@@ -24,6 +24,8 @@ Contents
 
     abc
     blosc
+    zlib
+    bz2
     release
 
 Acknowledgments
