@@ -350,6 +350,9 @@ class Blosc(Codec):
     """
 
     codec_id = 'blosc'
+    NOSHUFFLE = NOSHUFFLE
+    SHUFFLE = SHUFFLE
+    BITSHUFFLE = BITSHUFFLE
 
     def __init__(self, cname='lz4', clevel=5, shuffle=1):
         if isinstance(cname, text_type):
