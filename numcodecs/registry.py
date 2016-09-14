@@ -31,3 +31,7 @@ except ImportError:
     pass
 else:
     codec_registry[Blosc.codec_id] = Blosc
+
+
+from numcodecs.zlib import Zlib
+codec_registry[Zlib.codec_id] = Zlib
