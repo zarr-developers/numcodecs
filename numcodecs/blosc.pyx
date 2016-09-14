@@ -16,6 +16,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
 from numcodecs.compat import PY2, text_type
+from numcodecs.abc import Codec
 
 
 cdef extern from "blosc.h":
@@ -64,10 +65,6 @@ __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
 BITSHUFFLE = BLOSC_BITSHUFFLE
-
-
-def version():
-    return VERSION_STRING, VERSION_DATE
 
 
 def init():
@@ -335,3 +332,48 @@ def _get_use_threads():
             _use_threads = threading.current_thread().name == 'MainThread'
 
     return _use_threads
+
+
+class Blosc(Codec):
+    """Provides compression using the blosc meta-compressor.
+
+    Parameters
+    ----------
+    cname : string, optional
+        A string naming one of the compression algorithms available
+        within blosc, e.g., 'blosclz', 'lz4', 'zlib' or 'snappy'.
+    clevel : integer, optional
+        An integer between 0 and 9 specifying the compression level.
+    shuffle : integer, optional
+        Either 0 (no shuffle), 1 (byte shuffle) or 2 (bit shuffle).
+
+    """
+
+    codec_id = 'blosc'
+
+    def __init__(self, cname='lz4', clevel=5, shuffle=1):
+        if isinstance(cname, text_type):
+            cname = cname.encode('ascii')
+        self.cname = cname
+        self.clevel = clevel
+        self.shuffle = shuffle
+
+    def encode(self, buf):
+        return compress(buf, self.cname, self.clevel, self.shuffle)
+
+    def decode(self, buf, out=None):
+        return decompress(buf, out)
+
+    def get_config(self):
+        config = dict()
+        config['id'] = self.codec_id
+        config['cname'] = text_type(self.cname, 'ascii')
+        config['clevel'] = self.clevel
+        config['shuffle'] = self.shuffle
+        return config
+
+    def __repr__(self):
+        r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
+            (type(self).__name__, text_type(self.cname, 'ascii'),
+             self.clevel, self.shuffle)
+        return r
