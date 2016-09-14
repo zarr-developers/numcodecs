@@ -27,7 +27,7 @@ def get_codec(config):
 
 try:
     from numcodecs.blosc import Blosc
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 else:
     codec_registry[Blosc.codec_id] = Blosc

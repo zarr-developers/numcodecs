@@ -4,6 +4,7 @@ import itertools
 
 
 import numpy as np
+from nose.tools import eq_ as eq
 
 
 from numcodecs.bz2 import BZ2
@@ -33,3 +34,18 @@ arrays = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
+
+
+def test_get_config():
+    codec = BZ2(level=1)
+    expect = dict(id='bz2',
+                  level=1)
+    actual = codec.get_config()
+    eq(expect, actual)
+
+
+def test_repr():
+    codec = BZ2(level=1)
+    expect = 'BZ2(level=1)'
+    actual = repr(codec)
+    eq(expect, actual)

@@ -4,6 +4,7 @@ import itertools
 
 
 import numpy as np
+from nose.tools import eq_ as eq
 
 
 from numcodecs.zlib import Zlib
@@ -35,3 +36,18 @@ arrays = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
+
+
+def test_get_config():
+    codec = Zlib(level=1)
+    expect = dict(id='zlib',
+                  level=1)
+    actual = codec.get_config()
+    eq(expect, actual)
+
+
+def test_repr():
+    codec = Zlib(level=1)
+    expect = 'Zlib(level=1)'
+    actual = repr(codec)
+    eq(expect, actual)
