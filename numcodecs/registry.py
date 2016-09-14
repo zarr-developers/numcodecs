@@ -35,3 +35,5 @@ else:
 
 from numcodecs.zlib import Zlib
 codec_registry[Zlib.codec_id] = Zlib
+from numcodecs.bz2 import BZ2
+codec_registry[BZ2.codec_id] = BZ2
