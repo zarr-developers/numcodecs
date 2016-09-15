@@ -4,7 +4,7 @@ import itertools
 
 
 import numpy as np
-from nose.tools import assert_is_instance, eq_ as eq
+from nose.tools import eq_ as eq
 
 
 from numcodecs.blosc import Blosc

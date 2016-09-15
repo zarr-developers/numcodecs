@@ -4,13 +4,12 @@ import itertools
 
 
 import numpy as np
-from nose.tools import eq_ as eq, assert_is_instance
+from nose.tools import eq_ as eq
 
 
 from numcodecs.zlib import Zlib
 from numcodecs.tests.common import check_encode_decode
 from numcodecs.registry import get_codec
-from numcodecs.abc import Codec
 
 
 codecs = [

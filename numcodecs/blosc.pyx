@@ -368,3 +368,8 @@ class Blosc(Codec):
 
     def decode(self, buf, out=None):
         return decompress(buf, out)
+
+    def __repr__(self):
+        r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
+            (type(self).__name__, self.cname, self.clevel, self.shuffle)
+        return r

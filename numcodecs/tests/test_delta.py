@@ -4,13 +4,12 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq, assert_is_instance
+from nose.tools import eq_ as eq
 
 
 from numcodecs.delta import Delta
 from numcodecs.tests.common import check_encode_decode
 from numcodecs.registry import get_codec
-from numcodecs.abc import Codec
 
 
 # mix of dtypes: integer, float
