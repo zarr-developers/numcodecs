@@ -52,28 +52,12 @@ else:
 
         def decode(self, buf, out=None):
 
-            # setup filters
-            if self.format == _lzma.FORMAT_RAW:
-                # filters needed
-                filters = self.filters
-            else:
-                # filters should not be specified
-                filters = None
-
             # do decompression
-            dec = _lzma.decompress(buf, format=self.format, filters=filters)
+            dec = _lzma.decompress(buf, format=self.format,
+                                   filters=self.filters)
 
             # handle destination
             return buffer_copy(dec, out)
-
-        def get_config(self):
-            config = dict()
-            config['id'] = self.codec_id
-            config['format'] = self.format
-            config['check'] = self.check
-            config['preset'] = self.preset
-            config['filters'] = self.filters
-            return config
 
         def __repr__(self):
             r = '%s(format=%r, check=%r, preset=%r, filters=%r)' % \

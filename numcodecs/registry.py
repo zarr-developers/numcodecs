@@ -25,15 +25,12 @@ def get_codec(config):
     return cls.from_config(config)
 
 
-try:
-    from numcodecs.blosc import Blosc
-except ImportError:  # pragma: no cover
-    pass
-else:
-    codec_registry[Blosc.codec_id] = Blosc
+def register_codec(cls):
+    """Register a codec.
 
+    Parameters
+    ----------
+    cls : Codec class
 
-from numcodecs.zlib import Zlib
-codec_registry[Zlib.codec_id] = Zlib
-from numcodecs.bz2 import BZ2
-codec_registry[BZ2.codec_id] = BZ2
+    """
+    codec_registry[cls.codec_id] = cls

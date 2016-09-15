@@ -4,10 +4,27 @@ from __future__ import absolute_import, print_function, division
 
 
 from numcodecs.version import version as __version__
-from numcodecs.registry import get_codec
+from numcodecs.registry import get_codec, register_codec
+from numcodecs.compat import PY2
+
+from numcodecs.zlib import Zlib
+register_codec(Zlib)
+
+from numcodecs.bz2 import BZ2
+register_codec(BZ2)
+
+if not PY2:
+    from numcodecs.lzma import LZMA
+    register_codec(LZMA)
+
 try:
     from numcodecs.blosc import Blosc
+    register_codec(Blosc)
 except ImportError:  # pragma: no cover
     pass
-from numcodecs.zlib import Zlib
-from numcodecs.bz2 import BZ2
+
+from numcodecs.delta import Delta
+register_codec(Delta)
+
+from numcodecs.fixedscaleoffset import FixedScaleOffset
+register_codec(FixedScaleOffset)

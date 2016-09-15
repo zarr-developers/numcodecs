@@ -51,12 +51,6 @@ class BZ2(Codec):
         # out if given
         return buffer_copy(dec, out)
 
-    def get_config(self):
-        config = dict()
-        config['id'] = self.codec_id
-        config['level'] = self.level
-        return config
-
     def __repr__(self):
         r = '%s(level=%s)' % (type(self).__name__, self.level)
         return r

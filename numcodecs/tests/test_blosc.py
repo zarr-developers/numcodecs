@@ -4,10 +4,12 @@ import itertools
 
 
 import numpy as np
+from nose.tools import assert_is_instance, eq_ as eq
 
 
 from numcodecs.blosc import Blosc
 from numcodecs.tests.common import check_encode_decode
+from numcodecs.registry import get_codec
 
 
 codecs = [
@@ -39,3 +41,16 @@ arrays = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
+
+
+def test_get_config():
+    codec = Blosc(cname='zstd', clevel=3, shuffle=1)
+    config = codec.get_config()
+    eq(codec, get_codec(config))
+
+
+def test_repr():
+    expect = "Blosc(cname='zstd', clevel=3, shuffle=1)"
+    codec = eval(expect)
+    actual = repr(codec)
+    eq(expect, actual)

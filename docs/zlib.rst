@@ -1,5 +1,5 @@
-Zlib (``numcodecs.zlib``)
-=========================
+Zlib
+====
 .. module:: numcodecs.zlib
 
 .. autoclass:: Zlib

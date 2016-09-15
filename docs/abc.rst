@@ -1,5 +1,5 @@
-Abstract base classes (``numcodecs.abc``)
-=========================================
+Base Codec class
+================
 .. module:: numcodecs.abc
 
 .. autoclass:: Codec

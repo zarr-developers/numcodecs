@@ -27,6 +27,8 @@ Contents
     zlib
     bz2
     lzma
+    delta
+    fixedscaleoffset
     release
 
 Acknowledgments

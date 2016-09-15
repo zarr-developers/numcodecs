@@ -1,11 +1,8 @@
-Blosc (``numcodecs.blosc``)
-===========================
+Blosc
+=====
 .. module:: numcodecs.blosc
 
 .. autoclass:: Blosc
-
-Utility functions
------------------
 
 .. autofunction:: init
 .. autofunction:: destroy

@@ -8,7 +8,7 @@ from nose.tools import eq_ as eq
 from numpy.testing import assert_array_almost_equal
 
 
-from numcodecs.compat import buffer_tobytes
+from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
 
 
 def check_encode_decode(arr, codec, precision=None):
@@ -34,8 +34,8 @@ def check_encode_decode(arr, codec, precision=None):
         if precision is None:
             eq(arr_bytes, buffer_tobytes(res))
         else:
-            res = np.frombuffer(res, dtype=arr.dtype).reshape(arr.shape,
-                                                              order=order)
+            res = ndarray_from_buffer(res, dtype=arr.dtype)
+            res = res.reshape(arr.shape, order=order)
             assert_array_almost_equal(arr, res, decimal=precision)
 
     # encoding should support any object exporting the buffer protocol,

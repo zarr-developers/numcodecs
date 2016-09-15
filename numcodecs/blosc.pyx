@@ -355,28 +355,16 @@ class Blosc(Codec):
     BITSHUFFLE = BITSHUFFLE
 
     def __init__(self, cname='lz4', clevel=5, shuffle=1):
-        if isinstance(cname, text_type):
-            cname = cname.encode('ascii')
         self.cname = cname
+        if isinstance(cname, text_type):
+            self._cname_bytes = cname.encode('ascii')
+        else:
+            self._cname_bytes = cname
         self.clevel = clevel
         self.shuffle = shuffle
 
     def encode(self, buf):
-        return compress(buf, self.cname, self.clevel, self.shuffle)
+        return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
 
     def decode(self, buf, out=None):
         return decompress(buf, out)
-
-    def get_config(self):
-        config = dict()
-        config['id'] = self.codec_id
-        config['cname'] = text_type(self.cname, 'ascii')
-        config['clevel'] = self.clevel
-        config['shuffle'] = self.shuffle
-        return config
-
-    def __repr__(self):
-        r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
-            (type(self).__name__, text_type(self.cname, 'ascii'),
-             self.clevel, self.shuffle)
-        return r

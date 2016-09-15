@@ -4,11 +4,13 @@ import itertools
 
 
 import numpy as np
-from nose.tools import eq_ as eq
+from nose.tools import eq_ as eq, assert_is_instance
 
 
 from numcodecs.zlib import Zlib
 from numcodecs.tests.common import check_encode_decode
+from numcodecs.registry import get_codec
+from numcodecs.abc import Codec
 
 
 codecs = [
@@ -39,15 +41,13 @@ def test_encode_decode():
 
 
 def test_get_config():
-    codec = Zlib(level=1)
-    expect = dict(id='zlib',
-                  level=1)
-    actual = codec.get_config()
-    eq(expect, actual)
+    codec = Zlib(level=3)
+    config = codec.get_config()
+    eq(codec, get_codec(config))
 
 
 def test_repr():
-    codec = Zlib(level=1)
-    expect = 'Zlib(level=1)'
+    expect = "Zlib(level=3)"
+    codec = eval(expect)
     actual = repr(codec)
     eq(expect, actual)

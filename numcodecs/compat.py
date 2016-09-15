@@ -27,17 +27,6 @@ else:
     from functools import reduce
 
 
-def buffer_size(v):
-    """Return the size of the memory buffer used by `v`."""
-    if PY2 and isinstance(v, array.array):  # pragma: no cover
-        # special case array.array because does not support buffer
-        # interface in PY2
-        return v.buffer_info()[1] * v.itemsize
-    else:
-        v = memoryview(v)
-        return reduce(operator.mul, v.shape) * v.itemsize
-
-
 def buffer_tobytes(v):
     """Obtain a sequence of bytes for the memory buffer used by `v`."""
     if isinstance(v, np.ndarray):
@@ -92,3 +81,11 @@ def buffer_copy(buf, out=None):
         dest[:] = buf
 
     return out
+
+
+def ndarray_from_buffer(buf, dtype):
+    if isinstance(buf, np.ndarray):
+        arr = buf.reshape(-1, order='A').view(dtype)
+    else:
+        arr = np.frombuffer(buf, dtype=dtype)
+    return arr
