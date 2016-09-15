@@ -4,12 +4,11 @@ import itertools
 
 
 import numpy as np
-from nose.tools import eq_ as eq
 
 
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import check_encode_decode
-from numcodecs.registry import get_codec
+from numcodecs.tests.common import check_encode_decode, check_config, \
+    check_repr
 
 
 codecs = [
@@ -43,14 +42,10 @@ def test_encode_decode():
         check_encode_decode(arr, codec)
 
 
-def test_get_config():
+def test_config():
     codec = Blosc(cname='zstd', clevel=3, shuffle=1)
-    config = codec.get_config()
-    eq(codec, get_codec(config))
+    check_config(codec)
 
 
 def test_repr():
-    expect = "Blosc(cname='zstd', clevel=3, shuffle=1)"
-    codec = eval(expect)
-    actual = repr(codec)
-    eq(expect, actual)
+    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1)")

@@ -12,8 +12,8 @@ if not PY2:
     import numpy as np
     from nose.tools import eq_ as eq
     from numcodecs.lzma import LZMA
-    from numcodecs.tests.common import check_encode_decode
-    from numcodecs.registry import get_codec
+    from numcodecs.tests.common import check_encode_decode, check_config, \
+        check_repr
 
     codecs = [
         LZMA(),
@@ -40,14 +40,10 @@ if not PY2:
         for arr, codec in itertools.product(arrays, codecs):
             check_encode_decode(arr, codec)
 
-    def test_get_config():
+    def test_config():
         codec = LZMA(preset=1, format=_lzma.FORMAT_XZ,
                      check=_lzma.CHECK_NONE, filters=None)
-        config = codec.get_config()
-        eq(codec, get_codec(config))
+        check_config(codec)
 
     def test_repr():
-        expect = 'LZMA(format=1, check=0, preset=1, filters=None)'
-        codec = eval(expect)
-        actual = repr(codec)
-        eq(expect, actual)
+        check_repr('LZMA(format=1, check=0, preset=1, filters=None)')

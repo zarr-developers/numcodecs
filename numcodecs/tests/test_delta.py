@@ -8,8 +8,8 @@ from nose.tools import eq_ as eq
 
 
 from numcodecs.delta import Delta
-from numcodecs.tests.common import check_encode_decode
-from numcodecs.registry import get_codec
+from numcodecs.tests.common import check_encode_decode, check_config, \
+    check_repr
 
 
 # mix of dtypes: integer, float
@@ -41,14 +41,10 @@ def test_encode():
     eq(np.dtype(astype), actual.dtype)
 
 
-def test_get_config():
+def test_config():
     codec = Delta(dtype='<i4', astype='<i2')
-    config = codec.get_config()
-    eq(codec, get_codec(config))
+    check_config(codec)
 
 
 def test_repr():
-    expect = "Delta(dtype='<i4', astype='<i2')"
-    codec = eval(expect)
-    actual = repr(codec)
-    eq(expect, actual)
+    check_repr("Delta(dtype='<i4', astype='<i2')")

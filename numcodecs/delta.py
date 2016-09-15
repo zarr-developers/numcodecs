@@ -91,6 +91,14 @@ class Delta(Codec):
 
         return out
 
+    def get_config(self):
+        # override to handle encoding dtypes
+        return dict(
+            id=self.codec_id,
+            dtype=self.dtype.str,
+            astype=self.astype.str
+        )
+
     def __repr__(self):
         r = '%s(dtype=%r' % (type(self).__name__, self.dtype.str)
         if self.astype != self.dtype:

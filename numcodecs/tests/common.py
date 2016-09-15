@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import array
+import json
 
 
 import numpy as np
@@ -9,6 +10,7 @@ from numpy.testing import assert_array_almost_equal
 
 
 from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
+from numcodecs import *
 
 
 def check_encode_decode(arr, codec, precision=None):
@@ -87,3 +89,17 @@ def check_encode_decode(arr, codec, precision=None):
     out = bytearray(arr.nbytes)
     codec.decode(enc_bytes, out=out)
     compare(out)
+
+
+def check_config(codec):
+    config = codec.get_config()
+    # round-trip through JSON to check serialization
+    config = json.loads(json.dumps(config))
+    eq(codec, get_codec(config))
+
+
+def check_repr(stmt):
+    # check repr matches instantiation statement
+    codec = eval(stmt)
+    actual = repr(codec)
+    eq(stmt, actual)

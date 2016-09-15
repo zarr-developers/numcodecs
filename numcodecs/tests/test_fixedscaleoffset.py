@@ -9,8 +9,8 @@ from nose.tools import eq_ as eq
 
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
-from numcodecs.tests.common import check_encode_decode
-from numcodecs.registry import get_codec
+from numcodecs.tests.common import check_encode_decode, check_config, \
+    check_repr
 
 
 arrs = [
@@ -49,15 +49,11 @@ def test_encode():
     eq(np.dtype(astype), actual.dtype)
 
 
-def test_get_config():
+def test_config():
     codec = FixedScaleOffset(dtype='<f8', astype='<i4', scale=10, offset=100)
-    config = codec.get_config()
-    eq(codec, get_codec(config))
+    check_config(codec)
 
 
 def test_repr():
-    expect = "FixedScaleOffset(scale=10, offset=100, dtype='<f8', " \
-             "astype='<i4')"
-    codec = eval(expect)
-    actual = repr(codec)
-    eq(expect, actual)
+    stmt = "FixedScaleOffset(scale=10, offset=100, dtype='<f8', astype='<i4')"
+    check_repr(stmt)
