@@ -28,6 +28,7 @@ else:
 
 
 def buffer_size(v):
+    """Return the size of the memory buffer used by `v`."""
     if PY2 and isinstance(v, array.array):  # pragma: no cover
         # special case array.array because does not support buffer
         # interface in PY2
@@ -38,6 +39,7 @@ def buffer_size(v):
 
 
 def buffer_tobytes(v):
+    """Obtain a sequence of bytes for the memory buffer used by `v`."""
     if isinstance(v, np.ndarray):
         return v.tobytes(order='A')
     elif PY2 and isinstance(v, array.array):  # pragma: no cover
@@ -47,6 +49,7 @@ def buffer_tobytes(v):
 
 
 def buffer_copy(buf, out=None):
+    """Copy the contents of the memory buffer from `buf` to `out`."""
 
     if out is None:
         # no-op
