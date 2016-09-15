@@ -10,7 +10,7 @@ from numpy.testing import assert_array_almost_equal
 
 
 from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
-from numcodecs import *
+from numcodecs import *  # flake8: noqa
 
 
 def check_encode_decode(arr, codec, precision=None):

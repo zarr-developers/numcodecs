@@ -10,7 +10,6 @@ if not PY2:
     import lzma as _lzma
     import itertools
     import numpy as np
-    from nose.tools import eq_ as eq
     from numcodecs.lzma import LZMA
     from numcodecs.tests.common import check_encode_decode, check_config, \
         check_repr
