@@ -11,7 +11,7 @@ from numcodecs.compat import buffer_copy
 
 
 class Zlib(Codec):
-    """Provides compression using zlib via the Python standard library.
+    """Codec providing compression using zlib via the Python standard library.
 
     Parameters
     ----------

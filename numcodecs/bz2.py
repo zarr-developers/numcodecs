@@ -12,7 +12,7 @@ from numcodecs.compat import buffer_copy
 
 
 class BZ2(Codec):
-    """Provides compression using bzip2 via the Python standard library.
+    """Codec providing compression using bzip2 via the Python standard library.
 
     Parameters
     ----------

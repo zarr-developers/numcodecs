@@ -26,6 +26,7 @@ Contents
     blosc
     zlib
     bz2
+    lzma
     release
 
 Acknowledgments

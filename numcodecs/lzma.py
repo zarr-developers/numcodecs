@@ -12,11 +12,10 @@ else:
     from numcodecs.abc import Codec
     from numcodecs.compat import buffer_copy
 
-
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
-        """Provides compression using lzma via the Python standard library
-        (only available under Python 3).
+        """Codec providing compression using lzma via the Python standard
+        library (only available under Python 3).
 
         Parameters
         ----------

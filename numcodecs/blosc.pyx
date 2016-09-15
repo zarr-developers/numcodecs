@@ -335,7 +335,7 @@ def _get_use_threads():
 
 
 class Blosc(Codec):
-    """Provides compression using the blosc meta-compressor.
+    """Codec providing compression using the blosc meta-compressor.
 
     Parameters
     ----------
