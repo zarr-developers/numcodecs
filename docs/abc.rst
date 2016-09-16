@@ -1,5 +1,5 @@
-Base Codec class
-================
+Codec
+=====
 .. module:: numcodecs.abc
 
 .. autoclass:: Codec
