@@ -50,7 +50,3 @@ class BZ2(Codec):
         # support direct decompression into buffer, so we have to copy into
         # out if given
         return buffer_copy(dec, out)
-
-    def __repr__(self):
-        r = '%s(level=%s)' % (type(self).__name__, self.level)
-        return r

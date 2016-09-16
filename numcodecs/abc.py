@@ -57,8 +57,7 @@ class Codec(object):  # pragma: no cover
         codec. Must include an 'id' field with the codec ID. All values must be
         compatible with JSON encoding."""
         # override in sub-class if need special encoding of config values
-        config = dict()
-        config['id'] = self.codec_id
+        config = dict(id=self.codec_id)
         # add in all non-private members
         for k in self.__dict__:
             if not k.startswith('_'):
@@ -75,10 +74,17 @@ class Codec(object):  # pragma: no cover
 
     def __eq__(self, other):
         # override in sub-class if need special equality comparison
-        attrs = ['codec_id']
-        # compare all non-private members
-        attrs += [k for k in self.__dict__ if not k.startswith('_')]
         try:
-            return all([getattr(self, k) == getattr(other, k) for k in attrs])
+            return self.get_config() == other.get_config()
         except AttributeError:
             return False
+
+    def __repr__(self):
+        # override in sub-class if need special representation
+        r = '%s(' % type(self).__name__
+        # by default, include all non-private members
+        params = ['%s=%r' % (k, getattr(self, k))
+                  for k in sorted(self.__dict__)
+                  if not k.startswith('_')]
+        r += ', '.join(params) + ')'
+        return r

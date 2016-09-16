@@ -29,6 +29,7 @@ Contents
     lzma
     delta
     fixedscaleoffset
+    packbits
     release
 
 Acknowledgments

@@ -28,3 +28,6 @@ register_codec(Delta)
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
 register_codec(FixedScaleOffset)
+
+from numcodecs.packbits import PackBits
+register_codec(PackBits)
