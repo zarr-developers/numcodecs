@@ -61,6 +61,7 @@ Contents
     fixedscaleoffset
     packbits
     categorize
+    checksum32
     release
 
 Acknowledgments

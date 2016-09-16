@@ -42,3 +42,8 @@ register_codec(PackBits)
 
 from numcodecs.categorize import Categorize
 register_codec(Categorize)
+
+
+from numcodecs.checksum32 import CRC32, Adler32
+register_codec(CRC32)
+register_codec(Adler32)
