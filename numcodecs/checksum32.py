@@ -27,7 +27,7 @@ class Checksum32(Codec):
         expect = arr[:4].view('<u4')[0]
         checksum = self.checksum(arr[4:]) & 0xffffffff
         if expect != checksum:
-            raise RuntimeError('CRC32 checksum error')
+            raise RuntimeError('checksum failed')
         return buffer_copy(arr[4:], out)
 
 
