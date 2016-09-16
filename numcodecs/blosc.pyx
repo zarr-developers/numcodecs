@@ -129,6 +129,92 @@ def cbuffer_sizes(source):
     return nbytes, cbytes, blocksize
 
 
+def compress(source, char* cname, int clevel, int shuffle):
+    """Compression.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Data to be compressed. Can be any object supporting the buffer
+        protocol.
+    cname : bytes
+        Name of compression library to use.
+    clevel : int
+        Compression level.
+    shuffle : int
+        Shuffle filter.
+
+    Returns
+    -------
+    dest : array
+        Compressed data.
+
+    """
+
+    cdef:
+        char *source_ptr
+        char *dest_ptr
+        Py_buffer source_buffer
+        size_t nbytes, cbytes, itemsize
+        array.array source_array
+        bytes dest
+
+    # setup source buffer
+    if PY2 and isinstance(source, array.array):
+        # workaround fact that array.array does not support new-style buffer
+        # interface in PY2
+        release_source_buffer = False
+        source_array = source
+        source_ptr = <char *> source_array.data.as_voidptr
+        itemsize = source_array.itemsize
+        nbytes = source_array.buffer_info()[1] * itemsize
+    else:
+        release_source_buffer = True
+        PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
+        source_ptr = <char *> source_buffer.buf
+        itemsize = source_buffer.itemsize
+        nbytes = source_buffer.len
+
+    try:
+
+        # setup destination
+        dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
+        dest_ptr = PyBytes_AS_STRING(dest)
+
+        # perform compression
+        if _get_use_threads():
+            # allow blosc to use threads internally
+            compressor_set = blosc_set_compressor(cname)
+            if compressor_set < 0:
+                raise ValueError('compressor not supported: %r' % cname)
+            with nogil:
+                cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes,
+                                        source_ptr, dest_ptr,
+                                        nbytes + BLOSC_MAX_OVERHEAD)
+
+        else:
+            with nogil:
+                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes,
+                                            source_ptr, dest_ptr,
+                                            nbytes + BLOSC_MAX_OVERHEAD, cname,
+                                            0, 1)
+
+    finally:
+
+        # release buffers
+        if release_source_buffer:
+            PyBuffer_Release(&source_buffer)
+
+    # check compression was successful
+    if cbytes <= 0:
+        raise RuntimeError('error during blosc compression: %d' % cbytes)
+
+    # resize after compression
+    dest = dest[:cbytes]
+
+    return dest
+
+
 def decompress(source, dest=None):
     """Decompress data.
 
@@ -217,92 +303,6 @@ def decompress(source, dest=None):
     # handle errors
     if ret <= 0:
         raise RuntimeError('error during blosc decompression: %d' % ret)
-
-    return dest
-
-
-def compress(source, char* cname, int clevel, int shuffle):
-    """Compression.
-
-    Parameters
-    ----------
-    source : bytes-like
-        Data to be compressed. Can be any object supporting the buffer
-        protocol.
-    cname : bytes
-        Name of compression library to use.
-    clevel : int
-        Compression level.
-    shuffle : int
-        Shuffle filter.
-
-    Returns
-    -------
-    dest : array
-        Compressed data.
-
-    """
-
-    cdef:
-        char *source_ptr
-        char *dest_ptr
-        Py_buffer source_buffer
-        size_t nbytes, cbytes, itemsize
-        array.array source_array
-        bytes dest
-
-    # setup source buffer
-    if PY2 and isinstance(source, array.array):
-        # workaround fact that array.array does not support new-style buffer
-        # interface in PY2
-        release_source_buffer = False
-        source_array = source
-        source_ptr = <char *> source_array.data.as_voidptr
-        itemsize = source_array.itemsize
-        nbytes = source_array.buffer_info()[1] * itemsize
-    else:
-        release_source_buffer = True
-        PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
-        source_ptr = <char *> source_buffer.buf
-        itemsize = source_buffer.itemsize
-        nbytes = source_buffer.len
-
-    try:
-
-        # setup destination
-        dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
-        dest_ptr = PyBytes_AS_STRING(dest)
-
-        # perform compression
-        if _get_use_threads():
-            # allow blosc to use threads internally
-            compressor_set = blosc_set_compressor(cname)
-            if compressor_set < 0:
-                raise ValueError('compressor not supported: %r' % cname)
-            with nogil:
-                cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes,
-                                        source_ptr, dest_ptr,
-                                        nbytes + BLOSC_MAX_OVERHEAD)
-
-        else:
-            with nogil:
-                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes,
-                                            source_ptr, dest_ptr,
-                                            nbytes + BLOSC_MAX_OVERHEAD, cname,
-                                            0, 1)
-
-    finally:
-
-        # release buffers
-        if release_source_buffer:
-            PyBuffer_Release(&source_buffer)
-
-    # check compression was successful
-    if cbytes <= 0:
-        raise RuntimeError('error during blosc compression: %d' % cbytes)
-
-    # resize after compression
-    dest = dest[:cbytes]
 
     return dest
 

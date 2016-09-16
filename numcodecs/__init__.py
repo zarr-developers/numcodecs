@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa
 from __future__ import absolute_import, print_function, division
+import multiprocessing
+import atexit
 
 
 from numcodecs.version import version as __version__
@@ -18,8 +20,14 @@ if not PY2:
     register_codec(LZMA)
 
 try:
+    from numcodecs import blosc as _blosc
     from numcodecs.blosc import Blosc
     register_codec(Blosc)
+    # initialize blosc
+    ncores = multiprocessing.cpu_count()
+    _blosc.init()
+    _blosc.set_nthreads(min(8, ncores))
+    atexit.register(_blosc.destroy)
 except ImportError:  # pragma: no cover
     pass
 
