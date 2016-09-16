@@ -30,6 +30,7 @@ Contents
     delta
     fixedscaleoffset
     packbits
+    categorize
     release
 
 Acknowledgments

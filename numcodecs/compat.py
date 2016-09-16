@@ -89,3 +89,17 @@ def ndarray_from_buffer(buf, dtype):
     else:
         arr = np.frombuffer(buf, dtype=dtype)
     return arr
+
+
+def ensure_bytes(l, encoding='utf-8'):
+    if isinstance(l, binary_type):
+        return l
+    else:
+        return l.encode(encoding=encoding)
+
+
+def ensure_text(l, encoding='utf-8'):
+    if isinstance(l, text_type):
+        return l
+    else:
+        return text_type(l, encoding=encoding)

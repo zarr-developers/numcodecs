@@ -31,3 +31,6 @@ register_codec(FixedScaleOffset)
 
 from numcodecs.packbits import PackBits
 register_codec(PackBits)
+
+from numcodecs.categorize import Categorize
+register_codec(Categorize)
