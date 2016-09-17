@@ -99,36 +99,6 @@ def set_nthreads(int nthreads):
     return blosc_set_nthreads(nthreads)
 
 
-def cbuffer_sizes(source):
-    """Return information from the blosc header of some compressed data."""
-    cdef:
-        char *source_ptr
-        Py_buffer source_buffer
-        array.array source_array
-        size_t nbytes, cbytes, blocksize
-
-    # setup source buffer
-    if PY2 and isinstance(source, array.array):
-        # workaround fact that array.array does not support new-style buffer
-        # interface in PY2
-        release_source_buffer = False
-        source_array = source
-        source_ptr = <char *> source_array.data.as_voidptr
-    else:
-        release_source_buffer = True
-        PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
-        source_ptr = <char *> source_buffer.buf
-
-    # determine buffer size
-    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
-
-    # release buffers
-    if release_source_buffer:
-        PyBuffer_Release(&source_buffer)
-
-    return nbytes, cbytes, blocksize
-
-
 cdef class MyBuffer:
     """Compatibility class to work around fact that array.array does not
     support new-style buffer interface in PY2."""
@@ -155,6 +125,25 @@ cdef class MyBuffer:
     def release(self):
         if self.buffer.buf != NULL:
             PyBuffer_Release(&(self.buffer))
+
+
+def cbuffer_sizes(source):
+    """Return information from the blosc header of some compressed data."""
+    cdef:
+        char *source_ptr
+        MyBuffer source_buffer
+        size_t nbytes, cbytes, blocksize
+
+    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
+
+    # determine buffer size
+    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+
+    # release buffers
+    source_buffer.release()
+
+    return nbytes, cbytes, blocksize
 
 
 def compress(source, char* cname, int clevel, int shuffle):

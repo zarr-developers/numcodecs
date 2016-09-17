@@ -539,7 +539,7 @@ typedef struct arrayobject arrayobject;
 #endif
 struct __pyx_obj_9numcodecs_5blosc_MyBuffer;
 
-/* "numcodecs/blosc.pyx":132
+/* "numcodecs/blosc.pyx":102
  * 
  * 
  * cdef class MyBuffer:             # <<<<<<<<<<<<<<
@@ -649,9 +649,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
-/* ExtTypeTest.proto */
-static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
-
 /* RaiseArgTupleInvalid.proto */
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
@@ -663,6 +660,9 @@ static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_n
 static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
+
+/* ExtTypeTest.proto */
+static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
 
 /* PyObjectCallMethO.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1189,7 +1189,6 @@ static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_VERSION_DATE[] = "VERSION_DATE";
 static const char __pyx_k_get_nthreads[] = "get_nthreads";
 static const char __pyx_k_set_nthreads[] = "set_nthreads";
-static const char __pyx_k_source_array[] = "source_array";
 static const char __pyx_k_cbuffer_sizes[] = "cbuffer_sizes";
 static const char __pyx_k_numcodecs_abc[] = "numcodecs.abc";
 static const char __pyx_k_source_buffer[] = "source_buffer";
@@ -1203,7 +1202,6 @@ static const char __pyx_k_numcodecs_blosc[] = "numcodecs.blosc";
 static const char __pyx_k_list_compressors[] = "list_compressors";
 static const char __pyx_k_numcodecs_compat[] = "numcodecs.compat";
 static const char __pyx_k_compname_to_compcode[] = "compname_to_compcode";
-static const char __pyx_k_release_source_buffer[] = "release_source_buffer";
 static const char __pyx_k_compressor_not_supported_r[] = "compressor not supported: %r";
 static const char __pyx_k_s_cname_r_clevel_r_shuffle_r[] = "%s(cname=%r, clevel=%r, shuffle=%r)";
 static const char __pyx_k_home_aliman_src_github_alimanfo[] = "/home/aliman/src/github/alimanfoo/numcodecs/numcodecs/blosc.pyx";
@@ -1289,7 +1287,6 @@ static PyObject *__pyx_n_s_prepare;
 static PyObject *__pyx_n_s_qualname;
 static PyObject *__pyx_n_s_r;
 static PyObject *__pyx_n_s_release;
-static PyObject *__pyx_n_s_release_source_buffer;
 static PyObject *__pyx_n_s_repr;
 static PyObject *__pyx_n_s_ret;
 static PyObject *__pyx_kp_s_s_cname_r_clevel_r_shuffle_r;
@@ -1297,7 +1294,6 @@ static PyObject *__pyx_n_s_self;
 static PyObject *__pyx_n_s_set_nthreads;
 static PyObject *__pyx_n_s_shuffle;
 static PyObject *__pyx_n_s_source;
-static PyObject *__pyx_n_s_source_array;
 static PyObject *__pyx_n_s_source_buffer;
 static PyObject *__pyx_n_s_source_ptr;
 static PyObject *__pyx_n_s_split;
@@ -1313,9 +1309,9 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_4compname_to_compcode(CYTHON_UNUSED 
 static PyObject *__pyx_pf_9numcodecs_5blosc_6list_compressors(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_8get_nthreads(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_10set_nthreads(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_nthreads); /* proto */
-static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source); /* proto */
 static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numcodecs_5blosc_MyBuffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_9numcodecs_5blosc_MyBuffer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source, char *__pyx_v_cname, int __pyx_v_clevel, int __pyx_v_shuffle); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source, PyObject *__pyx_v_dest); /* proto */
 static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
@@ -1810,232 +1806,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_10set_nthreads(CYTHON_UNUSED PyObjec
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":102
- * 
- * 
- * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
- *     """Return information from the blosc header of some compressed data."""
- *     cdef:
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes(PyObject *__pyx_self, PyObject *__pyx_v_source); /*proto*/
-static char __pyx_doc_9numcodecs_5blosc_12cbuffer_sizes[] = "cbuffer_sizes(source)\nReturn information from the blosc header of some compressed data.";
-static PyMethodDef __pyx_mdef_9numcodecs_5blosc_13cbuffer_sizes = {"cbuffer_sizes", (PyCFunction)__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes, METH_O, __pyx_doc_9numcodecs_5blosc_12cbuffer_sizes};
-static PyObject *__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes(PyObject *__pyx_self, PyObject *__pyx_v_source) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("cbuffer_sizes (wrapper)", 0);
-  __pyx_r = __pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(__pyx_self, ((PyObject *)__pyx_v_source));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source) {
-  char *__pyx_v_source_ptr;
-  Py_buffer __pyx_v_source_buffer;
-  arrayobject *__pyx_v_source_array = 0;
-  size_t __pyx_v_nbytes;
-  size_t __pyx_v_cbytes;
-  size_t __pyx_v_blocksize;
-  int __pyx_v_release_source_buffer;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  PyObject *__pyx_t_2 = NULL;
-  int __pyx_t_3;
-  int __pyx_t_4;
-  int __pyx_t_5;
-  PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  __Pyx_RefNannySetupContext("cbuffer_sizes", 0);
-
-  /* "numcodecs/blosc.pyx":111
- * 
- *     # setup source buffer
- *     if PY2 and isinstance(source, array.array):             # <<<<<<<<<<<<<<
- *         # workaround fact that array.array does not support new-style buffer
- *         # interface in PY2
- */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_PY2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 111, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_3) {
-  } else {
-    __pyx_t_1 = __pyx_t_3;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_3 = __Pyx_TypeCheck(__pyx_v_source, __pyx_ptype_7cpython_5array_array); 
-  __pyx_t_4 = (__pyx_t_3 != 0);
-  __pyx_t_1 = __pyx_t_4;
-  __pyx_L4_bool_binop_done:;
-  if (__pyx_t_1) {
-
-    /* "numcodecs/blosc.pyx":114
- *         # workaround fact that array.array does not support new-style buffer
- *         # interface in PY2
- *         release_source_buffer = False             # <<<<<<<<<<<<<<
- *         source_array = source
- *         source_ptr = <char *> source_array.data.as_voidptr
- */
-    __pyx_v_release_source_buffer = 0;
-
-    /* "numcodecs/blosc.pyx":115
- *         # interface in PY2
- *         release_source_buffer = False
- *         source_array = source             # <<<<<<<<<<<<<<
- *         source_ptr = <char *> source_array.data.as_voidptr
- *     else:
- */
-    if (!(likely(((__pyx_v_source) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_source, __pyx_ptype_7cpython_5array_array))))) __PYX_ERR(0, 115, __pyx_L1_error)
-    __pyx_t_2 = __pyx_v_source;
-    __Pyx_INCREF(__pyx_t_2);
-    __pyx_v_source_array = ((arrayobject *)__pyx_t_2);
-    __pyx_t_2 = 0;
-
-    /* "numcodecs/blosc.pyx":116
- *         release_source_buffer = False
- *         source_array = source
- *         source_ptr = <char *> source_array.data.as_voidptr             # <<<<<<<<<<<<<<
- *     else:
- *         release_source_buffer = True
- */
-    __pyx_v_source_ptr = ((char *)__pyx_v_source_array->data.as_voidptr);
-
-    /* "numcodecs/blosc.pyx":111
- * 
- *     # setup source buffer
- *     if PY2 and isinstance(source, array.array):             # <<<<<<<<<<<<<<
- *         # workaround fact that array.array does not support new-style buffer
- *         # interface in PY2
- */
-    goto __pyx_L3;
-  }
-
-  /* "numcodecs/blosc.pyx":118
- *         source_ptr = <char *> source_array.data.as_voidptr
- *     else:
- *         release_source_buffer = True             # <<<<<<<<<<<<<<
- *         PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
- *         source_ptr = <char *> source_buffer.buf
- */
-  /*else*/ {
-    __pyx_v_release_source_buffer = 1;
-
-    /* "numcodecs/blosc.pyx":119
- *     else:
- *         release_source_buffer = True
- *         PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
- *         source_ptr = <char *> source_buffer.buf
- * 
- */
-    __pyx_t_5 = PyObject_GetBuffer(__pyx_v_source, (&__pyx_v_source_buffer), PyBUF_ANY_CONTIGUOUS); if (unlikely(__pyx_t_5 == -1)) __PYX_ERR(0, 119, __pyx_L1_error)
-
-    /* "numcodecs/blosc.pyx":120
- *         release_source_buffer = True
- *         PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
- *         source_ptr = <char *> source_buffer.buf             # <<<<<<<<<<<<<<
- * 
- *     # determine buffer size
- */
-    __pyx_v_source_ptr = ((char *)__pyx_v_source_buffer.buf);
-  }
-  __pyx_L3:;
-
-  /* "numcodecs/blosc.pyx":123
- * 
- *     # determine buffer size
- *     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)             # <<<<<<<<<<<<<<
- * 
- *     # release buffers
- */
-  blosc_cbuffer_sizes(__pyx_v_source_ptr, (&__pyx_v_nbytes), (&__pyx_v_cbytes), (&__pyx_v_blocksize));
-
-  /* "numcodecs/blosc.pyx":126
- * 
- *     # release buffers
- *     if release_source_buffer:             # <<<<<<<<<<<<<<
- *         PyBuffer_Release(&source_buffer)
- * 
- */
-  __pyx_t_1 = (__pyx_v_release_source_buffer != 0);
-  if (__pyx_t_1) {
-
-    /* "numcodecs/blosc.pyx":127
- *     # release buffers
- *     if release_source_buffer:
- *         PyBuffer_Release(&source_buffer)             # <<<<<<<<<<<<<<
- * 
- *     return nbytes, cbytes, blocksize
- */
-    PyBuffer_Release((&__pyx_v_source_buffer));
-
-    /* "numcodecs/blosc.pyx":126
- * 
- *     # release buffers
- *     if release_source_buffer:             # <<<<<<<<<<<<<<
- *         PyBuffer_Release(&source_buffer)
- * 
- */
-  }
-
-  /* "numcodecs/blosc.pyx":129
- *         PyBuffer_Release(&source_buffer)
- * 
- *     return nbytes, cbytes, blocksize             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_nbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = __Pyx_PyInt_FromSize_t(__pyx_v_cbytes); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 129, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = __Pyx_PyInt_FromSize_t(__pyx_v_blocksize); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 129, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_8 = PyTuple_New(3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 129, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_6);
-  __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_7);
-  __pyx_t_2 = 0;
-  __pyx_t_6 = 0;
-  __pyx_t_7 = 0;
-  __pyx_r = __pyx_t_8;
-  __pyx_t_8 = 0;
-  goto __pyx_L0;
-
-  /* "numcodecs/blosc.pyx":102
- * 
- * 
- * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
- *     """Return information from the blosc header of some compressed data."""
- *     cdef:
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("numcodecs.blosc.cbuffer_sizes", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XDECREF((PyObject *)__pyx_v_source_array);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "numcodecs/blosc.pyx":143
+/* "numcodecs/blosc.pyx":113
  *         array.array arr
  * 
  *     def __cinit__(self, obj, flags):             # <<<<<<<<<<<<<<
@@ -2071,11 +1842,11 @@ static int __pyx_pw_9numcodecs_5blosc_8MyBuffer_1__cinit__(PyObject *__pyx_v_sel
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_flags)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, 1); __PYX_ERR(0, 143, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, 1); __PYX_ERR(0, 113, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 143, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 113, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2088,7 +1859,7 @@ static int __pyx_pw_9numcodecs_5blosc_8MyBuffer_1__cinit__(PyObject *__pyx_v_sel
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 143, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 113, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.MyBuffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2116,16 +1887,16 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
   Py_ssize_t __pyx_t_10;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "numcodecs/blosc.pyx":144
+  /* "numcodecs/blosc.pyx":114
  * 
  *     def __cinit__(self, obj, flags):
  *         if PY2 and isinstance(obj, array.array):             # <<<<<<<<<<<<<<
  *             self.arr = obj
  *             self.ptr = <char *> self.arr.data.as_voidptr
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_PY2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_PY2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
   } else {
@@ -2138,14 +1909,14 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "numcodecs/blosc.pyx":145
+    /* "numcodecs/blosc.pyx":115
  *     def __cinit__(self, obj, flags):
  *         if PY2 and isinstance(obj, array.array):
  *             self.arr = obj             # <<<<<<<<<<<<<<
  *             self.ptr = <char *> self.arr.data.as_voidptr
  *             self.itemsize = self.arr.itemsize
  */
-    if (!(likely(((__pyx_v_obj) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_obj, __pyx_ptype_7cpython_5array_array))))) __PYX_ERR(0, 145, __pyx_L1_error)
+    if (!(likely(((__pyx_v_obj) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_obj, __pyx_ptype_7cpython_5array_array))))) __PYX_ERR(0, 115, __pyx_L1_error)
     __pyx_t_2 = __pyx_v_obj;
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_2);
@@ -2154,7 +1925,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
     __pyx_v_self->arr = ((arrayobject *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "numcodecs/blosc.pyx":146
+    /* "numcodecs/blosc.pyx":116
  *         if PY2 and isinstance(obj, array.array):
  *             self.arr = obj
  *             self.ptr = <char *> self.arr.data.as_voidptr             # <<<<<<<<<<<<<<
@@ -2163,27 +1934,27 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
  */
     __pyx_v_self->ptr = ((char *)__pyx_v_self->arr->data.as_voidptr);
 
-    /* "numcodecs/blosc.pyx":147
+    /* "numcodecs/blosc.pyx":117
  *             self.arr = obj
  *             self.ptr = <char *> self.arr.data.as_voidptr
  *             self.itemsize = self.arr.itemsize             # <<<<<<<<<<<<<<
  *             self.nbytes = self.arr.buffer_info()[1] * self.itemsize
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr), __pyx_n_s_itemsize); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr), __pyx_n_s_itemsize); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyInt_As_size_t(__pyx_t_2); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_size_t(__pyx_t_2); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_self->itemsize = __pyx_t_5;
 
-    /* "numcodecs/blosc.pyx":148
+    /* "numcodecs/blosc.pyx":118
  *             self.ptr = <char *> self.arr.data.as_voidptr
  *             self.itemsize = self.arr.itemsize
  *             self.nbytes = self.arr.buffer_info()[1] * self.itemsize             # <<<<<<<<<<<<<<
  *         else:
  *             PyObject_GetBuffer(obj, &(self.buffer), flags)
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr), __pyx_n_s_buffer_info); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->arr), __pyx_n_s_buffer_info); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_7 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -2196,27 +1967,27 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
       }
     }
     if (__pyx_t_7) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     } else {
-      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
     }
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_self->itemsize); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_self->itemsize); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = PyNumber_Multiply(__pyx_t_6, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Multiply(__pyx_t_6, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_5 = __Pyx_PyInt_As_size_t(__pyx_t_7); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_As_size_t(__pyx_t_7); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_v_self->nbytes = __pyx_t_5;
 
-    /* "numcodecs/blosc.pyx":144
+    /* "numcodecs/blosc.pyx":114
  * 
  *     def __cinit__(self, obj, flags):
  *         if PY2 and isinstance(obj, array.array):             # <<<<<<<<<<<<<<
@@ -2226,7 +1997,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
     goto __pyx_L3;
   }
 
-  /* "numcodecs/blosc.pyx":150
+  /* "numcodecs/blosc.pyx":120
  *             self.nbytes = self.arr.buffer_info()[1] * self.itemsize
  *         else:
  *             PyObject_GetBuffer(obj, &(self.buffer), flags)             # <<<<<<<<<<<<<<
@@ -2234,10 +2005,10 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
  *             self.itemsize = self.buffer.itemsize
  */
   /*else*/ {
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_flags); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L1_error)
-    __pyx_t_9 = PyObject_GetBuffer(__pyx_v_obj, (&__pyx_v_self->buffer), __pyx_t_8); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_flags); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
+    __pyx_t_9 = PyObject_GetBuffer(__pyx_v_obj, (&__pyx_v_self->buffer), __pyx_t_8); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 120, __pyx_L1_error)
 
-    /* "numcodecs/blosc.pyx":151
+    /* "numcodecs/blosc.pyx":121
  *         else:
  *             PyObject_GetBuffer(obj, &(self.buffer), flags)
  *             self.ptr = <char *> self.buffer.buf             # <<<<<<<<<<<<<<
@@ -2246,7 +2017,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
  */
     __pyx_v_self->ptr = ((char *)__pyx_v_self->buffer.buf);
 
-    /* "numcodecs/blosc.pyx":152
+    /* "numcodecs/blosc.pyx":122
  *             PyObject_GetBuffer(obj, &(self.buffer), flags)
  *             self.ptr = <char *> self.buffer.buf
  *             self.itemsize = self.buffer.itemsize             # <<<<<<<<<<<<<<
@@ -2256,7 +2027,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
     __pyx_t_10 = __pyx_v_self->buffer.itemsize;
     __pyx_v_self->itemsize = __pyx_t_10;
 
-    /* "numcodecs/blosc.pyx":153
+    /* "numcodecs/blosc.pyx":123
  *             self.ptr = <char *> self.buffer.buf
  *             self.itemsize = self.buffer.itemsize
  *             self.nbytes = self.buffer.len             # <<<<<<<<<<<<<<
@@ -2268,7 +2039,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
   }
   __pyx_L3:;
 
-  /* "numcodecs/blosc.pyx":143
+  /* "numcodecs/blosc.pyx":113
  *         array.array arr
  * 
  *     def __cinit__(self, obj, flags):             # <<<<<<<<<<<<<<
@@ -2290,7 +2061,7 @@ static int __pyx_pf_9numcodecs_5blosc_8MyBuffer___cinit__(struct __pyx_obj_9numc
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":155
+/* "numcodecs/blosc.pyx":125
  *             self.nbytes = self.buffer.len
  * 
  *     def release(self):             # <<<<<<<<<<<<<<
@@ -2318,7 +2089,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("release", 0);
 
-  /* "numcodecs/blosc.pyx":156
+  /* "numcodecs/blosc.pyx":126
  * 
  *     def release(self):
  *         if self.buffer.buf != NULL:             # <<<<<<<<<<<<<<
@@ -2328,7 +2099,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_
   __pyx_t_1 = ((__pyx_v_self->buffer.buf != NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "numcodecs/blosc.pyx":157
+    /* "numcodecs/blosc.pyx":127
  *     def release(self):
  *         if self.buffer.buf != NULL:
  *             PyBuffer_Release(&(self.buffer))             # <<<<<<<<<<<<<<
@@ -2337,7 +2108,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_
  */
     PyBuffer_Release((&__pyx_v_self->buffer));
 
-    /* "numcodecs/blosc.pyx":156
+    /* "numcodecs/blosc.pyx":126
  * 
  *     def release(self):
  *         if self.buffer.buf != NULL:             # <<<<<<<<<<<<<<
@@ -2346,7 +2117,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_
  */
   }
 
-  /* "numcodecs/blosc.pyx":155
+  /* "numcodecs/blosc.pyx":125
  *             self.nbytes = self.buffer.len
  * 
  *     def release(self):             # <<<<<<<<<<<<<<
@@ -2361,7 +2132,168 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8MyBuffer_2release(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":160
+/* "numcodecs/blosc.pyx":130
+ * 
+ * 
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
+ *     """Return information from the blosc header of some compressed data."""
+ *     cdef:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes(PyObject *__pyx_self, PyObject *__pyx_v_source); /*proto*/
+static char __pyx_doc_9numcodecs_5blosc_12cbuffer_sizes[] = "cbuffer_sizes(source)\nReturn information from the blosc header of some compressed data.";
+static PyMethodDef __pyx_mdef_9numcodecs_5blosc_13cbuffer_sizes = {"cbuffer_sizes", (PyCFunction)__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes, METH_O, __pyx_doc_9numcodecs_5blosc_12cbuffer_sizes};
+static PyObject *__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes(PyObject *__pyx_self, PyObject *__pyx_v_source) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("cbuffer_sizes (wrapper)", 0);
+  __pyx_r = __pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(__pyx_self, ((PyObject *)__pyx_v_source));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source) {
+  char *__pyx_v_source_ptr;
+  struct __pyx_obj_9numcodecs_5blosc_MyBuffer *__pyx_v_source_buffer = 0;
+  size_t __pyx_v_nbytes;
+  size_t __pyx_v_cbytes;
+  size_t __pyx_v_blocksize;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  char *__pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  __Pyx_RefNannySetupContext("cbuffer_sizes", 0);
+
+  /* "numcodecs/blosc.pyx":137
+ *         size_t nbytes, cbytes, blocksize
+ * 
+ *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
+ *     source_ptr = source_buffer.ptr
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_int(PyBUF_ANY_CONTIGUOUS); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_v_source);
+  __Pyx_GIVEREF(__pyx_v_source);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_source);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_5blosc_MyBuffer *)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "numcodecs/blosc.pyx":138
+ * 
+ *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+ *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
+ * 
+ *     # determine buffer size
+ */
+  __pyx_t_3 = __pyx_v_source_buffer->ptr;
+  __pyx_v_source_ptr = __pyx_t_3;
+
+  /* "numcodecs/blosc.pyx":141
+ * 
+ *     # determine buffer size
+ *     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)             # <<<<<<<<<<<<<<
+ * 
+ *     # release buffers
+ */
+  blosc_cbuffer_sizes(__pyx_v_source_ptr, (&__pyx_v_nbytes), (&__pyx_v_cbytes), (&__pyx_v_blocksize));
+
+  /* "numcodecs/blosc.pyx":144
+ * 
+ *     # release buffers
+ *     source_buffer.release()             # <<<<<<<<<<<<<<
+ * 
+ *     return nbytes, cbytes, blocksize
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 144, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "numcodecs/blosc.pyx":146
+ *     source_buffer.release()
+ * 
+ *     return nbytes, cbytes, blocksize             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_nbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_cbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = __Pyx_PyInt_FromSize_t(__pyx_v_blocksize); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_4);
+  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
+  goto __pyx_L0;
+
+  /* "numcodecs/blosc.pyx":130
+ * 
+ * 
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
+ *     """Return information from the blosc header of some compressed data."""
+ *     cdef:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("numcodecs.blosc.cbuffer_sizes", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF((PyObject *)__pyx_v_source_buffer);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "numcodecs/blosc.pyx":149
  * 
  * 
  * def compress(source, char* cname, int clevel, int shuffle):             # <<<<<<<<<<<<<<
@@ -2403,21 +2335,21 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_15compress(PyObject *__pyx_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_cname)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 1); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 1); __PYX_ERR(0, 149, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_clevel)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 2); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 2); __PYX_ERR(0, 149, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_shuffle)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 3); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, 3); __PYX_ERR(0, 149, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compress") < 0)) __PYX_ERR(0, 160, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "compress") < 0)) __PYX_ERR(0, 149, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -2428,13 +2360,13 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_15compress(PyObject *__pyx_self, PyO
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
     __pyx_v_source = values[0];
-    __pyx_v_cname = __Pyx_PyObject_AsString(values[1]); if (unlikely((!__pyx_v_cname) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L3_error)
-    __pyx_v_clevel = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_clevel == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L3_error)
-    __pyx_v_shuffle = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_shuffle == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L3_error)
+    __pyx_v_cname = __Pyx_PyObject_AsString(values[1]); if (unlikely((!__pyx_v_cname) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L3_error)
+    __pyx_v_clevel = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_clevel == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L3_error)
+    __pyx_v_shuffle = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_shuffle == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 160, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("compress", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 149, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.compress", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2475,16 +2407,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_15 = NULL;
   __Pyx_RefNannySetupContext("compress", 0);
 
-  /* "numcodecs/blosc.pyx":190
+  /* "numcodecs/blosc.pyx":179
  * 
  *     # setup source buffer
  *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(PyBUF_ANY_CONTIGUOUS); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(PyBUF_ANY_CONTIGUOUS); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_source);
   __Pyx_GIVEREF(__pyx_v_source);
@@ -2492,13 +2424,13 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_5blosc_MyBuffer *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":191
+  /* "numcodecs/blosc.pyx":180
  *     # setup source buffer
  *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
@@ -2508,7 +2440,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_t_3 = __pyx_v_source_buffer->ptr;
   __pyx_v_source_ptr = __pyx_t_3;
 
-  /* "numcodecs/blosc.pyx":192
+  /* "numcodecs/blosc.pyx":181
  *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes             # <<<<<<<<<<<<<<
@@ -2518,7 +2450,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_t_4 = __pyx_v_source_buffer->nbytes;
   __pyx_v_nbytes = __pyx_t_4;
 
-  /* "numcodecs/blosc.pyx":193
+  /* "numcodecs/blosc.pyx":182
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes
  *     itemsize = source_buffer.itemsize             # <<<<<<<<<<<<<<
@@ -2528,7 +2460,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_t_4 = __pyx_v_source_buffer->itemsize;
   __pyx_v_itemsize = __pyx_t_4;
 
-  /* "numcodecs/blosc.pyx":195
+  /* "numcodecs/blosc.pyx":184
  *     itemsize = source_buffer.itemsize
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -2537,19 +2469,19 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
   /*try:*/ {
 
-    /* "numcodecs/blosc.pyx":198
+    /* "numcodecs/blosc.pyx":187
  * 
  *         # setup destination
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)             # <<<<<<<<<<<<<<
  *         dest_ptr = PyBytes_AS_STRING(dest)
  * 
  */
-    __pyx_t_1 = PyBytes_FromStringAndSize(NULL, (__pyx_v_nbytes + BLOSC_MAX_OVERHEAD)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L4_error)
+    __pyx_t_1 = PyBytes_FromStringAndSize(NULL, (__pyx_v_nbytes + BLOSC_MAX_OVERHEAD)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_dest = ((PyObject*)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "numcodecs/blosc.pyx":199
+    /* "numcodecs/blosc.pyx":188
  *         # setup destination
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
  *         dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
@@ -2558,14 +2490,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
     __pyx_v_dest_ptr = PyBytes_AS_STRING(__pyx_v_dest);
 
-    /* "numcodecs/blosc.pyx":202
+    /* "numcodecs/blosc.pyx":191
  * 
  *         # perform compression
  *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  *             compressor_set = blosc_set_compressor(cname)
  */
-    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_get_use_threads); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L4_error)
+    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_get_use_threads); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L4_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_5 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2578,18 +2510,18 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
       }
     }
     if (__pyx_t_5) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L4_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
-      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L4_error)
+      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L4_error)
     }
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 202, __pyx_L4_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 191, __pyx_L4_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_6) {
 
-      /* "numcodecs/blosc.pyx":204
+      /* "numcodecs/blosc.pyx":193
  *         if _get_use_threads():
  *             # allow blosc to use threads internally
  *             compressor_set = blosc_set_compressor(cname)             # <<<<<<<<<<<<<<
@@ -2598,7 +2530,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
       __pyx_v_compressor_set = blosc_set_compressor(__pyx_v_cname);
 
-      /* "numcodecs/blosc.pyx":205
+      /* "numcodecs/blosc.pyx":194
  *             # allow blosc to use threads internally
  *             compressor_set = blosc_set_compressor(cname)
  *             if compressor_set < 0:             # <<<<<<<<<<<<<<
@@ -2608,31 +2540,31 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
       __pyx_t_6 = ((__pyx_v_compressor_set < 0) != 0);
       if (__pyx_t_6) {
 
-        /* "numcodecs/blosc.pyx":206
+        /* "numcodecs/blosc.pyx":195
  *             compressor_set = blosc_set_compressor(cname)
  *             if compressor_set < 0:
  *                 raise ValueError('compressor not supported: %r' % cname)             # <<<<<<<<<<<<<<
  *             with nogil:
  *                 cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes,
  */
-        __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_cname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L4_error)
+        __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_cname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_compressor_not_supported_r, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 206, __pyx_L4_error)
+        __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_compressor_not_supported_r, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L4_error)
+        __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_GIVEREF(__pyx_t_2);
         PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
         __pyx_t_2 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 206, __pyx_L4_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_Raise(__pyx_t_2, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __PYX_ERR(0, 206, __pyx_L4_error)
+        __PYX_ERR(0, 195, __pyx_L4_error)
 
-        /* "numcodecs/blosc.pyx":205
+        /* "numcodecs/blosc.pyx":194
  *             # allow blosc to use threads internally
  *             compressor_set = blosc_set_compressor(cname)
  *             if compressor_set < 0:             # <<<<<<<<<<<<<<
@@ -2641,7 +2573,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
       }
 
-      /* "numcodecs/blosc.pyx":207
+      /* "numcodecs/blosc.pyx":196
  *             if compressor_set < 0:
  *                 raise ValueError('compressor not supported: %r' % cname)
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -2655,7 +2587,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
           #endif
           /*try:*/ {
 
-            /* "numcodecs/blosc.pyx":208
+            /* "numcodecs/blosc.pyx":197
  *                 raise ValueError('compressor not supported: %r' % cname)
  *             with nogil:
  *                 cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes,             # <<<<<<<<<<<<<<
@@ -2665,7 +2597,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
             __pyx_v_cbytes = blosc_compress(__pyx_v_clevel, __pyx_v_shuffle, __pyx_v_itemsize, __pyx_v_nbytes, __pyx_v_source_ptr, __pyx_v_dest_ptr, (__pyx_v_nbytes + BLOSC_MAX_OVERHEAD));
           }
 
-          /* "numcodecs/blosc.pyx":207
+          /* "numcodecs/blosc.pyx":196
  *             if compressor_set < 0:
  *                 raise ValueError('compressor not supported: %r' % cname)
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -2683,7 +2615,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
           }
       }
 
-      /* "numcodecs/blosc.pyx":202
+      /* "numcodecs/blosc.pyx":191
  * 
  *         # perform compression
  *         if _get_use_threads():             # <<<<<<<<<<<<<<
@@ -2693,7 +2625,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
       goto __pyx_L6;
     }
 
-    /* "numcodecs/blosc.pyx":213
+    /* "numcodecs/blosc.pyx":202
  * 
  *         else:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -2708,7 +2640,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
           #endif
           /*try:*/ {
 
-            /* "numcodecs/blosc.pyx":214
+            /* "numcodecs/blosc.pyx":203
  *         else:
  *             with nogil:
  *                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes,             # <<<<<<<<<<<<<<
@@ -2718,7 +2650,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
             __pyx_v_cbytes = blosc_compress_ctx(__pyx_v_clevel, __pyx_v_shuffle, __pyx_v_itemsize, __pyx_v_nbytes, __pyx_v_source_ptr, __pyx_v_dest_ptr, (__pyx_v_nbytes + BLOSC_MAX_OVERHEAD), __pyx_v_cname, 0, 1);
           }
 
-          /* "numcodecs/blosc.pyx":213
+          /* "numcodecs/blosc.pyx":202
  * 
  *         else:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -2739,7 +2671,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
     __pyx_L6:;
   }
 
-  /* "numcodecs/blosc.pyx":222
+  /* "numcodecs/blosc.pyx":211
  * 
  *         # release buffers
  *         source_buffer.release()             # <<<<<<<<<<<<<<
@@ -2748,7 +2680,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
   /*finally:*/ {
     /*normal exit:*/{
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_5 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
@@ -2761,10 +2693,10 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
         }
       }
       if (__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2789,7 +2721,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
       __Pyx_XGOTREF(__pyx_t_15);
       __pyx_t_7 = __pyx_lineno; __pyx_t_8 = __pyx_clineno; __pyx_t_9 = __pyx_filename;
       {
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L15_error)
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L15_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_t_5 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
@@ -2802,10 +2734,10 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
           }
         }
         if (__pyx_t_5) {
-          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L15_error)
+          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L15_error)
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         } else {
-          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L15_error)
+          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L15_error)
         }
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2842,7 +2774,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
     __pyx_L5:;
   }
 
-  /* "numcodecs/blosc.pyx":225
+  /* "numcodecs/blosc.pyx":214
  * 
  *     # check compression was successful
  *     if cbytes <= 0:             # <<<<<<<<<<<<<<
@@ -2852,31 +2784,31 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_t_6 = ((__pyx_v_cbytes <= 0) != 0);
   if (__pyx_t_6) {
 
-    /* "numcodecs/blosc.pyx":226
+    /* "numcodecs/blosc.pyx":215
  *     # check compression was successful
  *     if cbytes <= 0:
  *         raise RuntimeError('error during blosc compression: %d' % cbytes)             # <<<<<<<<<<<<<<
  * 
  *     # resize after compression
  */
-    __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_cbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_cbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_error_during_blosc_compression_d, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_error_during_blosc_compression_d, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 226, __pyx_L1_error)
+    __PYX_ERR(0, 215, __pyx_L1_error)
 
-    /* "numcodecs/blosc.pyx":225
+    /* "numcodecs/blosc.pyx":214
  * 
  *     # check compression was successful
  *     if cbytes <= 0:             # <<<<<<<<<<<<<<
@@ -2885,7 +2817,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "numcodecs/blosc.pyx":229
+  /* "numcodecs/blosc.pyx":218
  * 
  *     # resize after compression
  *     dest = dest[:cbytes]             # <<<<<<<<<<<<<<
@@ -2894,14 +2826,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
  */
   if (unlikely(__pyx_v_dest == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 229, __pyx_L1_error)
+    __PYX_ERR(0, 218, __pyx_L1_error)
   }
-  __pyx_t_1 = PySequence_GetSlice(__pyx_v_dest, 0, __pyx_v_cbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
+  __pyx_t_1 = PySequence_GetSlice(__pyx_v_dest, 0, __pyx_v_cbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 218, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF_SET(__pyx_v_dest, ((PyObject*)__pyx_t_1));
   __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":231
+  /* "numcodecs/blosc.pyx":220
  *     dest = dest[:cbytes]
  * 
  *     return dest             # <<<<<<<<<<<<<<
@@ -2913,7 +2845,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_r = __pyx_v_dest;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":160
+  /* "numcodecs/blosc.pyx":149
  * 
  * 
  * def compress(source, char* cname, int clevel, int shuffle):             # <<<<<<<<<<<<<<
@@ -2936,7 +2868,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":234
+/* "numcodecs/blosc.pyx":223
  * 
  * 
  * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
@@ -2979,7 +2911,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_17decompress(PyObject *__pyx_self, P
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "decompress") < 0)) __PYX_ERR(0, 234, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "decompress") < 0)) __PYX_ERR(0, 223, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2994,7 +2926,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_17decompress(PyObject *__pyx_self, P
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("decompress", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 234, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("decompress", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 223, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.decompress", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3038,7 +2970,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __Pyx_RefNannySetupContext("decompress", 0);
   __Pyx_INCREF(__pyx_v_dest);
 
-  /* "numcodecs/blosc.pyx":256
+  /* "numcodecs/blosc.pyx":245
  *         char *dest_ptr
  *         MyBuffer source_buffer
  *         MyBuffer dest_buffer = None             # <<<<<<<<<<<<<<
@@ -3048,16 +2980,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __Pyx_INCREF(Py_None);
   __pyx_v_dest_buffer = ((struct __pyx_obj_9numcodecs_5blosc_MyBuffer *)Py_None);
 
-  /* "numcodecs/blosc.pyx":260
+  /* "numcodecs/blosc.pyx":249
  * 
  *     # setup source buffer
  *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  * 
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(PyBUF_ANY_CONTIGUOUS); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(PyBUF_ANY_CONTIGUOUS); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_source);
   __Pyx_GIVEREF(__pyx_v_source);
@@ -3065,13 +2997,13 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_5blosc_MyBuffer *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":261
+  /* "numcodecs/blosc.pyx":250
  *     # setup source buffer
  *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
@@ -3081,7 +3013,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __pyx_t_3 = __pyx_v_source_buffer->ptr;
   __pyx_v_source_ptr = __pyx_t_3;
 
-  /* "numcodecs/blosc.pyx":264
+  /* "numcodecs/blosc.pyx":253
  * 
  *     # determine buffer size
  *     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)             # <<<<<<<<<<<<<<
@@ -3090,7 +3022,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
   blosc_cbuffer_sizes(__pyx_v_source_ptr, (&__pyx_v_nbytes), (&__pyx_v_cbytes), (&__pyx_v_blocksize));
 
-  /* "numcodecs/blosc.pyx":267
+  /* "numcodecs/blosc.pyx":256
  * 
  *     # setup destination buffer
  *     if dest is None:             # <<<<<<<<<<<<<<
@@ -3101,19 +3033,19 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __pyx_t_5 = (__pyx_t_4 != 0);
   if (__pyx_t_5) {
 
-    /* "numcodecs/blosc.pyx":269
+    /* "numcodecs/blosc.pyx":258
  *     if dest is None:
  *         # allocate memory
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)             # <<<<<<<<<<<<<<
  *         dest_ptr = PyBytes_AS_STRING(dest)
  *         dest_nbytes = nbytes
  */
-    __pyx_t_1 = PyBytes_FromStringAndSize(NULL, __pyx_v_nbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+    __pyx_t_1 = PyBytes_FromStringAndSize(NULL, __pyx_v_nbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_dest, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "numcodecs/blosc.pyx":270
+    /* "numcodecs/blosc.pyx":259
  *         # allocate memory
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
  *         dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
@@ -3122,7 +3054,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
     __pyx_v_dest_ptr = PyBytes_AS_STRING(__pyx_v_dest);
 
-    /* "numcodecs/blosc.pyx":271
+    /* "numcodecs/blosc.pyx":260
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
  *         dest_ptr = PyBytes_AS_STRING(dest)
  *         dest_nbytes = nbytes             # <<<<<<<<<<<<<<
@@ -3131,7 +3063,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
     __pyx_v_dest_nbytes = __pyx_v_nbytes;
 
-    /* "numcodecs/blosc.pyx":267
+    /* "numcodecs/blosc.pyx":256
  * 
  *     # setup destination buffer
  *     if dest is None:             # <<<<<<<<<<<<<<
@@ -3141,7 +3073,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     goto __pyx_L3;
   }
 
-  /* "numcodecs/blosc.pyx":273
+  /* "numcodecs/blosc.pyx":262
  *         dest_nbytes = nbytes
  *     else:
  *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
@@ -3149,9 +3081,9 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  *         dest_nbytes = dest_buffer.nbytes
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyInt_From_int((PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_int((PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 273, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 262, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_dest);
     __Pyx_GIVEREF(__pyx_v_dest);
@@ -3159,13 +3091,13 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_5blosc_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF_SET(__pyx_v_dest_buffer, ((struct __pyx_obj_9numcodecs_5blosc_MyBuffer *)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "numcodecs/blosc.pyx":274
+    /* "numcodecs/blosc.pyx":263
  *     else:
  *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr             # <<<<<<<<<<<<<<
@@ -3175,7 +3107,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __pyx_t_3 = __pyx_v_dest_buffer->ptr;
     __pyx_v_dest_ptr = __pyx_t_3;
 
-    /* "numcodecs/blosc.pyx":275
+    /* "numcodecs/blosc.pyx":264
  *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr
  *         dest_nbytes = dest_buffer.nbytes             # <<<<<<<<<<<<<<
@@ -3187,7 +3119,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   }
   __pyx_L3:;
 
-  /* "numcodecs/blosc.pyx":277
+  /* "numcodecs/blosc.pyx":266
  *         dest_nbytes = dest_buffer.nbytes
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -3196,7 +3128,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
   /*try:*/ {
 
-    /* "numcodecs/blosc.pyx":280
+    /* "numcodecs/blosc.pyx":269
  * 
  *         # guard condition
  *         if dest_nbytes != nbytes:             # <<<<<<<<<<<<<<
@@ -3206,18 +3138,18 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __pyx_t_5 = ((__pyx_v_dest_nbytes != __pyx_v_nbytes) != 0);
     if (__pyx_t_5) {
 
-      /* "numcodecs/blosc.pyx":282
+      /* "numcodecs/blosc.pyx":271
  *         if dest_nbytes != nbytes:
  *             raise ValueError('destination buffer has wrong size; expected %s, '
  *                              'got %s' % (nbytes, dest_nbytes))             # <<<<<<<<<<<<<<
  * 
  *         # perform decompression
  */
-      __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_nbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L5_error)
+      __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_nbytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_dest_nbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_dest_nbytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 271, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 282, __pyx_L5_error)
+      __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 271, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
@@ -3225,30 +3157,30 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_2);
       __pyx_t_1 = 0;
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 271, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "numcodecs/blosc.pyx":281
+      /* "numcodecs/blosc.pyx":270
  *         # guard condition
  *         if dest_nbytes != nbytes:
  *             raise ValueError('destination buffer has wrong size; expected %s, '             # <<<<<<<<<<<<<<
  *                              'got %s' % (nbytes, dest_nbytes))
  * 
  */
-      __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 281, __pyx_L5_error)
+      __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 270, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 281, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_Raise(__pyx_t_2, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __PYX_ERR(0, 281, __pyx_L5_error)
+      __PYX_ERR(0, 270, __pyx_L5_error)
 
-      /* "numcodecs/blosc.pyx":280
+      /* "numcodecs/blosc.pyx":269
  * 
  *         # guard condition
  *         if dest_nbytes != nbytes:             # <<<<<<<<<<<<<<
@@ -3257,14 +3189,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
     }
 
-    /* "numcodecs/blosc.pyx":285
+    /* "numcodecs/blosc.pyx":274
  * 
  *         # perform decompression
  *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  *             with nogil:
  */
-    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_get_use_threads); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 285, __pyx_L5_error)
+    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_get_use_threads); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 274, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_1 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -3277,18 +3209,18 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       }
     }
     if (__pyx_t_1) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 274, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     } else {
-      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 274, __pyx_L5_error)
     }
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 285, __pyx_L5_error)
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 274, __pyx_L5_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     if (__pyx_t_5) {
 
-      /* "numcodecs/blosc.pyx":287
+      /* "numcodecs/blosc.pyx":276
  *         if _get_use_threads():
  *             # allow blosc to use threads internally
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -3302,7 +3234,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
           #endif
           /*try:*/ {
 
-            /* "numcodecs/blosc.pyx":288
+            /* "numcodecs/blosc.pyx":277
  *             # allow blosc to use threads internally
  *             with nogil:
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)             # <<<<<<<<<<<<<<
@@ -3312,7 +3244,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
             __pyx_v_ret = blosc_decompress(__pyx_v_source_ptr, __pyx_v_dest_ptr, __pyx_v_nbytes);
           }
 
-          /* "numcodecs/blosc.pyx":287
+          /* "numcodecs/blosc.pyx":276
  *         if _get_use_threads():
  *             # allow blosc to use threads internally
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -3330,7 +3262,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
           }
       }
 
-      /* "numcodecs/blosc.pyx":285
+      /* "numcodecs/blosc.pyx":274
  * 
  *         # perform decompression
  *         if _get_use_threads():             # <<<<<<<<<<<<<<
@@ -3340,7 +3272,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       goto __pyx_L8;
     }
 
-    /* "numcodecs/blosc.pyx":290
+    /* "numcodecs/blosc.pyx":279
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -3355,7 +3287,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
           #endif
           /*try:*/ {
 
-            /* "numcodecs/blosc.pyx":291
+            /* "numcodecs/blosc.pyx":280
  *         else:
  *             with nogil:
  *                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)             # <<<<<<<<<<<<<<
@@ -3365,7 +3297,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
             __pyx_v_ret = blosc_decompress_ctx(__pyx_v_source_ptr, __pyx_v_dest_ptr, __pyx_v_nbytes, 1);
           }
 
-          /* "numcodecs/blosc.pyx":290
+          /* "numcodecs/blosc.pyx":279
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
  *             with nogil:             # <<<<<<<<<<<<<<
@@ -3386,7 +3318,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __pyx_L8:;
   }
 
-  /* "numcodecs/blosc.pyx":296
+  /* "numcodecs/blosc.pyx":285
  * 
  *         # release buffers
  *         source_buffer.release()             # <<<<<<<<<<<<<<
@@ -3395,7 +3327,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
   /*finally:*/ {
     /*normal exit:*/{
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 296, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 285, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_1 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
@@ -3408,16 +3340,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
         }
       }
       if (__pyx_t_1) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 296, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 296, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "numcodecs/blosc.pyx":297
+      /* "numcodecs/blosc.pyx":286
  *         # release buffers
  *         source_buffer.release()
  *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
@@ -3428,14 +3360,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       __pyx_t_4 = (__pyx_t_5 != 0);
       if (__pyx_t_4) {
 
-        /* "numcodecs/blosc.pyx":298
+        /* "numcodecs/blosc.pyx":287
  *         source_buffer.release()
  *         if dest_buffer is not None:
  *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # handle errors
  */
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_dest_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 298, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_dest_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 287, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __pyx_t_1 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
@@ -3448,16 +3380,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
           }
         }
         if (__pyx_t_1) {
-          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         } else {
-          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
         }
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-        /* "numcodecs/blosc.pyx":297
+        /* "numcodecs/blosc.pyx":286
  *         # release buffers
  *         source_buffer.release()
  *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
@@ -3486,14 +3418,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       __pyx_t_8 = __pyx_lineno; __pyx_t_9 = __pyx_clineno; __pyx_t_10 = __pyx_filename;
       {
 
-        /* "numcodecs/blosc.pyx":296
+        /* "numcodecs/blosc.pyx":285
  * 
  *         # release buffers
  *         source_buffer.release()             # <<<<<<<<<<<<<<
  *         if dest_buffer is not None:
  *             dest_buffer.release()
  */
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 296, __pyx_L17_error)
+        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_source_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 285, __pyx_L17_error)
         __Pyx_GOTREF(__pyx_t_7);
         __pyx_t_1 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
@@ -3506,16 +3438,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
           }
         }
         if (__pyx_t_1) {
-          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 296, __pyx_L17_error)
+          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L17_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         } else {
-          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 296, __pyx_L17_error)
+          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L17_error)
         }
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-        /* "numcodecs/blosc.pyx":297
+        /* "numcodecs/blosc.pyx":286
  *         # release buffers
  *         source_buffer.release()
  *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
@@ -3526,14 +3458,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
         __pyx_t_5 = (__pyx_t_4 != 0);
         if (__pyx_t_5) {
 
-          /* "numcodecs/blosc.pyx":298
+          /* "numcodecs/blosc.pyx":287
  *         source_buffer.release()
  *         if dest_buffer is not None:
  *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # handle errors
  */
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_dest_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 298, __pyx_L17_error)
+          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_dest_buffer), __pyx_n_s_release); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 287, __pyx_L17_error)
           __Pyx_GOTREF(__pyx_t_7);
           __pyx_t_1 = NULL;
           if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
@@ -3546,16 +3478,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
             }
           }
           if (__pyx_t_1) {
-            __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L17_error)
+            __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L17_error)
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           } else {
-            __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L17_error)
+            __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L17_error)
           }
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-          /* "numcodecs/blosc.pyx":297
+          /* "numcodecs/blosc.pyx":286
  *         # release buffers
  *         source_buffer.release()
  *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
@@ -3595,7 +3527,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __pyx_L6:;
   }
 
-  /* "numcodecs/blosc.pyx":301
+  /* "numcodecs/blosc.pyx":290
  * 
  *     # handle errors
  *     if ret <= 0:             # <<<<<<<<<<<<<<
@@ -3605,31 +3537,31 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __pyx_t_5 = ((__pyx_v_ret <= 0) != 0);
   if (__pyx_t_5) {
 
-    /* "numcodecs/blosc.pyx":302
+    /* "numcodecs/blosc.pyx":291
  *     # handle errors
  *     if ret <= 0:
  *         raise RuntimeError('error during blosc decompression: %d' % ret)             # <<<<<<<<<<<<<<
  * 
  *     return dest
  */
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_error_during_blosc_decompression, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_error_during_blosc_decompression, __pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_7);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_7);
     __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_t_2, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_t_2, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_Raise(__pyx_t_7, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __PYX_ERR(0, 302, __pyx_L1_error)
+    __PYX_ERR(0, 291, __pyx_L1_error)
 
-    /* "numcodecs/blosc.pyx":301
+    /* "numcodecs/blosc.pyx":290
  * 
  *     # handle errors
  *     if ret <= 0:             # <<<<<<<<<<<<<<
@@ -3638,7 +3570,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  */
   }
 
-  /* "numcodecs/blosc.pyx":304
+  /* "numcodecs/blosc.pyx":293
  *         raise RuntimeError('error during blosc decompression: %d' % ret)
  * 
  *     return dest             # <<<<<<<<<<<<<<
@@ -3650,7 +3582,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __pyx_r = __pyx_v_dest;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":234
+  /* "numcodecs/blosc.pyx":223
  * 
  * 
  * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
@@ -3674,7 +3606,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":312
+/* "numcodecs/blosc.pyx":301
  * 
  * 
  * def _get_use_threads():             # <<<<<<<<<<<<<<
@@ -3709,25 +3641,25 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("_get_use_threads", 0);
 
-  /* "numcodecs/blosc.pyx":315
+  /* "numcodecs/blosc.pyx":304
  *     global use_threads
  * 
  *     if use_threads in [True, False]:             # <<<<<<<<<<<<<<
  *         # user has manually overridden the default behaviour
  *         _use_threads = use_threads
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_use_threads); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_use_threads); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, Py_True, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 315, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, Py_True, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (!__pyx_t_4) {
   } else {
     __pyx_t_2 = __pyx_t_4;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 315, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_1, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_2 = __pyx_t_4;
   __pyx_L4_bool_binop_done:;
@@ -3735,19 +3667,19 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
   __pyx_t_4 = (__pyx_t_2 != 0);
   if (__pyx_t_4) {
 
-    /* "numcodecs/blosc.pyx":317
+    /* "numcodecs/blosc.pyx":306
  *     if use_threads in [True, False]:
  *         # user has manually overridden the default behaviour
  *         _use_threads = use_threads             # <<<<<<<<<<<<<<
  * 
  *     else:
  */
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_use_threads); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 317, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_use_threads); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v__use_threads = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "numcodecs/blosc.pyx":315
+    /* "numcodecs/blosc.pyx":304
  *     global use_threads
  * 
  *     if use_threads in [True, False]:             # <<<<<<<<<<<<<<
@@ -3757,7 +3689,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
     goto __pyx_L3;
   }
 
-  /* "numcodecs/blosc.pyx":325
+  /* "numcodecs/blosc.pyx":314
  *         # blosc to use threads, inferring it is being run from within a
  *         # multi-threaded program
  *         if hasattr(threading, 'main_thread'):             # <<<<<<<<<<<<<<
@@ -3765,23 +3697,23 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
  *                             threading.current_thread())
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyObject_HasAttr(__pyx_t_1, __pyx_n_s_main_thread); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 325, __pyx_L1_error)
+    __pyx_t_4 = PyObject_HasAttr(__pyx_t_1, __pyx_n_s_main_thread); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_2 = (__pyx_t_4 != 0);
     if (__pyx_t_2) {
 
-      /* "numcodecs/blosc.pyx":326
+      /* "numcodecs/blosc.pyx":315
  *         # multi-threaded program
  *         if hasattr(threading, 'main_thread'):
  *             _use_threads = (threading.main_thread() ==             # <<<<<<<<<<<<<<
  *                             threading.current_thread())
  *         else:
  */
-      __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 326, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 315, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_main_thread); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 326, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_main_thread); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 315, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_3 = NULL;
@@ -3795,24 +3727,24 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
         }
       }
       if (__pyx_t_3) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 326, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 315, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else {
-        __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 326, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 315, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "numcodecs/blosc.pyx":327
+      /* "numcodecs/blosc.pyx":316
  *         if hasattr(threading, 'main_thread'):
  *             _use_threads = (threading.main_thread() ==
  *                             threading.current_thread())             # <<<<<<<<<<<<<<
  *         else:
  *             _use_threads = threading.current_thread().name == 'MainThread'
  */
-      __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 327, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 316, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_current_thread); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 327, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_current_thread); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 316, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_3 = NULL;
@@ -3826,20 +3758,20 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
         }
       }
       if (__pyx_t_3) {
-        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 327, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 316, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else {
-        __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 327, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 316, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_t_5, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 326, __pyx_L1_error)
+      __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_t_5, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 315, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_v__use_threads = __pyx_t_6;
       __pyx_t_6 = 0;
 
-      /* "numcodecs/blosc.pyx":325
+      /* "numcodecs/blosc.pyx":314
  *         # blosc to use threads, inferring it is being run from within a
  *         # multi-threaded program
  *         if hasattr(threading, 'main_thread'):             # <<<<<<<<<<<<<<
@@ -3849,7 +3781,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
       goto __pyx_L6;
     }
 
-    /* "numcodecs/blosc.pyx":329
+    /* "numcodecs/blosc.pyx":318
  *                             threading.current_thread())
  *         else:
  *             _use_threads = threading.current_thread().name == 'MainThread'             # <<<<<<<<<<<<<<
@@ -3857,9 +3789,9 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
  *     return _use_threads
  */
     /*else*/ {
-      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 329, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_threading); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_current_thread); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_current_thread); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_5 = NULL;
@@ -3873,17 +3805,17 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
         }
       }
       if (__pyx_t_5) {
-        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 329, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 318, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       } else {
-        __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 329, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 318, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_n_s_MainThread, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 329, __pyx_L1_error)
+      __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_n_s_MainThread, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v__use_threads = __pyx_t_6;
       __pyx_t_6 = 0;
@@ -3892,7 +3824,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
   }
   __pyx_L3:;
 
-  /* "numcodecs/blosc.pyx":331
+  /* "numcodecs/blosc.pyx":320
  *             _use_threads = threading.current_thread().name == 'MainThread'
  * 
  *     return _use_threads             # <<<<<<<<<<<<<<
@@ -3904,7 +3836,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
   __pyx_r = __pyx_v__use_threads;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":312
+  /* "numcodecs/blosc.pyx":301
  * 
  * 
  * def _get_use_threads():             # <<<<<<<<<<<<<<
@@ -3927,7 +3859,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18_get_use_threads(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":354
+/* "numcodecs/blosc.pyx":343
  *     BITSHUFFLE = BITSHUFFLE
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):             # <<<<<<<<<<<<<<
@@ -3986,7 +3918,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_1__init__(PyObject *__pyx_sel
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 354, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 343, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4005,7 +3937,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_1__init__(PyObject *__pyx_sel
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 354, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 343, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.Blosc.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4027,45 +3959,45 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "numcodecs/blosc.pyx":355
+  /* "numcodecs/blosc.pyx":344
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):
  *         self.cname = cname             # <<<<<<<<<<<<<<
  *         if isinstance(cname, text_type):
  *             self._cname_bytes = cname.encode('ascii')
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname, __pyx_v_cname) < 0) __PYX_ERR(0, 355, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname, __pyx_v_cname) < 0) __PYX_ERR(0, 344, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":356
+  /* "numcodecs/blosc.pyx":345
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):
  *         self.cname = cname
  *         if isinstance(cname, text_type):             # <<<<<<<<<<<<<<
  *             self._cname_bytes = cname.encode('ascii')
  *         else:
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_text_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_text_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_IsInstance(__pyx_v_cname, __pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_2 = PyObject_IsInstance(__pyx_v_cname, __pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_3 = (__pyx_t_2 != 0);
   if (__pyx_t_3) {
 
-    /* "numcodecs/blosc.pyx":357
+    /* "numcodecs/blosc.pyx":346
  *         self.cname = cname
  *         if isinstance(cname, text_type):
  *             self._cname_bytes = cname.encode('ascii')             # <<<<<<<<<<<<<<
  *         else:
  *             self._cname_bytes = cname
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cname, __pyx_n_s_encode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 357, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_cname, __pyx_n_s_encode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes, __pyx_t_4) < 0) __PYX_ERR(0, 357, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes, __pyx_t_4) < 0) __PYX_ERR(0, 346, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "numcodecs/blosc.pyx":356
+    /* "numcodecs/blosc.pyx":345
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):
  *         self.cname = cname
  *         if isinstance(cname, text_type):             # <<<<<<<<<<<<<<
@@ -4075,7 +4007,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
     goto __pyx_L3;
   }
 
-  /* "numcodecs/blosc.pyx":359
+  /* "numcodecs/blosc.pyx":348
  *             self._cname_bytes = cname.encode('ascii')
  *         else:
  *             self._cname_bytes = cname             # <<<<<<<<<<<<<<
@@ -4083,29 +4015,29 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
  *         self.shuffle = shuffle
  */
   /*else*/ {
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes, __pyx_v_cname) < 0) __PYX_ERR(0, 359, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes, __pyx_v_cname) < 0) __PYX_ERR(0, 348, __pyx_L1_error)
   }
   __pyx_L3:;
 
-  /* "numcodecs/blosc.pyx":360
+  /* "numcodecs/blosc.pyx":349
  *         else:
  *             self._cname_bytes = cname
  *         self.clevel = clevel             # <<<<<<<<<<<<<<
  *         self.shuffle = shuffle
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_clevel, __pyx_v_clevel) < 0) __PYX_ERR(0, 360, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_clevel, __pyx_v_clevel) < 0) __PYX_ERR(0, 349, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":361
+  /* "numcodecs/blosc.pyx":350
  *             self._cname_bytes = cname
  *         self.clevel = clevel
  *         self.shuffle = shuffle             # <<<<<<<<<<<<<<
  * 
  *     def encode(self, buf):
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_shuffle, __pyx_v_shuffle) < 0) __PYX_ERR(0, 361, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_shuffle, __pyx_v_shuffle) < 0) __PYX_ERR(0, 350, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":354
+  /* "numcodecs/blosc.pyx":343
  *     BITSHUFFLE = BITSHUFFLE
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):             # <<<<<<<<<<<<<<
@@ -4127,7 +4059,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":363
+/* "numcodecs/blosc.pyx":352
  *         self.shuffle = shuffle
  * 
  *     def encode(self, buf):             # <<<<<<<<<<<<<<
@@ -4165,11 +4097,11 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_3encode(PyObject *__pyx_self,
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_buf)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("encode", 1, 2, 2, 1); __PYX_ERR(0, 363, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("encode", 1, 2, 2, 1); __PYX_ERR(0, 352, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "encode") < 0)) __PYX_ERR(0, 363, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "encode") < 0)) __PYX_ERR(0, 352, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4182,7 +4114,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_3encode(PyObject *__pyx_self,
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("encode", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 363, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("encode", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 352, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.Blosc.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4208,7 +4140,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("encode", 0);
 
-  /* "numcodecs/blosc.pyx":364
+  /* "numcodecs/blosc.pyx":353
  * 
  *     def encode(self, buf):
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)             # <<<<<<<<<<<<<<
@@ -4216,13 +4148,13 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
  *     def decode(self, buf, out=None):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_compress); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_compress); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_cname_bytes); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_clevel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_clevel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_shuffle); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_shuffle); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   __pyx_t_7 = 0;
@@ -4236,7 +4168,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
       __pyx_t_7 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_6) {
     __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -4253,7 +4185,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
   __pyx_t_5 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -4261,7 +4193,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":363
+  /* "numcodecs/blosc.pyx":352
  *         self.shuffle = shuffle
  * 
  *     def encode(self, buf):             # <<<<<<<<<<<<<<
@@ -4286,7 +4218,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":366
+/* "numcodecs/blosc.pyx":355
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
@@ -4327,7 +4259,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_5decode(PyObject *__pyx_self,
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_buf)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("decode", 0, 2, 3, 1); __PYX_ERR(0, 366, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("decode", 0, 2, 3, 1); __PYX_ERR(0, 355, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -4336,7 +4268,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_5decode(PyObject *__pyx_self,
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "decode") < 0)) __PYX_ERR(0, 366, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "decode") < 0)) __PYX_ERR(0, 355, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4353,7 +4285,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_5Blosc_5decode(PyObject *__pyx_self,
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("decode", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 366, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("decode", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 355, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.blosc.Blosc.decode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4376,7 +4308,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("decode", 0);
 
-  /* "numcodecs/blosc.pyx":367
+  /* "numcodecs/blosc.pyx":356
  * 
  *     def decode(self, buf, out=None):
  *         return decompress(buf, out)             # <<<<<<<<<<<<<<
@@ -4384,7 +4316,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
  *     def __repr__(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_decompress); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_decompress); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -4398,7 +4330,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
       __pyx_t_4 = 1;
     }
   }
-  __pyx_t_5 = PyTuple_New(2+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(2+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   if (__pyx_t_3) {
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -4409,7 +4341,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   __Pyx_INCREF(__pyx_v_out);
   __Pyx_GIVEREF(__pyx_v_out);
   PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_4, __pyx_v_out);
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -4417,7 +4349,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":366
+  /* "numcodecs/blosc.pyx":355
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
@@ -4439,7 +4371,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   return __pyx_r;
 }
 
-/* "numcodecs/blosc.pyx":369
+/* "numcodecs/blosc.pyx":358
  *         return decompress(buf, out)
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
@@ -4473,21 +4405,21 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_6__repr__(CYTHON_UNUSED PyObj
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__repr__", 0);
 
-  /* "numcodecs/blosc.pyx":371
+  /* "numcodecs/blosc.pyx":360
  *     def __repr__(self):
  *         r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
  *             (type(self).__name__, self.cname, self.clevel, self.shuffle)             # <<<<<<<<<<<<<<
  *         return r
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_self)), __pyx_n_s_name_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_self)), __pyx_n_s_name_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_cname); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_cname); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_clevel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_clevel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_shuffle); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_shuffle); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -4502,20 +4434,20 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_6__repr__(CYTHON_UNUSED PyObj
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
 
-  /* "numcodecs/blosc.pyx":370
+  /* "numcodecs/blosc.pyx":359
  * 
  *     def __repr__(self):
  *         r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \             # <<<<<<<<<<<<<<
  *             (type(self).__name__, self.cname, self.clevel, self.shuffle)
  *         return r
  */
-  __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_cname_r_clevel_r_shuffle_r, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_cname_r_clevel_r_shuffle_r, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 359, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_r = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "numcodecs/blosc.pyx":372
+  /* "numcodecs/blosc.pyx":361
  *         r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
  *             (type(self).__name__, self.cname, self.clevel, self.shuffle)
  *         return r             # <<<<<<<<<<<<<<
@@ -4525,7 +4457,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_6__repr__(CYTHON_UNUSED PyObj
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "numcodecs/blosc.pyx":369
+  /* "numcodecs/blosc.pyx":358
  *         return decompress(buf, out)
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
@@ -5399,7 +5331,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
   {&__pyx_n_s_r, __pyx_k_r, sizeof(__pyx_k_r), 0, 0, 1, 1},
   {&__pyx_n_s_release, __pyx_k_release, sizeof(__pyx_k_release), 0, 0, 1, 1},
-  {&__pyx_n_s_release_source_buffer, __pyx_k_release_source_buffer, sizeof(__pyx_k_release_source_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_repr, __pyx_k_repr, sizeof(__pyx_k_repr), 0, 0, 1, 1},
   {&__pyx_n_s_ret, __pyx_k_ret, sizeof(__pyx_k_ret), 0, 0, 1, 1},
   {&__pyx_kp_s_s_cname_r_clevel_r_shuffle_r, __pyx_k_s_cname_r_clevel_r_shuffle_r, sizeof(__pyx_k_s_cname_r_clevel_r_shuffle_r), 0, 0, 1, 0},
@@ -5407,7 +5338,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_set_nthreads, __pyx_k_set_nthreads, sizeof(__pyx_k_set_nthreads), 0, 0, 1, 1},
   {&__pyx_n_s_shuffle, __pyx_k_shuffle, sizeof(__pyx_k_shuffle), 0, 0, 1, 1},
   {&__pyx_n_s_source, __pyx_k_source, sizeof(__pyx_k_source), 0, 0, 1, 1},
-  {&__pyx_n_s_source_array, __pyx_k_source_array, sizeof(__pyx_k_source_array), 0, 0, 1, 1},
   {&__pyx_n_s_source_buffer, __pyx_k_source_buffer, sizeof(__pyx_k_source_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_source_ptr, __pyx_k_source_ptr, sizeof(__pyx_k_source_ptr), 0, 0, 1, 1},
   {&__pyx_n_s_split, __pyx_k_split, sizeof(__pyx_k_split), 0, 0, 1, 1},
@@ -5420,8 +5350,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 206, __pyx_L1_error)
-  __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(0, 215, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 107, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -5454,14 +5384,14 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "numcodecs/blosc.pyx":357
+  /* "numcodecs/blosc.pyx":346
  *         self.cname = cname
  *         if isinstance(cname, text_type):
  *             self._cname_bytes = cname.encode('ascii')             # <<<<<<<<<<<<<<
  *         else:
  *             self._cname_bytes = cname
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_s_ascii); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_s_ascii); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
@@ -5525,107 +5455,107 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__11);
   __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_set_nthreads, 95, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 95, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":102
+  /* "numcodecs/blosc.pyx":130
  * 
  * 
  * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information from the blosc header of some compressed data."""
  *     cdef:
  */
-  __pyx_tuple__13 = PyTuple_Pack(8, __pyx_n_s_source, __pyx_n_s_source_ptr, __pyx_n_s_source_buffer, __pyx_n_s_source_array, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_blocksize, __pyx_n_s_release_source_buffer); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(6, __pyx_n_s_source, __pyx_n_s_source_ptr, __pyx_n_s_source_buffer, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_blocksize); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_cbuffer_sizes, 102, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_cbuffer_sizes, 130, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 130, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":160
+  /* "numcodecs/blosc.pyx":149
  * 
  * 
  * def compress(source, char* cname, int clevel, int shuffle):             # <<<<<<<<<<<<<<
  *     """Compression.
  * 
  */
-  __pyx_tuple__15 = PyTuple_Pack(12, __pyx_n_s_source, __pyx_n_s_cname, __pyx_n_s_clevel, __pyx_n_s_shuffle, __pyx_n_s_source_ptr, __pyx_n_s_dest_ptr, __pyx_n_s_source_buffer, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_itemsize, __pyx_n_s_dest, __pyx_n_s_compressor_set); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(12, __pyx_n_s_source, __pyx_n_s_cname, __pyx_n_s_clevel, __pyx_n_s_shuffle, __pyx_n_s_source_ptr, __pyx_n_s_dest_ptr, __pyx_n_s_source_buffer, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_itemsize, __pyx_n_s_dest, __pyx_n_s_compressor_set); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(4, 0, 12, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_compress, 160, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(4, 0, 12, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_compress, 149, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 149, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":234
+  /* "numcodecs/blosc.pyx":223
  * 
  * 
  * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
-  __pyx_tuple__17 = PyTuple_Pack(11, __pyx_n_s_source, __pyx_n_s_dest, __pyx_n_s_ret, __pyx_n_s_source_ptr, __pyx_n_s_dest_ptr, __pyx_n_s_source_buffer, __pyx_n_s_dest_buffer, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_blocksize, __pyx_n_s_dest_nbytes); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(11, __pyx_n_s_source, __pyx_n_s_dest, __pyx_n_s_ret, __pyx_n_s_source_ptr, __pyx_n_s_dest_ptr, __pyx_n_s_source_buffer, __pyx_n_s_dest_buffer, __pyx_n_s_nbytes, __pyx_n_s_cbytes, __pyx_n_s_blocksize, __pyx_n_s_dest_nbytes); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_decompress, 234, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_decompress, 223, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 223, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":312
+  /* "numcodecs/blosc.pyx":301
  * 
  * 
  * def _get_use_threads():             # <<<<<<<<<<<<<<
  *     global use_threads
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_n_s_use_threads_2); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 312, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_n_s_use_threads_2); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(0, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_get_use_threads, 312, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 312, __pyx_L1_error)
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(0, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_get_use_threads, 301, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 301, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":354
+  /* "numcodecs/blosc.pyx":343
  *     BITSHUFFLE = BITSHUFFLE
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, text_type):
  */
-  __pyx_tuple__21 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_cname, __pyx_n_s_clevel, __pyx_n_s_shuffle); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_cname, __pyx_n_s_clevel, __pyx_n_s_shuffle); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_init_2, 354, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 354, __pyx_L1_error)
-  __pyx_tuple__23 = PyTuple_Pack(3, ((PyObject*)__pyx_n_s_lz4), ((PyObject *)__pyx_int_5), ((PyObject *)__pyx_int_1)); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_init_2, 343, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(3, ((PyObject*)__pyx_n_s_lz4), ((PyObject *)__pyx_int_5), ((PyObject *)__pyx_int_1)); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
 
-  /* "numcodecs/blosc.pyx":363
+  /* "numcodecs/blosc.pyx":352
  *         self.shuffle = shuffle
  * 
  *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  */
-  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_buf); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_buf); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_encode, 363, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_encode, 352, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 352, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":366
+  /* "numcodecs/blosc.pyx":355
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         return decompress(buf, out)
  * 
  */
-  __pyx_tuple__26 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_buf, __pyx_n_s_out); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 366, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_buf, __pyx_n_s_out); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 355, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_decode, 366, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 366, __pyx_L1_error)
-  __pyx_tuple__28 = PyTuple_Pack(1, ((PyObject *)Py_None)); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 366, __pyx_L1_error)
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_decode, 355, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(1, ((PyObject *)Py_None)); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 355, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
 
-  /* "numcodecs/blosc.pyx":369
+  /* "numcodecs/blosc.pyx":358
  *         return decompress(buf, out)
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
  *             (type(self).__name__, self.cname, self.clevel, self.shuffle)
  */
-  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_r); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 369, __pyx_L1_error)
+  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_r); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
   __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_repr, 369, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 369, __pyx_L1_error)
+  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_n_s_repr, 358, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -5731,9 +5661,9 @@ PyMODINIT_FUNC PyInit_blosc(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_9numcodecs_5blosc_MyBuffer) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_9numcodecs_5blosc_MyBuffer) < 0) __PYX_ERR(0, 102, __pyx_L1_error)
   __pyx_type_9numcodecs_5blosc_MyBuffer.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "MyBuffer", (PyObject *)&__pyx_type_9numcodecs_5blosc_MyBuffer) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "MyBuffer", (PyObject *)&__pyx_type_9numcodecs_5blosc_MyBuffer) < 0) __PYX_ERR(0, 102, __pyx_L1_error)
   __pyx_ptype_9numcodecs_5blosc_MyBuffer = &__pyx_type_9numcodecs_5blosc_MyBuffer;
   /*--- Type import code ---*/
   __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
@@ -6107,92 +6037,92 @@ PyMODINIT_FUNC PyInit_blosc(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_set_nthreads, __pyx_t_1) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":102
+  /* "numcodecs/blosc.pyx":130
  * 
  * 
  * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information from the blosc header of some compressed data."""
  *     cdef:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_13cbuffer_sizes, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_13cbuffer_sizes, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cbuffer_sizes, __pyx_t_1) < 0) __PYX_ERR(0, 102, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cbuffer_sizes, __pyx_t_1) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":160
+  /* "numcodecs/blosc.pyx":149
  * 
  * 
  * def compress(source, char* cname, int clevel, int shuffle):             # <<<<<<<<<<<<<<
  *     """Compression.
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_15compress, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_15compress, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_compress, __pyx_t_1) < 0) __PYX_ERR(0, 160, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_compress, __pyx_t_1) < 0) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":234
+  /* "numcodecs/blosc.pyx":223
  * 
  * 
  * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_17decompress, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_17decompress, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_decompress, __pyx_t_1) < 0) __PYX_ERR(0, 234, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_decompress, __pyx_t_1) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":309
+  /* "numcodecs/blosc.pyx":298
  * # set the value of this variable to True or False to override the
  * # default adaptive behaviour
  * use_threads = None             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_use_threads, Py_None) < 0) __PYX_ERR(0, 309, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_use_threads, Py_None) < 0) __PYX_ERR(0, 298, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":312
+  /* "numcodecs/blosc.pyx":301
  * 
  * 
  * def _get_use_threads():             # <<<<<<<<<<<<<<
  *     global use_threads
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_19_get_use_threads, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 312, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_19_get_use_threads, NULL, __pyx_n_s_numcodecs_blosc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_use_threads, __pyx_t_1) < 0) __PYX_ERR(0, 312, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_use_threads, __pyx_t_1) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/blosc.pyx":334
+  /* "numcodecs/blosc.pyx":323
  * 
  * 
  * class Blosc(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using the blosc meta-compressor.
  * 
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_Codec); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_Codec); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_CalculateMetaclass(NULL, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CalculateMetaclass(NULL, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_Py3MetaclassPrepare(__pyx_t_1, __pyx_t_2, __pyx_n_s_Blosc, __pyx_n_s_Blosc, (PyObject *) NULL, __pyx_n_s_numcodecs_blosc, __pyx_kp_s_Codec_providing_compression_usin); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_Py3MetaclassPrepare(__pyx_t_1, __pyx_t_2, __pyx_n_s_Blosc, __pyx_n_s_Blosc, (PyObject *) NULL, __pyx_n_s_numcodecs_blosc, __pyx_kp_s_Codec_providing_compression_usin); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
 
-  /* "numcodecs/blosc.pyx":349
+  /* "numcodecs/blosc.pyx":338
  *     """
  * 
  *     codec_id = 'blosc'             # <<<<<<<<<<<<<<
  *     NOSHUFFLE = NOSHUFFLE
  *     SHUFFLE = SHUFFLE
  */
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_codec_id, __pyx_n_s_blosc) < 0) __PYX_ERR(0, 349, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_codec_id, __pyx_n_s_blosc) < 0) __PYX_ERR(0, 338, __pyx_L1_error)
 
-  /* "numcodecs/blosc.pyx":350
+  /* "numcodecs/blosc.pyx":339
  * 
  *     codec_id = 'blosc'
  *     NOSHUFFLE = NOSHUFFLE             # <<<<<<<<<<<<<<
@@ -6200,12 +6130,12 @@ PyMODINIT_FUNC PyInit_blosc(void)
  *     BITSHUFFLE = BITSHUFFLE
  */
   __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_NOSHUFFLE);
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 350, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 339, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_NOSHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 350, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_NOSHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 339, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":351
+  /* "numcodecs/blosc.pyx":340
  *     codec_id = 'blosc'
  *     NOSHUFFLE = NOSHUFFLE
  *     SHUFFLE = SHUFFLE             # <<<<<<<<<<<<<<
@@ -6213,12 +6143,12 @@ PyMODINIT_FUNC PyInit_blosc(void)
  * 
  */
   __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_SHUFFLE);
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 351, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_SHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 351, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_SHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":352
+  /* "numcodecs/blosc.pyx":341
  *     NOSHUFFLE = NOSHUFFLE
  *     SHUFFLE = SHUFFLE
  *     BITSHUFFLE = BITSHUFFLE             # <<<<<<<<<<<<<<
@@ -6226,71 +6156,71 @@ PyMODINIT_FUNC PyInit_blosc(void)
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):
  */
   __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_BITSHUFFLE);
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 352, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_BITSHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 352, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_BITSHUFFLE, __pyx_t_6) < 0) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":354
+  /* "numcodecs/blosc.pyx":343
  *     BITSHUFFLE = BITSHUFFLE
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=1):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, text_type):
  */
-  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_1__init__, 0, __pyx_n_s_Blosc___init, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_1__init__, 0, __pyx_n_s_Blosc___init, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_6, __pyx_tuple__23);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_init_2, __pyx_t_6) < 0) __PYX_ERR(0, 354, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_init_2, __pyx_t_6) < 0) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":363
+  /* "numcodecs/blosc.pyx":352
  *         self.shuffle = shuffle
  * 
  *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  */
-  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_3encode, 0, __pyx_n_s_Blosc_encode, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_3encode, 0, __pyx_n_s_Blosc_encode, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_encode, __pyx_t_6) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_encode, __pyx_t_6) < 0) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":366
+  /* "numcodecs/blosc.pyx":355
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
  * 
  *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         return decompress(buf, out)
  * 
  */
-  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_5decode, 0, __pyx_n_s_Blosc_decode, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 366, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_5decode, 0, __pyx_n_s_Blosc_decode, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 355, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_6, __pyx_tuple__28);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_decode, __pyx_t_6) < 0) __PYX_ERR(0, 366, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_decode, __pyx_t_6) < 0) __PYX_ERR(0, 355, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":369
+  /* "numcodecs/blosc.pyx":358
  *         return decompress(buf, out)
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
  *             (type(self).__name__, self.cname, self.clevel, self.shuffle)
  */
-  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_7__repr__, 0, __pyx_n_s_Blosc___repr, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__30)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 369, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_CyFunction_NewEx(&__pyx_mdef_9numcodecs_5blosc_5Blosc_7__repr__, 0, __pyx_n_s_Blosc___repr, NULL, __pyx_n_s_numcodecs_blosc, __pyx_d, ((PyObject *)__pyx_codeobj__30)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_repr, __pyx_t_6) < 0) __PYX_ERR(0, 369, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_5, __pyx_n_s_repr, __pyx_t_6) < 0) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "numcodecs/blosc.pyx":334
+  /* "numcodecs/blosc.pyx":323
  * 
  * 
  * class Blosc(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using the blosc meta-compressor.
  * 
  */
-  __pyx_t_6 = __Pyx_Py3ClassCreate(__pyx_t_1, __pyx_n_s_Blosc, __pyx_t_2, __pyx_t_5, NULL, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_Py3ClassCreate(__pyx_t_1, __pyx_n_s_Blosc, __pyx_t_2, __pyx_t_5, NULL, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Blosc, __pyx_t_6) < 0) __PYX_ERR(0, 334, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Blosc, __pyx_t_6) < 0) __PYX_ERR(0, 323, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -6408,19 +6338,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
     return result;
 }
 #endif
-
-/* ExtTypeTest */
-  static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
-    if (unlikely(!type)) {
-        PyErr_SetString(PyExc_SystemError, "Missing type object");
-        return 0;
-    }
-    if (likely(PyObject_TypeCheck(obj, type)))
-        return 1;
-    PyErr_Format(PyExc_TypeError, "Cannot convert %.200s to %.200s",
-                 Py_TYPE(obj)->tp_name, type->tp_name);
-    return 0;
-}
 
 /* RaiseArgTupleInvalid */
   static void __Pyx_RaiseArgtupleInvalid(
@@ -6562,6 +6479,19 @@ invalid_keyword:
     #endif
 bad:
     return -1;
+}
+
+/* ExtTypeTest */
+  static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    if (likely(PyObject_TypeCheck(obj, type)))
+        return 1;
+    PyErr_Format(PyExc_TypeError, "Cannot convert %.200s to %.200s",
+                 Py_TYPE(obj)->tp_name, type->tp_name);
+    return 0;
 }
 
 /* PyObjectCallMethO */
