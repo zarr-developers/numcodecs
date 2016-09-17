@@ -129,6 +129,34 @@ def cbuffer_sizes(source):
     return nbytes, cbytes, blocksize
 
 
+cdef class MyBuffer:
+    """Compatibility class to work around fact that array.array does not
+    support new-style buffer interface in PY2."""
+
+    cdef:
+        char *ptr
+        Py_buffer buffer
+        size_t nbytes
+        size_t itemsize
+        array.array arr
+
+    def __cinit__(self, obj, flags):
+        if PY2 and isinstance(obj, array.array):
+            self.arr = obj
+            self.ptr = <char *> self.arr.data.as_voidptr
+            self.itemsize = self.arr.itemsize
+            self.nbytes = self.arr.buffer_info()[1] * self.itemsize
+        else:
+            PyObject_GetBuffer(obj, &(self.buffer), flags)
+            self.ptr = <char *> self.buffer.buf
+            self.itemsize = self.buffer.itemsize
+            self.nbytes = self.buffer.len
+
+    def release(self):
+        if self.buffer.buf != NULL:
+            PyBuffer_Release(&(self.buffer))
+
+
 def compress(source, char* cname, int clevel, int shuffle):
     """Compression.
 
@@ -154,26 +182,15 @@ def compress(source, char* cname, int clevel, int shuffle):
     cdef:
         char *source_ptr
         char *dest_ptr
-        Py_buffer source_buffer
+        MyBuffer source_buffer
         size_t nbytes, cbytes, itemsize
-        array.array source_array
         bytes dest
 
     # setup source buffer
-    if PY2 and isinstance(source, array.array):
-        # workaround fact that array.array does not support new-style buffer
-        # interface in PY2
-        release_source_buffer = False
-        source_array = source
-        source_ptr = <char *> source_array.data.as_voidptr
-        itemsize = source_array.itemsize
-        nbytes = source_array.buffer_info()[1] * itemsize
-    else:
-        release_source_buffer = True
-        PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
-        source_ptr = <char *> source_buffer.buf
-        itemsize = source_buffer.itemsize
-        nbytes = source_buffer.len
+    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
+    nbytes = source_buffer.nbytes
+    itemsize = source_buffer.itemsize
 
     try:
 
@@ -202,8 +219,7 @@ def compress(source, char* cname, int clevel, int shuffle):
     finally:
 
         # release buffers
-        if release_source_buffer:
-            PyBuffer_Release(&source_buffer)
+        source_buffer.release()
 
     # check compression was successful
     if cbytes <= 0:
@@ -236,45 +252,27 @@ def decompress(source, dest=None):
         int ret
         char *source_ptr
         char *dest_ptr
-        Py_buffer source_buffer
-        array.array source_array
-        Py_buffer dest_buffer
+        MyBuffer source_buffer
+        MyBuffer dest_buffer = None
         size_t nbytes, cbytes, blocksize
 
     # setup source buffer
-    if PY2 and isinstance(source, array.array):
-        # workaround fact that array.array does not support new-style buffer
-        # interface in PY2
-        release_source_buffer = False
-        source_array = source
-        source_ptr = <char *> source_array.data.as_voidptr
-    else:
-        release_source_buffer = True
-        PyObject_GetBuffer(source, &source_buffer, PyBUF_ANY_CONTIGUOUS)
-        source_ptr = <char *> source_buffer.buf
+    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
 
     # determine buffer size
     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
 
     # setup destination buffer
-    release_dest_buffer = False
     if dest is None:
         # allocate memory
         dest = PyBytes_FromStringAndSize(NULL, nbytes)
         dest_ptr = PyBytes_AS_STRING(dest)
         dest_nbytes = nbytes
-    elif PY2 and isinstance(dest, array.array):
-        # workaround fact that array.array does not support new-style buffer
-        # interface in PY2
-        dest_array = dest
-        dest_ptr = <char *> dest_array.data.as_voidptr
-        dest_nbytes = dest_array.buffer_info()[1] * dest_array.itemsize
     else:
-        release_dest_buffer = True
-        PyObject_GetBuffer(dest, &dest_buffer,
-                           PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
-        dest_ptr = <char *> dest_buffer.buf
-        dest_nbytes = dest_buffer.len
+        dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+        dest_ptr = dest_buffer.ptr
+        dest_nbytes = dest_buffer.nbytes
 
     try:
 
@@ -295,10 +293,9 @@ def decompress(source, dest=None):
     finally:
 
         # release buffers
-        if release_source_buffer:
-            PyBuffer_Release(&source_buffer)
-        if release_dest_buffer:
-            PyBuffer_Release(&dest_buffer)
+        source_buffer.release()
+        if dest_buffer is not None:
+            dest_buffer.release()
 
     # handle errors
     if ret <= 0:
