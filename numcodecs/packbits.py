@@ -69,7 +69,7 @@ class PackBits(Codec):
         # view encoded data as ndarray
         enc = ndarray_from_buffer(buf, 'u1')
 
-        # find info how many bits were padded
+        # find out how many bits were padded
         n_bits_padded = int(enc[0])
 
         # apply decoding

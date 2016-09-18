@@ -75,7 +75,7 @@ class Delta(Codec):
 
         # setup decoded output
         if isinstance(out, np.ndarray):
-            # optimization, can decode directly to info
+            # optimization, can decode directly to out
             dec = out.reshape(-1, order='A')
             copy_needed = False
         else:
