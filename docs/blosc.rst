@@ -1,6 +1,6 @@
 Blosc
 =====
-.. module:: numcodecs.blosc
+.. automodule:: numcodecs.blosc
 
 .. autoclass:: Blosc
 

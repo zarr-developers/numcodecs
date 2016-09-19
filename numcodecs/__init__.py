@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa
+"""Numcodecs is a Python package providing buffer compression and
+transformation codecs for use in data storage and communication
+applications. These include:
+
+* Compression codecs, e.g., Zlib, BZ2, LZMA and Blosc.
+* Pre-compression filters, e.g., Delta, Quantize, FixedScaleOffset,
+  PackBits, Categorize.
+* Integrity checks, e.g., CRC32, Adler32.
+
+All codecs implement the same API, allowing codecs to be organized into
+pipelines in a variety of ways.
+
+If you have a question, find a bug, would like to make a suggestion or
+contribute code, please `raise an issue on GitHub
+<https://github.com/alimanfoo/numcodecs/issues>`_.
+
+"""
+
 from __future__ import absolute_import, print_function, division
 import multiprocessing
 import atexit

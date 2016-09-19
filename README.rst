@@ -1,7 +1,8 @@
-numcodecs
+Numcodecs
 =========
 
-TODO
+Numcodecs is a Python package providing buffer compression and transformation 
+codecs for use in data storage and communication applications.
 
 .. image:: https://travis-ci.org/alimanfoo/numcodecs.svg?branch=master
     :target: https://travis-ci.org/alimanfoo/numcodecs

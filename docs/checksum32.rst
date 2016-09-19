@@ -1,6 +1,11 @@
 32-bit checksums
 ================
-.. module:: numcodecs.checksum32
+.. automodule:: numcodecs.checksum32
 
+CRC32
+-----
 .. autoclass:: CRC32
+
+Adler32
+-------
 .. autoclass:: Adler32

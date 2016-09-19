@@ -1,5 +1,5 @@
 Categorize
 ==========
-.. module:: numcodecs.categorize
+.. automodule:: numcodecs.categorize
 
 .. autoclass:: Categorize

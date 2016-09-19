@@ -1,5 +1,5 @@
 LZMA
 ====
-.. module:: numcodecs.lzma
+.. automodule:: numcodecs.lzma
 
 .. autoclass:: LZMA

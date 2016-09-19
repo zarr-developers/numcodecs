@@ -1,5 +1,5 @@
 FixedScaleOffset
 ================
-.. module:: numcodecs.fixedscaleoffset
+.. automodule:: numcodecs.fixedscaleoffset
 
 .. autoclass:: FixedScaleOffset

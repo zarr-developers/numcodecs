@@ -1,9 +1,10 @@
-Codec
-=====
-.. module:: numcodecs.abc
+Codec API
+=========
+.. automodule:: numcodecs.abc
 
 .. autoclass:: Codec
 
+    .. autoattribute:: codec_id
     .. automethod:: encode
     .. automethod:: decode
     .. automethod:: get_config

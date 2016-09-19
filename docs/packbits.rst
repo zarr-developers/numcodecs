@@ -1,5 +1,5 @@
 PackBits
 ========
-.. module:: numcodecs.packbits
+.. automodule:: numcodecs.packbits
 
 .. autoclass:: PackBits

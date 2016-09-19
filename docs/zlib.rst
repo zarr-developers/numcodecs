@@ -1,5 +1,5 @@
 Zlib
 ====
-.. module:: numcodecs.zlib
+.. automodule:: numcodecs.zlib
 
 .. autoclass:: Zlib

@@ -1,15 +1,11 @@
 .. numcodecs documentation master file, created by
    sphinx-quickstart on Mon May  2 21:40:09 2016.
 
+
 Numcodecs
 =========
 
-This package contains compression and other codecs intended primarily for use
-with numerical data.
-
-If you have a question, find a bug, would like to make a suggestion or
-contribute code, please `raise an issue on GitHub
-<https://github.com/alimanfoo/numcodecs/issues>`_.
+.. automodule:: numcodecs
 
 Installation
 ------------
@@ -62,6 +58,7 @@ Contents
     packbits
     categorize
     checksum32
+    registry
     release
 
 Acknowledgments

@@ -1,5 +1,5 @@
 Delta
 =====
-.. module:: numcodecs.delta
+.. automodule:: numcodecs.delta
 
 .. autoclass:: Delta

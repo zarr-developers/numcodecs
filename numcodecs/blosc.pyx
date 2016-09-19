@@ -109,39 +109,41 @@ cdef class MyBuffer:
         size_t nbytes
         size_t itemsize
         array.array arr
+        bint new_buffer
 
     def __cinit__(self, obj, flags):
         if PY2 and isinstance(obj, array.array):
+            self.new_buffer = False
             self.arr = obj
             self.ptr = <char *> self.arr.data.as_voidptr
             self.itemsize = self.arr.itemsize
             self.nbytes = self.arr.buffer_info()[1] * self.itemsize
         else:
+            self.new_buffer = True
             PyObject_GetBuffer(obj, &(self.buffer), flags)
             self.ptr = <char *> self.buffer.buf
             self.itemsize = self.buffer.itemsize
             self.nbytes = self.buffer.len
 
     def release(self):
-        if self.buffer.buf != NULL:
+        if self.new_buffer:
             PyBuffer_Release(&(self.buffer))
 
 
 def cbuffer_sizes(source):
     """Return information from the blosc header of some compressed data."""
     cdef:
-        char *source_ptr
-        MyBuffer source_buffer
+        MyBuffer buffer
         size_t nbytes, cbytes, blocksize
 
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
+    # obtain buffer
+    buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
-    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)
 
     # release buffers
-    source_buffer.release()
+    buffer.release()
 
     return nbytes, cbytes, blocksize
 
