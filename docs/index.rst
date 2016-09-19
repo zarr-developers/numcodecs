@@ -49,6 +49,7 @@ Contents
     :maxdepth: 2
 
     abc
+    registry
     blosc
     zlib
     bz2
@@ -58,7 +59,6 @@ Contents
     packbits
     categorize
     checksum32
-    registry
     release
 
 Acknowledgments
