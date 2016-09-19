@@ -68,34 +68,38 @@ BITSHUFFLE = BLOSC_BITSHUFFLE
 
 
 def init():
+    """Initialize the Blosc library environment."""
     blosc_init()
 
 
 def destroy():
+    """Destroy the Blosc library environment."""
     blosc_destroy()
 
 
 def compname_to_compcode(cname):
+    """Return the compressor code associated with the compressor name. If
+    the compressor name is not recognized, or there is not support for it
+    in this build, -1 is returned instead."""
     if isinstance(cname, text_type):
         cname = cname.encode('ascii')
     return blosc_compname_to_compcode(cname)
 
 
 def list_compressors():
+    """Get a list of compressors supported in the current build."""
     return text_type(blosc_list_compressors(), 'ascii').split(',')
 
 
 def get_nthreads():
     """Get the number of threads that Blosc uses internally for compression
-    and decompression.
-    ."""
+    and decompression."""
     return blosc_get_nthreads()
 
 
 def set_nthreads(int nthreads):
     """Set the number of threads that Blosc uses internally for compression
-    and decompression.
-    ."""
+    and decompression."""
     return blosc_set_nthreads(nthreads)
 
 
@@ -131,7 +135,18 @@ cdef class MyBuffer:
 
 
 def cbuffer_sizes(source):
-    """Return information from the blosc header of some compressed data."""
+    """Return information about a compressed buffer, namely the number of
+    uncompressed bytes (`nbytes`) and compressed (`cbytes`).  It also
+    returns the `blocksize` (which is used internally for doing the
+    compression by blocks).
+
+    Returns
+    -------
+    nbytes : int
+    cbytes : int
+    blocksize : int
+
+    """
     cdef:
         MyBuffer buffer
         size_t nbytes, cbytes, blocksize
@@ -149,7 +164,7 @@ def cbuffer_sizes(source):
 
 
 def compress(source, char* cname, int clevel, int shuffle):
-    """Compression.
+    """Compress data.
 
     Parameters
     ----------
@@ -323,17 +338,18 @@ def _get_use_threads():
 
 
 class Blosc(Codec):
-    """Codec providing compression using the blosc meta-compressor.
+    """Codec providing compression using the Blosc meta-compressor.
 
     Parameters
     ----------
     cname : string, optional
         A string naming one of the compression algorithms available
-        within blosc, e.g., 'blosclz', 'lz4', 'zlib' or 'snappy'.
+        within blosc, e.g., 'zstd', 'blosclz', 'lz4', 'lz4hc', 'zlib' or
+        'snappy'.
     clevel : integer, optional
         An integer between 0 and 9 specifying the compression level.
     shuffle : integer, optional
-        Either 0 (no shuffle), 1 (byte shuffle) or 2 (bit shuffle).
+        Either NOSHUFFLE (0), SHUFFLE (1) or BITSHUFFLE (2).
 
     """
 

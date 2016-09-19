@@ -4,6 +4,11 @@ Blosc
 
 .. autoclass:: Blosc
 
+    .. autoattribute:: codec_id
+    .. autoattribute:: NOSHUFFLE
+    .. autoattribute:: SHUFFLE
+    .. autoattribute:: BITSHUFFLE
+
 .. autofunction:: init
 .. autofunction:: destroy
 .. autofunction:: compname_to_compcode
@@ -13,4 +18,3 @@ Blosc
 .. autofunction:: cbuffer_sizes
 .. autofunction:: compress
 .. autofunction:: decompress
-
