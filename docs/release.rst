@@ -1,6 +1,13 @@
 Release notes
 =============
 
+.. _release_0.0.1:
+
+0.0.1
+-----
+
+Fixed project description in setup.py.
+
 .. _release_0.0.0:
 
 0.0.0
