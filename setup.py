@@ -139,8 +139,9 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
-DESCRIPTION = 'A minimal implementation of chunked, compressed, ' \
-              'N-dimensional arrays for Python.'
+DESCRIPTION = ("A Python package providing buffer compression and "
+               "transformation codecs for use in data storage and "
+               "communication applications.")
 
 with open('README.rst') as f:
     LONG_DESCRIPTION = f.read()
