@@ -5,7 +5,7 @@ import json
 
 
 import numpy as np
-from nose.tools import eq_ as eq
+from nose.tools import eq_ as eq, assert_true
 from numpy.testing import assert_array_almost_equal
 
 
@@ -88,6 +88,37 @@ def check_encode_decode(arr, codec, precision=None):
     # test decoding directly into bytearray
     out = bytearray(arr.nbytes)
     codec.decode(enc_bytes, out=out)
+    compare(out)
+
+
+def check_encode_decode_objects(arr, codec):
+
+    # this is a more specific test that check_encode_decode
+    # as these require actual objects (and not bytes only)
+
+    def compare(res, arr=arr):
+
+        assert_true(isinstance(res, np.ndarray))
+        assert_true(res.shape == arr.shape)
+        assert_true(res.dtype == 'object')
+
+        # numpy asserts don't compare object arrays
+        # properly; assert that we have the same nans
+        # and values
+        arr = arr.ravel().tolist()
+        res = res.ravel().tolist()
+        for a, r in zip(arr, res):
+            if a != a:
+                assert_true(r != r)
+            else:
+                assert_true(a == r)
+
+    enc = codec.encode(arr)
+    dec = codec.decode(enc)
+    compare(dec)
+
+    out = np.empty_like(arr)
+    codec.decode(enc, out=out)
     compare(out)
 
 
