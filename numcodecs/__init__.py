@@ -61,6 +61,14 @@ register_codec(PackBits)
 from numcodecs.categorize import Categorize
 register_codec(Categorize)
 
+from numcodecs.pickles import Pickle
+register_codec(Pickle)
+
+try:
+    from numcodecs.msgpacks import MsgPack
+    register_codec(MsgPack)
+except ImportError: # pragma: no cover
+    pass
 
 from numcodecs.checksum32 import CRC32, Adler32
 register_codec(CRC32)

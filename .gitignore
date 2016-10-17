@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# editor
+*~
+
 # Distribution / packaging
 .Python
 env/
@@ -44,6 +47,7 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+cover/
 
 # Translations
 *.mo
