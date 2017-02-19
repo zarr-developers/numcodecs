@@ -2,12 +2,18 @@
 from __future__ import absolute_import, print_function, division
 
 
-from numcodecs.compat import PY2
-
-
-if not PY2:
-
+_lzma = None
+try:
     import lzma as _lzma
+except ImportError:  # pragma: no cover
+    try:
+        from backports import lzma as _lzma
+    except ImportError:
+        pass
+
+
+if _lzma:
+
     import itertools
     import numpy as np
     from numcodecs.lzma import LZMA

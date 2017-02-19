@@ -25,7 +25,6 @@ import atexit
 
 from numcodecs.version import version as __version__
 from numcodecs.registry import get_codec, register_codec
-from numcodecs.compat import PY2
 
 from numcodecs.zlib import Zlib
 register_codec(Zlib)
@@ -33,9 +32,11 @@ register_codec(Zlib)
 from numcodecs.bz2 import BZ2
 register_codec(BZ2)
 
-if not PY2:
+try:
     from numcodecs.lzma import LZMA
     register_codec(LZMA)
+except ImportError:  # pragma: no cover
+    pass
 
 try:
     from numcodecs import blosc as _blosc
