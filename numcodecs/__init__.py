@@ -49,6 +49,9 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
+from numcodecs.astype import AsType
+register_codec(AsType)
+
 from numcodecs.delta import Delta
 register_codec(Delta)
 
