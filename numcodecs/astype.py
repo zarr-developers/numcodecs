@@ -80,9 +80,9 @@ class AsType(Codec):
 
     def __repr__(self):
         return (
-            '%s(encode_dtype=%s, decode_dtype=%s)' % (
+            '%s(encode_dtype=%r, decode_dtype=%r)' % (
                 type(self).__name__,
-                self.encode_dtype,
-                self.decode_dtype
+                self.encode_dtype.str,
+                self.decode_dtype.str
             )
         )

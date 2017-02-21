@@ -57,4 +57,4 @@ def test_config():
 
 
 def test_repr():
-    check_repr("AsType(encode_dtype=int32, decode_dtype=int64)")
+    check_repr("AsType(encode_dtype='<i4', decode_dtype='<i2')")
