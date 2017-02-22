@@ -2,11 +2,17 @@
 from __future__ import absolute_import, print_function, division
 
 
+_lzma = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
-    pass
-else:
+    try:
+        from backports import lzma as _lzma
+    except ImportError:
+        pass
+
+
+if _lzma:
 
     import numpy as np
     from numcodecs.abc import Codec
