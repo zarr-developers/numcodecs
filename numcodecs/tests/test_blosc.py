@@ -54,27 +54,37 @@ def test_config():
 
 
 def test_repr():
-    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1, blocksize=0)")
-    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1, blocksize=256)")
+    expect = "Blosc(cname='zstd', clevel=3, shuffle=SHUFFLE, blocksize=0)"
+    actual = repr(Blosc(cname='zstd', clevel=3, shuffle=Blosc.SHUFFLE, blocksize=0))
+    assert expect == actual
+    expect = "Blosc(cname='lz4', clevel=1, shuffle=NOSHUFFLE, blocksize=256)"
+    actual = repr(Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=256))
+    assert expect == actual
+    expect = "Blosc(cname='zlib', clevel=9, shuffle=BITSHUFFLE, blocksize=512)"
+    actual = repr(Blosc(cname='zlib', clevel=9, shuffle=Blosc.BITSHUFFLE, blocksize=512))
+    assert expect == actual
 
 
 def test_compress_blocksize():
     arr = np.arange(1000, dtype='i4')
 
-    # default blocksize
-    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
-    assert blocksize > 0
+    for use_threads in True, False, None:
+        blosc.use_threads = use_threads
 
-    # explicit default blocksize
-    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
-    assert blocksize > 0
-
-    # custom blocksize
-    for bs in 2**7, 2**7:
-        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
+        # default blocksize
+        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
         _, _, blocksize = blosc.cbuffer_sizes(enc)
+        assert blocksize > 0
+
+        # explicit default blocksize
+        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
+        _, _, blocksize = blosc.cbuffer_sizes(enc)
+        assert blocksize > 0
+
+        # custom blocksize
+        for bs in 2**7, 2**7:
+            enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
+            _, _, blocksize = blosc.cbuffer_sizes(enc)
         assert blocksize == bs
 
 

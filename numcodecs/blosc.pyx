@@ -339,6 +339,9 @@ def _get_use_threads():
     return _use_threads
 
 
+_shuffle_repr = ['NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
+
+
 class Blosc(Codec):
     """Codec providing compression using the Blosc meta-compressor.
 
@@ -379,6 +382,10 @@ class Blosc(Codec):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = '%s(cname=%r, clevel=%r, shuffle=%r, blocksize=%s)' % \
-            (type(self).__name__, self.cname, self.clevel, self.shuffle, self.blocksize)
+        r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
+            (type(self).__name__,
+             self.cname,
+             self.clevel,
+             _shuffle_repr[self.shuffle],
+             self.blocksize)
         return r
