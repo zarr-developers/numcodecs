@@ -6,6 +6,7 @@ import itertools
 import numpy as np
 
 
+from numcodecs import blosc
 from numcodecs.blosc import Blosc
 from numcodecs.tests.common import check_encode_decode, check_config, \
     check_repr
@@ -22,6 +23,9 @@ codecs = [
     Blosc(cname='zstd', clevel=1, shuffle=1),
     Blosc(cname='blosclz', clevel=1, shuffle=2),
     Blosc(cname='snappy', clevel=1, shuffle=2),
+    Blosc(blocksize=0),
+    Blosc(blocksize=2**8),
+    Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=2**8),
 ]
 
 
@@ -45,7 +49,45 @@ def test_encode_decode():
 def test_config():
     codec = Blosc(cname='zstd', clevel=3, shuffle=1)
     check_config(codec)
+    codec = Blosc(cname='lz4', clevel=1, shuffle=2, blocksize=2**8)
+    check_config(codec)
 
 
 def test_repr():
-    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1)")
+    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1, blocksize=0)")
+    check_repr("Blosc(cname='zstd', clevel=3, shuffle=1, blocksize=256)")
+
+
+def test_compress_blocksize():
+    arr = np.arange(1000, dtype='i4')
+
+    # default blocksize
+    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
+    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    assert blocksize > 0
+
+    # explicit default blocksize
+    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
+    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    assert blocksize > 0
+
+    # custom blocksize
+    for bs in 2**7, 2**7:
+        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
+        _, _, blocksize = blosc.cbuffer_sizes(enc)
+        assert blocksize == bs
+
+
+def test_config_blocksize():
+    # N.B., we want to be backwards compatible with any config where blocksize is not explicitly
+    # stated
+
+    # blocksize not stated
+    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
+    codec = Blosc.from_config(config)
+    assert codec.blocksize == 0
+
+    # blocksize stated
+    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE, blocksize=2**8)
+    codec = Blosc.from_config(config)
+    assert codec.blocksize == 2**8

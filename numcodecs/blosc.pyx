@@ -5,6 +5,7 @@
 # cython: binding=False
 from __future__ import absolute_import, print_function, division
 import threading
+import os
 
 
 # noinspection PyUnresolvedReferences
@@ -163,7 +164,7 @@ def cbuffer_sizes(source):
     return nbytes, cbytes, blocksize
 
 
-def compress(source, char* cname, int clevel, int shuffle):
+def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     """Compress data.
 
     Parameters
@@ -177,6 +178,8 @@ def compress(source, char* cname, int clevel, int shuffle):
         Compression level.
     shuffle : int
         Shuffle filter.
+    blocksize : int
+        The requested size of the compressed blocks.  If 0, an automatic blocksize will be used.
 
     Returns
     -------
@@ -207,20 +210,30 @@ def compress(source, char* cname, int clevel, int shuffle):
         # perform compression
         if _get_use_threads():
             # allow blosc to use threads internally
+
+            # set compressor
             compressor_set = blosc_set_compressor(cname)
             if compressor_set < 0:
                 raise ValueError('compressor not supported: %r' % cname)
+
+            # set blocksize
+            os.environ['BLOSC_BLOCKSIZE'] = str(blocksize)
+
+            # perform compression
             with nogil:
                 cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes,
                                         source_ptr, dest_ptr,
                                         nbytes + BLOSC_MAX_OVERHEAD)
+
+            # unset blocksize
+            del os.environ['BLOSC_BLOCKSIZE']
 
         else:
             with nogil:
                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes,
                                             source_ptr, dest_ptr,
                                             nbytes + BLOSC_MAX_OVERHEAD, cname,
-                                            0, 1)
+                                            blocksize, 1)
 
     finally:
 
@@ -350,6 +363,9 @@ class Blosc(Codec):
         An integer between 0 and 9 specifying the compression level.
     shuffle : integer, optional
         Either NOSHUFFLE (0), SHUFFLE (1) or BITSHUFFLE (2).
+    blocksize : int
+        The requested size of the compressed blocks.  If 0 (default), an automatic blocksize will
+        be used.
 
     """
 
@@ -358,7 +374,7 @@ class Blosc(Codec):
     SHUFFLE = SHUFFLE
     BITSHUFFLE = BITSHUFFLE
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=1):
+    def __init__(self, cname='lz4', clevel=5, shuffle=1, blocksize=0):
         self.cname = cname
         if isinstance(cname, text_type):
             self._cname_bytes = cname.encode('ascii')
@@ -366,14 +382,15 @@ class Blosc(Codec):
             self._cname_bytes = cname
         self.clevel = clevel
         self.shuffle = shuffle
+        self.blocksize = blocksize
 
     def encode(self, buf):
-        return compress(buf, self._cname_bytes, self.clevel, self.shuffle)
+        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = '%s(cname=%r, clevel=%r, shuffle=%r)' % \
-            (type(self).__name__, self.cname, self.clevel, self.shuffle)
+        r = '%s(cname=%r, clevel=%r, shuffle=%r, blocksize=%s)' % \
+            (type(self).__name__, self.cname, self.clevel, self.shuffle, self.blocksize)
         return r
