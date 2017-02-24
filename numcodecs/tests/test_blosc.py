@@ -8,8 +8,7 @@ import numpy as np
 
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+from numcodecs.tests.common import check_encode_decode, check_config
 
 
 codecs = [
