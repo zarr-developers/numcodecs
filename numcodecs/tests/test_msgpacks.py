@@ -2,7 +2,6 @@
 from __future__ import absolute_import, print_function, division
 
 
-import nose
 import numpy as np
 from numpy.testing import assert_raises
 from numcodecs.msgpacks import MsgPack
