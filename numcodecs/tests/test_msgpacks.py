@@ -3,10 +3,15 @@ from __future__ import absolute_import, print_function, division
 
 
 import numpy as np
+import nose
 from numpy.testing import assert_raises
-from numcodecs.msgpacks import MsgPack
-from numcodecs.tests.common import (check_config, check_repr,
-                                    check_encode_decode_objects)
+
+try:
+    from numcodecs.msgpacks import MsgPack
+except ImportError:
+    raise nose.SkipTest("msgpack-python not available")
+
+from numcodecs.tests.common import check_config, check_repr, check_encode_decode_objects
 
 
 # object array with strings
@@ -17,6 +22,7 @@ arrays = [
     np.array([['foo', 'bar', np.nan]] * 300, dtype=object),
     np.array(['foo', 1.0, 2] * 300, dtype=object),
 ]
+
 
 # non-object ndarrays
 arrays_incompat = [
