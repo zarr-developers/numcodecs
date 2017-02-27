@@ -2,15 +2,9 @@
 from __future__ import absolute_import, print_function, division
 
 
-import nose
 import numpy as np
 from numpy.testing import assert_raises
-
-try:
-    from numcodecs.msgpacks import MsgPack
-except ImportError:
-    raise nose.SkipTest("no msgpack installed")
-
+from numcodecs.msgpacks import MsgPack
 from numcodecs.tests.common import (check_config, check_repr,
                                     check_encode_decode_objects)
 

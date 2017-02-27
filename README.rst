@@ -12,3 +12,6 @@ codecs for use in data storage and communication applications.
 
 .. image:: https://ci.appveyor.com/api/projects/status/r35av34952d9fcyn?svg=true
     :target: https://ci.appveyor.com/project/alimanfoo/numcodecs
+
+.. image:: https://coveralls.io/repos/github/alimanfoo/numcodecs/badge.svg?branch=master
+    :target: https://coveralls.io/github/alimanfoo/numcodecs?branch=master
