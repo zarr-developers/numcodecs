@@ -102,7 +102,8 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
 
     cdef:
         char *source_ptr
-        char *dest_ptr, *dest_start
+        char *dest_ptr
+        char *dest_start
         MyBuffer source_buffer
         int source_size, dest_size, compressed_size
         bytes dest
@@ -163,7 +164,8 @@ def decompress(source, dest=None):
 
     """
     cdef:
-        char *source_ptr, *source_start
+        char *source_ptr
+        char *source_start
         char *dest_ptr
         MyBuffer source_buffer
         MyBuffer dest_buffer = None
