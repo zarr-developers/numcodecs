@@ -59,6 +59,8 @@ Contents
     packbits
     categorize
     checksum32
+    pickles
+    msgpacks
     release
 
 Acknowledgments

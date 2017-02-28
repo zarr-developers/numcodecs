@@ -6,17 +6,12 @@ import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_from_buffer, buffer_copy
 import msgpack
 
 
 class MsgPack(Codec):
-    """Codec to encode data as msgpacked bytes. Useful for encoding python
-    strings
-
-    Raises
-    ------
-    encoding a non-object dtyped ndarray will raise ValueError
+    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python string
+    objects.
 
     Examples
     --------
@@ -27,18 +22,30 @@ class MsgPack(Codec):
     >>> f.decode(f.encode(x))
     array(['foo', 'bar', 'baz'], dtype=object)
 
+    See Also
+    --------
+    :class:`numcodecs.pickles.Pickle`
+
+    Notes
+    -----
+    Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be installed.
+
     """  # flake8: noqa
 
     codec_id = 'msgpack'
 
+    def __init__(self, encoding='utf-8'):
+        self.encoding = encoding
+
     def encode(self, buf):
-        if hasattr(buf, 'dtype') and buf.dtype != 'object':
-            raise ValueError("cannot encode non-object ndarrays, %s "
-                             "dtype was passed" % buf.dtype)
-        return msgpack.packb(buf.tolist(), encoding='utf-8')
+        buf = np.asarray(buf)
+        l = buf.tolist()
+        l.append(buf.dtype.str)
+        return msgpack.packb(l, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        dec = np.array(msgpack.unpackb(buf, encoding='utf-8'), dtype='object')
+        l = msgpack.unpackb(buf, encoding=self.encoding)
+        dec = np.array(l[:-1], dtype=l[-1])
         if out is not None:
             np.copyto(out, dec)
             return out
@@ -46,7 +53,8 @@ class MsgPack(Codec):
             return dec
 
     def get_config(self):
-        return dict(id=self.codec_id)
+        return dict(id=self.codec_id,
+                    encoding=self.encoding)
 
     def __repr__(self):
-        return 'MsgPack()'
+        return 'MsgPack(encoding=%r)' % self.encoding
