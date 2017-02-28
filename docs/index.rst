@@ -51,6 +51,7 @@ Contents
     abc
     registry
     blosc
+    zstd
     zlib
     bz2
     lzma
