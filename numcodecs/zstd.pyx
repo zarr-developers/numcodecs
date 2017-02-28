@@ -7,7 +7,6 @@ from __future__ import absolute_import, print_function, division
 
 
 # noinspection PyUnresolvedReferences
-from libc.stdint cimport uint32_t, uint64_t
 from cpython cimport array, PyObject
 import array
 from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release, PyBUF_ANY_CONTIGUOUS, \
@@ -111,8 +110,7 @@ def compress(source, int level=DEFAULT_CLEVEL):
         char *source_ptr
         char *dest_ptr
         MyBuffer source_buffer
-        uint32_t source_size, dest_size
-        size_t compressed_size
+        size_t source_size, dest_size, compressed_size
         bytes dest
 
     # check level
@@ -174,9 +172,7 @@ def decompress(source, dest=None):
         char *dest_ptr
         MyBuffer source_buffer
         MyBuffer dest_buffer = None
-        uint32_t source_size
-        uint64_t dest_size
-        size_t decompressed_size
+        size_t source_size, dest_size, decompressed_size
 
     # setup source buffer
     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
@@ -186,7 +182,7 @@ def decompress(source, dest=None):
     try:
 
         # determine uncompressed size
-        dest_size = <uint64_t>ZSTD_getDecompressedSize(source_ptr, source_size)
+        dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
         if dest_size == 0:
             raise RuntimeError('Zstd decompression error: invalid input data')
 
