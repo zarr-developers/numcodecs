@@ -14,7 +14,8 @@ except ImportError:
 
 
 class Pickle(Codec):
-    """Codec to encode data as as pickled bytes. Useful for encoding an array of Python strings.
+    """Codec to encode data as as pickled bytes. Useful for encoding an array of Python string
+    objects.
 
     Parameters
     ----------
@@ -42,7 +43,6 @@ class Pickle(Codec):
         self.protocol = protocol
 
     def encode(self, buf):
-        buf = np.asarray(buf, dtype='object')
         return pickle.dumps(buf, protocol=self.protocol)
 
     def decode(self, buf, out=None):

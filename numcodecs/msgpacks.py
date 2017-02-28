@@ -10,7 +10,8 @@ import msgpack
 
 
 class MsgPack(Codec):
-    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python strings.
+    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python string
+    objects.
 
     Examples
     --------
@@ -33,12 +34,18 @@ class MsgPack(Codec):
 
     codec_id = 'msgpack'
 
+    def __init__(self, encoding='utf-8'):
+        self.encoding = encoding
+
     def encode(self, buf):
-        buf = np.asarray(buf, dtype='object')
-        return msgpack.packb(buf.tolist(), encoding='utf-8')
+        buf = np.asarray(buf)
+        l = buf.tolist()
+        l.append(buf.dtype.str)
+        return msgpack.packb(l, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        dec = np.array(msgpack.unpackb(buf, encoding='utf-8'), dtype='object')
+        l = msgpack.unpackb(buf, encoding=self.encoding)
+        dec = np.array(l[:-1], dtype=l[-1])
         if out is not None:
             np.copyto(out, dec)
             return out
@@ -46,7 +53,8 @@ class MsgPack(Codec):
             return dec
 
     def get_config(self):
-        return dict(id=self.codec_id)
+        return dict(id=self.codec_id,
+                    encoding=self.encoding)
 
     def __repr__(self):
-        return 'MsgPack()'
+        return 'MsgPack(encoding=%r)' % self.encoding

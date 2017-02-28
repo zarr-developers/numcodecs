@@ -6,7 +6,7 @@ import numpy as np
 
 
 from numcodecs.pickles import Pickle
-from numcodecs.tests.common import check_config, check_repr, check_encode_decode_objects
+from numcodecs.tests.common import check_config, check_repr, check_encode_decode_array
 
 
 # object array with strings
@@ -24,7 +24,7 @@ arrays = [
 def test_encode_decode():
     codec = Pickle()
     for arr in arrays:
-        check_encode_decode_objects(arr, codec)
+        check_encode_decode_array(arr, codec)
 
 
 def test_config():

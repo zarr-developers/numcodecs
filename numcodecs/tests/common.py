@@ -91,16 +91,13 @@ def check_encode_decode(arr, codec, precision=None):
     compare(out)
 
 
-def check_encode_decode_objects(arr, codec):
-
-    # this is a more specific test that check_encode_decode
-    # as these require actual objects (and not bytes only)
+def check_encode_decode_array(arr, codec):
 
     def compare(res, arr=arr):
 
         assert_true(isinstance(res, np.ndarray))
         assert_true(res.shape == arr.shape)
-        assert_true(res.dtype == 'object')
+        assert_true(res.dtype == arr.dtype)
 
         # numpy asserts don't compare object arrays
         # properly; assert that we have the same nans
@@ -117,7 +114,7 @@ def check_encode_decode_objects(arr, codec):
     dec = codec.decode(enc)
     compare(dec)
 
-    out = np.empty_like(arr, dtype='object')
+    out = np.empty_like(arr)
     codec.decode(enc, out=out)
     compare(out)
 
