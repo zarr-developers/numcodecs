@@ -2511,7 +2511,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
 
 /* Python wrapper */
 static PyObject *__pyx_pw_9numcodecs_5blosc_15compress(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_9numcodecs_5blosc_14compress[] = "compress(source, char *cname, int clevel, int shuffle, int blocksize=0)\nCompress data.\n\n    Parameters\n    ----------\n    source : bytes-like\n        Data to be compressed. Can be any object supporting the buffer\n        protocol.\n    cname : bytes\n        Name of compression library to use.\n    clevel : int\n        Compression level.\n    shuffle : int\n        Shuffle filter.\n    blocksize : int\n        The requested size of the compressed blocks.  If 0, an automatic blocksize will be used.\n\n    Returns\n    -------\n    dest : array\n        Compressed data.\n\n    ";
+static char __pyx_doc_9numcodecs_5blosc_14compress[] = "compress(source, char *cname, int clevel, int shuffle, int blocksize=0)\nCompress data.\n\n    Parameters\n    ----------\n    source : bytes-like\n        Data to be compressed. Can be any object supporting the buffer\n        protocol.\n    cname : bytes\n        Name of compression library to use.\n    clevel : int\n        Compression level.\n    shuffle : int\n        Shuffle filter.\n    blocksize : int\n        The requested size of the compressed blocks.  If 0, an automatic blocksize will be used.\n\n    Returns\n    -------\n    dest : bytes\n        Compressed data.\n\n    ";
 static PyMethodDef __pyx_mdef_9numcodecs_5blosc_15compress = {"compress", (PyCFunction)__pyx_pw_9numcodecs_5blosc_15compress, METH_VARARGS|METH_KEYWORDS, __pyx_doc_9numcodecs_5blosc_14compress};
 static PyObject *__pyx_pw_9numcodecs_5blosc_15compress(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_source = 0;
@@ -3142,7 +3142,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
 
 /* Python wrapper */
 static PyObject *__pyx_pw_9numcodecs_5blosc_17decompress(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_9numcodecs_5blosc_16decompress[] = "decompress(source, dest=None)\nDecompress data.\n\n    Parameters\n    ----------\n    source : bytes-like\n        Compressed data, including blosc header. Can be any object supporting the buffer protocol.\n    dest : array-like, optional\n        Object to decompress into.\n\n    Returns\n    -------\n    dest : array-like\n        Object containing decompressed data.\n\n    ";
+static char __pyx_doc_9numcodecs_5blosc_16decompress[] = "decompress(source, dest=None)\nDecompress data.\n\n    Parameters\n    ----------\n    source : bytes-like\n        Compressed data, including blosc header. Can be any object supporting the buffer protocol.\n    dest : array-like, optional\n        Object to decompress into.\n\n    Returns\n    -------\n    dest : bytes\n        Object containing decompressed data.\n\n    ";
 static PyMethodDef __pyx_mdef_9numcodecs_5blosc_17decompress = {"decompress", (PyCFunction)__pyx_pw_9numcodecs_5blosc_17decompress, METH_VARARGS|METH_KEYWORDS, __pyx_doc_9numcodecs_5blosc_16decompress};
 static PyObject *__pyx_pw_9numcodecs_5blosc_17decompress(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_source = 0;

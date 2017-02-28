@@ -176,7 +176,7 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
 
     Returns
     -------
-    dest : array
+    dest : bytes
         Compressed data.
 
     """
@@ -252,7 +252,7 @@ def decompress(source, dest=None):
 
     Returns
     -------
-    dest : array-like
+    dest : bytes
         Object containing decompressed data.
 
     """
