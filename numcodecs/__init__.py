@@ -57,6 +57,13 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
+try:
+    from numcodecs import lz4
+    from numcodecs.lz4 import LZ4
+    register_codec(LZ4)
+except ImportError:  # pragma: no cover
+    pass
+
 from numcodecs.astype import AsType
 register_codec(AsType)
 

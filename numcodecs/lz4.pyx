@@ -20,8 +20,7 @@ from numcodecs.abc import Codec
 
 cdef extern from "lz4.h":
 
-    unsigned LZ4_versionNumber() nogil
-    unsigned LZ4_versionString() nogil
+    const char* LZ4_versionString() nogil
 
     int LZ4_compress_fast(const char* source,
                           char* dest,
@@ -29,10 +28,10 @@ cdef extern from "lz4.h":
                           int maxDestSize,
                           int acceleration) nogil
 
-
-    int LZ4_decompress_fast(const char* source,
+    int LZ4_decompress_safe(const char* source,
                             char* dest,
-                            int originalSize) nogil
+                            int compressedSize,
+                            int maxDecompressedSize) nogil
 
     int LZ4_compressBound(int inputSize) nogil
 
@@ -45,15 +44,9 @@ cdef extern from "stdint_compat.h":
 
 
 
-VERSION_NUMBER = LZ4_versionNumber()
-MAJOR_VERSION_NUMBER = VERSION_NUMBER // (100 * 100)
-MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100
-MICRO_VERSION_NUMBER = (
-    VERSION_NUMBER -
-    (MAJOR_VERSION_NUMBER * 100 * 100) -
-    (MINOR_VERSION_NUMBER * 100)
-)
 VERSION_STRING = LZ4_versionString()
+if not PY2:
+    VERSION_STRING = str(VERSION_STRING, 'ascii')
 __version__ = VERSION_STRING
 DEFAULT_ACCELERATION = 1
 
@@ -153,98 +146,103 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
     return dest
 
 
-# def decompress(source, dest=None):
-#     """Decompress data.
-#
-#     Parameters
-#     ----------
-#     source : bytes-like
-#         Compressed data. Can be any object supporting the buffer protocol.
-#     dest : array-like, optional
-#         Object to decompress into.
-#
-#     Returns
-#     -------
-#     dest : bytes
-#         Object containing decompressed data.
-#
-#     """
-#     cdef:
-#         char *source_ptr
-#         char *dest_ptr
-#         MyBuffer source_buffer
-#         MyBuffer dest_buffer = None
-#         size_t source_size, dest_size, decompressed_size
-#
-#     # setup source buffer
-#     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
-#     source_ptr = source_buffer.ptr
-#     source_size = source_buffer.nbytes
-#
-#     try:
-#
-#         # determine uncompressed size
-#         dest_size = zstd.pyxZSTD_getDecompressedSize(source_ptr, source_size)
-#         if dest_size == 0:
-#             raise RuntimeError('Zstd decompression error: invalid input data')
-#
-#         # setup destination buffer
-#         if dest is None:
-#             # allocate memory
-#             dest = PyBytes_FromStringAndSize(NULL, dest_size)
-#             dest_ptr = PyBytes_AS_STRING(dest)
-#         else:
-#             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
-#             dest_ptr = dest_buffer.ptr
-#             if dest_buffer.nbytes != dest_size:
-#                 raise ValueError('destination buffer has wrong size; expected %s, '
-#                                  'got %s' % (dest_size, dest_buffer.nbytes))
-#
-#         # perform decompression
-#         with nogil:
-#             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
-#
-#     finally:
-#
-#         # release buffers
-#         source_buffer.release()
-#         if dest_buffer is not None:
-#             dest_buffer.release()
-#
-#     # check decompression was successful
-#     if ZSTD_isError(decompressed_size):
-#         error = ZSTD_getErrorName(decompressed_size)
-#         raise RuntimeError('Zstd decompression error: %s' % error)
-#     elif decompressed_size != dest_size:
-#         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %
-#                            (dest_size, decompressed_size))
-#
-#     return dest
-#
-#
-# class Zstd(Codec):
-#     """Codec providing compression using Zstandard.
-#
-#     Parameters
-#     ----------
-#     level : int
-#         Compression level (1-22).
-#
-#     """
-#
-#     codec_id = 'zstd'
-#
-#     def __init__(self, level=DEFAULT_CLEVEL):
-#         self.level = level
-#
-#     def encode(self, buf):
-#         return compress(buf, self.level)
-#
-#     def decode(self, buf, out=None):
-#         return decompress(buf, out)
-#
-#     def __repr__(self):
-#         r = '%s(level=%r)' % \
-#             (type(self).__name__,
-#              self.level)
-#         return r
+def decompress(source, dest=None):
+    """Decompress data.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Compressed data. Can be any object supporting the buffer protocol.
+    dest : array-like, optional
+        Object to decompress into.
+
+    Returns
+    -------
+    dest : bytes
+        Object containing decompressed data.
+
+    """
+    cdef:
+        char *source_ptr, *source_start
+        char *dest_ptr
+        MyBuffer source_buffer
+        MyBuffer dest_buffer = None
+        int source_size, dest_size, decompressed_size
+
+    # setup source buffer
+    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
+    source_size = source_buffer.nbytes
+
+    try:
+
+        # determine uncompressed size
+        if source_size < UINT32_SIZE:
+            raise ValueError('bad input data')
+        dest_size = load_le32(source_ptr)
+        if dest_size <= 0:
+            raise RuntimeError('LZ4 decompression error: invalid input data')
+        source_start = source_ptr + UINT32_SIZE
+        source_size -= UINT32_SIZE
+
+        # setup destination buffer
+        if dest is None:
+            # allocate memory
+            dest = PyBytes_FromStringAndSize(NULL, dest_size)
+            dest_ptr = PyBytes_AS_STRING(dest)
+        else:
+            dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+            dest_ptr = dest_buffer.ptr
+            if dest_buffer.nbytes != dest_size:
+                raise ValueError('destination buffer has wrong size; expected %s, '
+                                 'got %s' % (dest_size, dest_buffer.nbytes))
+
+        # perform decompression
+        with nogil:
+            decompressed_size = LZ4_decompress_safe(source_start, dest_ptr, source_size, dest_size)
+
+    finally:
+
+        # release buffers
+        source_buffer.release()
+        if dest_buffer is not None:
+            dest_buffer.release()
+
+    # check decompression was successful
+    if decompressed_size <= 0:
+        raise RuntimeError('LZ4 decompression error: %s' % decompressed_size)
+    elif decompressed_size != dest_size:
+        raise RuntimeError('LZ4 decompression error: expected to decompress %s, got %s' %
+                           (dest_size, decompressed_size))
+
+    return dest
+
+
+
+class LZ4(Codec):
+    """Codec providing compression using LZ4.
+
+    Parameters
+    ----------
+    acceleration : int
+        Acceleration level. The larger the acceleration value, the faster the algorithm, but also
+        the lesser the compression.
+
+    """
+
+    codec_id = 'lz4'
+
+    def __init__(self, acceleration=DEFAULT_ACCELERATION):
+        self.acceleration = acceleration
+
+    def encode(self, buf):
+        return compress(buf, self.acceleration)
+
+    def decode(self, buf, out=None):
+        return decompress(buf, out)
+
+    def __repr__(self):
+        r = '%s(acceleration=%r)' % \
+            (type(self).__name__,
+             self.acceleration)
+        return r
