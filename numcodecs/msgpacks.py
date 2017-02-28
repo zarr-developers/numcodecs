@@ -10,11 +10,7 @@ import msgpack
 
 
 class MsgPack(Codec):
-    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python strings
-
-    Raises
-    ------
-    encoding a non-object dtyped ndarray will raise ValueError
+    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python strings.
 
     Examples
     --------
@@ -28,6 +24,10 @@ class MsgPack(Codec):
     See Also
     --------
     :class:`numcodecs.pickles.Pickle`
+
+    Notes
+    -----
+    Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be installed.
 
     """  # flake8: noqa
 

@@ -21,10 +21,6 @@ class Pickle(Codec):
     protocol : int, defaults to pickle.HIGHEST_PROTOCOL
         The protocol used to pickle data.
 
-    Raises
-    ------
-    Encoding a non-object dtyped ndarray will raise ValueError.
-
     Examples
     --------
     >>> import numcodecs as codecs
