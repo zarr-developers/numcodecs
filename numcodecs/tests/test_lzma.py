@@ -8,7 +8,7 @@ import numpy as np
 
 try:
     from numcodecs.lzma import LZMA, _lzma
-except ImportError:
+except ImportError:  # pragma: no cover
     raise nose.SkipTest("LZMA not available")
 
 from numcodecs.tests.common import check_encode_decode, check_config, check_repr
