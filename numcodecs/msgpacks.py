@@ -6,13 +6,11 @@ import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_from_buffer, buffer_copy
 import msgpack
 
 
 class MsgPack(Codec):
-    """Codec to encode data as msgpacked bytes. Useful for encoding python
-    strings
+    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python strings
 
     Raises
     ------
@@ -27,14 +25,16 @@ class MsgPack(Codec):
     >>> f.decode(f.encode(x))
     array(['foo', 'bar', 'baz'], dtype=object)
 
+    See Also
+    --------
+    :class:`numcodecs.pickles.Pickle`
+
     """  # flake8: noqa
 
     codec_id = 'msgpack'
 
     def encode(self, buf):
-        if hasattr(buf, 'dtype') and buf.dtype != 'object':
-            raise ValueError("cannot encode non-object ndarrays, %s "
-                             "dtype was passed" % buf.dtype)
+        buf = np.asarray(buf, dtype='object')
         return msgpack.packb(buf.tolist(), encoding='utf-8')
 
     def decode(self, buf, out=None):

@@ -14,17 +14,16 @@ except ImportError:
 
 
 class Pickle(Codec):
-    """Codec to encode data as as pickled bytes. Useful for encoding python
-    strings.
+    """Codec to encode data as as pickled bytes. Useful for encoding an array of Python strings.
 
     Parameters
     ----------
     protocol : int, defaults to pickle.HIGHEST_PROTOCOL
-        the protocol used to pickle data
+        The protocol used to pickle data.
 
     Raises
     ------
-    encoding a non-object dtyped ndarray will raise ValueError
+    Encoding a non-object dtyped ndarray will raise ValueError.
 
     Examples
     --------
@@ -35,6 +34,10 @@ class Pickle(Codec):
     >>> f.decode(f.encode(x))
     array(['foo', 'bar', 'baz'], dtype=object)
 
+    See Also
+    --------
+    :class:`numcodecs.msgpacks.MsgPack`
+
     """  # flake8: noqa
 
     codec_id = 'pickle'
@@ -43,9 +46,7 @@ class Pickle(Codec):
         self.protocol = protocol
 
     def encode(self, buf):
-        if hasattr(buf, 'dtype') and buf.dtype != 'object':
-            raise ValueError("cannot encode non-object ndarrays, %s "
-                             "dtype was passed" % buf.dtype)
+        buf = np.asarray(buf, dtype='object')
         return pickle.dumps(buf, protocol=self.protocol)
 
     def decode(self, buf, out=None):

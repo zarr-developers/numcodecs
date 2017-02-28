@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 import nose
-from numpy.testing import assert_raises
 
 try:
     from numcodecs.msgpacks import MsgPack
@@ -21,20 +20,9 @@ arrays = [
     np.array(['foo', 'bar', 'baz'] * 300, dtype=object),
     np.array([['foo', 'bar', np.nan]] * 300, dtype=object),
     np.array(['foo', 1.0, 2] * 300, dtype=object),
-]
-
-
-# non-object ndarrays
-arrays_incompat = [
     np.arange(1000, dtype='i4'),
     np.array(['foo', 'bar', 'baz'] * 300),
 ]
-
-
-def test_encode_errors():
-    for arr in arrays_incompat:
-        codec = MsgPack()
-        assert_raises(ValueError, codec.encode, arr)
 
 
 def test_encode_decode():

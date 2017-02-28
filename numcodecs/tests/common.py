@@ -117,7 +117,7 @@ def check_encode_decode_objects(arr, codec):
     dec = codec.decode(enc)
     compare(dec)
 
-    out = np.empty_like(arr)
+    out = np.empty_like(arr, dtype='object')
     codec.decode(enc, out=out)
     compare(out)
 
