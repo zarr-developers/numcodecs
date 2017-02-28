@@ -172,6 +172,9 @@ def run_setup(with_extensions):
         install_requires=[
             'numpy>=1.7',
         ],
+        extras_require={
+            'msgpack':  ["msgpack-python"],
+        },
         ext_modules=ext_modules,
         cmdclass=cmdclass,
         package_dir={'': '.'},
