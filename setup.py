@@ -110,6 +110,109 @@ def blosc_extension():
     return extensions
 
 
+def zstd_extension():
+    info('setting up Zstandard extension')
+
+    zstd_sources = []
+    extra_compile_args = []
+    include_dirs = []
+    define_macros = []
+
+    # setup sources - use zstd bundled in blosc
+    zstd_sources += glob('c-blosc/internal-complibs/zstd*/common/*.c')
+    zstd_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
+    zstd_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
+    zstd_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
+
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*')
+                     if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*/*')
+                     if os.path.isdir(d)]
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    # workaround lack of support for "inline" in MSVC when building for Python
+    # 2.7 64-bit
+    if PY2 and os.name == 'nt':
+        extra_compile_args.append('-Dinline=__inline')
+
+    if have_cython:
+        sources = ['numcodecs/zstd.pyx']
+    else:
+        sources = ['numcodecs/zstd.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.zstd',
+                  sources=sources + zstd_sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
+def lz4_extension():
+    info('setting up LZ4 extension')
+
+    extra_compile_args = []
+    define_macros = []
+
+    # setup sources - use LZ4 bundled in blosc
+    lz4_sources = glob('c-blosc/internal-complibs/lz4*/*.c')
+    include_dirs = [d for d in glob('c-blosc/internal-complibs/lz4*') if os.path.isdir(d)]
+    include_dirs += ['numcodecs']
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    # workaround lack of support for "inline" in MSVC when building for Python
+    # 2.7 64-bit
+    if PY2 and os.name == 'nt':
+        extra_compile_args.append('-Dinline=__inline')
+
+    if have_cython:
+        sources = ['numcodecs/lz4.pyx']
+    else:
+        sources = ['numcodecs/lz4.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.lz4',
+                  sources=sources + lz4_sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
+def compat_extension():
+    info('setting up compat extension')
+
+    if have_cython:
+        sources = ['numcodecs/compat_ext.pyx']
+    else:
+        sources = ['numcodecs/compat_ext.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.compat_ext', sources=sources),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
 if sys.platform == 'win32':
     ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
                   IOError, ValueError)
@@ -150,7 +253,7 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = blosc_extension()
+        ext_modules = blosc_extension() + zstd_extension() + lz4_extension() + compat_extension()
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []

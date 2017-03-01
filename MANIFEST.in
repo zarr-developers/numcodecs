@@ -1,4 +1,6 @@
 recursive-include c-blosc *
 recursive-include numcodecs *.pyx
+recursive-include numcodecs *.pxd
 recursive-include numcodecs *.c
+recursive-include numcodecs *.h
 include cpuinfo.py

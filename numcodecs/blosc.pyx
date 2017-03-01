@@ -8,14 +8,12 @@ import threading
 import os
 
 
-# noinspection PyUnresolvedReferences
-from cpython cimport array, PyObject
-import array
-from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release, PyBUF_ANY_CONTIGUOUS, \
-    PyBUF_WRITEABLE
+from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
+from numcodecs.compat_ext cimport Buffer
+from numcodecs.compat_ext import Buffer
 from numcodecs.compat import PY2, text_type
 from numcodecs.abc import Codec
 
@@ -98,37 +96,6 @@ def set_nthreads(int nthreads):
     return blosc_set_nthreads(nthreads)
 
 
-cdef class MyBuffer:
-    """Compatibility class to work around fact that array.array does not support new-style buffer
-    interface in PY2."""
-
-    cdef:
-        char *ptr
-        Py_buffer buffer
-        size_t nbytes
-        size_t itemsize
-        array.array arr
-        bint new_buffer
-
-    def __cinit__(self, obj, flags):
-        if PY2 and isinstance(obj, array.array):
-            self.new_buffer = False
-            self.arr = obj
-            self.ptr = <char *> self.arr.data.as_voidptr
-            self.itemsize = self.arr.itemsize
-            self.nbytes = self.arr.buffer_info()[1] * self.itemsize
-        else:
-            self.new_buffer = True
-            PyObject_GetBuffer(obj, &(self.buffer), flags)
-            self.ptr = <char *> self.buffer.buf
-            self.itemsize = self.buffer.itemsize
-            self.nbytes = self.buffer.len
-
-    def release(self):
-        if self.new_buffer:
-            PyBuffer_Release(&(self.buffer))
-
-
 def cbuffer_sizes(source):
     """Return information about a compressed buffer, namely the number of uncompressed bytes (
     `nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which is used
@@ -142,11 +109,11 @@ def cbuffer_sizes(source):
 
     """
     cdef:
-        MyBuffer buffer
+        Buffer buffer
         size_t nbytes, cbytes, blocksize
 
     # obtain buffer
-    buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
     blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)
@@ -176,7 +143,7 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
 
     Returns
     -------
-    dest : array
+    dest : bytes
         Compressed data.
 
     """
@@ -184,12 +151,12 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     cdef:
         char *source_ptr
         char *dest_ptr
-        MyBuffer source_buffer
+        Buffer source_buffer
         size_t nbytes, cbytes, itemsize
         bytes dest
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
     itemsize = source_buffer.itemsize
@@ -252,7 +219,7 @@ def decompress(source, dest=None):
 
     Returns
     -------
-    dest : array-like
+    dest : bytes
         Object containing decompressed data.
 
     """
@@ -260,12 +227,12 @@ def decompress(source, dest=None):
         int ret
         char *source_ptr
         char *dest_ptr
-        MyBuffer source_buffer
-        MyBuffer dest_buffer = None
+        Buffer source_buffer
+        Buffer dest_buffer = None
         size_t nbytes, cbytes, blocksize
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
 
     # determine buffer size
@@ -278,15 +245,15 @@ def decompress(source, dest=None):
         dest_ptr = PyBytes_AS_STRING(dest)
         dest_nbytes = nbytes
     else:
-        dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+        dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
         dest_ptr = dest_buffer.ptr
         dest_nbytes = dest_buffer.nbytes
 
     try:
 
         # guard condition
-        if dest_nbytes != nbytes:
-            raise ValueError('destination buffer has wrong size; expected %s, '
+        if dest_nbytes < nbytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nbytes, dest_nbytes))
 
         # perform decompression
@@ -357,6 +324,10 @@ class Blosc(Codec):
     blocksize : int
         The requested size of the compressed blocks.  If 0 (default), an automatic blocksize will
         be used.
+
+    See Also
+    --------
+    numcodecs.zstd.Zstd, numcodecs.lz4.LZ4
 
     """
 

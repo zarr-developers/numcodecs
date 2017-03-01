@@ -39,14 +39,28 @@ except ImportError:  # pragma: no cover
     pass
 
 try:
-    from numcodecs import blosc as _blosc
+    from numcodecs import blosc
     from numcodecs.blosc import Blosc
     register_codec(Blosc)
     # initialize blosc
     ncores = multiprocessing.cpu_count()
-    _blosc.init()
-    _blosc.set_nthreads(min(8, ncores))
-    atexit.register(_blosc.destroy)
+    blosc.init()
+    blosc.set_nthreads(min(8, ncores))
+    atexit.register(blosc.destroy)
+except ImportError:  # pragma: no cover
+    pass
+
+try:
+    from numcodecs import zstd
+    from numcodecs.zstd import Zstd
+    register_codec(Zstd)
+except ImportError:  # pragma: no cover
+    pass
+
+try:
+    from numcodecs import lz4
+    from numcodecs.lz4 import LZ4
+    register_codec(LZ4)
 except ImportError:  # pragma: no cover
     pass
 
