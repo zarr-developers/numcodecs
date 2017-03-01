@@ -61,6 +61,7 @@ Contents
     packbits
     categorize
     checksum32
+    astype
     pickles
     msgpacks
     release
