@@ -6,6 +6,8 @@ Release notes
 0.1.0
 -----
 
+TODO
+
 * Two new compressor codecs :class:`numcodecs.zstd.Zstd` and :class:`numcodecs.lz4.LZ4`
   have been added (`#3 <https://github.com/alimanfoo/numcodecs/issues/3>`_,
   `#22 <https://github.com/alimanfoo/numcodecs/issues/22>`_). These provide direct support for
