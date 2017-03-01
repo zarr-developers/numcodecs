@@ -1,6 +1,16 @@
 Release notes
 =============
 
+.. _release_0.1.1:
+
+0.1.1
+-----
+
+This release includes a small modification to the setup.py script to provide greater control over
+how compiler options for different instruction sets are configured
+(`#24 <https://github.com/alimanfoo/numcodecs/issues/24>`_,
+`#26 <https://github.com/alimanfoo/numcodecs/issues/26>`_).
+
 .. _release_0.1.0:
 
 0.1.0
