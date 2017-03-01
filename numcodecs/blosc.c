@@ -25,10 +25,10 @@
             "c-blosc/blosc/blosc.h"
         ],
         "extra_compile_args": [
-            "-DSHUFFLE_SSE2_ENABLED",
             "-msse2",
-            "-DSHUFFLE_AVX2_ENABLED",
-            "-mavx2"
+            "-mavx2",
+            "-DSHUFFLE_SSE2_ENABLED",
+            "-DSHUFFLE_AVX2_ENABLED"
         ],
         "include_dirs": [
             "c-blosc/blosc",

@@ -13,6 +13,34 @@ from distutils.errors import CCompilerError, DistutilsExecError, \
 PY2 = sys.version_info[0] == 2
 
 
+# determine CPU support for SSE2 and AVX2
+cpu_info = cpuinfo.get_cpu_info()
+have_sse2 = 'sse2' in cpu_info['flags']
+have_avx2 = 'avx2' in cpu_info['flags']
+disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
+disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
+
+
+# setup common compile arguments
+have_cflags = 'CFLAGS' in os.environ
+base_compile_args = list()
+if have_cflags:
+    # respect compiler options set by user
+    pass
+elif os.name == 'posix':
+    if disable_sse2:
+        base_compile_args.append('-mno-sse2')
+    elif have_sse2:
+        base_compile_args.append('-msse2')
+    if disable_avx2:
+        base_compile_args.append('-mno-avx2')
+    elif have_avx2:
+        base_compile_args.append('-mavx2')
+# workaround lack of support for "inline" in MSVC when building for Python 2.7 64-bit
+if PY2 and os.name == 'nt':
+    base_compile_args.append('-Dinline=__inline')
+
+
 try:
     from Cython.Build import cythonize
 except ImportError:
@@ -34,15 +62,15 @@ def error(*msg):
 def blosc_extension():
     info('setting up Blosc extension')
 
-    # setup blosc extension
-    blosc_sources = []
-    extra_compile_args = []
-    include_dirs = []
+    extra_compile_args = list(base_compile_args)
     define_macros = []
 
-    # generic setup
-    blosc_sources += [f for f in glob('c-blosc/blosc/*.c')
-                      if 'avx2' not in f and 'sse2' not in f]
+    # setup blosc sources
+    blosc_sources = [f for f in glob('c-blosc/blosc/*.c')
+                     if 'avx2' not in f and 'sse2' not in f]
+    include_dirs = [os.path.join('c-blosc', 'blosc')]
+
+    # add internal complibs
     blosc_sources += glob('c-blosc/internal-complibs/lz4*/*.c')
     blosc_sources += glob('c-blosc/internal-complibs/snappy*/*.cc')
     blosc_sources += glob('c-blosc/internal-complibs/zlib*/*.c')
@@ -50,7 +78,6 @@ def blosc_extension():
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
-    include_dirs += [os.path.join('c-blosc', 'blosc')]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*')
                      if os.path.isdir(d)]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*')
@@ -61,33 +88,25 @@ def blosc_extension():
                       ('HAVE_ZSTD', 1)]
     # define_macros += [('CYTHON_TRACE', '1')]
 
-    # determine CPU support for SSE2 and AVX2
-    cpu_info = cpuinfo.get_cpu_info()
-
     # SSE2
-    if 'sse2' in cpu_info['flags'] and 'DISABLE_NUMCODECS_SSE2' not in os.environ:
-        info('building with SSE2 support')
+    if have_sse2 and not disable_sse2:
+        info('compiling Blosc extension with SSE2 support')
         extra_compile_args.append('-DSHUFFLE_SSE2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'sse2' in f]
-        if os.name == 'posix':
-            extra_compile_args.append('-msse2')
-        elif os.name == 'nt':
+        if os.name == 'nt':
             define_macros += [('__SSE2__', 1)]
+    else:
+        info('compiling Blosc extension without SSE2 support')
 
     # AVX2
-    if 'avx2' in cpu_info['flags'] and 'DISABLE_NUMCODECS_AVX2' not in os.environ:
-        info('building with AVX2 support')
+    if have_avx2 and not disable_avx2:
+        info('compiling Blosc extension with AVX2 support')
         extra_compile_args.append('-DSHUFFLE_AVX2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'avx2' in f]
-        if os.name == 'posix':
-            extra_compile_args.append('-mavx2')
-        elif os.name == 'nt':
+        if os.name == 'nt':
             define_macros += [('__AVX2__', 1)]
-
-    # workaround lack of support for "inline" in MSVC when building for Python
-    # 2.7 64-bit
-    if PY2 and os.name == 'nt':
-        extra_compile_args.append('-Dinline=__inline')
+    else:
+        info('compiling Blosc extension without AVX2 support')
 
     if have_cython:
         sources = ['numcodecs/blosc.pyx']
@@ -114,7 +133,7 @@ def zstd_extension():
     info('setting up Zstandard extension')
 
     zstd_sources = []
-    extra_compile_args = []
+    extra_compile_args = list(base_compile_args)
     include_dirs = []
     define_macros = []
 
@@ -123,17 +142,11 @@ def zstd_extension():
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
-
     include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*')
                      if os.path.isdir(d)]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*/*')
                      if os.path.isdir(d)]
     # define_macros += [('CYTHON_TRACE', '1')]
-
-    # workaround lack of support for "inline" in MSVC when building for Python
-    # 2.7 64-bit
-    if PY2 and os.name == 'nt':
-        extra_compile_args.append('-Dinline=__inline')
 
     if have_cython:
         sources = ['numcodecs/zstd.pyx']
@@ -159,7 +172,7 @@ def zstd_extension():
 def lz4_extension():
     info('setting up LZ4 extension')
 
-    extra_compile_args = []
+    extra_compile_args = list(base_compile_args)
     define_macros = []
 
     # setup sources - use LZ4 bundled in blosc
@@ -167,11 +180,6 @@ def lz4_extension():
     include_dirs = [d for d in glob('c-blosc/internal-complibs/lz4*') if os.path.isdir(d)]
     include_dirs += ['numcodecs']
     # define_macros += [('CYTHON_TRACE', '1')]
-
-    # workaround lack of support for "inline" in MSVC when building for Python
-    # 2.7 64-bit
-    if PY2 and os.name == 'nt':
-        extra_compile_args.append('-Dinline=__inline')
 
     if have_cython:
         sources = ['numcodecs/lz4.pyx']
@@ -197,6 +205,8 @@ def lz4_extension():
 def compat_extension():
     info('setting up compat extension')
 
+    extra_compile_args = list(base_compile_args)
+
     if have_cython:
         sources = ['numcodecs/compat_ext.pyx']
     else:
@@ -204,7 +214,9 @@ def compat_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.compat_ext', sources=sources),
+        Extension('numcodecs.compat_ext',
+                  sources=sources,
+                  extra_compile_args=extra_compile_args),
     ]
 
     if have_cython:
