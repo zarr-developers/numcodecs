@@ -6,14 +6,12 @@
 from __future__ import absolute_import, print_function, division
 
 
-# noinspection PyUnresolvedReferences
-from cpython cimport array, PyObject
-import array
-from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release, PyBUF_ANY_CONTIGUOUS, \
-    PyBUF_WRITEABLE
+from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
+from numcodecs.compat_ext cimport MyBuffer
+from numcodecs.compat_ext import MyBuffer
 from numcodecs.compat import PY2
 from numcodecs.abc import Codec
 
@@ -51,37 +49,6 @@ __version__ = VERSION_STRING
 DEFAULT_ACCELERATION = 1
 
 
-cdef class MyBuffer:
-    """Compatibility class to work around fact that array.array does not support new-style buffer
-    interface in PY2."""
-
-    cdef:
-        char *ptr
-        Py_buffer buffer
-        size_t nbytes
-        size_t itemsize
-        array.array arr
-        bint new_buffer
-
-    def __cinit__(self, obj, flags):
-        if PY2 and isinstance(obj, array.array):
-            self.new_buffer = False
-            self.arr = obj
-            self.ptr = <char *> self.arr.data.as_voidptr
-            self.itemsize = self.arr.itemsize
-            self.nbytes = self.arr.buffer_info()[1] * self.itemsize
-        else:
-            self.new_buffer = True
-            PyObject_GetBuffer(obj, &(self.buffer), flags)
-            self.ptr = <char *> self.buffer.buf
-            self.itemsize = self.buffer.itemsize
-            self.nbytes = self.buffer.len
-
-    def release(self):
-        if self.new_buffer:
-            PyBuffer_Release(&(self.buffer))
-
-
 def compress(source, int acceleration=DEFAULT_ACCELERATION):
     """Compress data.
 
@@ -98,6 +65,12 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
     -------
     dest : bytes
         Compressed data.
+
+    Notes
+    -----
+    The compressed output includes a 4-byte header storing the original size of the decompressed
+    data as a little-endian 32-bit integer.
+
     """
 
     cdef:
@@ -229,6 +202,10 @@ class LZ4(Codec):
     acceleration : int
         Acceleration level. The larger the acceleration value, the faster the algorithm, but also
         the lesser the compression.
+
+    See Also
+    --------
+    numcodecs.zstd.Zstd, numcodecs.blosc.Blosc
 
     """
 

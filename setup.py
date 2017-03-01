@@ -194,6 +194,25 @@ def lz4_extension():
     return extensions
 
 
+def compat_extension():
+    info('setting up compat extension')
+
+    if have_cython:
+        sources = ['numcodecs/compat_ext.pyx']
+    else:
+        sources = ['numcodecs/compat_ext.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.compat_ext', sources=sources),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
 if sys.platform == 'win32':
     ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
                   IOError, ValueError)
@@ -234,7 +253,7 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = blosc_extension() + zstd_extension() + lz4_extension()
+        ext_modules = blosc_extension() + zstd_extension() + lz4_extension() + compat_extension()
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
