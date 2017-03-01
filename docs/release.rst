@@ -53,6 +53,13 @@ Other new features:
   help with understanding the shuffle option
   (`#4 <https://github.com/alimanfoo/numcodecs/issues/4>`_,
   `#19 <https://github.com/alimanfoo/numcodecs/issues/19>`_).
+* Options have been added to manually control how the C extensions are built regardless of the
+  architecture of the system on which the build is run. To disable support for AVX2 set the
+  environment variable "DISABLE_NUMCODECS_AVX2". To disable support for SSE2 set the environment
+  variable "DISABLE_NUMCODECS_SSE2". To disable C extensions altogether set the environment variable
+  "DISABLE_NUMCODECS_CEXT"
+  (`#24 <https://github.com/alimanfoo/numcodecs/issues/24>`_,
+  `#26 <https://github.com/alimanfoo/numcodecs/issues/26>`_).
 
 Maintenance work:
 
