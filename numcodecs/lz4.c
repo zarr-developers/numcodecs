@@ -1296,7 +1296,7 @@ static const char __pyx_k_LZ4_decompression_error_invalid[] = "LZ4 decompression
 static const char __pyx_k_home_aliman_src_github_alimanfo[] = "/home/aliman/src/github/alimanfoo/numcodecs/numcodecs/lz4.pyx";
 static const char __pyx_k_Codec_providing_compression_usin[] = "Codec providing compression using LZ4.\n\n    Parameters\n    ----------\n    acceleration : int\n        Acceleration level. The larger the acceleration value, the faster the algorithm, but also\n        the lesser the compression.\n\n    See Also\n    --------\n    numcodecs.zstd.Zstd, numcodecs.blosc.Blosc\n\n    ";
 static const char __pyx_k_LZ4_decompression_error_expected[] = "LZ4 decompression error: expected to decompress %s, got %s";
-static const char __pyx_k_destination_buffer_has_wrong_siz[] = "destination buffer has wrong size; expected %s, got %s";
+static const char __pyx_k_destination_buffer_too_small_exp[] = "destination buffer too small; expected at least %s, got %s";
 static PyObject *__pyx_n_s_Codec;
 static PyObject *__pyx_kp_s_Codec_providing_compression_usin;
 static PyObject *__pyx_n_s_DEFAULT_ACCELERATION;
@@ -1330,7 +1330,7 @@ static PyObject *__pyx_n_s_dest_buffer;
 static PyObject *__pyx_n_s_dest_ptr;
 static PyObject *__pyx_n_s_dest_size;
 static PyObject *__pyx_n_s_dest_start;
-static PyObject *__pyx_kp_s_destination_buffer_has_wrong_siz;
+static PyObject *__pyx_kp_s_destination_buffer_too_small_exp;
 static PyObject *__pyx_n_s_doc;
 static PyObject *__pyx_n_s_encode;
 static PyObject *__pyx_kp_s_home_aliman_src_github_alimanfo;
@@ -2170,7 +2170,7 @@ static PyObject *__pyx_pf_9numcodecs_3lz4_2decompress(CYTHON_UNUSED PyObject *__
  *         else:
  *             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes != dest_size:
+ *             if dest_buffer.nbytes < dest_size:
  */
     /*else*/ {
       __pyx_t_1 = __Pyx_PyInt_From_int((PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L4_error)
@@ -2193,8 +2193,8 @@ static PyObject *__pyx_pf_9numcodecs_3lz4_2decompress(CYTHON_UNUSED PyObject *__
  *         else:
  *             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr             # <<<<<<<<<<<<<<
- *             if dest_buffer.nbytes != dest_size:
- *                 raise ValueError('destination buffer has wrong size; expected %s, '
+ *             if dest_buffer.nbytes < dest_size:
+ *                 raise ValueError('destination buffer too small; expected at least %s, '
  */
       __pyx_t_3 = __pyx_v_dest_buffer->ptr;
       __pyx_v_dest_ptr = __pyx_t_3;
@@ -2202,16 +2202,16 @@ static PyObject *__pyx_pf_9numcodecs_3lz4_2decompress(CYTHON_UNUSED PyObject *__
       /* "numcodecs/lz4.pyx":171
  *             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes != dest_size:             # <<<<<<<<<<<<<<
- *                 raise ValueError('destination buffer has wrong size; expected %s, '
+ *             if dest_buffer.nbytes < dest_size:             # <<<<<<<<<<<<<<
+ *                 raise ValueError('destination buffer too small; expected at least %s, '
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  */
-      __pyx_t_6 = ((__pyx_v_dest_buffer->nbytes != __pyx_v_dest_size) != 0);
+      __pyx_t_6 = ((__pyx_v_dest_buffer->nbytes < __pyx_v_dest_size) != 0);
       if (__pyx_t_6) {
 
         /* "numcodecs/lz4.pyx":173
- *             if dest_buffer.nbytes != dest_size:
- *                 raise ValueError('destination buffer has wrong size; expected %s, '
+ *             if dest_buffer.nbytes < dest_size:
+ *                 raise ValueError('destination buffer too small; expected at least %s, '
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))             # <<<<<<<<<<<<<<
  * 
  *         # perform decompression
@@ -2228,14 +2228,14 @@ static PyObject *__pyx_pf_9numcodecs_3lz4_2decompress(CYTHON_UNUSED PyObject *__
         PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_2);
         __pyx_t_1 = 0;
         __pyx_t_2 = 0;
-        __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L4_error)
+        __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_too_small_exp, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L4_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
         /* "numcodecs/lz4.pyx":172
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes != dest_size:
- *                 raise ValueError('destination buffer has wrong size; expected %s, '             # <<<<<<<<<<<<<<
+ *             if dest_buffer.nbytes < dest_size:
+ *                 raise ValueError('destination buffer too small; expected at least %s, '             # <<<<<<<<<<<<<<
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  * 
  */
@@ -2254,8 +2254,8 @@ static PyObject *__pyx_pf_9numcodecs_3lz4_2decompress(CYTHON_UNUSED PyObject *__
         /* "numcodecs/lz4.pyx":171
  *             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes != dest_size:             # <<<<<<<<<<<<<<
- *                 raise ValueError('destination buffer has wrong size; expected %s, '
+ *             if dest_buffer.nbytes < dest_size:             # <<<<<<<<<<<<<<
+ *                 raise ValueError('destination buffer too small; expected at least %s, '
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  */
       }
@@ -3934,7 +3934,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dest_ptr, __pyx_k_dest_ptr, sizeof(__pyx_k_dest_ptr), 0, 0, 1, 1},
   {&__pyx_n_s_dest_size, __pyx_k_dest_size, sizeof(__pyx_k_dest_size), 0, 0, 1, 1},
   {&__pyx_n_s_dest_start, __pyx_k_dest_start, sizeof(__pyx_k_dest_start), 0, 0, 1, 1},
-  {&__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_k_destination_buffer_has_wrong_siz, sizeof(__pyx_k_destination_buffer_has_wrong_siz), 0, 0, 1, 0},
+  {&__pyx_kp_s_destination_buffer_too_small_exp, __pyx_k_destination_buffer_too_small_exp, sizeof(__pyx_k_destination_buffer_too_small_exp), 0, 0, 1, 0},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
   {&__pyx_kp_s_home_aliman_src_github_alimanfo, __pyx_k_home_aliman_src_github_alimanfo, sizeof(__pyx_k_home_aliman_src_github_alimanfo), 0, 0, 1, 0},

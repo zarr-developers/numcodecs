@@ -1355,7 +1355,7 @@ static const char __pyx_k_compressor_not_supported_r[] = "compressor not support
 static const char __pyx_k_home_aliman_src_github_alimanfo[] = "/home/aliman/src/github/alimanfoo/numcodecs/numcodecs/blosc.pyx";
 static const char __pyx_k_s_cname_r_clevel_r_shuffle_s_bl[] = "%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)";
 static const char __pyx_k_Codec_providing_compression_usin[] = "Codec providing compression using the Blosc meta-compressor.\n\n    Parameters\n    ----------\n    cname : string, optional\n        A string naming one of the compression algorithms available within blosc, e.g., 'zstd',\n        'blosclz', 'lz4', 'lz4hc', 'zlib' or 'snappy'.\n    clevel : integer, optional\n        An integer between 0 and 9 specifying the compression level.\n    shuffle : integer, optional\n        Either NOSHUFFLE (0), SHUFFLE (1) or BITSHUFFLE (2).\n    blocksize : int\n        The requested size of the compressed blocks.  If 0 (default), an automatic blocksize will\n        be used.\n\n    See Also\n    --------\n    numcodecs.zstd.Zstd, numcodecs.lz4.LZ4\n\n    ";
-static const char __pyx_k_destination_buffer_has_wrong_siz[] = "destination buffer has wrong size; expected %s, got %s";
+static const char __pyx_k_destination_buffer_too_small_exp[] = "destination buffer too small; expected at least %s, got %s";
 static const char __pyx_k_error_during_blosc_compression_d[] = "error during blosc compression: %d";
 static const char __pyx_k_error_during_blosc_decompression[] = "error during blosc decompression: %d";
 static PyObject *__pyx_n_s_BITSHUFFLE;
@@ -1404,7 +1404,7 @@ static PyObject *__pyx_n_s_dest;
 static PyObject *__pyx_n_s_dest_buffer;
 static PyObject *__pyx_n_s_dest_nbytes;
 static PyObject *__pyx_n_s_dest_ptr;
-static PyObject *__pyx_kp_s_destination_buffer_has_wrong_siz;
+static PyObject *__pyx_kp_s_destination_buffer_too_small_exp;
 static PyObject *__pyx_n_s_destroy;
 static PyObject *__pyx_n_s_doc;
 static PyObject *__pyx_n_s_encode;
@@ -3019,16 +3019,16 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":255
  * 
  *         # guard condition
- *         if dest_nbytes != nbytes:             # <<<<<<<<<<<<<<
- *             raise ValueError('destination buffer has wrong size; expected %s, '
+ *         if dest_nbytes < nbytes:             # <<<<<<<<<<<<<<
+ *             raise ValueError('destination buffer too small; expected at least %s, '
  *                              'got %s' % (nbytes, dest_nbytes))
  */
-    __pyx_t_5 = ((__pyx_v_dest_nbytes != __pyx_v_nbytes) != 0);
+    __pyx_t_5 = ((__pyx_v_dest_nbytes < __pyx_v_nbytes) != 0);
     if (__pyx_t_5) {
 
       /* "numcodecs/blosc.pyx":257
- *         if dest_nbytes != nbytes:
- *             raise ValueError('destination buffer has wrong size; expected %s, '
+ *         if dest_nbytes < nbytes:
+ *             raise ValueError('destination buffer too small; expected at least %s, '
  *                              'got %s' % (nbytes, dest_nbytes))             # <<<<<<<<<<<<<<
  * 
  *         # perform decompression
@@ -3045,14 +3045,14 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_2);
       __pyx_t_1 = 0;
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_destination_buffer_too_small_exp, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
       /* "numcodecs/blosc.pyx":256
  *         # guard condition
- *         if dest_nbytes != nbytes:
- *             raise ValueError('destination buffer has wrong size; expected %s, '             # <<<<<<<<<<<<<<
+ *         if dest_nbytes < nbytes:
+ *             raise ValueError('destination buffer too small; expected at least %s, '             # <<<<<<<<<<<<<<
  *                              'got %s' % (nbytes, dest_nbytes))
  * 
  */
@@ -3071,8 +3071,8 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":255
  * 
  *         # guard condition
- *         if dest_nbytes != nbytes:             # <<<<<<<<<<<<<<
- *             raise ValueError('destination buffer has wrong size; expected %s, '
+ *         if dest_nbytes < nbytes:             # <<<<<<<<<<<<<<
+ *             raise ValueError('destination buffer too small; expected at least %s, '
  *                              'got %s' % (nbytes, dest_nbytes))
  */
     }
@@ -5195,7 +5195,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dest_buffer, __pyx_k_dest_buffer, sizeof(__pyx_k_dest_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_dest_nbytes, __pyx_k_dest_nbytes, sizeof(__pyx_k_dest_nbytes), 0, 0, 1, 1},
   {&__pyx_n_s_dest_ptr, __pyx_k_dest_ptr, sizeof(__pyx_k_dest_ptr), 0, 0, 1, 1},
-  {&__pyx_kp_s_destination_buffer_has_wrong_siz, __pyx_k_destination_buffer_has_wrong_siz, sizeof(__pyx_k_destination_buffer_has_wrong_siz), 0, 0, 1, 0},
+  {&__pyx_kp_s_destination_buffer_too_small_exp, __pyx_k_destination_buffer_too_small_exp, sizeof(__pyx_k_destination_buffer_too_small_exp), 0, 0, 1, 0},
   {&__pyx_n_s_destroy, __pyx_k_destroy, sizeof(__pyx_k_destroy), 0, 0, 1, 1},
   {&__pyx_n_s_doc, __pyx_k_doc, sizeof(__pyx_k_doc), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},

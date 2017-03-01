@@ -168,8 +168,8 @@ def decompress(source, dest=None):
         else:
             dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
             dest_ptr = dest_buffer.ptr
-            if dest_buffer.nbytes != dest_size:
-                raise ValueError('destination buffer has wrong size; expected %s, '
+            if dest_buffer.nbytes < dest_size:
+                raise ValueError('destination buffer too small; expected at least %s, '
                                  'got %s' % (dest_size, dest_buffer.nbytes))
 
         # perform decompression

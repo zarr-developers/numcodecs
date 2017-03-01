@@ -252,8 +252,8 @@ def decompress(source, dest=None):
     try:
 
         # guard condition
-        if dest_nbytes != nbytes:
-            raise ValueError('destination buffer has wrong size; expected %s, '
+        if dest_nbytes < nbytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nbytes, dest_nbytes))
 
         # perform decompression
