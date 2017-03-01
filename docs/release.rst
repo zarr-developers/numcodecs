@@ -9,7 +9,7 @@ Release notes
 This release includes a small modification to the setup.py script to provide greater control over
 how compiler options for different instruction sets are configured
 (`#24 <https://github.com/alimanfoo/numcodecs/issues/24>`_,
-`#26 <https://github.com/alimanfoo/numcodecs/issues/26>`_).
+`#27 <https://github.com/alimanfoo/numcodecs/issues/27>`_).
 
 .. _release_0.1.0:
 
