@@ -62,7 +62,7 @@ def error(*msg):
 def blosc_extension():
     info('setting up Blosc extension')
 
-    extra_compile_args = base_compile_args.copy()
+    extra_compile_args = list(base_compile_args)
     define_macros = []
 
     # setup blosc sources
@@ -133,7 +133,7 @@ def zstd_extension():
     info('setting up Zstandard extension')
 
     zstd_sources = []
-    extra_compile_args = base_compile_args.copy()
+    extra_compile_args = list(base_compile_args)
     include_dirs = []
     define_macros = []
 
@@ -172,7 +172,7 @@ def zstd_extension():
 def lz4_extension():
     info('setting up LZ4 extension')
 
-    extra_compile_args = base_compile_args.copy()
+    extra_compile_args = list(base_compile_args)
     define_macros = []
 
     # setup sources - use LZ4 bundled in blosc
@@ -205,7 +205,7 @@ def lz4_extension():
 def compat_extension():
     info('setting up compat extension')
 
-    extra_compile_args = base_compile_args.copy()
+    extra_compile_args = list(base_compile_args)
 
     if have_cython:
         sources = ['numcodecs/compat_ext.pyx']
