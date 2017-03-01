@@ -30,6 +30,14 @@ Intel Haswell, Broadwell or Skylake) then installing via pip is preferable,
 because this will compile the Blosc library from source with optimisations
 for AVX2.
 
+Note that if you compile the C extensions on a machine with AVX2 support
+you probably then cannot use the same binaries on a machine without AVX2.
+To disable compilation with AVX2 support regardless of the machine
+architecture:
+
+    $ export DISABLE_NUMCODECS_AVX2=
+    $ pip install numcodecs
+
 To work with Numcodecs source code in development, install from GitHub::
 
     $ git clone --recursive https://github.com/alimanfoo/numcodecs.git

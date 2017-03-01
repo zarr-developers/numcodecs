@@ -65,8 +65,8 @@ def blosc_extension():
     cpu_info = cpuinfo.get_cpu_info()
 
     # SSE2
-    if 'sse2' in cpu_info['flags']:
-        info('SSE2 detected')
+    if 'sse2' in cpu_info['flags'] and 'DISABLE_NUMCODECS_SSE2' not in os.environ:
+        info('building with SSE2 support')
         extra_compile_args.append('-DSHUFFLE_SSE2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'sse2' in f]
         if os.name == 'posix':
@@ -75,8 +75,8 @@ def blosc_extension():
             define_macros += [('__SSE2__', 1)]
 
     # AVX2
-    if 'avx2' in cpu_info['flags']:
-        info('AVX2 detected')
+    if 'avx2' in cpu_info['flags'] and 'DISABLE_NUMCODECS_AVX2' not in os.environ:
+        info('building with AVX2 support')
         extra_compile_args.append('-DSHUFFLE_AVX2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'avx2' in f]
         if os.name == 'posix':
@@ -308,12 +308,13 @@ def run_setup(with_extensions):
 
 if __name__ == '__main__':
     is_pypy = hasattr(sys, 'pypy_translation_info')
+    with_extensions = not is_pypy and 'DISABLE_NUMCODECS_CEXT' not in os.environ
 
     try:
-        run_setup(not is_pypy)
+        run_setup(with_extensions)
     except BuildFailed:
         error('*' * 75)
-        error('compilation of the Blosc C extension failed.')
+        error('compilation of C extensions failed.')
         error('retrying installation without C extensions...')
         error('*' * 75)
         run_setup(False)
