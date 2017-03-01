@@ -10,8 +10,8 @@ from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
-from numcodecs.compat_ext cimport MyBuffer
-from numcodecs.compat_ext import MyBuffer
+from numcodecs.compat_ext cimport Buffer
+from numcodecs.compat_ext import Buffer
 from numcodecs.compat import PY2
 from numcodecs.abc import Codec
 
@@ -77,7 +77,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         char *source_ptr
         char *dest_ptr
         char *dest_start
-        MyBuffer source_buffer
+        Buffer source_buffer
         int source_size, dest_size, compressed_size
         bytes dest
 
@@ -86,7 +86,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         acceleration = DEFAULT_ACCELERATION
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     source_size = source_buffer.nbytes
 
@@ -140,12 +140,12 @@ def decompress(source, dest=None):
         char *source_ptr
         char *source_start
         char *dest_ptr
-        MyBuffer source_buffer
-        MyBuffer dest_buffer = None
+        Buffer source_buffer
+        Buffer dest_buffer = None
         int source_size, dest_size, decompressed_size
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     source_size = source_buffer.nbytes
 
@@ -166,7 +166,7 @@ def decompress(source, dest=None):
             dest = PyBytes_FromStringAndSize(NULL, dest_size)
             dest_ptr = PyBytes_AS_STRING(dest)
         else:
-            dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+            dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
             dest_ptr = dest_buffer.ptr
             if dest_buffer.nbytes < dest_size:
                 raise ValueError('destination buffer too small; expected at least %s, '

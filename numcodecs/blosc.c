@@ -690,16 +690,16 @@ static const char *__pyx_f[] = {
 struct arrayobject;
 typedef struct arrayobject arrayobject;
 #endif
-struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer;
+struct __pyx_obj_9numcodecs_10compat_ext_Buffer;
 
 /* "numcodecs/compat_ext.pxd":5
  * 
  * 
- * cdef class MyBuffer:             # <<<<<<<<<<<<<<
+ * cdef class Buffer:             # <<<<<<<<<<<<<<
  *     cdef:
  *         char *ptr
  */
-struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer {
+struct __pyx_obj_9numcodecs_10compat_ext_Buffer {
   PyObject_HEAD
   char *ptr;
   Py_buffer buffer;
@@ -1251,7 +1251,7 @@ static PyTypeObject *__pyx_ptype_7cpython_5array_array = 0;
 static CYTHON_INLINE int __pyx_f_7cpython_5array_extend_buffer(arrayobject *, char *, Py_ssize_t); /*proto*/
 
 /* Module declarations from 'numcodecs.compat_ext' */
-static PyTypeObject *__pyx_ptype_9numcodecs_10compat_ext_MyBuffer = 0;
+static PyTypeObject *__pyx_ptype_9numcodecs_10compat_ext_Buffer = 0;
 
 /* Module declarations from 'numcodecs.blosc' */
 #define __Pyx_MODULE_NAME "numcodecs.blosc"
@@ -1283,6 +1283,7 @@ static const char __pyx_k_ascii[] = "ascii";
 static const char __pyx_k_blosc[] = "blosc";
 static const char __pyx_k_cname[] = "cname";
 static const char __pyx_k_split[] = "split";
+static const char __pyx_k_Buffer[] = "Buffer";
 static const char __pyx_k_buffer[] = "buffer";
 static const char __pyx_k_cbytes[] = "cbytes";
 static const char __pyx_k_clevel[] = "clevel";
@@ -1301,7 +1302,6 @@ static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_release[] = "release";
 static const char __pyx_k_shuffle[] = "shuffle";
 static const char __pyx_k_version[] = "__version__";
-static const char __pyx_k_MyBuffer[] = "MyBuffer";
 static const char __pyx_k_codec_id[] = "codec_id";
 static const char __pyx_k_compress[] = "compress";
 static const char __pyx_k_dest_ptr[] = "dest_ptr";
@@ -1365,6 +1365,7 @@ static PyObject *__pyx_n_s_Blosc___init;
 static PyObject *__pyx_n_s_Blosc___repr;
 static PyObject *__pyx_n_s_Blosc_decode;
 static PyObject *__pyx_n_s_Blosc_encode;
+static PyObject *__pyx_n_s_Buffer;
 static PyObject *__pyx_n_s_Codec;
 static PyObject *__pyx_kp_s_Codec_providing_compression_usin;
 static PyObject *__pyx_n_s_MAX_BUFFERSIZE;
@@ -1373,7 +1374,6 @@ static PyObject *__pyx_n_s_MAX_THREADS;
 static PyObject *__pyx_n_s_MAX_TYPESIZE;
 static PyObject *__pyx_n_s_MainThread;
 static PyObject *__pyx_n_s_MemoryError;
-static PyObject *__pyx_n_s_MyBuffer;
 static PyObject *__pyx_n_s_NOSHUFFLE;
 static PyObject *__pyx_n_s_PY2;
 static PyObject *__pyx_n_s_RuntimeError;
@@ -2000,7 +2000,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_13cbuffer_sizes(PyObject *__pyx_self
 }
 
 static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source) {
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_buffer = 0;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_buffer = 0;
   size_t __pyx_v_nbytes;
   size_t __pyx_v_cbytes;
   size_t __pyx_v_blocksize;
@@ -2015,7 +2015,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":116
  * 
  *     # obtain buffer
- *     buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
+ *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
  */
@@ -2029,10 +2029,10 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_Buffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_t_1);
+  __pyx_v_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "numcodecs/blosc.pyx":119
@@ -2229,7 +2229,7 @@ static PyObject *__pyx_pw_9numcodecs_5blosc_15compress(PyObject *__pyx_self, PyO
 static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_source, char *__pyx_v_cname, int __pyx_v_clevel, int __pyx_v_shuffle, int __pyx_v_blocksize) {
   char *__pyx_v_source_ptr;
   char *__pyx_v_dest_ptr;
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_source_buffer = 0;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_source_buffer = 0;
   size_t __pyx_v_nbytes;
   size_t __pyx_v_cbytes;
   size_t __pyx_v_itemsize;
@@ -2257,7 +2257,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":159
  * 
  *     # setup source buffer
- *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes
  */
@@ -2271,15 +2271,15 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_Buffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_t_1);
+  __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "numcodecs/blosc.pyx":160
  *     # setup source buffer
- *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  *     nbytes = source_buffer.nbytes
  *     itemsize = source_buffer.itemsize
@@ -2288,7 +2288,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14compress(CYTHON_UNUSED PyObject *_
   __pyx_v_source_ptr = __pyx_t_3;
 
   /* "numcodecs/blosc.pyx":161
- *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes             # <<<<<<<<<<<<<<
  *     itemsize = source_buffer.itemsize
@@ -2831,8 +2831,8 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   int __pyx_v_ret;
   char *__pyx_v_source_ptr;
   char *__pyx_v_dest_ptr;
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_source_buffer = 0;
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_dest_buffer = 0;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_source_buffer = 0;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_dest_buffer = 0;
   size_t __pyx_v_nbytes;
   size_t __pyx_v_cbytes;
   size_t __pyx_v_blocksize;
@@ -2860,18 +2860,18 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
 
   /* "numcodecs/blosc.pyx":231
  *         char *dest_ptr
- *         MyBuffer source_buffer
- *         MyBuffer dest_buffer = None             # <<<<<<<<<<<<<<
+ *         Buffer source_buffer
+ *         Buffer dest_buffer = None             # <<<<<<<<<<<<<<
  *         size_t nbytes, cbytes, blocksize
  * 
  */
   __Pyx_INCREF(Py_None);
-  __pyx_v_dest_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)Py_None);
+  __pyx_v_dest_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)Py_None);
 
   /* "numcodecs/blosc.pyx":235
  * 
  *     # setup source buffer
- *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  * 
  */
@@ -2885,15 +2885,15 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_Buffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_t_1);
+  __pyx_v_source_buffer = ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "numcodecs/blosc.pyx":236
  *     # setup source buffer
- *     source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
@@ -2947,7 +2947,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
  *         dest_ptr = PyBytes_AS_STRING(dest)
  *         dest_nbytes = nbytes             # <<<<<<<<<<<<<<
  *     else:
- *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+ *         dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  */
     __pyx_v_dest_nbytes = __pyx_v_nbytes;
 
@@ -2964,7 +2964,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":248
  *         dest_nbytes = nbytes
  *     else:
- *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
+ *         dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
  *         dest_ptr = dest_buffer.ptr
  *         dest_nbytes = dest_buffer.nbytes
  */
@@ -2979,15 +2979,15 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_MyBuffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 248, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_9numcodecs_10compat_ext_Buffer), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 248, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF_SET(__pyx_v_dest_buffer, ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_t_1));
+    __Pyx_DECREF_SET(__pyx_v_dest_buffer, ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_t_1));
     __pyx_t_1 = 0;
 
     /* "numcodecs/blosc.pyx":249
  *     else:
- *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+ *         dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr             # <<<<<<<<<<<<<<
  *         dest_nbytes = dest_buffer.nbytes
  * 
@@ -2996,7 +2996,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16decompress(CYTHON_UNUSED PyObject 
     __pyx_v_dest_ptr = __pyx_t_3;
 
     /* "numcodecs/blosc.pyx":250
- *         dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+ *         dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr
  *         dest_nbytes = dest_buffer.nbytes             # <<<<<<<<<<<<<<
  * 
@@ -5156,6 +5156,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_Blosc___repr, __pyx_k_Blosc___repr, sizeof(__pyx_k_Blosc___repr), 0, 0, 1, 1},
   {&__pyx_n_s_Blosc_decode, __pyx_k_Blosc_decode, sizeof(__pyx_k_Blosc_decode), 0, 0, 1, 1},
   {&__pyx_n_s_Blosc_encode, __pyx_k_Blosc_encode, sizeof(__pyx_k_Blosc_encode), 0, 0, 1, 1},
+  {&__pyx_n_s_Buffer, __pyx_k_Buffer, sizeof(__pyx_k_Buffer), 0, 0, 1, 1},
   {&__pyx_n_s_Codec, __pyx_k_Codec, sizeof(__pyx_k_Codec), 0, 0, 1, 1},
   {&__pyx_kp_s_Codec_providing_compression_usin, __pyx_k_Codec_providing_compression_usin, sizeof(__pyx_k_Codec_providing_compression_usin), 0, 0, 1, 0},
   {&__pyx_n_s_MAX_BUFFERSIZE, __pyx_k_MAX_BUFFERSIZE, sizeof(__pyx_k_MAX_BUFFERSIZE), 0, 0, 1, 1},
@@ -5164,7 +5165,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_MAX_TYPESIZE, __pyx_k_MAX_TYPESIZE, sizeof(__pyx_k_MAX_TYPESIZE), 0, 0, 1, 1},
   {&__pyx_n_s_MainThread, __pyx_k_MainThread, sizeof(__pyx_k_MainThread), 0, 0, 1, 1},
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
-  {&__pyx_n_s_MyBuffer, __pyx_k_MyBuffer, sizeof(__pyx_k_MyBuffer), 0, 0, 1, 1},
   {&__pyx_n_s_NOSHUFFLE, __pyx_k_NOSHUFFLE, sizeof(__pyx_k_NOSHUFFLE), 0, 0, 1, 1},
   {&__pyx_n_s_PY2, __pyx_k_PY2, sizeof(__pyx_k_PY2), 0, 0, 1, 1},
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
@@ -5572,7 +5572,7 @@ PyMODINIT_FUNC PyInit_blosc(void)
   __pyx_ptype_7cpython_4bool_bool = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "bool", sizeof(PyBoolObject), 0); if (unlikely(!__pyx_ptype_7cpython_4bool_bool)) __PYX_ERR(3, 8, __pyx_L1_error)
   __pyx_ptype_7cpython_7complex_complex = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "complex", sizeof(PyComplexObject), 0); if (unlikely(!__pyx_ptype_7cpython_7complex_complex)) __PYX_ERR(4, 15, __pyx_L1_error)
   __pyx_ptype_7cpython_5array_array = __Pyx_ImportType("array", "array", sizeof(arrayobject), 0); if (unlikely(!__pyx_ptype_7cpython_5array_array)) __PYX_ERR(1, 58, __pyx_L1_error)
-  __pyx_ptype_9numcodecs_10compat_ext_MyBuffer = __Pyx_ImportType("numcodecs.compat_ext", "MyBuffer", sizeof(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer), 1); if (unlikely(!__pyx_ptype_9numcodecs_10compat_ext_MyBuffer)) __PYX_ERR(5, 5, __pyx_L1_error)
+  __pyx_ptype_9numcodecs_10compat_ext_Buffer = __Pyx_ImportType("numcodecs.compat_ext", "Buffer", sizeof(struct __pyx_obj_9numcodecs_10compat_ext_Buffer), 1); if (unlikely(!__pyx_ptype_9numcodecs_10compat_ext_Buffer)) __PYX_ERR(5, 5, __pyx_L1_error)
   /*--- Variable import code ---*/
   /*--- Function import code ---*/
   /*--- Execution code ---*/
@@ -5606,24 +5606,24 @@ PyMODINIT_FUNC PyInit_blosc(void)
 
   /* "numcodecs/blosc.pyx":16
  * 
- * from numcodecs.compat_ext cimport MyBuffer
- * from numcodecs.compat_ext import MyBuffer             # <<<<<<<<<<<<<<
+ * from numcodecs.compat_ext cimport Buffer
+ * from numcodecs.compat_ext import Buffer             # <<<<<<<<<<<<<<
  * from numcodecs.compat import PY2, text_type
  * from numcodecs.abc import Codec
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_MyBuffer);
-  __Pyx_GIVEREF(__pyx_n_s_MyBuffer);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_MyBuffer);
+  __Pyx_INCREF(__pyx_n_s_Buffer);
+  __Pyx_GIVEREF(__pyx_n_s_Buffer);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Buffer);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_numcodecs_compat_ext, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "numcodecs/blosc.pyx":17
- * from numcodecs.compat_ext cimport MyBuffer
- * from numcodecs.compat_ext import MyBuffer
+ * from numcodecs.compat_ext cimport Buffer
+ * from numcodecs.compat_ext import Buffer
  * from numcodecs.compat import PY2, text_type             # <<<<<<<<<<<<<<
  * from numcodecs.abc import Codec
  * 
@@ -5650,7 +5650,7 @@ PyMODINIT_FUNC PyInit_blosc(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "numcodecs/blosc.pyx":18
- * from numcodecs.compat_ext import MyBuffer
+ * from numcodecs.compat_ext import Buffer
  * from numcodecs.compat import PY2, text_type
  * from numcodecs.abc import Codec             # <<<<<<<<<<<<<<
  * 

@@ -13,7 +13,7 @@ from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release
 PY2 = sys.version_info[0] == 2
 
 
-cdef class MyBuffer:
+cdef class Buffer:
     """Compatibility class to work around fact that array.array does not support new-style buffer
     interface in PY2."""
 

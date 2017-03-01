@@ -2,7 +2,7 @@ from cpython cimport array
 import array
 
 
-cdef class MyBuffer:
+cdef class Buffer:
     cdef:
         char *ptr
         Py_buffer buffer

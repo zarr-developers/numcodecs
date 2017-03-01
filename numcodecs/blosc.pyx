@@ -12,8 +12,8 @@ from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
-from numcodecs.compat_ext cimport MyBuffer
-from numcodecs.compat_ext import MyBuffer
+from numcodecs.compat_ext cimport Buffer
+from numcodecs.compat_ext import Buffer
 from numcodecs.compat import PY2, text_type
 from numcodecs.abc import Codec
 
@@ -109,11 +109,11 @@ def cbuffer_sizes(source):
 
     """
     cdef:
-        MyBuffer buffer
+        Buffer buffer
         size_t nbytes, cbytes, blocksize
 
     # obtain buffer
-    buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
     blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)
@@ -151,12 +151,12 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     cdef:
         char *source_ptr
         char *dest_ptr
-        MyBuffer source_buffer
+        Buffer source_buffer
         size_t nbytes, cbytes, itemsize
         bytes dest
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
     itemsize = source_buffer.itemsize
@@ -227,12 +227,12 @@ def decompress(source, dest=None):
         int ret
         char *source_ptr
         char *dest_ptr
-        MyBuffer source_buffer
-        MyBuffer dest_buffer = None
+        Buffer source_buffer
+        Buffer dest_buffer = None
         size_t nbytes, cbytes, blocksize
 
     # setup source buffer
-    source_buffer = MyBuffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
 
     # determine buffer size
@@ -245,7 +245,7 @@ def decompress(source, dest=None):
         dest_ptr = PyBytes_AS_STRING(dest)
         dest_nbytes = nbytes
     else:
-        dest_buffer = MyBuffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+        dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
         dest_ptr = dest_buffer.ptr
         dest_nbytes = dest_buffer.nbytes
 

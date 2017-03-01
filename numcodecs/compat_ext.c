@@ -648,16 +648,16 @@ static const char *__pyx_f[] = {
 struct arrayobject;
 typedef struct arrayobject arrayobject;
 #endif
-struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer;
+struct __pyx_obj_9numcodecs_10compat_ext_Buffer;
 
 /* "numcodecs/compat_ext.pxd":5
  * 
  * 
- * cdef class MyBuffer:             # <<<<<<<<<<<<<<
+ * cdef class Buffer:             # <<<<<<<<<<<<<<
  *     cdef:
  *         char *ptr
  */
-struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer {
+struct __pyx_obj_9numcodecs_10compat_ext_Buffer {
   PyObject_HEAD
   char *ptr;
   Py_buffer buffer;
@@ -1096,7 +1096,7 @@ static PyTypeObject *__pyx_ptype_7cpython_5array_array = 0;
 static CYTHON_INLINE int __pyx_f_7cpython_5array_extend_buffer(arrayobject *, char *, Py_ssize_t); /*proto*/
 
 /* Module declarations from 'numcodecs.compat_ext' */
-static PyTypeObject *__pyx_ptype_9numcodecs_10compat_ext_MyBuffer = 0;
+static PyTypeObject *__pyx_ptype_9numcodecs_10compat_ext_Buffer = 0;
 #define __Pyx_MODULE_NAME "numcodecs.compat_ext"
 int __pyx_module_is_main_numcodecs__compat_ext = 0;
 
@@ -1126,11 +1126,11 @@ static PyObject *__pyx_n_s_obj;
 static PyObject *__pyx_n_s_sys;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_version_info;
-static int __pyx_pf_9numcodecs_10compat_ext_8MyBuffer___cinit__(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags); /* proto */
-static PyObject *__pyx_pf_9numcodecs_10compat_ext_8MyBuffer_2release(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_self); /* proto */
+static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags); /* proto */
+static PyObject *__pyx_pf_9numcodecs_10compat_ext_6Buffer_2release(struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_self); /* proto */
 static int __pyx_pf_7cpython_5array_5array___getbuffer__(arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info, CYTHON_UNUSED int __pyx_v_flags); /* proto */
 static void __pyx_pf_7cpython_5array_5array_2__releasebuffer__(CYTHON_UNUSED arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
-static PyObject *__pyx_tp_new_9numcodecs_10compat_ext_MyBuffer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_9numcodecs_10compat_ext_Buffer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_2;
 
 /* "numcodecs/compat_ext.pyx":20
@@ -1142,8 +1142,8 @@ static PyObject *__pyx_int_2;
  */
 
 /* Python wrapper */
-static int __pyx_pw_9numcodecs_10compat_ext_8MyBuffer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_9numcodecs_10compat_ext_8MyBuffer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_9numcodecs_10compat_ext_6Buffer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_9numcodecs_10compat_ext_6Buffer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_obj = 0;
   PyObject *__pyx_v_flags = 0;
   int __pyx_r;
@@ -1188,18 +1188,18 @@ static int __pyx_pw_9numcodecs_10compat_ext_8MyBuffer_1__cinit__(PyObject *__pyx
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 20, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("numcodecs.compat_ext.MyBuffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("numcodecs.compat_ext.Buffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_9numcodecs_10compat_ext_8MyBuffer___cinit__(((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_v_self), __pyx_v_obj, __pyx_v_flags);
+  __pyx_r = __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_v_self), __pyx_v_obj, __pyx_v_flags);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_9numcodecs_10compat_ext_8MyBuffer___cinit__(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags) {
+static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -1399,7 +1399,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_8MyBuffer___cinit__(struct __pyx_obj
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("numcodecs.compat_ext.MyBuffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("numcodecs.compat_ext.Buffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -1415,20 +1415,20 @@ static int __pyx_pf_9numcodecs_10compat_ext_8MyBuffer___cinit__(struct __pyx_obj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_9numcodecs_10compat_ext_8MyBuffer_3release(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_9numcodecs_10compat_ext_8MyBuffer_2release[] = "MyBuffer.release(self)";
-static PyObject *__pyx_pw_9numcodecs_10compat_ext_8MyBuffer_3release(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9numcodecs_10compat_ext_6Buffer_3release(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_9numcodecs_10compat_ext_6Buffer_2release[] = "Buffer.release(self)";
+static PyObject *__pyx_pw_9numcodecs_10compat_ext_6Buffer_3release(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("release (wrapper)", 0);
-  __pyx_r = __pyx_pf_9numcodecs_10compat_ext_8MyBuffer_2release(((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9numcodecs_10compat_ext_6Buffer_2release(((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_9numcodecs_10compat_ext_8MyBuffer_2release(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *__pyx_v_self) {
+static PyObject *__pyx_pf_9numcodecs_10compat_ext_6Buffer_2release(struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -2110,8 +2110,8 @@ static CYTHON_INLINE void __pyx_f_7cpython_5array_zero(arrayobject *__pyx_v_self
   __Pyx_RefNannyFinishContext();
 }
 
-static PyObject *__pyx_tp_new_9numcodecs_10compat_ext_MyBuffer(PyTypeObject *t, PyObject *a, PyObject *k) {
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *p;
+static PyObject *__pyx_tp_new_9numcodecs_10compat_ext_Buffer(PyTypeObject *t, PyObject *a, PyObject *k) {
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *p;
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -2119,18 +2119,18 @@ static PyObject *__pyx_tp_new_9numcodecs_10compat_ext_MyBuffer(PyTypeObject *t, 
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  p = ((struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)o);
+  p = ((struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)o);
   p->arr = ((arrayobject *)Py_None); Py_INCREF(Py_None);
   p->buffer.obj = NULL;
-  if (unlikely(__pyx_pw_9numcodecs_10compat_ext_8MyBuffer_1__cinit__(o, a, k) < 0)) goto bad;
+  if (unlikely(__pyx_pw_9numcodecs_10compat_ext_6Buffer_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
   Py_DECREF(o); o = 0;
   return NULL;
 }
 
-static void __pyx_tp_dealloc_9numcodecs_10compat_ext_MyBuffer(PyObject *o) {
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)o;
+static void __pyx_tp_dealloc_9numcodecs_10compat_ext_Buffer(PyObject *o) {
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)o;
   #if PY_VERSION_HEX >= 0x030400a1
   if (unlikely(Py_TYPE(o)->tp_finalize) && !_PyGC_FINALIZED(o)) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
@@ -2141,9 +2141,9 @@ static void __pyx_tp_dealloc_9numcodecs_10compat_ext_MyBuffer(PyObject *o) {
   (*Py_TYPE(o)->tp_free)(o);
 }
 
-static int __pyx_tp_traverse_9numcodecs_10compat_ext_MyBuffer(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_9numcodecs_10compat_ext_Buffer(PyObject *o, visitproc v, void *a) {
   int e;
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)o;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)o;
   if (p->arr) {
     e = (*v)(((PyObject*)p->arr), a); if (e) return e;
   }
@@ -2153,9 +2153,9 @@ static int __pyx_tp_traverse_9numcodecs_10compat_ext_MyBuffer(PyObject *o, visit
   return 0;
 }
 
-static int __pyx_tp_clear_9numcodecs_10compat_ext_MyBuffer(PyObject *o) {
+static int __pyx_tp_clear_9numcodecs_10compat_ext_Buffer(PyObject *o) {
   PyObject* tmp;
-  struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer *)o;
+  struct __pyx_obj_9numcodecs_10compat_ext_Buffer *p = (struct __pyx_obj_9numcodecs_10compat_ext_Buffer *)o;
   tmp = ((PyObject*)p->arr);
   p->arr = ((arrayobject *)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
@@ -2163,17 +2163,17 @@ static int __pyx_tp_clear_9numcodecs_10compat_ext_MyBuffer(PyObject *o) {
   return 0;
 }
 
-static PyMethodDef __pyx_methods_9numcodecs_10compat_ext_MyBuffer[] = {
-  {"release", (PyCFunction)__pyx_pw_9numcodecs_10compat_ext_8MyBuffer_3release, METH_NOARGS, __pyx_doc_9numcodecs_10compat_ext_8MyBuffer_2release},
+static PyMethodDef __pyx_methods_9numcodecs_10compat_ext_Buffer[] = {
+  {"release", (PyCFunction)__pyx_pw_9numcodecs_10compat_ext_6Buffer_3release, METH_NOARGS, __pyx_doc_9numcodecs_10compat_ext_6Buffer_2release},
   {0, 0, 0, 0}
 };
 
-static PyTypeObject __pyx_type_9numcodecs_10compat_ext_MyBuffer = {
+static PyTypeObject __pyx_type_9numcodecs_10compat_ext_Buffer = {
   PyVarObject_HEAD_INIT(0, 0)
-  "numcodecs.compat_ext.MyBuffer", /*tp_name*/
-  sizeof(struct __pyx_obj_9numcodecs_10compat_ext_MyBuffer), /*tp_basicsize*/
+  "numcodecs.compat_ext.Buffer", /*tp_name*/
+  sizeof(struct __pyx_obj_9numcodecs_10compat_ext_Buffer), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_9numcodecs_10compat_ext_MyBuffer, /*tp_dealloc*/
+  __pyx_tp_dealloc_9numcodecs_10compat_ext_Buffer, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -2195,13 +2195,13 @@ static PyTypeObject __pyx_type_9numcodecs_10compat_ext_MyBuffer = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   "Compatibility class to work around fact that array.array does not support new-style buffer\n    interface in PY2.", /*tp_doc*/
-  __pyx_tp_traverse_9numcodecs_10compat_ext_MyBuffer, /*tp_traverse*/
-  __pyx_tp_clear_9numcodecs_10compat_ext_MyBuffer, /*tp_clear*/
+  __pyx_tp_traverse_9numcodecs_10compat_ext_Buffer, /*tp_traverse*/
+  __pyx_tp_clear_9numcodecs_10compat_ext_Buffer, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_9numcodecs_10compat_ext_MyBuffer, /*tp_methods*/
+  __pyx_methods_9numcodecs_10compat_ext_Buffer, /*tp_methods*/
   0, /*tp_members*/
   0, /*tp_getset*/
   0, /*tp_base*/
@@ -2211,7 +2211,7 @@ static PyTypeObject __pyx_type_9numcodecs_10compat_ext_MyBuffer = {
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_9numcodecs_10compat_ext_MyBuffer, /*tp_new*/
+  __pyx_tp_new_9numcodecs_10compat_ext_Buffer, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -2370,10 +2370,10 @@ PyMODINIT_FUNC PyInit_compat_ext(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_9numcodecs_10compat_ext_MyBuffer) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
-  __pyx_type_9numcodecs_10compat_ext_MyBuffer.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "MyBuffer", (PyObject *)&__pyx_type_9numcodecs_10compat_ext_MyBuffer) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
-  __pyx_ptype_9numcodecs_10compat_ext_MyBuffer = &__pyx_type_9numcodecs_10compat_ext_MyBuffer;
+  if (PyType_Ready(&__pyx_type_9numcodecs_10compat_ext_Buffer) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_type_9numcodecs_10compat_ext_Buffer.tp_print = 0;
+  if (PyObject_SetAttrString(__pyx_m, "Buffer", (PyObject *)&__pyx_type_9numcodecs_10compat_ext_Buffer) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_ptype_9numcodecs_10compat_ext_Buffer = &__pyx_type_9numcodecs_10compat_ext_Buffer;
   /*--- Type import code ---*/
   __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
   #if CYTHON_COMPILING_IN_PYPY
