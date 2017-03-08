@@ -10,7 +10,7 @@ from numpy.testing import assert_array_equal, assert_array_almost_equal
 
 from numcodecs.quantize import Quantize
 from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+    check_repr, check_backwards_compatibility
 
 
 arrays = [
@@ -66,3 +66,8 @@ def test_repr():
 def test_errors():
     with assert_raises(ValueError):
         Quantize(digits=2, dtype='i4')
+
+
+def test_backwards_compatibility():
+    precision = [codec.digits for codec in codecs]
+    check_backwards_compatibility(Quantize.codec_id, arrays, codecs, precision=precision)

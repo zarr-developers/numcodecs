@@ -9,14 +9,9 @@ import numpy as np
 from nose.tools import eq_ as eq
 
 from numcodecs.zlib import Zlib
-<<<<<<< a531b7ff9ce3f0edefcb9059f593f7e9e33ef471
 from numcodecs.registry import get_codec
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
-=======
 from numcodecs.tests.common import check_encode_decode, check_config, check_repr, \
     check_backwards_compatibility
->>>>>>> add data fixture
 
 
 codecs = [
