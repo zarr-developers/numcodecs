@@ -66,6 +66,7 @@ Contents
     lzma
     delta
     fixedscaleoffset
+    quantize
     packbits
     categorize
     checksum32

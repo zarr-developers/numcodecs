@@ -70,6 +70,9 @@ register_codec(AsType)
 from numcodecs.delta import Delta
 register_codec(Delta)
 
+from numcodecs.quantize import Quantize
+register_codec(Quantize)
+
 from numcodecs.fixedscaleoffset import FixedScaleOffset
 register_codec(FixedScaleOffset)
 
