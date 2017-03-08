@@ -7,15 +7,14 @@ import numpy as np
 
 from numcodecs.packbits import PackBits
 from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+    check_repr, check_backwards_compatibility
 
 
 arrays = [
     np.random.randint(0, 2, size=1000, dtype=bool),
     np.random.randint(0, 2, size=(100, 10), dtype=bool),
     np.random.randint(0, 2, size=(10, 10, 10), dtype=bool),
-    np.random.randint(0, 2, size=1000, dtype=bool).reshape(10, 10, 10,
-                                                           order='F'),
+    np.random.randint(0, 2, size=1000, dtype=bool).reshape(10, 10, 10, order='F'),
 ]
 
 
@@ -36,3 +35,7 @@ def test_config():
 
 def test_repr():
     check_repr("PackBits()")
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(PackBits.codec_id, arrays, [PackBits()])

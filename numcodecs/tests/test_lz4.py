@@ -8,7 +8,8 @@ import numpy as np
 
 
 from numcodecs.lz4 import LZ4
-from numcodecs.tests.common import check_encode_decode, check_config, check_repr
+from numcodecs.tests.common import check_encode_decode, check_config, check_repr, \
+    check_backwards_compatibility
 
 
 codecs = [
@@ -47,3 +48,7 @@ def test_config():
 def test_repr():
     check_repr("LZ4(acceleration=1)")
     check_repr("LZ4(acceleration=100)")
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(LZ4.codec_id, arrays, codecs)

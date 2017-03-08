@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
+import itertools
 
 
 import numpy as np
 
 
+from numcodecs.compat import PY2
 from numcodecs.pickles import Pickle
-from numcodecs.tests.common import check_config, check_repr, check_encode_decode_array
+from numcodecs.tests.common import check_config, check_repr, check_encode_decode_array, \
+    check_backwards_compatibility
+
+
+codecs = [
+    Pickle(protocol=0),
+    Pickle(protocol=1),
+    Pickle(protocol=2),
+]
+if not PY2:
+    codecs.append(Pickle(protocol=3))
+    codecs.append(Pickle(protocol=4))
 
 
 # object array with strings
@@ -22,15 +35,20 @@ arrays = [
 
 
 def test_encode_decode():
-    codec = Pickle()
-    for arr in arrays:
+    for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode_array(arr, codec)
 
 
 def test_config():
     codec = Pickle(protocol=-1)
     check_config(codec)
+    for codec in codecs:
+        check_config(codec)
 
 
 def test_repr():
     check_repr("Pickle(protocol=-1)")
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(Pickle.codec_id, arrays, codecs)

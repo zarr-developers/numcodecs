@@ -1,0 +1,7 @@
+{
+    "blocksize": 256,
+    "clevel": 1,
+    "cname": "lz4",
+    "id": "blosc",
+    "shuffle": 0
+}

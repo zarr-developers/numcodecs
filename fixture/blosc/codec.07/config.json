@@ -1,0 +1,7 @@
+{
+    "blocksize": 0,
+    "clevel": 1,
+    "cname": "zstd",
+    "id": "blosc",
+    "shuffle": 1
+}

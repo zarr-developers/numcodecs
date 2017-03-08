@@ -8,7 +8,7 @@ import numpy as np
 
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import check_encode_decode, check_config
+from numcodecs.tests.common import check_encode_decode, check_config, check_backwards_compatibility
 
 
 codecs = [
@@ -100,3 +100,7 @@ def test_config_blocksize():
     config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE, blocksize=2**8)
     codec = Blosc.from_config(config)
     assert codec.blocksize == 2**8
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(Blosc.codec_id, arrays, codecs)

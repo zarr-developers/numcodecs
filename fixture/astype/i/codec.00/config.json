@@ -1,0 +1,5 @@
+{
+    "decode_dtype": "<i4",
+    "encode_dtype": "<i2",
+    "id": "astype"
+}

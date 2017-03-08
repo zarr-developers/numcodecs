@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import itertools
+import os
+import json
 
 
 import numpy as np
 from nose.tools import eq_ as eq
 
 from numcodecs.zlib import Zlib
+<<<<<<< a531b7ff9ce3f0edefcb9059f593f7e9e33ef471
 from numcodecs.registry import get_codec
 from numcodecs.tests.common import check_encode_decode, check_config, \
     check_repr
+=======
+from numcodecs.tests.common import check_encode_decode, check_config, check_repr, \
+    check_backwards_compatibility
+>>>>>>> add data fixture
 
 
 codecs = [
@@ -52,3 +59,7 @@ def test_alias():
     config = dict(id='gzip', level=1)
     codec = get_codec(config)
     eq(Zlib(1), codec)
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(Zlib.codec_id, arrays, codecs)

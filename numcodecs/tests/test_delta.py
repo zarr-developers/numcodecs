@@ -9,7 +9,7 @@ from nose.tools import eq_ as eq
 
 from numcodecs.delta import Delta
 from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+    check_repr, check_backwards_compatibility
 
 
 # mix of dtypes: integer, float
@@ -17,10 +17,9 @@ from numcodecs.tests.common import check_encode_decode, check_config, \
 # mix of orders: C, F
 arrays = [
     np.arange(1000, dtype='i4'),
-    np.linspace(1000, 1001, 1000, dtype='f8').reshape(100, 10),
-    np.random.normal(loc=1000, scale=1, size=(10, 10, 10)),
-    np.random.randint(0, 200, size=1000, dtype='u2').reshape(100, 10,
-                                                             order='F'),
+    np.linspace(1000, 1001, 1000, dtype='f4').reshape(100, 10),
+    np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('f8'),
+    np.random.randint(0, 200, size=1000, dtype='u2').reshape(100, 10, order='F'),
 ]
 
 
@@ -48,3 +47,9 @@ def test_config():
 
 def test_repr():
     check_repr("Delta(dtype='<i4', astype='<i2')")
+
+
+def test_backwards_compatibility():
+    for arr in arrays:
+        codec = Delta(dtype=arr.dtype)
+        check_backwards_compatibility(Delta.codec_id, [arr], [codec], prefix=str(arr.dtype))

@@ -11,7 +11,8 @@ try:
 except ImportError:  # pragma: no cover
     raise nose.SkipTest("LZMA not available")
 
-from numcodecs.tests.common import check_encode_decode, check_config, check_repr
+from numcodecs.tests.common import check_encode_decode, check_config, check_repr, \
+    check_backwards_compatibility
 
 
 codecs = [
@@ -47,3 +48,7 @@ def test_config():
 
 def test_repr():
     check_repr('LZMA(format=1, check=0, preset=1, filters=None)')
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(LZMA.codec_id, arrays, codecs)

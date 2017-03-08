@@ -8,7 +8,7 @@ from nose.tools import eq_ as eq
 
 
 from numcodecs.categorize import Categorize
-from numcodecs.tests.common import check_encode_decode, check_config
+from numcodecs.tests.common import check_encode_decode, check_config, check_backwards_compatibility
 from numcodecs.compat import PY2
 
 
@@ -116,3 +116,12 @@ def test_repr():
                  "labels=['ƒöõ', 'ßàř', 'ßāẑ', ...])"
         actual = repr(codec)
         eq(expect, actual)
+
+
+def test_backwards_compatibility():
+    codec = Categorize(labels=labels, dtype=arrays[0].dtype, astype='u1')
+    check_backwards_compatibility(Categorize.codec_id, arrays, [codec], prefix='s')
+    codec = Categorize(labels=labels_u, dtype=arrays_u[0].dtype, astype='u1')
+    check_backwards_compatibility(Categorize.codec_id, arrays_u, [codec], prefix='u')
+    codec = Categorize(labels=labels_num, dtype=arrays_num[0].dtype, astype='u1')
+    check_backwards_compatibility(Categorize.codec_id, arrays_num, [codec], prefix='n')
