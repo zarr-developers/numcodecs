@@ -6,7 +6,6 @@ import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_from_buffer, buffer_copy
 try:
     import cPickle as pickle
 except ImportError:

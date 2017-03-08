@@ -7,7 +7,6 @@ from numcodecs.abc import Codec
 from numcodecs.compat import buffer_copy, ndarray_from_buffer
 
 
-
 class AsType(Codec):
     """Filter to convert data between different types.
 
