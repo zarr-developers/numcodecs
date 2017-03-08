@@ -14,9 +14,9 @@ class PackBits(Codec):
 
     Examples
     --------
-    >>> import numcodecs as codecs
+    >>> import numcodecs
     >>> import numpy as np
-    >>> codec = codecs.PackBits()
+    >>> codec = numcodecs.PackBits()
     >>> x = np.array([True, False, False, True], dtype=bool)
     >>> y = codec.encode(x)
     >>> y

@@ -40,7 +40,7 @@ class AsType(Codec):
     >>> z
     array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int8)
 
-    """  # flake8: noqa
+    """
 
     codec_id = 'astype'
 

@@ -34,39 +34,43 @@ class FixedScaleOffset(Codec):
 
     Examples
     --------
-    >>> import numcodecs as codecs
+    >>> import numcodecs
     >>> import numpy as np
     >>> x = np.linspace(1000, 1001, 10, dtype='f8')
     >>> x
     array([ 1000.        ,  1000.11111111,  1000.22222222,  1000.33333333,
             1000.44444444,  1000.55555556,  1000.66666667,  1000.77777778,
             1000.88888889,  1001.        ])
-    >>> f1 = codecs.FixedScaleOffset(offset=1000, scale=10, dtype='f8', astype='u1')
-    >>> y1 = f1.encode(x)
+    >>> codec = numcodecs.FixedScaleOffset(offset=1000, scale=10, dtype='f8', astype='u1')
+    >>> y1 = codec.encode(x)
     >>> y1
     array([ 0,  1,  2,  3,  4,  6,  7,  8,  9, 10], dtype=uint8)
-    >>> z1 = f1.decode(y1)
+    >>> z1 = codec.decode(y1)
     >>> z1
     array([ 1000. ,  1000.1,  1000.2,  1000.3,  1000.4,  1000.6,  1000.7,
             1000.8,  1000.9,  1001. ])
-    >>> f2 = codecs.FixedScaleOffset(offset=1000, scale=10**2, dtype='f8', astype='u1')
-    >>> y2 = f2.encode(x)
+    >>> codec = numcodecs.FixedScaleOffset(offset=1000, scale=10**2, dtype='f8', astype='u1')
+    >>> y2 = codec.encode(x)
     >>> y2
     array([  0,  11,  22,  33,  44,  56,  67,  78,  89, 100], dtype=uint8)
-    >>> z2 = f2.decode(y2)
+    >>> z2 = codec.decode(y2)
     >>> z2
     array([ 1000.  ,  1000.11,  1000.22,  1000.33,  1000.44,  1000.56,
             1000.67,  1000.78,  1000.89,  1001.  ])
-    >>> f3 = codecs.FixedScaleOffset(offset=1000, scale=10**3, dtype='f8', astype='u2')
-    >>> y3 = f3.encode(x)
+    >>> codec = numcodecs.FixedScaleOffset(offset=1000, scale=10**3, dtype='f8', astype='u2')
+    >>> y3 = codec.encode(x)
     >>> y3
     array([   0,  111,  222,  333,  444,  556,  667,  778,  889, 1000], dtype=uint16)
-    >>> z3 = f3.decode(y3)
+    >>> z3 = codec.decode(y3)
     >>> z3
     array([ 1000.   ,  1000.111,  1000.222,  1000.333,  1000.444,  1000.556,
             1000.667,  1000.778,  1000.889,  1001.   ])
 
-    """  # flake8: noqa
+    See Also
+    --------
+    numcodecs.quantize.Quantize
+
+    """
 
     codec_id = 'fixedscaleoffset'
 

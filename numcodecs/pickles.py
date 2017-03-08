@@ -33,9 +33,9 @@ class Pickle(Codec):
 
     See Also
     --------
-    :class:`numcodecs.msgpacks.MsgPack`
+    numcodecs.msgpacks.MsgPack
 
-    """  # flake8: noqa
+    """
 
     codec_id = 'pickle'
 
