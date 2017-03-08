@@ -15,22 +15,22 @@ class MsgPack(Codec):
 
     Examples
     --------
-    >>> import numcodecs as codecs
+    >>> import numcodecs
     >>> import numpy as np
     >>> x = np.array(['foo', 'bar', 'baz'], dtype='object')
-    >>> f = codecs.MsgPack()
-    >>> f.decode(f.encode(x))
+    >>> codec = numcodecs.MsgPack()
+    >>> codec.decode(codec.encode(x))
     array(['foo', 'bar', 'baz'], dtype=object)
 
     See Also
     --------
-    :class:`numcodecs.pickles.Pickle`
+    numcodecs.pickles.Pickle
 
     Notes
     -----
     Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be installed.
 
-    """  # flake8: noqa
+    """
 
     codec_id = 'msgpack'
 

@@ -24,17 +24,17 @@ class Categorize(Codec):
 
     Examples
     --------
-    >>> import numcodecs as codecs
+    >>> import numcodecs
     >>> import numpy as np
     >>> x = np.array([b'male', b'female', b'female', b'male', b'unexpected'])
     >>> x
     array([b'male', b'female', b'female', b'male', b'unexpected'],
           dtype='|S10')
-    >>> f = codecs.Categorize(labels=[b'female', b'male'], dtype=x.dtype)
-    >>> y = f.encode(x)
+    >>> codec = numcodecs.Categorize(labels=[b'female', b'male'], dtype=x.dtype)
+    >>> y = codec.encode(x)
     >>> y
     array([2, 1, 1, 2, 0], dtype=uint8)
-    >>> z = f.decode(y)
+    >>> z = codec.decode(y)
     >>> z
     array([b'male', b'female', b'female', b'male', b''],
           dtype='|S10')

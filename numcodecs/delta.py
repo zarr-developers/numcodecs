@@ -30,18 +30,18 @@ class Delta(Codec):
 
     Examples
     --------
-    >>> import numcodecs as codecs
+    >>> import numcodecs
     >>> import numpy as np
     >>> x = np.arange(100, 120, 2, dtype='i8')
-    >>> f = codecs.Delta(dtype='i8', astype='i1')
-    >>> y = f.encode(x)
+    >>> codec = numcodecs.Delta(dtype='i8', astype='i1')
+    >>> y = codec.encode(x)
     >>> y
     array([100,   2,   2,   2,   2,   2,   2,   2,   2,   2], dtype=int8)
-    >>> z = f.decode(y)
+    >>> z = codec.decode(y)
     >>> z
     array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118])
 
-    """  # flake8: noqa
+    """
 
     codec_id = 'delta'
 
