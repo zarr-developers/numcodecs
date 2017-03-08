@@ -36,7 +36,7 @@ def get_codec(config):
     return cls.from_config(config)
 
 
-def register_codec(cls):
+def register_codec(cls, codec_id=None):
     """Register a codec class.
 
     Parameters
@@ -50,4 +50,6 @@ def register_codec(cls):
     previously registered under the same codec identifier, if present.
 
     """
-    codec_registry[cls.codec_id] = cls
+    if codec_id is None:
+        codec_id = cls.codec_id
+    codec_registry[codec_id] = cls
