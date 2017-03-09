@@ -1,6 +1,15 @@
 Release notes
 =============
 
+.. _release_0.2.1:
+
+0.2.1
+-----
+
+The bundled c-blosc libary has been upgraded to version 1.11.3
+(`#34 <https://github.com/alimanfoo/numcodecs/issues/34>`_,
+`#35 <https://github.com/alimanfoo/numcodecs/issues/35>`_).
+
 .. _release_0.2.0:
 
 0.2.0
