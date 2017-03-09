@@ -143,13 +143,13 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
         fixture_dir = os.path.join('fixture', codec_id, prefix)
     else:
         fixture_dir = os.path.join('fixture', codec_id)
-    if not os.path.exists(fixture_dir):
+    if not os.path.exists(fixture_dir):  # pragma: no cover
         os.makedirs(fixture_dir)
 
     # save fixture data
     for i, arr in enumerate(arrays):
         arr_fn = os.path.join(fixture_dir, 'array.{:02d}.npy'.format(i))
-        if not os.path.exists(arr_fn):
+        if not os.path.exists(arr_fn):  # pragma: no cover
             np.save(arr_fn, arr)
 
     # load fixture data
@@ -168,14 +168,14 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
             # setup a directory to hold encoded data
             codec_dir = os.path.join(fixture_dir, 'codec.{:02d}'.format(j))
-            if not os.path.exists(codec_dir):
+            if not os.path.exists(codec_dir):  # pragma: no cover
                 os.makedirs(codec_dir)
 
             # file with codec configuration information
             codec_fn = os.path.join(codec_dir, 'config.json')
 
             # one time save config
-            if not os.path.exists(codec_fn):
+            if not os.path.exists(codec_fn):  # pragma: no cover
                 with open(codec_fn, mode='w') as cf:
                     json.dump(codec.get_config(), cf, sort_keys=True, indent=4)
 
@@ -187,7 +187,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             enc_fn = os.path.join(codec_dir, 'encoded.{:02d}.dat'.format(i))
 
             # one time encode and save array
-            if not os.path.exists(enc_fn):
+            if not os.path.exists(enc_fn):  # pragma: no cover
                 enc = codec.encode(arr)
                 with open(enc_fn, mode='wb') as ef:
                     ef.write(enc)
