@@ -9,7 +9,7 @@ from nose.tools import eq_ as eq
 
 from numcodecs.astype import AsType
 from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+    check_repr, check_backwards_compatibility
 
 
 # mix of dtypes: integer, float
@@ -19,8 +19,7 @@ arrays = [
     np.arange(1000, dtype='i4'),
     np.linspace(1000, 1001, 1000, dtype='f8').reshape(100, 10),
     np.random.normal(loc=1000, scale=1, size=(10, 10, 10)),
-    np.random.randint(0, 200, size=1000, dtype='u2').reshape(100, 10,
-                                                             order='F'),
+    np.random.randint(0, 200, size=1000, dtype='u2').reshape(100, 10, order='F'),
 ]
 
 
@@ -58,3 +57,22 @@ def test_config():
 
 def test_repr():
     check_repr("AsType(encode_dtype='<i4', decode_dtype='<i2')")
+
+
+def test_backwards_compatibility():
+
+    # integers
+    arrays = [
+        np.arange(1000, dtype='<i4'),
+        np.random.randint(0, 200, size=1000, dtype='<i4').reshape(100, 10, order='F'),
+    ]
+    codec = AsType(encode_dtype='<i2', decode_dtype='<i4')
+    check_backwards_compatibility(AsType.codec_id, arrays, [codec], prefix='i')
+
+    # floats
+    arrays = [
+        np.linspace(1000, 1001, 1000, dtype='<f8').reshape(100, 10, order='F'),
+        np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('<f8'),
+    ]
+    codec = AsType(encode_dtype='<f4', decode_dtype='<f8')
+    check_backwards_compatibility(AsType.codec_id, arrays, [codec], precision=[3], prefix='f')

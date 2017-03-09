@@ -10,10 +10,10 @@ from nose.tools import eq_ as eq
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
 from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+    check_repr, check_backwards_compatibility
 
 
-arrs = [
+arrays = [
     np.linspace(1000, 1001, 1000, dtype='f8'),
     np.random.normal(loc=1000, scale=1, size=1000).astype('f8'),
     np.linspace(1000, 1001, 1000, dtype='f8').reshape(100, 10),
@@ -32,7 +32,7 @@ codecs = [
 
 
 def test_encode_decode():
-    for arr, codec in itertools.product(arrs, codecs):
+    for arr, codec in itertools.product(arrays, codecs):
         precision = int(np.log10(codec.scale))
         check_encode_decode(arr, codec, precision=precision)
 
@@ -40,8 +40,7 @@ def test_encode_decode():
 def test_encode():
     dtype = '<f8'
     astype = '|u1'
-    codec = FixedScaleOffset(scale=10, offset=1000, dtype=dtype,
-                             astype=astype)
+    codec = FixedScaleOffset(scale=10, offset=1000, dtype=dtype, astype=astype)
     arr = np.linspace(1000, 1001, 10, dtype=dtype)
     expect = np.array([0, 1, 2, 3, 4, 6, 7, 8, 9, 10], dtype=astype)
     actual = codec.encode(arr)
@@ -57,3 +56,8 @@ def test_config():
 def test_repr():
     stmt = "FixedScaleOffset(scale=10, offset=100, dtype='<f8', astype='<i4')"
     check_repr(stmt)
+
+
+def test_backwards_compatibility():
+    precision = [int(np.log10(codec.scale)) for codec in codecs]
+    check_backwards_compatibility(FixedScaleOffset.codec_id, arrays, codecs, precision=precision)

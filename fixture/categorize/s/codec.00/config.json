@@ -1,0 +1,11 @@
+{
+    "astype": "|u1",
+    "dtype": "|S4",
+    "id": "categorize",
+    "labels": [
+        "foo",
+        "bar",
+        "baz",
+        "quux"
+    ]
+}

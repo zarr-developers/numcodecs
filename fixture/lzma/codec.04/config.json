@@ -1,0 +1,12 @@
+{
+    "check": -1,
+    "filters": [
+        {
+            "id": 33,
+            "preset": 1
+        }
+    ],
+    "format": 3,
+    "id": "lzma",
+    "preset": null
+}

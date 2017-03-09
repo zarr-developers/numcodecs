@@ -8,8 +8,8 @@ from nose.tools import eq_ as eq
 
 from numcodecs.zlib import Zlib
 from numcodecs.registry import get_codec
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr
+from numcodecs.tests.common import check_encode_decode, check_config, check_repr, \
+    check_backwards_compatibility
 
 
 codecs = [
@@ -52,3 +52,7 @@ def test_alias():
     config = dict(id='gzip', level=1)
     codec = get_codec(config)
     eq(Zlib(1), codec)
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(Zlib.codec_id, arrays, codecs)
