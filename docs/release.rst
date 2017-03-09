@@ -1,6 +1,31 @@
 Release notes
 =============
 
+.. _release_0.2.0:
+
+0.2.0
+-----
+
+New codecs:
+
+* The :class:`numcodecs.quantize.Quantize` codec, which provides support for reducing the precision
+  of floating-point data, has been ported over from Zarr
+  (`#28 <https://github.com/alimanfoo/numcodecs/issues/28>`_,
+  `#31 <https://github.com/alimanfoo/numcodecs/issues/31>`_).
+
+Other changes:
+
+* The :class:`numcodecs.zlib.Zlib` codec is now also registered under the alias 'gzip'
+  (`#29 <https://github.com/alimanfoo/numcodecs/issues/29>`_,
+  `#32 <https://github.com/alimanfoo/numcodecs/issues/32>`_).
+
+Maintenance work:
+
+* A data fixture has been added to the test suite to add some protection against changes to codecs
+  that break backwards-compatibility with data encoded using a previous release of numcodecs
+  (`#30 <https://github.com/alimanfoo/numcodecs/issues/30>`_,
+  `#33 <https://github.com/alimanfoo/numcodecs/issues/33>`_).
+
 .. _release_0.1.1:
 
 0.1.1
