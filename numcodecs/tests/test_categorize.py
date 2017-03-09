@@ -28,10 +28,10 @@ arrays_u = [
     np.random.choice(labels_u, size=1000).reshape(100, 10, order='F'),
 ]
 arrays_num = [
-    np.random.choice(labels_num, size=1000),
-    np.random.choice(labels_num, size=(100, 10)),
-    np.random.choice(labels_num, size=(10, 10, 10)),
-    np.random.choice(labels_num, size=1000).reshape(100, 10, order='F'),
+    np.random.choice(labels_num, size=1000).astype('i8'),
+    np.random.choice(labels_num, size=(100, 10)).astype('i8'),
+    np.random.choice(labels_num, size=(10, 10, 10)).astype('i8'),
+    np.random.choice(labels_num, size=1000).reshape(100, 10, order='F').astype('i8'),
 ]
 
 
