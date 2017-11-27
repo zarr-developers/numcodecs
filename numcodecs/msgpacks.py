@@ -39,13 +39,13 @@ class MsgPack(Codec):
 
     def encode(self, buf):
         buf = np.asarray(buf)
-        l = buf.tolist()
-        l.append(buf.dtype.str)
-        return msgpack.packb(l, encoding=self.encoding)
+        items = buf.tolist()
+        items.append(buf.dtype.str)
+        return msgpack.packb(items, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        l = msgpack.unpackb(buf, encoding=self.encoding)
-        dec = np.array(l[:-1], dtype=l[-1])
+        items = msgpack.unpackb(buf, encoding=self.encoding)
+        dec = np.array(items[:-1], dtype=items[-1])
         if out is not None:
             np.copyto(out, dec)
             return out

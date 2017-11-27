@@ -99,15 +99,18 @@ def test_config():
 
 
 def test_repr():
-    if not PY2:
+    dtype = '|S5'
+    astype = '|u1'
+    codec = Categorize(labels=labels, dtype=dtype, astype=astype)
+    expect = "Categorize(dtype='|S5', astype='|u1', "
+    if PY2:  # pragma: py3 no cover
+        expect += "labels=['foo', 'bar', 'baz', ...])"
+    else:  # pragma: py2 no cover
+        expect += "labels=[b'foo', b'bar', b'baz', ...])"
+    actual = repr(codec)
+    eq(expect, actual)
 
-        dtype = '|S5'
-        astype = '|u1'
-        codec = Categorize(labels=labels, dtype=dtype, astype=astype)
-        expect = "Categorize(dtype='|S5', astype='|u1', " \
-                 "labels=[b'foo', b'bar', b'baz', ...])"
-        actual = repr(codec)
-        eq(expect, actual)
+    if not PY2:  # pragma: py2 no cover
 
         dtype = '<U5'
         astype = '|u1'

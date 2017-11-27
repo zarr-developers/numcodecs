@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import itertools
+from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 
 
 import numpy as np
+from nose.tools import assert_raises
 
 
 from numcodecs import blosc
@@ -12,9 +15,9 @@ from numcodecs.tests.common import check_encode_decode, check_config, check_back
 
 
 codecs = [
-    Blosc(),
-    Blosc(clevel=0),
-    Blosc(cname='lz4'),
+    Blosc(shuffle=Blosc.SHUFFLE),
+    Blosc(clevel=0, shuffle=Blosc.SHUFFLE),
+    Blosc(cname='lz4', shuffle=Blosc.SHUFFLE),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE),
     Blosc(cname='lz4', clevel=5, shuffle=Blosc.SHUFFLE),
     Blosc(cname='lz4', clevel=9, shuffle=Blosc.BITSHUFFLE),
@@ -22,8 +25,8 @@ codecs = [
     Blosc(cname='zstd', clevel=1, shuffle=1),
     Blosc(cname='blosclz', clevel=1, shuffle=2),
     Blosc(cname='snappy', clevel=1, shuffle=2),
-    Blosc(blocksize=0),
-    Blosc(blocksize=2**8),
+    Blosc(shuffle=Blosc.SHUFFLE, blocksize=0),
+    Blosc(shuffle=Blosc.SHUFFLE, blocksize=2**8),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=2**8),
 ]
 
@@ -62,6 +65,17 @@ def test_repr():
     expect = "Blosc(cname='zlib', clevel=9, shuffle=BITSHUFFLE, blocksize=512)"
     actual = repr(Blosc(cname='zlib', clevel=9, shuffle=Blosc.BITSHUFFLE, blocksize=512))
     assert expect == actual
+    expect = "Blosc(cname='blosclz', clevel=5, shuffle=AUTOSHUFFLE, blocksize=1024)"
+    actual = repr(Blosc(cname='blosclz', clevel=5, shuffle=Blosc.AUTOSHUFFLE,
+                        blocksize=1024))
+    assert expect == actual
+
+
+def test_eq():
+    assert Blosc() == Blosc()
+    assert Blosc(cname='lz4') != Blosc(cname='zstd')
+    assert Blosc(clevel=1) != Blosc(clevel=9)
+    assert Blosc(cname='lz4') != 'foo'
 
 
 def test_compress_blocksize():
@@ -81,15 +95,69 @@ def test_compress_blocksize():
         assert blocksize > 0
 
         # custom blocksize
-        for bs in 2**7, 2**7:
+        for bs in 2**7, 2**8:
             enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
             _, _, blocksize = blosc.cbuffer_sizes(enc)
         assert blocksize == bs
 
 
+def test_compress_complib():
+    arr = np.arange(1000, dtype='i4')
+    expected_complibs = {
+        'lz4': 'LZ4',
+        'lz4hc': 'LZ4',
+        'blosclz': 'BloscLZ',
+        'snappy': 'Snappy',
+        'zlib': 'Zlib',
+        'zstd': 'Zstd',
+    }
+    for use_threads in True, False, None:
+        blosc.use_threads = use_threads
+        for cname in blosc.list_compressors():
+            enc = blosc.compress(arr, cname.encode(), 1, Blosc.NOSHUFFLE)
+            complib = blosc.cbuffer_complib(enc)
+            expected_complib = expected_complibs[cname]
+            assert complib == expected_complib
+        with assert_raises(ValueError):
+            # capitalized cname
+            blosc.compress(arr, b'LZ4', 1)
+        with assert_raises(ValueError):
+            # bad cname
+            blosc.compress(arr, b'foo', 1)
+
+
+def test_compress_metainfo():
+    for dtype in 'i1', 'i2', 'i4', 'i8':
+        arr = np.arange(1000, dtype=dtype)
+        for shuffle in Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE:
+            for use_threads in True, False, None:
+                blosc.use_threads = use_threads
+                for cname in blosc.list_compressors():
+                    enc = blosc.compress(arr, cname.encode(), 1, shuffle)
+                    typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+                    assert typesize == arr.dtype.itemsize
+                    assert did_shuffle == shuffle
+
+
+def test_compress_autoshuffle():
+    arr = np.arange(8000)
+    for dtype in 'i1', 'i2', 'i4', 'i8', 'f2', 'f4', 'f8', 'bool', 'S10':
+        varr = arr.view(dtype)
+        for use_threads in True, False, None:
+            blosc.use_threads = use_threads
+            for cname in blosc.list_compressors():
+                enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
+                typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+                assert typesize == varr.dtype.itemsize
+                if typesize == 1:
+                    assert did_shuffle == Blosc.BITSHUFFLE
+                else:
+                    assert did_shuffle == Blosc.SHUFFLE
+
+
 def test_config_blocksize():
-    # N.B., we want to be backwards compatible with any config where blocksize is not explicitly
-    # stated
+    # N.B., we want to be backwards compatible with any config where blocksize is not
+    # explicitly stated
 
     # blocksize not stated
     config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
@@ -104,3 +172,42 @@ def test_config_blocksize():
 
 def test_backwards_compatibility():
     check_backwards_compatibility(Blosc.codec_id, arrays, codecs)
+
+
+def _encode_worker(data):
+    compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
+    enc = compressor.encode(data)
+    return enc
+
+
+def _decode_worker(enc):
+    compressor = Blosc()
+    data = compressor.decode(enc)
+    return data
+
+
+def test_multiprocessing():
+    data = np.arange(1000000)
+    enc = _encode_worker(data)
+
+    try:
+        for use_threads in None, True, False:
+            blosc.use_threads = use_threads
+
+            # test with process pool and thread pool
+            for pool in Pool(5), ThreadPool(5):
+
+                # test encoding
+                enc_results = pool.map(_encode_worker, [data] * 5)
+                assert all([len(enc) == len(e) for e in enc_results])
+
+                # test decoding
+                dec_results = pool.map(_decode_worker, [enc] * 5)
+                assert all([data.nbytes == len(d) for d in dec_results])
+
+                # tidy up
+                pool.close()
+                pool.join()
+
+    finally:
+        blosc.use_threads = None  # restore default

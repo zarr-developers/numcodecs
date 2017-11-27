@@ -5,6 +5,7 @@
 # cython: binding=False
 from __future__ import absolute_import, print_function, division
 import threading
+import multiprocessing
 import os
 
 
@@ -12,10 +13,10 @@ from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
-from numcodecs.compat_ext cimport Buffer
-from numcodecs.compat_ext import Buffer
-from numcodecs.compat import PY2, text_type
-from numcodecs.abc import Codec
+from .compat_ext cimport Buffer
+from .compat_ext import Buffer
+from .compat import PY2, text_type
+from .abc import Codec
 
 
 cdef extern from "blosc.h":
@@ -28,24 +29,32 @@ cdef extern from "blosc.h":
         BLOSC_BITSHUFFLE,
         BLOSC_MAX_BUFFERSIZE,
         BLOSC_MAX_THREADS,
-        BLOSC_MAX_TYPESIZE
+        BLOSC_MAX_TYPESIZE,
+        BLOSC_DOSHUFFLE,
+        BLOSC_DOBITSHUFFLE,
+        BLOSC_MEMCPYED
 
     void blosc_init()
     void blosc_destroy()
     int blosc_get_nthreads()
     int blosc_set_nthreads(int nthreads)
     int blosc_set_compressor(const char *compname)
+    void blosc_set_blocksize(size_t blocksize)
     char* blosc_list_compressors()
-    int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes, void *src,
-                       void *dest, size_t destsize) nogil
+    int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
+                       void* src, void* dest, size_t destsize) nogil
     int blosc_decompress(void *src, void *dest, size_t destsize) nogil
-    int blosc_compname_to_compcode(const char *compname)
+    int blosc_compname_to_compcode(const char* compname)
     int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                           const void*src, void*dest, size_t destsize, const char*compressor,
-                           size_t blocksize, int numinternalthreads) nogil
-    int blosc_decompress_ctx(const void *src, void *dest, size_t destsize,
+                           const void* src, void* dest, size_t destsize,
+                           const char* compressor, size_t blocksize,
+                           int numinternalthreads) nogil
+    int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
                              int numinternalthreads) nogil
-    void blosc_cbuffer_sizes(const void *cbuffer, size_t *nbytes, size_t *cbytes, size_t *blocksize)
+    void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
+                             size_t* blocksize)
+    char* blosc_cbuffer_complib(const void* cbuffer)
+    void blosc_cbuffer_metainfo(const void* cbuffer, size_t* typesize, int* flags)
 
 
 MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
@@ -61,6 +70,17 @@ __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
 BITSHUFFLE = BLOSC_BITSHUFFLE
+# automatic shuffle
+AUTOSHUFFLE = -1
+# automatic block size - let blosc decide
+AUTOBLOCKS = 0
+
+# synchronization
+mutex = multiprocessing.Lock()
+
+
+# store ID of process that first loads the module, so we can detect a fork later
+_importer_pid = os.getpid()
 
 
 def init():
@@ -74,8 +94,9 @@ def destroy():
 
 
 def compname_to_compcode(cname):
-    """Return the compressor code associated with the compressor name. If the compressor name is
-    not recognized, or there is not support for it in this build, -1 is returned instead."""
+    """Return the compressor code associated with the compressor name. If the compressor
+    name is not recognized, or there is not support for it in this build, -1 is returned
+    instead."""
     if isinstance(cname, text_type):
         cname = cname.encode('ascii')
     return blosc_compname_to_compcode(cname)
@@ -83,23 +104,28 @@ def compname_to_compcode(cname):
 
 def list_compressors():
     """Get a list of compressors supported in the current build."""
-    return text_type(blosc_list_compressors(), 'ascii').split(',')
+    s = blosc_list_compressors()
+    if not PY2:
+        s = s.decode('ascii')
+    return s.split(',')
 
 
 def get_nthreads():
-    """Get the number of threads that Blosc uses internally for compression and decompression."""
+    """Get the number of threads that Blosc uses internally for compression and
+    decompression."""
     return blosc_get_nthreads()
 
 
 def set_nthreads(int nthreads):
-    """Set the number of threads that Blosc uses internally for compression and decompression."""
+    """Set the number of threads that Blosc uses internally for compression and
+    decompression."""
     return blosc_set_nthreads(nthreads)
 
 
 def cbuffer_sizes(source):
-    """Return information about a compressed buffer, namely the number of uncompressed bytes (
-    `nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which is used
-    internally for doing the compression by blocks).
+    """Return information about a compressed buffer, namely the number of uncompressed
+    bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
+    is used internally for doing the compression by blocks).
 
     Returns
     -------
@@ -124,7 +150,59 @@ def cbuffer_sizes(source):
     return nbytes, cbytes, blocksize
 
 
-def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
+def cbuffer_complib(source):
+    """TODO"""
+    cdef:
+        Buffer buffer
+        char* complib
+
+    # obtain buffer
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+
+    # determine buffer size
+    complib = blosc_cbuffer_complib(buffer.ptr)
+
+    # release buffers
+    buffer.release()
+
+    return complib.decode('ascii')
+
+
+def cbuffer_metainfo(source):
+    """TODO"""
+    cdef:
+        Buffer buffer
+        size_t typesize
+        int flags
+
+    # obtain buffer
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+
+    # determine buffer size
+    blosc_cbuffer_metainfo(buffer.ptr, &typesize, &flags)
+
+    # release buffers
+    buffer.release()
+
+    # decompose flags
+    if flags & BLOSC_DOSHUFFLE:
+        shuffle = SHUFFLE
+    elif flags & BLOSC_DOBITSHUFFLE:
+        shuffle = BITSHUFFLE
+    else:
+        shuffle = NOSHUFFLE
+    memcpyed = flags & BLOSC_MEMCPYED
+
+    return typesize, shuffle, memcpyed
+
+
+def err_bad_cname(cname):
+    raise ValueError('bad compressor or compressor not supported: %r; expected one of '
+                     '%s' % (cname, list_compressors()))
+
+
+def compress(source, char* cname, int clevel, int shuffle=AUTOSHUFFLE,
+             int blocksize=AUTOBLOCKS):
     """Compress data.
 
     Parameters
@@ -139,7 +217,8 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     shuffle : int
         Shuffle filter.
     blocksize : int
-        The requested size of the compressed blocks.  If 0, an automatic blocksize will be used.
+        The requested size of the compressed blocks.  If 0, an automatic blocksize will
+        be used.
 
     Returns
     -------
@@ -155,11 +234,29 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
         size_t nbytes, cbytes, itemsize
         bytes dest
 
+    # check valid cname early
+    if PY2:
+        cname_str = cname
+    else:
+        cname_str = cname.decode('ascii')
+    if cname_str not in list_compressors():
+        err_bad_cname(cname_str)
+
     # setup source buffer
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
     itemsize = source_buffer.itemsize
+
+    # determine shuffle
+    if shuffle == AUTOSHUFFLE:
+        if itemsize == 1:
+            shuffle = BITSHUFFLE
+        else:
+            shuffle = SHUFFLE
+    elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:
+        raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
+                         shuffle)
 
     try:
 
@@ -171,26 +268,31 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
         if _get_use_threads():
             # allow blosc to use threads internally
 
-            # set compressor
-            compressor_set = blosc_set_compressor(cname)
-            if compressor_set < 0:
-                raise ValueError('compressor not supported: %r' % cname)
+            # N.B., we are using blosc's global context, and so we need to use a lock
+            # to ensure no-one else can modify the global context while we're setting it
+            # up and using it.
+            with mutex:
 
-            # set blocksize
-            os.environ['BLOSC_BLOCKSIZE'] = str(blocksize)
+                # set compressor
+                compressor_set = blosc_set_compressor(cname)
+                if compressor_set < 0:
+                    # shouldn't happen if we checked against list of compressors
+                    # already, but just in case
+                    err_bad_cname(cname_str)
 
-            # perform compression
-            with nogil:
-                cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr, dest_ptr,
-                                        nbytes + BLOSC_MAX_OVERHEAD)
+                # set blocksize
+                blosc_set_blocksize(blocksize)
 
-            # unset blocksize
-            del os.environ['BLOSC_BLOCKSIZE']
+                # perform compression
+                with nogil:
+                    cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
 
         else:
             with nogil:
-                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr, dest_ptr,
-                                            nbytes + BLOSC_MAX_OVERHEAD, cname, blocksize, 1)
+                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
+                                            cname, blocksize, 1)
 
     finally:
 
@@ -213,7 +315,8 @@ def decompress(source, dest=None):
     Parameters
     ----------
     source : bytes-like
-        Compressed data, including blosc header. Can be any object supporting the buffer protocol.
+        Compressed data, including blosc header. Can be any object supporting the buffer
+        protocol.
     dest : array-like, optional
         Object to decompress into.
 
@@ -286,27 +389,37 @@ use_threads = None
 
 def _get_use_threads():
     global use_threads
+    proc = multiprocessing.current_process()
+
+    # check for fork
+    if proc.pid != _importer_pid:
+        # If this module has been imported in the parent process, and the current process
+        # is a fork, attempting to use blosc in multi-threaded mode will cause a
+        # program hang, so we force use of blosc ctx functions, i.e., no threads.
+        return False
 
     if use_threads in [True, False]:
         # user has manually overridden the default behaviour
         _use_threads = use_threads
 
     else:
-        # adaptive behaviour: allow blosc to use threads if it is being
-        # called from the main Python thread, inferring that it is being run
-        # from within a single-threaded program; otherwise do not allow
-        # blosc to use threads, inferring it is being run from within a
-        # multi-threaded program
-        if hasattr(threading, 'main_thread'):
-            _use_threads = (threading.main_thread() ==
-                            threading.current_thread())
+        # Adaptive behaviour: allow blosc to use threads if it is being called from the
+        # main Python thread in the main Python process, inferring that it is being run
+        # from within a single-threaded, single-process program; otherwise do not allow
+        # blosc to use threads, inferring it is being run from within a multi-threaded
+        # program or multi-process program
+
+        if proc.name != 'MainProcess':
+            _use_threads = False
+        elif hasattr(threading, 'main_thread'):
+            _use_threads = (threading.main_thread() == threading.current_thread())
         else:
             _use_threads = threading.current_thread().name == 'MainThread'
 
     return _use_threads
 
 
-_shuffle_repr = ['NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
+_shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
 
 
 class Blosc(Codec):
@@ -315,15 +428,15 @@ class Blosc(Codec):
     Parameters
     ----------
     cname : string, optional
-        A string naming one of the compression algorithms available within blosc, e.g., 'zstd',
-        'blosclz', 'lz4', 'lz4hc', 'zlib' or 'snappy'.
+        A string naming one of the compression algorithms available within blosc, e.g.,
+        'zstd', 'blosclz', 'lz4', 'lz4hc', 'zlib' or 'snappy'.
     clevel : integer, optional
         An integer between 0 and 9 specifying the compression level.
     shuffle : integer, optional
         Either NOSHUFFLE (0), SHUFFLE (1) or BITSHUFFLE (2).
     blocksize : int
-        The requested size of the compressed blocks.  If 0 (default), an automatic blocksize will
-        be used.
+        The requested size of the compressed blocks.  If 0 (default), an automatic
+        blocksize will be used.
 
     See Also
     --------
@@ -335,8 +448,9 @@ class Blosc(Codec):
     NOSHUFFLE = NOSHUFFLE
     SHUFFLE = SHUFFLE
     BITSHUFFLE = BITSHUFFLE
+    AUTOSHUFFLE = AUTOSHUFFLE
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=1, blocksize=0):
+    def __init__(self, cname='lz4', clevel=5, shuffle=AUTOSHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
         if isinstance(cname, text_type):
             self._cname_bytes = cname.encode('ascii')
@@ -357,6 +471,6 @@ class Blosc(Codec):
             (type(self).__name__,
              self.cname,
              self.clevel,
-             _shuffle_repr[self.shuffle],
+             _shuffle_repr[self.shuffle + 1],
              self.blocksize)
         return r

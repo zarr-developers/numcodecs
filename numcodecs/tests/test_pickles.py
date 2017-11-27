@@ -17,7 +17,7 @@ codecs = [
     Pickle(protocol=1),
     Pickle(protocol=2),
 ]
-if not PY2:
+if not PY2:  # pragma: py2 no cover
     codecs.append(Pickle(protocol=3))
     codecs.append(Pickle(protocol=4))
 

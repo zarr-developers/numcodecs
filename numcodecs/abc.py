@@ -32,14 +32,14 @@ other and vice versa.
 from __future__ import absolute_import, print_function, division
 
 
-class Codec(object):  # pragma: no cover
+class Codec(object):
     """Codec abstract base class."""
 
     # override in sub-class
     codec_id = None
     """Codec identifier."""
 
-    def encode(self, buf):
+    def encode(self, buf):  # pragma: no cover
         """Encode data in `buf`.
 
         Parameters
@@ -58,7 +58,7 @@ class Codec(object):  # pragma: no cover
         # override in sub-class
         raise NotImplementedError
 
-    def decode(self, buf, out=None):
+    def decode(self, buf, out=None):  # pragma: no cover
         """Decode data in `buf`.
 
         Parameters
@@ -115,6 +115,10 @@ class Codec(object):  # pragma: no cover
             return self.get_config() == other.get_config()
         except AttributeError:
             return False
+
+    def __ne__(self, other):
+        # only needed for PY2
+        return not self == other
 
     def __repr__(self):
 

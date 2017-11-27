@@ -6,9 +6,12 @@ import numpy as np
 
 
 from numcodecs.abc import Codec
-try:
+from numcodecs.compat import PY2
+
+
+if PY2:  # pragma: py3 no cover
     import cPickle as pickle
-except ImportError:
+else:  # pragma: py2 no cover
     import pickle
 
 
