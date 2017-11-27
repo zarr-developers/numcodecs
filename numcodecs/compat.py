@@ -12,14 +12,14 @@ import numpy as np
 PY2 = sys.version_info[0] == 2
 
 
-if PY2:  # pragma: no cover
+if PY2:  # pragma: py3 no cover
 
     text_type = unicode
     binary_type = str
     integer_types = (int, long)
     reduce = reduce
 
-else:
+else:  # pragma: py2 no cover
 
     text_type = str
     binary_type = bytes
@@ -31,7 +31,7 @@ def buffer_tobytes(v):
     """Obtain a sequence of bytes for the memory buffer used by `v`."""
     if isinstance(v, np.ndarray):
         return v.tobytes(order='A')
-    elif PY2 and isinstance(v, array.array):  # pragma: no cover
+    elif PY2 and isinstance(v, array.array):  # pragma: py3 no cover
         return v.tostring()
     else:
         return memoryview(v).tobytes()
