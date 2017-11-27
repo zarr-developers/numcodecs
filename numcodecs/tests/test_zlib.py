@@ -54,5 +54,15 @@ def test_alias():
     eq(Zlib(1), codec)
 
 
+def test_eq():
+    assert Zlib() == Zlib()
+    assert not Zlib() != Zlib()
+    assert Zlib(1) == Zlib(1)
+    assert Zlib(1) != Zlib(9)
+    assert Zlib() != 'foo'
+    assert 'foo' != Zlib()
+    assert not Zlib() == 'foo'
+
+
 def test_backwards_compatibility():
     check_backwards_compatibility(Zlib.codec_id, arrays, codecs)
