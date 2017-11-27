@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import itertools
+from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 
 
 import numpy as np
@@ -64,6 +66,13 @@ def test_repr():
     assert expect == actual
 
 
+def test_eq():
+    assert Blosc() == Blosc()
+    assert Blosc(cname='lz4') != Blosc(cname='zstd')
+    assert Blosc(clevel=1) != Blosc(clevel=9)
+    assert Blosc(cname='lz4') != 'foo'
+
+
 def test_compress_blocksize():
     arr = np.arange(1000, dtype='i4')
 
@@ -81,15 +90,15 @@ def test_compress_blocksize():
         assert blocksize > 0
 
         # custom blocksize
-        for bs in 2**7, 2**7:
+        for bs in 2**7, 2**8:
             enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
             _, _, blocksize = blosc.cbuffer_sizes(enc)
         assert blocksize == bs
 
 
 def test_config_blocksize():
-    # N.B., we want to be backwards compatible with any config where blocksize is not explicitly
-    # stated
+    # N.B., we want to be backwards compatible with any config where blocksize is not
+    # explicitly stated
 
     # blocksize not stated
     config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
@@ -104,3 +113,42 @@ def test_config_blocksize():
 
 def test_backwards_compatibility():
     check_backwards_compatibility(Blosc.codec_id, arrays, codecs)
+
+
+def _encode_worker(data):
+    compressor = Blosc()
+    enc = compressor.encode(data)
+    return enc
+
+
+def _decode_worker(enc):
+    compressor = Blosc()
+    data = compressor.decode(enc)
+    return data
+
+
+def test_multiprocessing():
+    data = np.arange(10000000)
+    enc = _encode_worker(data)
+
+    try:
+        for use_threads in None, True, False:
+            blosc.use_threads = use_threads
+
+            # test with process pool and thread pool
+            for pool in Pool(5), ThreadPool(5):
+
+                # test encoding
+                enc_results = pool.map(_encode_worker, [data] * 5)
+                assert all([len(enc) == len(e) for e in enc_results])
+
+                # test decoding
+                dec_results = pool.map(_decode_worker, [enc] * 5)
+                assert all([data.nbytes == len(d) for d in dec_results])
+
+                # tidy up
+                pool.close()
+                pool.join()
+
+    finally:
+        blosc.use_threads = None  # restore default
