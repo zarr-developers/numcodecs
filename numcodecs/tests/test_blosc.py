@@ -175,7 +175,7 @@ def test_backwards_compatibility():
 
 
 def _encode_worker(data):
-    compressor = Blosc()
+    compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
     enc = compressor.encode(data)
     return enc
 
@@ -187,7 +187,7 @@ def _decode_worker(enc):
 
 
 def test_multiprocessing():
-    data = np.arange(10000000)
+    data = np.arange(1000000)
     enc = _encode_worker(data)
 
     try:
