@@ -745,10 +745,10 @@ static const char *__pyx_filename;
 static const char *__pyx_f[] = {
   "stringsource",
   "numcodecs/compat_ext.pyx",
-  "array.pxd",
-  "type.pxd",
-  "bool.pxd",
-  "complex.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/array.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/complex.pxd",
 };
 
 /*--- Type declarations ---*/

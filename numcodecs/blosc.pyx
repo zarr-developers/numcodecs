@@ -154,7 +154,6 @@ def cbuffer_complib(source):
     """Return the name of the compression library used to compress `source`."""
     cdef:
         Buffer buffer
-        bytes complib
 
     # obtain buffer
     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
