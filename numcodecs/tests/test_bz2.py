@@ -28,10 +28,10 @@ arrays = [
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
     np.random.randint(0, 2, size=1000, dtype=bool).reshape(100, 10, order='F'),
     np.random.choice([b'a', b'bb', b'ccc'], size=1000).reshape(10, 10, 10),
-    np.random.randint(0, 2**60, size=1000).view('M8[ns]'),
-    np.random.randint(0, 2**60, size=1000).view('m8[ns]'),
-    np.random.randint(0, 2**25, size=1000).view('M8[m]'),
-    np.random.randint(0, 2**25, size=1000).view('m8[m]'),
+    np.random.randint(0, 2**60, size=1000, dtype='u8').view('M8[ns]'),
+    np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
+    np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
+    np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
 ]
 
 
