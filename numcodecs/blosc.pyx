@@ -7,17 +7,16 @@ from __future__ import absolute_import, print_function, division
 import threading
 import multiprocessing
 import os
-import sys
 
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
-from numcodecs.compat_ext cimport Buffer
-from numcodecs.compat_ext import Buffer
-from numcodecs.compat import PY2, text_type
-from numcodecs.abc import Codec
+from .compat_ext cimport Buffer
+from .compat_ext import Buffer
+from .compat import PY2, text_type
+from .abc import Codec
 
 
 cdef extern from "blosc.h":
@@ -30,7 +29,10 @@ cdef extern from "blosc.h":
         BLOSC_BITSHUFFLE,
         BLOSC_MAX_BUFFERSIZE,
         BLOSC_MAX_THREADS,
-        BLOSC_MAX_TYPESIZE
+        BLOSC_MAX_TYPESIZE,
+        BLOSC_DOSHUFFLE,
+        BLOSC_DOBITSHUFFLE,
+        BLOSC_MEMCPYED
 
     void blosc_init()
     void blosc_destroy()
@@ -40,17 +42,19 @@ cdef extern from "blosc.h":
     void blosc_set_blocksize(size_t blocksize)
     char* blosc_list_compressors()
     int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                       void *src, void *dest, size_t destsize) nogil
+                       void* src, void* dest, size_t destsize) nogil
     int blosc_decompress(void *src, void *dest, size_t destsize) nogil
-    int blosc_compname_to_compcode(const char *compname)
+    int blosc_compname_to_compcode(const char* compname)
     int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                           const void *src, void *dest, size_t destsize,
-                           const char *compressor, size_t blocksize,
+                           const void* src, void* dest, size_t destsize,
+                           const char* compressor, size_t blocksize,
                            int numinternalthreads) nogil
-    int blosc_decompress_ctx(const void *src, void *dest, size_t destsize,
+    int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
                              int numinternalthreads) nogil
-    void blosc_cbuffer_sizes(const void *cbuffer, size_t *nbytes, size_t *cbytes,
-                             size_t *blocksize)
+    void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
+                             size_t* blocksize)
+    char* blosc_cbuffer_complib(const void* cbuffer)
+    void blosc_cbuffer_metainfo(const void* cbuffer, size_t* typesize, int* flags)
 
 
 MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
@@ -66,6 +70,7 @@ __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
 BITSHUFFLE = BLOSC_BITSHUFFLE
+AUTOSHUFFLE = -1
 
 
 # synchronization
@@ -140,6 +145,52 @@ def cbuffer_sizes(source):
     return nbytes, cbytes, blocksize
 
 
+def cbuffer_complib(source):
+    """TODO"""
+    cdef:
+        Buffer buffer
+        char* complib
+
+    # obtain buffer
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+
+    # determine buffer size
+    complib = blosc_cbuffer_complib(buffer.ptr)
+
+    # release buffers
+    buffer.release()
+
+    return complib.decode('ascii')
+
+
+def cbuffer_metainfo(source):
+    """TODO"""
+    cdef:
+        Buffer buffer
+        size_t typesize
+        int flags
+
+    # obtain buffer
+    buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+
+    # determine buffer size
+    blosc_cbuffer_metainfo(buffer.ptr, &typesize, &flags)
+
+    # release buffers
+    buffer.release()
+
+    # decompose flags
+    if flags & BLOSC_DOSHUFFLE:
+        shuffle = SHUFFLE
+    elif flags & BLOSC_DOBITSHUFFLE:
+        shuffle = BITSHUFFLE
+    else:
+        shuffle = NOSHUFFLE
+    memcpyed = flags & BLOSC_MEMCPYED
+
+    return typesize, shuffle, memcpyed
+
+
 def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     """Compress data.
 
@@ -177,6 +228,16 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
     itemsize = source_buffer.itemsize
+
+    # determine shuffle
+    if shuffle == AUTOSHUFFLE:
+        if itemsize == 1:
+            shuffle = BITSHUFFLE
+        else:
+            shuffle = SHUFFLE
+    elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:
+        raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
+                         shuffle)
 
     try:
 
@@ -337,7 +398,7 @@ def _get_use_threads():
     return _use_threads
 
 
-_shuffle_repr = ['NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
+_shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
 
 
 class Blosc(Codec):
@@ -366,8 +427,9 @@ class Blosc(Codec):
     NOSHUFFLE = NOSHUFFLE
     SHUFFLE = SHUFFLE
     BITSHUFFLE = BITSHUFFLE
+    AUTOSHUFFLE = AUTOSHUFFLE
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=1, blocksize=0):
+    def __init__(self, cname='lz4', clevel=5, shuffle=AUTOSHUFFLE, blocksize=0):
         self.cname = cname
         if isinstance(cname, text_type):
             self._cname_bytes = cname.encode('ascii')
@@ -388,6 +450,6 @@ class Blosc(Codec):
             (type(self).__name__,
              self.cname,
              self.clevel,
-             _shuffle_repr[self.shuffle],
+             _shuffle_repr[self.shuffle + 1],
              self.blocksize)
         return r
