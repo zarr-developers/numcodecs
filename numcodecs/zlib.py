@@ -6,8 +6,8 @@ import zlib as _zlib
 import numpy as np
 
 
-from numcodecs.abc import Codec
-from numcodecs.compat import buffer_copy, handle_datetime
+from .abc import Codec
+from .compat import buffer_copy, handle_datetime
 
 
 class Zlib(Codec):

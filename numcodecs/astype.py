@@ -3,8 +3,8 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 
-from numcodecs.abc import Codec
-from numcodecs.compat import buffer_copy, ndarray_from_buffer
+from .abc import Codec
+from .compat import buffer_copy, ndarray_from_buffer
 
 
 class AsType(Codec):

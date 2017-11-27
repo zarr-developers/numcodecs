@@ -2,9 +2,8 @@
 from __future__ import absolute_import, print_function, division
 
 
-from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_from_buffer, buffer_copy, ensure_text, \
-    ensure_bytes
+from .abc import Codec
+from .compat import ndarray_from_buffer, buffer_copy, ensure_text, ensure_bytes
 
 
 import numpy as np

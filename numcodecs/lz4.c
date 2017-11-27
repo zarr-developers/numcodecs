@@ -4,24 +4,24 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/lz4-1.7.5/lz4.h", 
+            "c-blosc/internal-complibs/lz4-1.7.5/lz4.h",
             "numcodecs/stdint_compat.h"
-        ], 
+        ],
         "extra_compile_args": [
-            "-msse2", 
+            "-msse2",
             "-mavx2"
-        ], 
+        ],
         "include_dirs": [
-            "numcodecs", 
+            "numcodecs",
             "c-blosc/internal-complibs/lz4-1.7.5"
-        ], 
-        "name": "numcodecs.lz4", 
+        ],
+        "name": "numcodecs.lz4",
         "sources": [
-            "numcodecs/lz4.pyx", 
-            "c-blosc/internal-complibs/lz4-1.7.5/lz4hc.c", 
+            "numcodecs/lz4.pyx",
+            "c-blosc/internal-complibs/lz4-1.7.5/lz4hc.c",
             "c-blosc/internal-complibs/lz4-1.7.5/lz4.c"
         ]
-    }, 
+    },
     "module_name": "numcodecs.lz4"
 }
 END: Cython Metadata */
@@ -755,10 +755,10 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/lz4.pyx",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/array.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/type.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/bool.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/complex.pxd",
+  "array.pxd",
+  "type.pxd",
+  "bool.pxd",
+  "complex.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */
@@ -786,7 +786,7 @@ struct __pyx_defaults {
   PyObject *__pyx_arg_acceleration;
 };
 
-/* "numcodecs/compat_ext.pxd":5
+/* "compat_ext.pxd":5
  * 
  * 
  * cdef class Buffer:             # <<<<<<<<<<<<<<
@@ -1388,6 +1388,7 @@ static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_r[] = "r";
 static const char __pyx_k_LZ4[] = "LZ4";
 static const char __pyx_k_PY2[] = "PY2";
+static const char __pyx_k_abc[] = "abc";
 static const char __pyx_k_buf[] = "buf";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_lz4[] = "lz4";
@@ -1402,6 +1403,7 @@ static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_Codec[] = "Codec";
 static const char __pyx_k_ascii[] = "ascii";
 static const char __pyx_k_Buffer[] = "Buffer";
+static const char __pyx_k_compat[] = "compat";
 static const char __pyx_k_decode[] = "decode";
 static const char __pyx_k_encode[] = "encode";
 static const char __pyx_k_import[] = "__import__";
@@ -1421,6 +1423,7 @@ static const char __pyx_k_LZ4___repr[] = "LZ4.__repr__";
 static const char __pyx_k_LZ4_decode[] = "LZ4.decode";
 static const char __pyx_k_LZ4_encode[] = "LZ4.encode";
 static const char __pyx_k_ValueError[] = "ValueError";
+static const char __pyx_k_compat_ext[] = "compat_ext";
 static const char __pyx_k_decompress[] = "decompress";
 static const char __pyx_k_dest_start[] = "dest_start";
 static const char __pyx_k_source_ptr[] = "source_ptr";
@@ -1430,19 +1433,16 @@ static const char __pyx_k_source_size[] = "source_size";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_acceleration[] = "acceleration";
 static const char __pyx_k_source_start[] = "source_start";
-static const char __pyx_k_numcodecs_abc[] = "numcodecs.abc";
 static const char __pyx_k_numcodecs_lz4[] = "numcodecs.lz4";
 static const char __pyx_k_source_buffer[] = "source_buffer";
 static const char __pyx_k_VERSION_STRING[] = "VERSION_STRING";
 static const char __pyx_k_bad_input_data[] = "bad input data";
 static const char __pyx_k_compressed_size[] = "compressed_size";
-static const char __pyx_k_numcodecs_compat[] = "numcodecs.compat";
 static const char __pyx_k_s_acceleration_r[] = "%s(acceleration=%r)";
 static const char __pyx_k_decompressed_size[] = "decompressed_size";
 static const char __pyx_k_numcodecs_lz4_pyx[] = "numcodecs/lz4.pyx";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_DEFAULT_ACCELERATION[] = "DEFAULT_ACCELERATION";
-static const char __pyx_k_numcodecs_compat_ext[] = "numcodecs.compat_ext";
 static const char __pyx_k_LZ4_compression_error_s[] = "LZ4 compression error: %s";
 static const char __pyx_k_LZ4_decompression_error_s[] = "LZ4 decompression error: %s";
 static const char __pyx_k_LZ4_decompression_error_invalid[] = "LZ4 decompression error: invalid input data";
@@ -1467,12 +1467,15 @@ static PyObject *__pyx_n_s_PY2;
 static PyObject *__pyx_n_s_RuntimeError;
 static PyObject *__pyx_n_s_VERSION_STRING;
 static PyObject *__pyx_n_s_ValueError;
+static PyObject *__pyx_n_s_abc;
 static PyObject *__pyx_n_s_acceleration;
 static PyObject *__pyx_n_s_ascii;
 static PyObject *__pyx_kp_s_bad_input_data;
 static PyObject *__pyx_n_s_buf;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_codec_id;
+static PyObject *__pyx_n_s_compat;
+static PyObject *__pyx_n_s_compat_ext;
 static PyObject *__pyx_n_s_compress;
 static PyObject *__pyx_n_s_compressed_size;
 static PyObject *__pyx_n_s_decode;
@@ -1493,9 +1496,6 @@ static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_metaclass;
 static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_name;
-static PyObject *__pyx_n_s_numcodecs_abc;
-static PyObject *__pyx_n_s_numcodecs_compat;
-static PyObject *__pyx_n_s_numcodecs_compat_ext;
 static PyObject *__pyx_n_s_numcodecs_lz4;
 static PyObject *__pyx_kp_s_numcodecs_lz4_pyx;
 static PyObject *__pyx_n_s_out;
@@ -4107,12 +4107,15 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
   {&__pyx_n_s_VERSION_STRING, __pyx_k_VERSION_STRING, sizeof(__pyx_k_VERSION_STRING), 0, 0, 1, 1},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
+  {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
   {&__pyx_n_s_acceleration, __pyx_k_acceleration, sizeof(__pyx_k_acceleration), 0, 0, 1, 1},
   {&__pyx_n_s_ascii, __pyx_k_ascii, sizeof(__pyx_k_ascii), 0, 0, 1, 1},
   {&__pyx_kp_s_bad_input_data, __pyx_k_bad_input_data, sizeof(__pyx_k_bad_input_data), 0, 0, 1, 0},
   {&__pyx_n_s_buf, __pyx_k_buf, sizeof(__pyx_k_buf), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_codec_id, __pyx_k_codec_id, sizeof(__pyx_k_codec_id), 0, 0, 1, 1},
+  {&__pyx_n_s_compat, __pyx_k_compat, sizeof(__pyx_k_compat), 0, 0, 1, 1},
+  {&__pyx_n_s_compat_ext, __pyx_k_compat_ext, sizeof(__pyx_k_compat_ext), 0, 0, 1, 1},
   {&__pyx_n_s_compress, __pyx_k_compress, sizeof(__pyx_k_compress), 0, 0, 1, 1},
   {&__pyx_n_s_compressed_size, __pyx_k_compressed_size, sizeof(__pyx_k_compressed_size), 0, 0, 1, 1},
   {&__pyx_n_s_decode, __pyx_k_decode, sizeof(__pyx_k_decode), 0, 0, 1, 1},
@@ -4133,9 +4136,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_metaclass, __pyx_k_metaclass, sizeof(__pyx_k_metaclass), 0, 0, 1, 1},
   {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
-  {&__pyx_n_s_numcodecs_abc, __pyx_k_numcodecs_abc, sizeof(__pyx_k_numcodecs_abc), 0, 0, 1, 1},
-  {&__pyx_n_s_numcodecs_compat, __pyx_k_numcodecs_compat, sizeof(__pyx_k_numcodecs_compat), 0, 0, 1, 1},
-  {&__pyx_n_s_numcodecs_compat_ext, __pyx_k_numcodecs_compat_ext, sizeof(__pyx_k_numcodecs_compat_ext), 0, 0, 1, 1},
   {&__pyx_n_s_numcodecs_lz4, __pyx_k_numcodecs_lz4, sizeof(__pyx_k_numcodecs_lz4), 0, 0, 1, 1},
   {&__pyx_kp_s_numcodecs_lz4_pyx, __pyx_k_numcodecs_lz4_pyx, sizeof(__pyx_k_numcodecs_lz4_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_out, __pyx_k_out, sizeof(__pyx_k_out), 0, 0, 1, 1},
@@ -4444,26 +4444,26 @@ static int __pyx_pymod_exec_lz4(PyObject *__pyx_pyinit_module)
 
   /* "numcodecs/lz4.pyx":14
  * 
- * from numcodecs.compat_ext cimport Buffer
- * from numcodecs.compat_ext import Buffer             # <<<<<<<<<<<<<<
- * from numcodecs.compat import PY2
- * from numcodecs.abc import Codec
+ * from .compat_ext cimport Buffer
+ * from .compat_ext import Buffer             # <<<<<<<<<<<<<<
+ * from .compat import PY2
+ * from .abc import Codec
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_Buffer);
   __Pyx_GIVEREF(__pyx_n_s_Buffer);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Buffer);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_numcodecs_compat_ext, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_compat_ext, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "numcodecs/lz4.pyx":15
- * from numcodecs.compat_ext cimport Buffer
- * from numcodecs.compat_ext import Buffer
- * from numcodecs.compat import PY2             # <<<<<<<<<<<<<<
- * from numcodecs.abc import Codec
+ * from .compat_ext cimport Buffer
+ * from .compat_ext import Buffer
+ * from .compat import PY2             # <<<<<<<<<<<<<<
+ * from .abc import Codec
  * 
  */
   __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
@@ -4471,7 +4471,7 @@ static int __pyx_pymod_exec_lz4(PyObject *__pyx_pyinit_module)
   __Pyx_INCREF(__pyx_n_s_PY2);
   __Pyx_GIVEREF(__pyx_n_s_PY2);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_PY2);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numcodecs_compat, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_compat, __pyx_t_2, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_PY2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
@@ -4481,9 +4481,9 @@ static int __pyx_pymod_exec_lz4(PyObject *__pyx_pyinit_module)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "numcodecs/lz4.pyx":16
- * from numcodecs.compat_ext import Buffer
- * from numcodecs.compat import PY2
- * from numcodecs.abc import Codec             # <<<<<<<<<<<<<<
+ * from .compat_ext import Buffer
+ * from .compat import PY2
+ * from .abc import Codec             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -4492,7 +4492,7 @@ static int __pyx_pymod_exec_lz4(PyObject *__pyx_pyinit_module)
   __Pyx_INCREF(__pyx_n_s_Codec);
   __Pyx_GIVEREF(__pyx_n_s_Codec);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Codec);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_numcodecs_abc, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_abc, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Codec); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)

@@ -9,6 +9,13 @@ Blosc
     .. autoattribute:: SHUFFLE
     .. autoattribute:: BITSHUFFLE
     .. autoattribute:: AUTOSHUFFLE
+    .. automethod:: encode
+    .. automethod:: decode
+    .. automethod:: get_config
+    .. automethod:: from_config
+
+Helper functions
+----------------
 
 .. autofunction:: init
 .. autofunction:: destroy
