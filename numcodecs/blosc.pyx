@@ -70,8 +70,10 @@ __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
 BITSHUFFLE = BLOSC_BITSHUFFLE
+# automatic shuffle
 AUTOSHUFFLE = -1
-
+# automatic block size - let blosc decide
+AUTOBLOCKS = 0
 
 # synchronization
 mutex = multiprocessing.Lock()
@@ -102,7 +104,10 @@ def compname_to_compcode(cname):
 
 def list_compressors():
     """Get a list of compressors supported in the current build."""
-    return text_type(blosc_list_compressors(), 'ascii').split(',')
+    s = blosc_list_compressors()
+    if not PY2:
+        s = s.decode('ascii')
+    return s.split(',')
 
 
 def get_nthreads():
@@ -191,7 +196,13 @@ def cbuffer_metainfo(source):
     return typesize, shuffle, memcpyed
 
 
-def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
+def err_bad_cname(cname):
+    raise ValueError('bad compressor or compressor not supported: %r; expected one of '
+                     '%s' % (cname, list_compressors()))
+
+
+def compress(source, char* cname, int clevel, int shuffle=AUTOSHUFFLE,
+             int blocksize=AUTOBLOCKS):
     """Compress data.
 
     Parameters
@@ -222,6 +233,14 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
         Buffer source_buffer
         size_t nbytes, cbytes, itemsize
         bytes dest
+
+    # check valid cname early
+    if PY2:
+        cname_str = cname
+    else:
+        cname_str = cname.decode('ascii')
+    if cname_str not in list_compressors():
+        err_bad_cname(cname_str)
 
     # setup source buffer
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
@@ -257,7 +276,9 @@ def compress(source, char* cname, int clevel, int shuffle, int blocksize=0):
                 # set compressor
                 compressor_set = blosc_set_compressor(cname)
                 if compressor_set < 0:
-                    raise ValueError('compressor not supported: %r' % cname)
+                    # shouldn't happen if we checked against list of compressors
+                    # already, but just in case
+                    err_bad_cname(cname_str)
 
                 # set blocksize
                 blosc_set_blocksize(blocksize)
@@ -429,7 +450,7 @@ class Blosc(Codec):
     BITSHUFFLE = BITSHUFFLE
     AUTOSHUFFLE = AUTOSHUFFLE
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=AUTOSHUFFLE, blocksize=0):
+    def __init__(self, cname='lz4', clevel=5, shuffle=AUTOSHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
         if isinstance(cname, text_type):
             self._cname_bytes = cname.encode('ascii')
