@@ -7,7 +7,7 @@ import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import buffer_copy
+from numcodecs.compat import buffer_copy, handle_datetime
 
 
 class Zlib(Codec):
@@ -26,6 +26,9 @@ class Zlib(Codec):
         self.level = level
 
     def encode(self, buf):
+
+        # deal with lack of buffer support for datetime64 and timedelta64
+        buf = handle_datetime(buf)
 
         # if numpy array, can only handle C contiguous directly
         if isinstance(buf, np.ndarray) and not buf.flags.c_contiguous:

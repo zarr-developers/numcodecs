@@ -16,7 +16,7 @@ if _lzma:
 
     import numpy as np
     from numcodecs.abc import Codec
-    from numcodecs.compat import buffer_copy
+    from numcodecs.compat import buffer_copy, handle_datetime
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -47,6 +47,9 @@ if _lzma:
             self.filters = filters
 
         def encode(self, buf):
+
+            # deal with lack of buffer support for datetime64 and timedelta64
+            buf = handle_datetime(buf)
 
             # if numpy array, can only handle C contiguous directly
             if isinstance(buf, np.ndarray) and not buf.flags.c_contiguous:
