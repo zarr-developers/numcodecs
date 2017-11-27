@@ -14,10 +14,12 @@ PY2 = sys.version_info[0] == 2
 
 
 cdef class Buffer:
-    """Compatibility class to work around fact that array.array does not support new-style buffer
-    interface in PY2."""
+    """Compatibility class to work around fact that array.array does not support
+    new-style buffer interface in PY2."""
 
     def __cinit__(self, obj, flags):
+        if hasattr(obj, 'dtype') and obj.dtype.kind in 'Mm':
+            obj = obj.view('u8')
         if PY2 and isinstance(obj, array.array):
             self.new_buffer = False
             self.arr = obj

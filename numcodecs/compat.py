@@ -114,3 +114,9 @@ def ensure_text(l, encoding='utf-8'):
         return l
     else:
         return text_type(l, encoding=encoding)
+
+
+def handle_datetime(buf):
+    if hasattr(buf, 'dtype') and buf.dtype.kind in 'Mm':
+        return buf.view('u8')
+    return buf
