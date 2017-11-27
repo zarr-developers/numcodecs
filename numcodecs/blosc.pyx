@@ -151,10 +151,10 @@ def cbuffer_sizes(source):
 
 
 def cbuffer_complib(source):
-    """TODO"""
+    """Return the name of the compression library used to compress `source`."""
     cdef:
         Buffer buffer
-        char* complib
+        bytes complib
 
     # obtain buffer
     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
@@ -165,11 +165,24 @@ def cbuffer_complib(source):
     # release buffers
     buffer.release()
 
-    return complib.decode('ascii')
+    if not PY2:
+        complib = complib.decode('ascii')
+
+    return complib
 
 
 def cbuffer_metainfo(source):
-    """TODO"""
+    """Return some meta-information about the compressed buffer in `source`, including
+    the typesize, whether the shuffle or bit-shuffle filters were used, and the
+    whether the buffer was memcpyed.
+
+    Returns
+    -------
+    typesize
+    shuffle
+    memcpyed
+
+    """
     cdef:
         Buffer buffer
         size_t typesize
@@ -215,7 +228,9 @@ def compress(source, char* cname, int clevel, int shuffle=AUTOSHUFFLE,
     clevel : int
         Compression level.
     shuffle : int
-        Shuffle filter.
+        Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If -1
+        (default), bit-shuffle will be used for buffers with itemsize 1,
+        and byte-shuffle will be used otherwise.
     blocksize : int
         The requested size of the compressed blocks.  If 0, an automatic blocksize will
         be used.
@@ -433,7 +448,9 @@ class Blosc(Codec):
     clevel : integer, optional
         An integer between 0 and 9 specifying the compression level.
     shuffle : integer, optional
-        Either NOSHUFFLE (0), SHUFFLE (1) or BITSHUFFLE (2).
+        Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If -1
+        (default), bit-shuffle will be used for buffers with itemsize 1,
+        and byte-shuffle will be used otherwise.
     blocksize : int
         The requested size of the compressed blocks.  If 0 (default), an automatic
         blocksize will be used.

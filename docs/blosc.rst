@@ -8,6 +8,7 @@ Blosc
     .. autoattribute:: NOSHUFFLE
     .. autoattribute:: SHUFFLE
     .. autoattribute:: BITSHUFFLE
+    .. autoattribute:: AUTOSHUFFLE
 
 .. autofunction:: init
 .. autofunction:: destroy
@@ -16,5 +17,7 @@ Blosc
 .. autofunction:: get_nthreads
 .. autofunction:: set_nthreads
 .. autofunction:: cbuffer_sizes
+.. autofunction:: cbuffer_complib
+.. autofunction:: cbuffer_metainfo
 .. autofunction:: compress
 .. autofunction:: decompress
