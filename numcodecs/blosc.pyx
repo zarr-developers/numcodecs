@@ -213,7 +213,7 @@ def err_bad_cname(cname):
                      '%s' % (cname, list_compressors()))
 
 
-def compress(source, char* cname, int clevel, int shuffle=AUTOSHUFFLE,
+def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
              int blocksize=AUTOBLOCKS):
     """Compress data.
 
@@ -466,7 +466,7 @@ class Blosc(Codec):
     BITSHUFFLE = BITSHUFFLE
     AUTOSHUFFLE = AUTOSHUFFLE
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=AUTOSHUFFLE, blocksize=AUTOBLOCKS):
+    def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
         if isinstance(cname, text_type):
             self._cname_bytes = cname.encode('ascii')
