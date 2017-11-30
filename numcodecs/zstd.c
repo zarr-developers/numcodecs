@@ -4,43 +4,43 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/zstd-1.1.3/zstd.h"
-        ], 
+            "c-blosc/internal-complibs/zstd-1.3.0/zstd.h"
+        ],
         "extra_compile_args": [
-            "-msse2", 
+            "-msse2",
             "-mavx2"
-        ], 
+        ],
         "include_dirs": [
-            "c-blosc/internal-complibs/zstd-1.1.3", 
-            "c-blosc/internal-complibs/zstd-1.1.3/legacy", 
-            "c-blosc/internal-complibs/zstd-1.1.3/compress", 
-            "c-blosc/internal-complibs/zstd-1.1.3/dictBuilder", 
-            "c-blosc/internal-complibs/zstd-1.1.3/deprecated", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common", 
-            "c-blosc/internal-complibs/zstd-1.1.3/decompress", 
-            "c-blosc/internal-complibs/zstd-1.1.3/dll"
-        ], 
-        "name": "numcodecs.zstd", 
+            "c-blosc/internal-complibs/zstd-1.3.0",
+            "c-blosc/internal-complibs/zstd-1.3.0/legacy",
+            "c-blosc/internal-complibs/zstd-1.3.0/compress",
+            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder",
+            "c-blosc/internal-complibs/zstd-1.3.0/deprecated",
+            "c-blosc/internal-complibs/zstd-1.3.0/common",
+            "c-blosc/internal-complibs/zstd-1.3.0/decompress",
+            "c-blosc/internal-complibs/zstd-1.3.0/dll"
+        ],
+        "name": "numcodecs.zstd",
         "sources": [
-            "numcodecs/zstd.pyx", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/threading.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/zstd_common.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/pool.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/fse_decompress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/error_private.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/xxhash.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/common/entropy_common.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/compress/fse_compress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/compress/zstd_compress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/compress/huf_compress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/compress/zstdmt_compress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/decompress/zstd_decompress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/decompress/huf_decompress.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/dictBuilder/divsufsort.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/dictBuilder/cover.c", 
-            "c-blosc/internal-complibs/zstd-1.1.3/dictBuilder/zdict.c"
+            "numcodecs/zstd.pyx",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/threading.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/zstd_common.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/pool.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/fse_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/error_private.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/xxhash.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/common/entropy_common.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/compress/fse_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/compress/zstd_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/compress/huf_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/compress/zstdmt_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/decompress/zstd_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/decompress/huf_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/divsufsort.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/cover.c",
+            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/zdict.c"
         ]
-    }, 
+    },
     "module_name": "numcodecs.zstd"
 }
 END: Cython Metadata */
@@ -773,10 +773,10 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/zstd.pyx",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/array.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/type.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/bool.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/complex.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/array.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".tox/py35/lib/python3.5/site-packages/Cython/Includes/cpython/complex.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */
@@ -804,7 +804,7 @@ struct __pyx_defaults {
   PyObject *__pyx_arg_level;
 };
 
-/* "numcodecs/compat_ext.pxd":5
+/* "compat_ext.pxd":5
  * 
  * 
  * cdef class Buffer:             # <<<<<<<<<<<<<<
@@ -1415,6 +1415,7 @@ static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_r[] = "r";
+static const char __pyx_k_abc[] = "abc";
 static const char __pyx_k_buf[] = "buf";
 static const char __pyx_k_doc[] = "__doc__";
 static const char __pyx_k_out[] = "out";
@@ -1449,6 +1450,7 @@ static const char __pyx_k_metaclass[] = "__metaclass__";
 static const char __pyx_k_s_level_r[] = "%s(level=%r)";
 static const char __pyx_k_MAX_CLEVEL[] = "MAX_CLEVEL";
 static const char __pyx_k_ValueError[] = "ValueError";
+static const char __pyx_k_compat_ext[] = "compat_ext";
 static const char __pyx_k_decompress[] = "decompress";
 static const char __pyx_k_source_ptr[] = "source_ptr";
 static const char __pyx_k_MemoryError[] = "MemoryError";
@@ -1459,7 +1461,6 @@ static const char __pyx_k_Zstd_encode[] = "Zstd.encode";
 static const char __pyx_k_dest_buffer[] = "dest_buffer";
 static const char __pyx_k_source_size[] = "source_size";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
-static const char __pyx_k_numcodecs_abc[] = "numcodecs.abc";
 static const char __pyx_k_source_buffer[] = "source_buffer";
 static const char __pyx_k_DEFAULT_CLEVEL[] = "DEFAULT_CLEVEL";
 static const char __pyx_k_VERSION_NUMBER[] = "VERSION_NUMBER";
@@ -1471,7 +1472,6 @@ static const char __pyx_k_numcodecs_zstd_pyx[] = "numcodecs/zstd.pyx";
 static const char __pyx_k_MAJOR_VERSION_NUMBER[] = "MAJOR_VERSION_NUMBER";
 static const char __pyx_k_MICRO_VERSION_NUMBER[] = "MICRO_VERSION_NUMBER";
 static const char __pyx_k_MINOR_VERSION_NUMBER[] = "MINOR_VERSION_NUMBER";
-static const char __pyx_k_numcodecs_compat_ext[] = "numcodecs.compat_ext";
 static const char __pyx_k_Zstd_compression_error_s[] = "Zstd compression error: %s";
 static const char __pyx_k_Zstd_decompression_error_s[] = "Zstd decompression error: %s";
 static const char __pyx_k_Codec_providing_compression_usin[] = "Codec providing compression using Zstandard.\n\n    Parameters\n    ----------\n    level : int\n        Compression level (1-22).\n\n    See Also\n    --------\n    numcodecs.lz4.LZ4, numcodecs.blosc.Blosc\n\n    ";
@@ -1499,9 +1499,11 @@ static PyObject *__pyx_kp_s_Zstd_decompression_error_expecte;
 static PyObject *__pyx_kp_s_Zstd_decompression_error_invalid;
 static PyObject *__pyx_kp_s_Zstd_decompression_error_s;
 static PyObject *__pyx_n_s_Zstd_encode;
+static PyObject *__pyx_n_s_abc;
 static PyObject *__pyx_n_s_buf;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_codec_id;
+static PyObject *__pyx_n_s_compat_ext;
 static PyObject *__pyx_n_s_compress;
 static PyObject *__pyx_n_s_compressed_size;
 static PyObject *__pyx_n_s_decode;
@@ -1522,8 +1524,6 @@ static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_metaclass;
 static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_name;
-static PyObject *__pyx_n_s_numcodecs_abc;
-static PyObject *__pyx_n_s_numcodecs_compat_ext;
 static PyObject *__pyx_n_s_numcodecs_zstd;
 static PyObject *__pyx_kp_s_numcodecs_zstd_pyx;
 static PyObject *__pyx_n_s_out;
@@ -4122,9 +4122,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Zstd_decompression_error_invalid, __pyx_k_Zstd_decompression_error_invalid, sizeof(__pyx_k_Zstd_decompression_error_invalid), 0, 0, 1, 0},
   {&__pyx_kp_s_Zstd_decompression_error_s, __pyx_k_Zstd_decompression_error_s, sizeof(__pyx_k_Zstd_decompression_error_s), 0, 0, 1, 0},
   {&__pyx_n_s_Zstd_encode, __pyx_k_Zstd_encode, sizeof(__pyx_k_Zstd_encode), 0, 0, 1, 1},
+  {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
   {&__pyx_n_s_buf, __pyx_k_buf, sizeof(__pyx_k_buf), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_codec_id, __pyx_k_codec_id, sizeof(__pyx_k_codec_id), 0, 0, 1, 1},
+  {&__pyx_n_s_compat_ext, __pyx_k_compat_ext, sizeof(__pyx_k_compat_ext), 0, 0, 1, 1},
   {&__pyx_n_s_compress, __pyx_k_compress, sizeof(__pyx_k_compress), 0, 0, 1, 1},
   {&__pyx_n_s_compressed_size, __pyx_k_compressed_size, sizeof(__pyx_k_compressed_size), 0, 0, 1, 1},
   {&__pyx_n_s_decode, __pyx_k_decode, sizeof(__pyx_k_decode), 0, 0, 1, 1},
@@ -4145,8 +4147,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_metaclass, __pyx_k_metaclass, sizeof(__pyx_k_metaclass), 0, 0, 1, 1},
   {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
-  {&__pyx_n_s_numcodecs_abc, __pyx_k_numcodecs_abc, sizeof(__pyx_k_numcodecs_abc), 0, 0, 1, 1},
-  {&__pyx_n_s_numcodecs_compat_ext, __pyx_k_numcodecs_compat_ext, sizeof(__pyx_k_numcodecs_compat_ext), 0, 0, 1, 1},
   {&__pyx_n_s_numcodecs_zstd, __pyx_k_numcodecs_zstd, sizeof(__pyx_k_numcodecs_zstd), 0, 0, 1, 1},
   {&__pyx_kp_s_numcodecs_zstd_pyx, __pyx_k_numcodecs_zstd_pyx, sizeof(__pyx_k_numcodecs_zstd_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_out, __pyx_k_out, sizeof(__pyx_k_out), 0, 0, 1, 1},
@@ -4445,9 +4445,9 @@ static int __pyx_pymod_exec_zstd(PyObject *__pyx_pyinit_module)
 
   /* "numcodecs/zstd.pyx":14
  * 
- * from numcodecs.compat_ext cimport Buffer
- * from numcodecs.compat_ext import Buffer             # <<<<<<<<<<<<<<
- * from numcodecs.abc import Codec
+ * from .compat_ext cimport Buffer
+ * from .compat_ext import Buffer             # <<<<<<<<<<<<<<
+ * from .abc import Codec
  * 
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
@@ -4455,15 +4455,15 @@ static int __pyx_pymod_exec_zstd(PyObject *__pyx_pyinit_module)
   __Pyx_INCREF(__pyx_n_s_Buffer);
   __Pyx_GIVEREF(__pyx_n_s_Buffer);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Buffer);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_numcodecs_compat_ext, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_compat_ext, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "numcodecs/zstd.pyx":15
- * from numcodecs.compat_ext cimport Buffer
- * from numcodecs.compat_ext import Buffer
- * from numcodecs.abc import Codec             # <<<<<<<<<<<<<<
+ * from .compat_ext cimport Buffer
+ * from .compat_ext import Buffer
+ * from .abc import Codec             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -4472,7 +4472,7 @@ static int __pyx_pymod_exec_zstd(PyObject *__pyx_pyinit_module)
   __Pyx_INCREF(__pyx_n_s_Codec);
   __Pyx_GIVEREF(__pyx_n_s_Codec);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_Codec);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numcodecs_abc, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_abc, __pyx_t_2, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_Codec); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)

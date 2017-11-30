@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, division
 import numpy as np
 
 
-from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_from_buffer, buffer_copy
+from .abc import Codec
+from .compat import ndarray_from_buffer, buffer_copy
 
 
 class FixedScaleOffset(Codec):

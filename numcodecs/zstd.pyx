@@ -10,9 +10,9 @@ from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
-from numcodecs.compat_ext cimport Buffer
-from numcodecs.compat_ext import Buffer
-from numcodecs.abc import Codec
+from .compat_ext cimport Buffer
+from .compat_ext import Buffer
+from .abc import Codec
 
 
 cdef extern from "zstd.h":

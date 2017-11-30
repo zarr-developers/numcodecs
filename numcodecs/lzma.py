@@ -15,8 +15,8 @@ except ImportError:  # pragma: no cover
 if _lzma:
 
     import numpy as np
-    from numcodecs.abc import Codec
-    from numcodecs.compat import buffer_copy, handle_datetime
+    from .abc import Codec
+    from .compat import buffer_copy, handle_datetime
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
