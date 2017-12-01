@@ -7,7 +7,7 @@ from glob import glob
 
 
 import numpy as np
-from nose.tools import eq_ as eq, assert_true
+from nose.tools import eq_ as eq, assert_true, assert_raises
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 
@@ -211,3 +211,13 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 else:
                     assert_array_equal(arr, dec_arr)
                     eq(arr_bytes, buffer_tobytes(dec))
+
+
+def check_err_object_buffer(compressor):
+    # cannot decode directly into object array, leads to segfaults
+    a = np.arange(10)
+    enc = compressor.encode(a)
+    out = np.empty(10, dtype=object)
+    with assert_raises(ValueError):
+        compressor.decode(enc, out=out)
+    print(out[:])

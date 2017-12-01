@@ -7,8 +7,9 @@ import numpy as np
 
 
 from numcodecs.bz2 import BZ2
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
+                                    check_backwards_compatibility,
+                                    check_err_object_buffer)
 
 
 codecs = [
@@ -51,3 +52,7 @@ def test_repr():
 
 def test_backwards_compatibility():
     check_backwards_compatibility(BZ2.codec_id, arrays, codecs)
+
+
+def test_err_object_buffer():
+    check_err_object_buffer(BZ2())

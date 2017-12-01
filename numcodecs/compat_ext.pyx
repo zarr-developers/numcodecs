@@ -18,8 +18,11 @@ cdef class Buffer:
     new-style buffer interface in PY2."""
 
     def __cinit__(self, obj, flags):
-        if hasattr(obj, 'dtype') and obj.dtype.kind in 'Mm':
-            obj = obj.view('u8')
+        if hasattr(obj, 'dtype'):
+            if obj.dtype.kind in 'Mm':
+                obj = obj.view('u8')
+            elif obj.dtype.kind == 'O':
+                raise ValueError('cannot obtain buffer from object array')
         if PY2 and isinstance(obj, array.array):
             self.new_buffer = False
             self.arr = obj
