@@ -23,6 +23,7 @@ arrays = [
     np.array(['foo', 1.0, 2] * 300, dtype=object),
     np.arange(1000, dtype='i4'),
     np.array(['foo', 'bar', 'baz'] * 300),
+    np.array(['foo', ['bar', 1.0, 2], {'a': 'b', 'c': 42}] * 300, dtype=object)
 ]
 
 
