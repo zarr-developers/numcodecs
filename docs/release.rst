@@ -1,7 +1,18 @@
 Release notes
 =============
 
+.. _release_0.4.0:
+
+0.4.0
+-----
+
+* Added a new :class:`numcodecs.json.JSON` codec as an alternative for encoding of
+  object arrays.
+
 .. _release_0.3.1:
+
+0.3.1
+-----
 
 * Revert the default shuffle argument to SHUFFLE (byte shuffle) for the
   :class:`numcodecs.blosc.Blosc` codec for compatibility and consistency with previous
