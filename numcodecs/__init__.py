@@ -96,5 +96,5 @@ from numcodecs.checksum32 import CRC32, Adler32
 register_codec(CRC32)
 register_codec(Adler32)
 
-from numcodecs.jsons import JSON
+from numcodecs.json import JSON
 register_codec(JSON)

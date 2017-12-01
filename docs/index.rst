@@ -71,6 +71,7 @@ Contents
     categorize
     checksum32
     astype
+    json
     pickles
     msgpacks
     release

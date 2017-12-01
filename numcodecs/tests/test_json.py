@@ -6,8 +6,7 @@ import itertools
 import numpy as np
 
 
-from numcodecs.compat import PY2
-from numcodecs.jsons import JSON
+from numcodecs.json import JSON
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
 

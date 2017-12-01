@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
-import json
+import json as _json
 import textwrap
 
 
@@ -48,12 +48,12 @@ class JSON(Codec):
                                     check_circular=check_circular, allow_nan=allow_nan,
                                     indent=indent, separators=separators,
                                     sort_keys=sort_keys)
-        self._encoder = json.JSONEncoder(**self._encoder_config)
+        self._encoder = _json.JSONEncoder(**self._encoder_config)
         self._decoder_config = dict(strict=strict)
-        self._decoder = json.JSONDecoder(**self._decoder_config)
+        self._decoder = _json.JSONDecoder(**self._decoder_config)
 
     def encode(self, buf):
-        buf = np.asarray(buf)
+        buf = np.asanyarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         return self._encoder.encode(items).encode(self._text_encoding)
