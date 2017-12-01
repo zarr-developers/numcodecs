@@ -1,6 +1,12 @@
 Release notes
 =============
 
+.. _release_0.3.1:
+
+* Revert the default shuffle argument to SHUFFLE (byte shuffle) for the
+  :class:`numcodecs.blosc.Blosc` codec for compatibility and consistency with previous
+  code.
+
 .. _release_0.3.0:
 
 0.3.0
