@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
+import itertools
 
 
 import numpy as np
-import nose
 
-try:
-    from numcodecs.msgpacks import MsgPack
-except ImportError:  # pragma: no cover
-    raise nose.SkipTest("msgpack-python not available")
 
+from numcodecs.json import JSON
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
+
+
+codecs = [
+    JSON(),
+    JSON(indent=True),
+]
 
 
 # object array with strings
@@ -31,20 +34,23 @@ arrays = [
 
 
 def test_encode_decode():
-    for arr in arrays:
-        codec = MsgPack()
+    for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode_array(arr, codec)
 
 
 def test_config():
-    codec = MsgPack()
-    check_config(codec)
+    for codec in codecs:
+        check_config(codec)
 
 
 def test_repr():
-    check_repr("MsgPack(encoding='utf-8')")
-    check_repr("MsgPack(encoding='ascii')")
+    r = (
+        "JSON(encoding='utf-8', allow_nan=True, check_circular=True, ensure_ascii=True,\n"
+        "     indent=None, separators=(',', ':'), skipkeys=False, sort_keys=True,\n"
+        "     strict=True)"
+    )
+    check_repr(r)
 
 
 def test_backwards_compatibility():
-    check_backwards_compatibility(MsgPack.codec_id, arrays, [MsgPack()])
+    check_backwards_compatibility(JSON.codec_id, arrays, codecs)

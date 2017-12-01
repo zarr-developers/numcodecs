@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import array
-import json
+import json as _json
 import os
 from glob import glob
 
@@ -13,6 +13,12 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
 from numcodecs import *  # flake8: noqa
+
+
+greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!',
+             u'Xin chào thế giới', u'Njatjeta Botë!', u'Γεια σου κόσμε!',
+             u'こんにちは世界', u'世界，你好！', u'Helló, világ!', u'Zdravo svete!',
+             u'เฮลโลเวิลด์']
 
 
 def check_encode_decode(arr, codec, precision=None):
@@ -125,7 +131,7 @@ def check_encode_decode_array(arr, codec):
 def check_config(codec):
     config = codec.get_config()
     # round-trip through JSON to check serialization
-    config = json.loads(json.dumps(config))
+    config = _json.loads(_json.dumps(config))
     eq(codec, get_codec(config))
 
 
@@ -177,11 +183,11 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             # one time save config
             if not os.path.exists(codec_fn):  # pragma: no cover
                 with open(codec_fn, mode='w') as cf:
-                    json.dump(codec.get_config(), cf, sort_keys=True, indent=4)
+                    _json.dump(codec.get_config(), cf, sort_keys=True, indent=4)
 
             # load config and compare with expectation
             with open(codec_fn, mode='r') as cf:
-                config = json.load(cf)
+                config = _json.load(cf)
                 eq(codec, get_codec(config))
 
             enc_fn = os.path.join(codec_dir, 'encoded.{:02d}.dat'.format(i))
