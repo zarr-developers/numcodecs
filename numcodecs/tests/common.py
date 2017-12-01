@@ -15,6 +15,12 @@ from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
 from numcodecs import *  # flake8: noqa
 
 
+greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!',
+             u'Xin chào thế giới', u'Njatjeta Botë!', u'Γεια σου κόσμε!',
+             u'こんにちは世界', u'世界，你好！', u'Helló, világ!', u'Zdravo svete!',
+             u'เฮลโลเวิลด์']
+
+
 def check_encode_decode(arr, codec, precision=None):
 
     # N.B., watch out here with blosc compressor, if the itemsize of

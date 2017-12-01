@@ -8,8 +8,8 @@ import numpy as np
 
 from numcodecs.compat import PY2
 from numcodecs.pickles import Pickle
-from numcodecs.tests.common import check_config, check_repr, check_encode_decode_array, \
-    check_backwards_compatibility
+from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
+                                    check_backwards_compatibility, greetings)
 
 
 codecs = [
@@ -25,13 +25,16 @@ if not PY2:  # pragma: py2 no cover
 # object array with strings
 # object array with mix strings / nans
 # object array with mix of string, int, float
+# ...
 arrays = [
     np.array(['foo', 'bar', 'baz'] * 300, dtype=object),
     np.array([['foo', 'bar', np.nan]] * 300, dtype=object),
     np.array(['foo', 1.0, 2] * 300, dtype=object),
     np.arange(1000, dtype='i4'),
     np.array(['foo', 'bar', 'baz'] * 300),
-    np.array(['foo', ['bar', 1.0, 2], {'a': 'b', 'c': 42}] * 300, dtype=object)
+    np.array(['foo', ['bar', 1.0, 2], {'a': 'b', 'c': 42}] * 300, dtype=object),
+    np.array(greetings * 100),
+    np.array(greetings * 100, dtype=object),
 ]
 
 
