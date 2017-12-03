@@ -51,6 +51,8 @@ class Delta(Codec):
             self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
+        if self.dtype == object or self.astype == object:
+            raise ValueError('object arrays are not supported')
 
     def encode(self, buf):
 

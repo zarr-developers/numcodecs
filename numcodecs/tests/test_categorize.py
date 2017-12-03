@@ -8,7 +8,8 @@ from nose.tools import eq_ as eq
 
 
 from numcodecs.categorize import Categorize
-from numcodecs.tests.common import check_encode_decode, check_config, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config,
+                                    check_backwards_compatibility, compare_arrays)
 from numcodecs.compat import PY2
 
 
@@ -33,6 +34,7 @@ arrays_num = [
     np.random.choice(labels_num, size=(10, 10, 10)).astype('i8'),
     np.random.choice(labels_num, size=1000).reshape(100, 10, order='F').astype('i8'),
 ]
+arrays_object = [a.astype(object) for a in arrays_u]
 
 
 def test_encode_decode():
@@ -47,10 +49,18 @@ def test_encode_decode():
         codec = Categorize(labels_u, dtype=arr.dtype)
         check_encode_decode(arr, codec)
 
-    # other dtype
+    # numeric dtype
     for arr in arrays_num:
         codec = Categorize(labels_num, dtype=arr.dtype)
         check_encode_decode(arr, codec)
+
+    # object dtype
+    for arr in arrays_object:
+        codec = Categorize(labels_u, dtype=arr.dtype)
+        # can't do the full check because can only accept object array for encoding
+        enc = codec.encode(arr)
+        dec = codec.decode(enc)
+        compare_arrays(arr, dec)
 
 
 def test_encode():
@@ -128,3 +138,5 @@ def test_backwards_compatibility():
     check_backwards_compatibility(Categorize.codec_id, arrays_u, [codec], prefix='u')
     codec = Categorize(labels=labels_num, dtype=arrays_num[0].dtype, astype='u1')
     check_backwards_compatibility(Categorize.codec_id, arrays_num, [codec], prefix='n')
+    codec = Categorize(labels=labels_u, dtype=object, astype='u1')
+    check_backwards_compatibility(Categorize.codec_id, arrays_object, [codec], prefix='o')

@@ -4,12 +4,12 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq
+from nose.tools import eq_ as eq, assert_raises
 
 
 from numcodecs.delta import Delta
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
+                                    check_backwards_compatibility)
 
 
 # mix of dtypes: integer, float
@@ -53,3 +53,10 @@ def test_backwards_compatibility():
     for arr in arrays:
         codec = Delta(dtype=arr.dtype)
         check_backwards_compatibility(Delta.codec_id, [arr], [codec], prefix=str(arr.dtype))
+
+
+def test_errors():
+    with assert_raises(ValueError):
+        Delta(dtype=object)
+    with assert_raises(ValueError):
+        Delta(dtype='i8', astype=object)

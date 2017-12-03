@@ -11,7 +11,10 @@ from nose.tools import assert_raises
 
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import check_encode_decode, check_config, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config,
+                                    check_backwards_compatibility,
+                                    check_err_decode_object_buffer,
+                                    check_err_encode_object_buffer)
 
 
 codecs = [
@@ -215,3 +218,11 @@ def test_multiprocessing():
 
     finally:
         blosc.use_threads = None  # restore default
+
+
+def test_err_decode_object_buffer():
+    check_err_decode_object_buffer(Blosc())
+
+
+def test_err_encode_object_buffer():
+    check_err_encode_object_buffer(Blosc())

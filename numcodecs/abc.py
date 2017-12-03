@@ -67,7 +67,8 @@ class Codec(object):
             Encoded data. May be any object supporting the new-style buffer
             protocol or `array.array` under Python 2.
         out : buffer-like, optional
-            Writeable buffer to store decoded data.
+            Writeable buffer to store decoded data. N.B. if provided, this buffer must
+            be exactly the right size to store the decoded data.
 
         Returns
         -------

@@ -15,6 +15,8 @@ class Checksum32(Codec):
     checksum = None
 
     def encode(self, buf):
+        if isinstance(buf, np.ndarray) and buf.dtype == object:
+            raise ValueError('cannot encode object array')
         arr = ndarray_from_buffer(buf, dtype='u1')
         checksum = self.checksum(arr) & 0xffffffff
         enc = np.empty(arr.nbytes + 4, dtype='u1')

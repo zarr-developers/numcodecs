@@ -30,9 +30,15 @@ class Zlib(Codec):
         # deal with lack of buffer support for datetime64 and timedelta64
         buf = handle_datetime(buf)
 
-        # if numpy array, can only handle C contiguous directly
-        if isinstance(buf, np.ndarray) and not buf.flags.c_contiguous:
-            buf = buf.tobytes(order='A')
+        if isinstance(buf, np.ndarray):
+
+            # cannot compress object array
+            if buf.dtype == object:
+                raise ValueError('cannot encode object array')
+
+            # if numpy array, can only handle C contiguous directly
+            if not buf.flags.c_contiguous:
+                buf = buf.tobytes(order='A')
 
         # do compression
         return _zlib.compress(buf, self.level)
