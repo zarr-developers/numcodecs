@@ -5,12 +5,12 @@ import itertools
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq
+from nose.tools import eq_ as eq, assert_raises
 
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
+                                    check_backwards_compatibility)
 
 
 arrays = [
@@ -61,3 +61,10 @@ def test_repr():
 def test_backwards_compatibility():
     precision = [int(np.log10(codec.scale)) for codec in codecs]
     check_backwards_compatibility(FixedScaleOffset.codec_id, arrays, codecs, precision=precision)
+
+
+def test_errors():
+    with assert_raises(ValueError):
+        FixedScaleOffset(dtype=object, astype='i4', scale=10, offset=100)
+    with assert_raises(ValueError):
+        FixedScaleOffset(dtype='f8', astype=object, scale=10, offset=100)

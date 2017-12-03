@@ -66,6 +66,10 @@ def test_repr():
 def test_errors():
     with assert_raises(ValueError):
         Quantize(digits=2, dtype='i4')
+    with assert_raises(ValueError):
+        Quantize(digits=2, dtype=object)
+    with assert_raises(ValueError):
+        Quantize(digits=2, dtype='f8', astype=object)
 
 
 def test_backwards_compatibility():

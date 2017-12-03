@@ -9,7 +9,8 @@ import numpy as np
 from numcodecs.zstd import Zstd
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
-                                    check_err_object_buffer)
+                                    check_err_decode_object_buffer,
+                                    check_err_encode_object_buffer)
 
 
 codecs = [
@@ -57,5 +58,9 @@ def test_backwards_compatibility():
     check_backwards_compatibility(Zstd.codec_id, arrays, codecs)
 
 
-def test_err_object_buffer():
-    check_err_object_buffer(Zstd())
+def test_err_decode_object_buffer():
+    check_err_decode_object_buffer(Zstd())
+
+
+def test_err_encode_object_buffer():
+    check_err_encode_object_buffer(Zstd())

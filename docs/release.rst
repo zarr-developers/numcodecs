@@ -8,7 +8,7 @@ Release notes
 -----
 
 * Resolved an issue where providing an array with dtype ``object`` as the destination
-  when decoding could cause segaults.
+  when decoding could cause segaults with some codecs.
 
 .. _release_0.4.0:
 

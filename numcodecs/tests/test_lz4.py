@@ -9,7 +9,8 @@ import numpy as np
 from numcodecs.lz4 import LZ4
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
-                                    check_err_object_buffer)
+                                    check_err_decode_object_buffer,
+                                    check_err_encode_object_buffer)
 
 
 codecs = [
@@ -58,5 +59,9 @@ def test_backwards_compatibility():
     check_backwards_compatibility(LZ4.codec_id, arrays, codecs)
 
 
-def test_err_object_buffer():
-    check_err_object_buffer(LZ4())
+def test_err_decode_object_buffer():
+    check_err_decode_object_buffer(LZ4())
+
+
+def test_err_encode_object_buffer():
+    check_err_encode_object_buffer(LZ4())

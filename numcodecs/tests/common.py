@@ -21,6 +21,30 @@ greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!
              u'เฮลโลเวิลด์']
 
 
+def compare_arrays(arr, res, precision=None):
+
+    # ensure numpy array
+    if not isinstance(res, np.ndarray):
+        res = ndarray_from_buffer(res, dtype=arr.dtype)
+    elif res.dtype != arr.dtype:
+        res = res.view(arr.dtype)
+
+    # convert to correct shape
+    if arr.flags.f_contiguous:
+        order = 'F'
+    else:
+        order = 'C'
+    res = res.reshape(arr.shape, order=order)
+
+    # exact compare
+    if precision is None:
+        assert_array_equal(arr, res)
+
+    # fuzzy compare
+    else:
+        assert_array_almost_equal(arr, res, decimal=precision)
+
+
 def check_encode_decode(arr, codec, precision=None):
 
     # N.B., watch out here with blosc compressor, if the itemsize of
@@ -30,43 +54,25 @@ def check_encode_decode(arr, codec, precision=None):
     # we just require that the results of the encode/decode round-trip can
     # be compared to the original array.
 
-    # setup
-    arr_bytes = buffer_tobytes(arr)
-    if arr.flags.f_contiguous:
-        order = 'F'
-    else:
-        order = 'C'
-
-    # function to compare result after encode/decode round-trip against
-    # original array
-
-    def compare(res):
-        if precision is None:
-            eq(arr_bytes, buffer_tobytes(res))
-        else:
-            res = ndarray_from_buffer(res, dtype=arr.dtype)
-            res = res.reshape(arr.shape, order=order)
-            assert_array_almost_equal(arr, res, decimal=precision)
-
     # encoding should support any object exporting the buffer protocol,
     # as well as array.array in PY2
 
     # test encoding of numpy array
     enc = codec.encode(arr)
     dec = codec.decode(enc)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # test encoding of raw bytes
     buf = arr.tobytes(order='A')
     enc = codec.encode(buf)
     dec = codec.decode(enc)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # test encoding of array.array
     buf = array.array('b', arr.tobytes(order='A'))
     enc = codec.encode(buf)
     dec = codec.decode(enc)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # decoding should support any object exporting the buffer protocol,
     # as well as array.array in PY2
@@ -76,27 +82,27 @@ def check_encode_decode(arr, codec, precision=None):
 
     # test decoding of raw bytes
     dec = codec.decode(enc_bytes)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # test decoding of array.array
     buf = array.array('b', enc_bytes)
     dec = codec.decode(buf)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # test decoding of numpy array
     buf = np.frombuffer(enc_bytes, dtype='u1')
     dec = codec.decode(buf)
-    compare(dec)
+    compare_arrays(arr, dec, precision=precision)
 
     # test decoding directly into numpy array
     out = np.empty_like(arr)
     codec.decode(enc_bytes, out=out)
-    compare(out)
+    compare_arrays(arr, out, precision=precision)
 
     # test decoding directly into bytearray
     out = bytearray(arr.nbytes)
     codec.decode(enc_bytes, out=out)
-    compare(out)
+    compare_arrays(arr, out, precision=precision)
 
 
 def assert_array_items_equal(res, arr):
@@ -213,7 +219,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     eq(arr_bytes, buffer_tobytes(dec))
 
 
-def check_err_object_buffer(compressor):
+def check_err_decode_object_buffer(compressor):
     # cannot decode directly into object array, leads to segfaults
     a = np.arange(10)
     enc = compressor.encode(a)
@@ -221,3 +227,10 @@ def check_err_object_buffer(compressor):
     with assert_raises(ValueError):
         compressor.decode(enc, out=out)
     print(out[:])
+
+
+def check_err_encode_object_buffer(compressor):
+    # compressors cannot encode object array
+    a = np.array(['foo', 'bar', 'baz'], dtype=object)
+    with assert_raises(ValueError):
+        compressor.encode(a)

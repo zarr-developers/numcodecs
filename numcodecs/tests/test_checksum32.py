@@ -8,8 +8,9 @@ from nose.tools import assert_raises
 
 
 from numcodecs.checksum32 import CRC32, Adler32
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr, check_backwards_compatibility
+from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
+                                    check_backwards_compatibility,
+                                    check_err_encode_object_buffer)
 
 
 # mix of dtypes: integer, float, bool, string
@@ -51,3 +52,8 @@ def test_repr():
 def test_backwards_compatibility():
     check_backwards_compatibility(CRC32.codec_id, arrays, [CRC32()])
     check_backwards_compatibility(Adler32.codec_id, arrays, [Adler32()])
+
+
+def test_err_encode_object_buffer():
+    check_err_encode_object_buffer(CRC32())
+    check_err_encode_object_buffer(Adler32())
