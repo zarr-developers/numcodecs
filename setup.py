@@ -202,6 +202,37 @@ def lz4_extension():
     return extensions
 
 
+def vlen_extension():
+    info('setting up vlen extension')
+
+    extra_compile_args = list(base_compile_args)
+    define_macros = []
+
+    # setup sources
+    include_dirs = ['numcodecs']
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    if have_cython:
+        sources = ['numcodecs/vlen.pyx']
+    else:
+        sources = ['numcodecs/vlen.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.vlen',
+                  sources=sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
 def compat_extension():
     info('setting up compat extension')
 
@@ -265,7 +296,8 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = blosc_extension() + zstd_extension() + lz4_extension() + compat_extension()
+        ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
+                       compat_extension() + vlen_extension())
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []

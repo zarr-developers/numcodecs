@@ -98,3 +98,11 @@ register_codec(Adler32)
 
 from numcodecs.json import JSON
 register_codec(JSON)
+
+try:
+    from numcodecs import vlen
+    from numcodecs.vlen import VLenUTF8
+    register_codec(VLenUTF8)
+except ImportError:  # pragma: no cover
+    pass
+
