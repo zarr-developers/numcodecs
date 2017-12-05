@@ -22,3 +22,14 @@ VLenBytes
     .. automethod:: decode
     .. automethod:: get_config
     .. automethod:: from_config
+
+
+VLenArray
+---------
+.. autoclass:: VLenArray
+
+    .. autoattribute:: codec_id
+    .. automethod:: encode
+    .. automethod:: decode
+    .. automethod:: get_config
+    .. automethod:: from_config
