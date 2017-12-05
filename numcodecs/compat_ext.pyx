@@ -18,6 +18,7 @@ cdef class Buffer:
     new-style buffer interface in PY2."""
 
     def __cinit__(self, obj, flags):
+        self.released = False
         if hasattr(obj, 'dtype'):
             if obj.dtype.kind in 'Mm':
                 obj = obj.view('u8')
@@ -36,7 +37,10 @@ cdef class Buffer:
             self.itemsize = self.buffer.itemsize
             self.nbytes = self.buffer.len
 
-    def release(self):
-        if self.new_buffer:
+    cpdef release(self):
+        if self.new_buffer and not self.released:
             PyBuffer_Release(&(self.buffer))
+            self.released = True
 
+    def __dealloc__(self):
+        self.release()

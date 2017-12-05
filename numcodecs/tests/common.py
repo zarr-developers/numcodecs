@@ -108,6 +108,8 @@ def check_encode_decode(arr, codec, precision=None):
 def assert_array_items_equal(res, arr):
 
     assert_true(isinstance(res, np.ndarray))
+    res = res.reshape(-1, order='A')
+    arr = arr.reshape(-1, order='A')
     assert_true(res.shape == arr.shape)
     assert_true(res.dtype == arr.dtype)
 
@@ -117,10 +119,12 @@ def assert_array_items_equal(res, arr):
     arr = arr.ravel().tolist()
     res = res.ravel().tolist()
     for a, r in zip(arr, res):
-        if a != a:
-            assert_true(r != r)
+        if isinstance(a, np.ndarray):
+            assert_array_equal(a, r)
+        elif a != a:
+            assert r != r
         else:
-            assert_true(a == r)
+            assert a == r
 
 
 def check_encode_decode_array(arr, codec):

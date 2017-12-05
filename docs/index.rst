@@ -74,6 +74,7 @@ Contents
     json
     pickles
     msgpacks
+    vlen
     release
 
 Acknowledgments

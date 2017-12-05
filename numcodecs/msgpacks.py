@@ -10,8 +10,8 @@ from .abc import Codec
 
 
 class MsgPack(Codec):
-    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python string
-    objects.
+    """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python
+    string objects.
 
     Examples
     --------
@@ -24,11 +24,12 @@ class MsgPack(Codec):
 
     See Also
     --------
-    numcodecs.pickles.Pickle
+    numcodecs.pickles.Pickle, numcodecs.json.JSON, numcodecs.vlen.VLenUTF8
 
     Notes
     -----
-    Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be installed.
+    Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be
+    installed.
 
     """
 
