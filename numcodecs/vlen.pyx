@@ -87,7 +87,7 @@ class VLenUTF8(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, n_items, l, data_length, total_length
-            object[:] unicode_objects
+            object[:] input_values
             object[:] encoded_values
             int[:] encoded_lengths
             char* encv
@@ -97,10 +97,10 @@ class VLenUTF8(Codec):
             object u
 
         # normalise input
-        unicode_objects = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+        input_values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
 
         # determine number of items
-        n_items = unicode_objects.shape[0]
+        n_items = input_values.shape[0]
 
         # setup intermediates
         encoded_values = np.empty(n_items, dtype=object)
@@ -109,7 +109,7 @@ class VLenUTF8(Codec):
         # first iteration to convert to bytes
         data_length = 0
         for i in range(n_items):
-            u = unicode_objects[i]
+            u = input_values[i]
             if not PyUnicode_Check(u):
                 raise TypeError('expected unicode string, found %r' % u)
             b = PyUnicode_AsUTF8String(u)
@@ -144,7 +144,7 @@ class VLenUTF8(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            object[:] result
+            object[:] decoded_values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -183,16 +183,16 @@ class VLenUTF8(Codec):
         else:
 
             # setup output
-            result = np.empty(n_items, dtype=object)
+            decoded_values = np.empty(n_items, dtype=object)
 
-            # iterate and decode - slightly faster as can use typed `result` variable
+            # iterate and decode - slightly faster as can use typed `decoded_values` variable
             for i in range(n_items):
                 l = load_le32(data)
                 data += 4
-                result[i] = PyUnicode_FromStringAndSize(data, l)
+                decoded_values[i] = PyUnicode_FromStringAndSize(data, l)
                 data += l
 
-            return np.asarray(result)
+            return np.asarray(decoded_values)
 
 
 class VLenBytes(Codec):
@@ -279,7 +279,7 @@ class VLenBytes(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            object[:] result
+            object[:] values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -318,16 +318,16 @@ class VLenBytes(Codec):
         else:
 
             # setup output
-            result = np.empty(n_items, dtype=object)
+            values = np.empty(n_items, dtype=object)
 
-            # iterate and decode - slightly faster as can use typed `result` variable
+            # iterate and decode - slightly faster as can use typed `values` variable
             for i in range(n_items):
                 l = load_le32(data)
                 data += 4
-                result[i] = PyBytes_FromStringAndSize(data, l)
+                values[i] = PyBytes_FromStringAndSize(data, l)
                 data += l
 
-            return np.asarray(result)
+            return np.asarray(values)
 
 
 class VLenArray(Codec):
@@ -431,7 +431,7 @@ class VLenArray(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            object[:] result
+            object[:] values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -470,13 +470,13 @@ class VLenArray(Codec):
         else:
 
             # setup output
-            result = np.empty(n_items, dtype=object)
+            values = np.empty(n_items, dtype=object)
 
-            # iterate and decode - slightly faster as can use typed `result` variable
+            # iterate and decode - slightly faster as can use typed `values` variable
             for i in range(n_items):
                 l = load_le32(data)
                 data += 4
-                result[i] = np.frombuffer(data[:l], dtype=self.dtype)
+                values[i] = np.frombuffer(data[:l], dtype=self.dtype)
                 data += l
 
-            return np.asarray(result)
+            return np.asarray(values)
