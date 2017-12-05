@@ -210,7 +210,7 @@ def vlen_extension():
 
     # setup sources
     include_dirs = ['numcodecs']
-    define_macros += [('CYTHON_TRACE', '1')]
+    # define_macros += [('CYTHON_TRACE', '1')]
 
     if have_cython:
         sources = ['numcodecs/vlen.pyx']
