@@ -10,22 +10,44 @@ import struct
 import cython
 import numpy as np
 cimport numpy as np
-from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
-from libc.stdlib cimport malloc, free
-from libc.string cimport memcpy
-cdef extern from "Python.h":
-    bytearray PyByteArray_FromStringAndSize(char *v, Py_ssize_t l)
-    char* PyByteArray_AS_STRING(object string)
-    char* PyUnicode_AsUTF8AndSize(object text, Py_ssize_t *size)
-    object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
-    int PyUnicode_Check(object text)
-
 from .abc import Codec
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
+from cpython cimport PyBytes_GET_SIZE, PyBytes_AS_STRING
+from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
+from cpython cimport PyUnicode_AsUTF8String
+from libc.stdlib cimport malloc, free
+from libc.string cimport memcpy
+
+
 cdef extern from "stdint_compat.h":
     void store_le32(char *c, int y)
     int load_le32(const char *c)
+
+
+cdef extern from "Python.h":
+    bytearray PyByteArray_FromStringAndSize(char *v, Py_ssize_t l)
+    char* PyByteArray_AS_STRING(object string)
+    object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
+    int PyUnicode_Check(object text)
+
+
+# noinspection PyUnresolvedReferences
+IF COMPILE_PY2:
+    cdef char* PyUnicode_AsUTF8AndSize(object u, Py_ssize_t* l):
+        cdef:
+            bytes b
+            char* encv
+        b = PyUnicode_AsUTF8String(u)
+        encv = PyBytes_AS_STRING(b)
+        l[0] = PyBytes_GET_SIZE(b)
+        return encv
+
+
+# noinspection PyUnresolvedReferences
+IF COMPILE_PY3:
+    cdef extern from "Python.h":
+        char* PyUnicode_AsUTF8AndSize(object text, Py_ssize_t *size)
 
 
 # 8 bytes to store number of items
@@ -60,10 +82,10 @@ class VLenUTF8(Codec):
             bytes b
             bytearray out
             char* data
+            object u
 
         # normalise input
-        buf = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
-        unicode_objects = buf
+        unicode_objects = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
 
         # determine number of items
         n_items = unicode_objects.shape[0]
@@ -77,10 +99,15 @@ class VLenUTF8(Codec):
             # first iteration to convert to bytes
             data_length = 0
             for i in range(n_items):
-                v = unicode_objects[i]
-                if not PyUnicode_Check(v):
-                    raise TypeError('expected array of unicode strings, found %r' % v)
-                encv = PyUnicode_AsUTF8AndSize(unicode_objects[i], &l)
+                u = unicode_objects[i]
+                if not PyUnicode_Check(u):
+                    raise TypeError('expected unicode string, found %r' % u)
+                # IF COMPILE_PY2:
+                #     b = PyUnicode_AsUTF8String(u)
+                #     encv = PyBytes_AS_STRING(b)
+                #     l = PyBytes_GET_SIZE(b)
+                # IF COMPILE_PY3:
+                encv = PyUnicode_AsUTF8AndSize(u, &l)
                 encoded_values[i] = encv
                 data_length += l + 4  # 4 bytes to store item length
                 encoded_lengths[i] = l

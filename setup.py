@@ -10,7 +10,16 @@ from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
 
 
+try:
+    from Cython.Build import cythonize
+except ImportError:
+    have_cython = False
+else:
+    have_cython = True
+
+
 PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 
 # determine CPU support for SSE2 and AVX2
@@ -39,14 +48,6 @@ elif os.name == 'posix':
 # workaround lack of support for "inline" in MSVC when building for Python 2.7 64-bit
 if PY2 and os.name == 'nt':
     base_compile_args.append('-Dinline=__inline')
-
-
-try:
-    from Cython.Build import cythonize
-except ImportError:
-    have_cython = False
-else:
-    have_cython = True
 
 
 def info(*msg):
@@ -228,7 +229,10 @@ def vlen_extension():
     ]
 
     if have_cython:
-        extensions = cythonize(extensions)
+        extensions = cythonize(extensions,
+                               compile_time_env={'COMPILE_PY2': PY2,
+                                                 'COMPILE_PY3': PY3}
+)
 
     return extensions
 

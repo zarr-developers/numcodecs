@@ -16,9 +16,9 @@ from numcodecs.tests.common import (check_config, check_repr, check_encode_decod
 
 
 arrays = [
-    np.array(['foo', 'bar', 'baz'] * 300, dtype=object),
+    np.array([u'foo', u'bar', u'baz'] * 300, dtype=object),
     np.array(greetings * 100, dtype=object),
-    np.array(['foo', 'bar', 'baz'] * 300, dtype=object).reshape(90, 10),
+    np.array([u'foo', u'bar', u'baz'] * 300, dtype=object).reshape(90, 10),
     np.array(greetings * 1000, dtype=object).reshape(len(greetings), 100, 10, order='F'),
 ]
 
@@ -55,10 +55,12 @@ def test_encode_errors():
 def test_decode_errors():
     codec = VLenUTF8()
     with assert_raises(TypeError):
-        codec.decode('foo')
+        codec.decode(u'foo')
     with assert_raises(TypeError):
         codec.decode(1234)
     # these should look like corrupt data
+    with assert_raises(ValueError):
+        codec.decode(b'foo')
     with assert_raises(ValueError):
         codec.decode(np.arange(2, dtype='i4'))
     with assert_raises(ValueError):
@@ -67,7 +69,9 @@ def test_decode_errors():
     # test out parameter
     enc = codec.encode(arrays[0])
     with assert_raises(TypeError):
-        codec.decode(enc, out='foo')
+        codec.decode(enc, out=b'foo')
+    with assert_raises(TypeError):
+        codec.decode(enc, out=u'foo')
     with assert_raises(TypeError):
         codec.decode(enc, out=123)
     with assert_raises(ValueError):
