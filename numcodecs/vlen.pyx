@@ -8,6 +8,7 @@ import struct
 
 
 import cython
+cimport cython
 import numpy as np
 cimport numpy as np
 from .abc import Codec
@@ -45,6 +46,26 @@ def read_header(buf):
 
 
 class VLenUTF8(Codec):
+    """Encode variable-length unicode string objects via UTF-8.
+
+    Examples
+    --------
+    >>> import numcodecs
+    >>> import numpy as np
+    >>> x = np.array(['foo', 'bar', 'baz'], dtype='object')
+    >>> codec = numcodecs.VLenUTF8()
+    >>> codec.decode(codec.encode(x))
+    array(['foo', 'bar', 'baz'], dtype=object)
+
+    See Also
+    --------
+    numcodecs.pickles.Pickle, numcodecs.json.JSON, numcodecs.msgpacks.MsgPack
+
+    Notes
+    -----
+    The encoded bytes values for each string are packed into a parquet-style byte array.
+
+    """
 
     codec_id = 'vlen-utf8'
 
@@ -170,6 +191,26 @@ class VLenUTF8(Codec):
 
 
 class VLenBytes(Codec):
+    """Encode variable-length byte string objects.
+
+    Examples
+    --------
+    >>> import numcodecs
+    >>> import numpy as np
+    >>> x = np.array([b'foo', b'bar', b'baz'], dtype='object')
+    >>> codec = numcodecs.VLenUTF8()
+    >>> codec.decode(codec.encode(x))
+    array([b'foo', b'bar', b'baz'], dtype=object)
+
+    See Also
+    --------
+    numcodecs.pickles.Pickle
+
+    Notes
+    -----
+    The bytes values for each string are packed into a parquet-style byte array.
+
+    """
 
     codec_id = 'vlen-bytes'
 
