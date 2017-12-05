@@ -15,7 +15,6 @@ typedef signed int int32_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
-typedef unsigned int uint64_t;
 #endif /* _MSC_VER >= 1600 */
 #endif
 
@@ -44,4 +43,3 @@ static inline int load_le32(const char *c)
 
 
 static const int UINT32_SIZE = sizeof (uint32_t);
-static const int UINT64_SIZE = sizeof (uint64_t);
