@@ -26,8 +26,6 @@ from .compat_ext import Buffer
 cdef extern from "stdint_compat.h":
     void store_le32(char *c, int y)
     int load_le32(const char *c)
-    void store_le64(char *c, int y)
-    int load_le64(const char *c)
 
 
 # 8 bytes to store number of items
