@@ -1,14 +1,23 @@
 Release notes
 =============
 
-.. _release_0.4.1:
+.. _release_0.5.0:
 
+0.5.0
+-----
+
+* Added new codecs for encoding arrays with variable-length unicode strings
+  (:class:`numcodecs.vlen.VLenUTF8`), variable-length byte strings
+  (:class:`numcodecs.vlen.VLenBytes`) and variable-length numerical arrays
+  ((:class:`numcodecs.vlen.VLenArray`) (:issue:`56`).
+
+.. _release_0.4.1:
 
 0.4.1
 -----
 
 * Resolved an issue where providing an array with dtype ``object`` as the destination
-  when decoding could cause segaults with some codecs.
+  when decoding could cause segaults with some codecs (:issue:`55`).
 
 .. _release_0.4.0:
 
@@ -16,7 +25,7 @@ Release notes
 -----
 
 * Added a new :class:`numcodecs.json.JSON` codec as an alternative for encoding of
-  object arrays.
+  object arrays (:issue:`54`).
 
 .. _release_0.3.1:
 
