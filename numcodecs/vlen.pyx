@@ -32,16 +32,7 @@ cdef extern from "Python.h":
 
 
 # 4 bytes to store number of items
-# 4 bytes to store data length
-cdef Py_ssize_t HEADER_LENGTH = 8
-
-
-def write_header(buf, n_items, data_length):
-    struct.pack_into('<II', buf, 0, n_items, data_length)
-
-
-def read_header(buf):
-    return struct.unpack_from('<II', buf, 0)
+cdef Py_ssize_t HEADER_LENGTH = 4
 
 
 def check_out_param(out, n_items):
@@ -123,10 +114,11 @@ class VLenUTF8(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        write_header(out, n_items, data_length)
+        data = PyByteArray_AS_STRING(out)
+        store_le32(data, n_items)
 
         # second iteration, store data
-        data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
+        data += HEADER_LENGTH
         for i in range(n_items):
             l = encoded_lengths[i]
             store_le32(data, l)
@@ -143,8 +135,8 @@ class VLenUTF8(Codec):
         cdef:
             Buffer input_buffer
             char* data
+            char* data_end
             Py_ssize_t i, l, n_items, data_length, input_length
-            object[:] decoded_values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -154,45 +146,34 @@ class VLenUTF8(Codec):
         if input_length < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
+        # obtain input data pointer
+        data = input_buffer.ptr
+        data_end = data + input_length
+
         # load number of items
-        n_items, data_length = read_header(buf)
+        n_items = load_le32(data)
 
-        # sanity check
-        if input_length < data_length + HEADER_LENGTH:
-            raise ValueError('corrupt buffer, data are truncated')
-
-        # position input data pointer
-        data = input_buffer.ptr + HEADER_LENGTH
-
+        # setup output
         if out is not None:
-
-            # value checks
             out = check_out_param(out, n_items)
-
-            # iterate and decode - N.B., use a separate loop and do not try to cast `out`
-            # as np.ndarray[object] as this causes segfaults, possibly similar to
-            # https://github.com/cython/cython/issues/1608
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                out[i] = PyUnicode_FromStringAndSize(data, l)
-                data += l
-
-            return out
-
         else:
+            out = np.empty(n_items, dtype=object)
 
-            # setup output
-            decoded_values = np.empty(n_items, dtype=object)
+        # iterate and decode - N.B., do not try to cast `out` as object[:]
+        # as this causes segfaults, possibly similar to
+        # https://github.com/cython/cython/issues/1608
+        data += HEADER_LENGTH
+        for i in range(n_items):
+            if data + 4 > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            l = load_le32(data)
+            data += 4
+            if data + l > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            out[i] = PyUnicode_FromStringAndSize(data, l)
+            data += l
 
-            # iterate and decode - slightly faster as can use typed `decoded_values` variable
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                decoded_values[i] = PyUnicode_FromStringAndSize(data, l)
-                data += l
-
-            return np.asarray(decoded_values)
+        return out
 
 
 class VLenBytes(Codec):
@@ -258,10 +239,11 @@ class VLenBytes(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        write_header(out, n_items, data_length)
+        data = PyByteArray_AS_STRING(out)
+        store_le32(data, n_items)
 
         # second iteration, store data
-        data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
+        data += HEADER_LENGTH
         for i in range(n_items):
             l = lengths[i]
             store_le32(data, l)
@@ -278,8 +260,8 @@ class VLenBytes(Codec):
         cdef:
             Buffer input_buffer
             char* data
+            char* data_end
             Py_ssize_t i, l, n_items, data_length, input_length
-            object[:] values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -289,45 +271,34 @@ class VLenBytes(Codec):
         if input_length < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
+        # obtain input data pointer
+        data = input_buffer.ptr
+        data_end = data + input_length
+
         # load number of items
-        n_items, data_length = read_header(buf)
+        n_items = load_le32(data)
 
-        # sanity check
-        if input_length < data_length + HEADER_LENGTH:
-            raise ValueError('corrupt buffer, data are truncated')
-
-        # position input data pointer
-        data = input_buffer.ptr + HEADER_LENGTH
-
+        # setup output
         if out is not None:
-
-            # value checks
             out = check_out_param(out, n_items)
-
-            # iterate and decode - N.B., use a separate loop and do not try to cast `out`
-            # as np.ndarray[object] as this causes segfaults, possibly similar to
-            # https://github.com/cython/cython/issues/1608
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                out[i] = PyBytes_FromStringAndSize(data, l)
-                data += l
-
-            return out
-
         else:
+            out = np.empty(n_items, dtype=object)
 
-            # setup output
-            values = np.empty(n_items, dtype=object)
+        # iterate and decode - N.B., do not try to cast `out` as object[:]
+        # as this causes segfaults, possibly similar to
+        # https://github.com/cython/cython/issues/1608
+        data += HEADER_LENGTH
+        for i in range(n_items):
+            if data + 4 > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            l = load_le32(data)
+            data += 4
+            if data + l > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            out[i] = PyBytes_FromStringAndSize(data, l)
+            data += l
 
-            # iterate and decode - slightly faster as can use typed `values` variable
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                values[i] = PyBytes_FromStringAndSize(data, l)
-                data += l
-
-            return np.asarray(values)
+        return out
 
 
 class VLenArray(Codec):
@@ -408,10 +379,11 @@ class VLenArray(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        write_header(out, n_items, data_length)
+        data = PyByteArray_AS_STRING(out)
+        store_le32(data, n_items)
 
         # second iteration, store data
-        data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
+        data += HEADER_LENGTH
         for i in range(n_items):
             l = lengths[i]
             store_le32(data, l)
@@ -430,8 +402,8 @@ class VLenArray(Codec):
         cdef:
             Buffer input_buffer
             char* data
+            char* data_end
             Py_ssize_t i, l, n_items, data_length, input_length
-            object[:] values
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -441,42 +413,31 @@ class VLenArray(Codec):
         if input_length < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
+        # obtain input data pointer
+        data = input_buffer.ptr
+        data_end = data + input_length
+
         # load number of items
-        n_items, data_length = read_header(buf)
+        n_items = load_le32(data)
 
-        # sanity check
-        if input_length < data_length + HEADER_LENGTH:
-            raise ValueError('corrupt buffer, data are truncated')
-
-        # position input data pointer
-        data = input_buffer.ptr + HEADER_LENGTH
-
+        # setup output
         if out is not None:
-
-            # value checks
             out = check_out_param(out, n_items)
-
-            # iterate and decode - N.B., use a separate loop and do not try to cast `out`
-            # as np.ndarray[object] as this causes segfaults, possibly similar to
-            # https://github.com/cython/cython/issues/1608
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                out[i] = np.frombuffer(data[:l], dtype=self.dtype)
-                data += l
-
-            return out
-
         else:
+            out = np.empty(n_items, dtype=object)
 
-            # setup output
-            values = np.empty(n_items, dtype=object)
+        # iterate and decode - N.B., do not try to cast `out` as object[:]
+        # as this causes segfaults, possibly similar to
+        # https://github.com/cython/cython/issues/1608
+        data += HEADER_LENGTH
+        for i in range(n_items):
+            if data + 4 > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            l = load_le32(data)
+            data += 4
+            if data + l > data_end:
+                raise ValueError('corrupt buffer, data seem truncated')
+            out[i] = np.frombuffer(data[:l], dtype=self.dtype)
+            data += l
 
-            # iterate and decode - slightly faster as can use typed `values` variable
-            for i in range(n_items):
-                l = load_le32(data)
-                data += 4
-                values[i] = np.frombuffer(data[:l], dtype=self.dtype)
-                data += l
-
-            return np.asarray(values)
+        return out

@@ -66,9 +66,9 @@ def test_decode_errors():
     with assert_raises(ValueError):
         codec.decode(b'foo')
     with assert_raises(ValueError):
-        codec.decode(np.arange(2, dtype='i4'))
+        codec.decode(np.arange(2, 3, dtype='i4'))
     with assert_raises(ValueError):
-        codec.decode(np.arange(10, dtype='i4'))
+        codec.decode(np.arange(10, 20, dtype='i4'))
 
     # test out parameter
     enc = codec.encode(arrays[0])
