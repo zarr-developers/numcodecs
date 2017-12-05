@@ -118,9 +118,9 @@ def assert_array_items_equal(res, arr):
     res = res.ravel().tolist()
     for a, r in zip(arr, res):
         if a != a:
-            assert_true(r != r)
+            assert r != r
         else:
-            assert_true(a == r)
+            assert a == r
 
 
 def check_encode_decode_array(arr, codec):
