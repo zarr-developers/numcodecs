@@ -10,3 +10,6 @@ cdef class Buffer:
         size_t itemsize
         array.array arr
         bint new_buffer
+        bint released
+
+    cpdef release(self)

@@ -10,7 +10,6 @@ import struct
 import cython
 cimport cython
 import numpy as np
-cimport numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
@@ -45,6 +44,17 @@ def read_header(buf):
     return struct.unpack_from('<QQ', buf, 0)
 
 
+def check_out_param(out, n_items):
+    if not isinstance(out, np.ndarray):
+        raise TypeError('out must be 1-dimensional array')
+    if out.dtype != object:
+        raise ValueError('out must be object array')
+    out = out.reshape(-1, order='A')
+    if out.shape[0] < n_items:
+        raise ValueError('out is too small')
+    return out
+
+
 class VLenUTF8(Codec):
     """Encode variable-length unicode string objects via UTF-8.
 
@@ -77,9 +87,9 @@ class VLenUTF8(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, n_items, l, data_length, total_length
-            np.ndarray[object] unicode_objects
-            np.ndarray[object] encoded_values
-            np.uint32_t[:] encoded_lengths
+            object[:] unicode_objects
+            object[:] encoded_values
+            int[:] encoded_lengths
             char* encv
             bytes b
             bytearray out
@@ -94,7 +104,7 @@ class VLenUTF8(Codec):
 
         # setup intermediates
         encoded_values = np.empty(n_items, dtype=object)
-        encoded_lengths = np.empty(n_items, dtype='u4')
+        encoded_lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to convert to bytes
         data_length = 0
@@ -134,7 +144,7 @@ class VLenUTF8(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            np.ndarray[object, ndim=1] result
+            object[:] result
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -156,13 +166,8 @@ class VLenUTF8(Codec):
 
         if out is not None:
 
-            if not isinstance(out, np.ndarray):
-                raise TypeError('out must be 1-dimensional array')
-            if out.dtype != object:
-                raise ValueError('out must be object array')
-            out = out.reshape(-1, order='A')
-            if out.shape[0] < n_items:
-                raise ValueError('out is too small')
+            # value checks
+            out = check_out_param(out, n_items)
 
             # iterate and decode - N.B., use a separate loop and do not try to cast `out`
             # as np.ndarray[object] as this causes segfaults, possibly similar to
@@ -187,7 +192,7 @@ class VLenUTF8(Codec):
                 result[i] = PyUnicode_FromStringAndSize(data, l)
                 data += l
 
-            return result
+            return np.asarray(result)
 
 
 class VLenBytes(Codec):
@@ -222,8 +227,8 @@ class VLenBytes(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, n_items, l, data_length, total_length
-            np.ndarray[object] values
-            np.uint32_t[:] lengths
+            object[:] values
+            int[:] lengths
             char* encv
             object b
             bytearray out
@@ -236,7 +241,7 @@ class VLenBytes(Codec):
         n_items = values.shape[0]
 
         # setup intermediates
-        lengths = np.empty(n_items, dtype='u4')
+        lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to find lengths
         data_length = 0
@@ -274,7 +279,7 @@ class VLenBytes(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            np.ndarray[object, ndim=1] result
+            object[:] result
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -296,13 +301,8 @@ class VLenBytes(Codec):
 
         if out is not None:
 
-            if not isinstance(out, np.ndarray):
-                raise TypeError('out must be 1-dimensional array')
-            if out.dtype != object:
-                raise ValueError('out must be object array')
-            out = out.reshape(-1, order='A')
-            if out.shape[0] < n_items:
-                raise ValueError('out is too small')
+            # value checks
+            out = check_out_param(out, n_items)
 
             # iterate and decode - N.B., use a separate loop and do not try to cast `out`
             # as np.ndarray[object] as this causes segfaults, possibly similar to
@@ -327,7 +327,7 @@ class VLenBytes(Codec):
                 result[i] = PyBytes_FromStringAndSize(data, l)
                 data += l
 
-            return result
+            return np.asarray(result)
 
 
 class VLenArray(Codec):
@@ -372,13 +372,15 @@ class VLenArray(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, n_items, l, data_length, total_length
-            np.ndarray[object] values
-            np.uint32_t[:] lengths
+            object[:] values
+            object[:] normed_values
+            int[:] lengths
             char* encv
             bytes b
             bytearray out
             char* data
-            np.ndarray v
+            Buffer value_buffer
+            object v
 
         # normalise input
         values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
@@ -388,7 +390,7 @@ class VLenArray(Codec):
 
         # setup intermediates
         normed_values = np.empty(n_items, dtype=object)
-        lengths = np.empty(n_items, dtype='u4')
+        lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to convert to bytes
         data_length = 0
@@ -414,9 +416,11 @@ class VLenArray(Codec):
             l = lengths[i]
             store_le32(data, l)
             data += 4
-            encv = Buffer(normed_values[i], PyBUF_ANY_CONTIGUOUS).ptr
+            value_buffer = Buffer(normed_values[i], PyBUF_ANY_CONTIGUOUS)
+            encv = value_buffer.ptr
             memcpy(data, encv, l)
             data += l
+            value_buffer.release()
 
         return out
 
@@ -427,7 +431,7 @@ class VLenArray(Codec):
             Buffer input_buffer
             char* data
             Py_ssize_t i, n_items, l, data_length, input_length
-            np.ndarray[object, ndim=1] result
+            object[:] result
 
         # accept any buffer
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
@@ -449,13 +453,8 @@ class VLenArray(Codec):
 
         if out is not None:
 
-            if not isinstance(out, np.ndarray):
-                raise TypeError('out must be 1-dimensional array')
-            if out.dtype != object:
-                raise ValueError('out must be object array')
-            out = out.reshape(-1, order='A')
-            if out.shape[0] < n_items:
-                raise ValueError('out is too small')
+            # value checks
+            out = check_out_param(out, n_items)
 
             # iterate and decode - N.B., use a separate loop and do not try to cast `out`
             # as np.ndarray[object] as this causes segfaults, possibly similar to
@@ -480,4 +479,4 @@ class VLenArray(Codec):
                 result[i] = np.frombuffer(data[:l], dtype=self.dtype)
                 data += l
 
-            return result
+            return np.asarray(result)
