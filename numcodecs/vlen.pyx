@@ -20,6 +20,7 @@ from libc.string cimport memcpy
 
 
 cdef extern from "stdint_compat.h":
+    ctypedef int uint64_t
     void store_le32(char *c, int y)
     int load_le32(const char *c)
 
@@ -86,7 +87,8 @@ class VLenUTF8(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, n_items, l, data_length, total_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, total_length
             object[:] input_values
             object[:] encoded_values
             int[:] encoded_lengths
@@ -143,7 +145,8 @@ class VLenUTF8(Codec):
         cdef:
             Buffer input_buffer
             char* data
-            Py_ssize_t i, n_items, l, data_length, input_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, input_length
             object[:] decoded_values
 
         # accept any buffer
@@ -226,7 +229,8 @@ class VLenBytes(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, n_items, l, data_length, total_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, total_length
             object[:] values
             int[:] lengths
             char* encv
@@ -278,7 +282,8 @@ class VLenBytes(Codec):
         cdef:
             Buffer input_buffer
             char* data
-            Py_ssize_t i, n_items, l, data_length, input_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, input_length
             object[:] values
 
         # accept any buffer
@@ -371,7 +376,8 @@ class VLenArray(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, n_items, l, data_length, total_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, total_length
             object[:] values
             object[:] normed_values
             int[:] lengths
@@ -430,7 +436,8 @@ class VLenArray(Codec):
         cdef:
             Buffer input_buffer
             char* data
-            Py_ssize_t i, n_items, l, data_length, input_length
+            Py_ssize_t i, l
+            uint64_t n_items, data_length, input_length
             object[:] values
 
         # accept any buffer
