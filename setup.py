@@ -229,10 +229,7 @@ def vlen_extension():
     ]
 
     if have_cython:
-        extensions = cythonize(extensions,
-                               compile_time_env={'COMPILE_PY2': PY2,
-                                                 'COMPILE_PY3': PY3}
-)
+        extensions = cythonize(extensions)
 
     return extensions
 

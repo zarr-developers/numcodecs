@@ -13,10 +13,9 @@ cimport numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from cpython cimport PyBytes_GET_SIZE, PyBytes_AS_STRING
+from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
+                      PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
-from cpython cimport PyUnicode_AsUTF8String
-from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
 
 
@@ -30,24 +29,6 @@ cdef extern from "Python.h":
     char* PyByteArray_AS_STRING(object string)
     object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
     int PyUnicode_Check(object text)
-
-
-# noinspection PyUnresolvedReferences
-IF COMPILE_PY2:
-    cdef char* PyUnicode_AsUTF8AndSize(object u, Py_ssize_t* l):
-        cdef:
-            bytes b
-            char* encv
-        b = PyUnicode_AsUTF8String(u)
-        encv = PyBytes_AS_STRING(b)
-        l[0] = PyBytes_GET_SIZE(b)
-        return encv
-
-
-# noinspection PyUnresolvedReferences
-IF COMPILE_PY3:
-    cdef extern from "Python.h":
-        char* PyUnicode_AsUTF8AndSize(object text, Py_ssize_t *size)
 
 
 # 8 bytes to store number of items
@@ -76,9 +57,9 @@ class VLenUTF8(Codec):
         cdef:
             Py_ssize_t i, n_items, l, data_length, total_length
             np.ndarray[object] unicode_objects
+            np.ndarray[object] encoded_values
+            np.uint32_t[:] encoded_lengths
             char* encv
-            char** encoded_values
-            int* encoded_lengths
             bytes b
             bytearray out
             char* data
@@ -91,46 +72,37 @@ class VLenUTF8(Codec):
         n_items = unicode_objects.shape[0]
 
         # setup intermediates
-        encoded_values = <char**> malloc(n_items * sizeof(char*))
-        encoded_lengths = <int*> malloc(n_items * sizeof(int))
+        encoded_values = np.empty(n_items, dtype=object)
+        encoded_lengths = np.empty(n_items, dtype='u4')
 
-        try:
+        # first iteration to convert to bytes
+        data_length = 0
+        for i in range(n_items):
+            u = unicode_objects[i]
+            if not PyUnicode_Check(u):
+                raise TypeError('expected unicode string, found %r' % u)
+            b = PyUnicode_AsUTF8String(u)
+            l = PyBytes_GET_SIZE(b)
+            encoded_values[i] = b
+            data_length += l + 4  # 4 bytes to store item length
+            encoded_lengths[i] = l
 
-            # first iteration to convert to bytes
-            data_length = 0
-            for i in range(n_items):
-                u = unicode_objects[i]
-                if not PyUnicode_Check(u):
-                    raise TypeError('expected unicode string, found %r' % u)
-                # IF COMPILE_PY2:
-                #     b = PyUnicode_AsUTF8String(u)
-                #     encv = PyBytes_AS_STRING(b)
-                #     l = PyBytes_GET_SIZE(b)
-                # IF COMPILE_PY3:
-                encv = PyUnicode_AsUTF8AndSize(u, &l)
-                encoded_values[i] = encv
-                data_length += l + 4  # 4 bytes to store item length
-                encoded_lengths[i] = l
+        # setup output
+        total_length = HEADER_LENGTH + data_length
+        out = PyByteArray_FromStringAndSize(NULL, total_length)
 
-            # setup output
-            total_length = HEADER_LENGTH + data_length
-            out = PyByteArray_FromStringAndSize(NULL, total_length)
+        # write header
+        write_header(out, n_items, data_length)
 
-            # write header
-            write_header(out, n_items, data_length)
-
-            # second iteration, store data
-            data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
-            for i in range(n_items):
-                l = encoded_lengths[i]
-                store_le32(data, l)
-                data += 4
-                memcpy(data, encoded_values[i], l)
-                data += l
-
-        finally:
-            free(encoded_values)
-            free(encoded_lengths)
+        # second iteration, store data
+        data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
+        for i in range(n_items):
+            l = encoded_lengths[i]
+            store_le32(data, l)
+            data += 4
+            encv = PyBytes_AS_STRING(encoded_values[i])
+            memcpy(data, encv, l)
+            data += l
 
         return out
 
@@ -171,7 +143,7 @@ class VLenUTF8(Codec):
             if out.shape[0] < n_items:
                 raise ValueError('out is too small')
 
-            # iterate and decode - N.B., use a separate loop and do not try to cast out
+            # iterate and decode - N.B., use a separate loop and do not try to cast `out`
             # as np.ndarray[object] as this causes segfaults, possibly similar to
             # https://github.com/cython/cython/issues/1608
             for i in range(n_items):
@@ -187,11 +159,131 @@ class VLenUTF8(Codec):
             # setup output
             result = np.empty(n_items, dtype=object)
 
-            # iterate and decode - slightly faster as can use typed result variable
+            # iterate and decode - slightly faster as can use typed `result` variable
             for i in range(n_items):
                 l = load_le32(data)
                 data += 4
                 result[i] = PyUnicode_FromStringAndSize(data, l)
+                data += l
+
+            return result
+
+
+class VLenBytes(Codec):
+
+    codec_id = 'vlen-bytes'
+
+    def __init__(self):
+        pass
+
+    @cython.wraparound(False)
+    @cython.boundscheck(False)
+    def encode(self, buf):
+        cdef:
+            Py_ssize_t i, n_items, l, data_length, total_length
+            np.ndarray[object] values
+            np.uint32_t[:] lengths
+            char* encv
+            object b
+            bytearray out
+            char* data
+
+        # normalise input
+        values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+
+        # determine number of items
+        n_items = values.shape[0]
+
+        # setup intermediates
+        lengths = np.empty(n_items, dtype='u4')
+
+        # first iteration to find lengths
+        data_length = 0
+        for i in range(n_items):
+            b = values[i]
+            if not PyBytes_Check(b):
+                raise TypeError('expected byte string, found %r' % b)
+            l = PyBytes_GET_SIZE(b)
+            data_length += l + 4  # 4 bytes to store item length
+            lengths[i] = l
+
+        # setup output
+        total_length = HEADER_LENGTH + data_length
+        out = PyByteArray_FromStringAndSize(NULL, total_length)
+
+        # write header
+        write_header(out, n_items, data_length)
+
+        # second iteration, store data
+        data = PyByteArray_AS_STRING(out) + HEADER_LENGTH
+        for i in range(n_items):
+            l = lengths[i]
+            store_le32(data, l)
+            data += 4
+            encv = PyBytes_AS_STRING(values[i])
+            memcpy(data, encv, l)
+            data += l
+
+        return out
+
+    @cython.wraparound(False)
+    @cython.boundscheck(False)
+    def decode(self, buf, out=None):
+        cdef:
+            Buffer input_buffer
+            char* data
+            Py_ssize_t i, n_items, l, data_length, input_length
+            np.ndarray[object, ndim=1] result
+
+        # accept any buffer
+        input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
+        input_length = input_buffer.nbytes
+
+        # sanity checks
+        if input_length < HEADER_LENGTH:
+            raise ValueError('corrupt buffer, missing or truncated header')
+
+        # load number of items
+        n_items, data_length = read_header(buf)
+
+        # sanity check
+        if input_length < data_length + HEADER_LENGTH:
+            raise ValueError('corrupt buffer, data are truncated')
+
+        # position input data pointer
+        data = input_buffer.ptr + HEADER_LENGTH
+
+        if out is not None:
+
+            if not isinstance(out, np.ndarray):
+                raise TypeError('out must be 1-dimensional array')
+            if out.dtype != object:
+                raise ValueError('out must be object array')
+            out = out.reshape(-1, order='A')
+            if out.shape[0] < n_items:
+                raise ValueError('out is too small')
+
+            # iterate and decode - N.B., use a separate loop and do not try to cast `out`
+            # as np.ndarray[object] as this causes segfaults, possibly similar to
+            # https://github.com/cython/cython/issues/1608
+            for i in range(n_items):
+                l = load_le32(data)
+                data += 4
+                out[i] = PyBytes_FromStringAndSize(data, l)
+                data += l
+
+            return out
+
+        else:
+
+            # setup output
+            result = np.empty(n_items, dtype=object)
+
+            # iterate and decode - slightly faster as can use typed `result` variable
+            for i in range(n_items):
+                l = load_le32(data)
+                data += 4
+                result[i] = PyBytes_FromStringAndSize(data, l)
                 data += l
 
             return result

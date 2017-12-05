@@ -101,8 +101,8 @@ register_codec(JSON)
 
 try:
     from numcodecs import vlen
-    from numcodecs.vlen import VLenUTF8
+    from numcodecs.vlen import VLenUTF8, VLenBytes
     register_codec(VLenUTF8)
+    register_codec(VLenBytes)
 except ImportError:  # pragma: no cover
     pass
-
