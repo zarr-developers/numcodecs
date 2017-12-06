@@ -1,6 +1,14 @@
 Release notes
 =============
 
+.. _release_0.5.1:
+
+0.5.1
+-----
+
+* Fixed a compatibility issue with the Zlib codec to ensure it can handle
+  bytearray objects under Python 2.7.
+
 .. _release_0.5.0:
 
 0.5.0
