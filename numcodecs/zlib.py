@@ -7,7 +7,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import buffer_copy, handle_datetime
+from .compat import buffer_copy, handle_datetime, buffer_tobytes, PY2
 
 
 class Zlib(Codec):
@@ -40,11 +40,19 @@ class Zlib(Codec):
             if not buf.flags.c_contiguous:
                 buf = buf.tobytes(order='A')
 
+        if PY2:
+            # ensure bytes, PY2 cannot handle things like bytearray
+            buf = buffer_tobytes(buf)
+
         # do compression
         return _zlib.compress(buf, self.level)
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
+
+        if PY2:
+            # ensure bytes, PY2 cannot handle things like bytearray
+            buf = buffer_tobytes(buf)
 
         # do decompression
         dec = _zlib.decompress(buf)
