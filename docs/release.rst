@@ -7,7 +7,7 @@ Release notes
 -----
 
 * Fixed a compatibility issue with the Zlib codec to ensure it can handle
-  bytearray objects under Python 2.7.
+  bytearray objects under Python 2.7 (:issue:`57`).
 
 .. _release_0.5.0:
 
