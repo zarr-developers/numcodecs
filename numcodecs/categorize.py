@@ -45,11 +45,10 @@ class Categorize(Codec):
     def __init__(self, labels, dtype, astype='u1'):
         self.dtype = np.dtype(dtype)
         if self.dtype.kind == 'S':
-            self.labels = [ensure_bytes(l) for l in labels]
+            labels = [ensure_bytes(l) for l in labels]
         elif self.dtype.kind == 'U':
-            self.labels = [ensure_text(l) for l in labels]
-        else:
-            self.labels = labels
+            labels = [ensure_text(l) for l in labels]
+        self.labels = np.array(labels, dtype=self.dtype)
         self.astype = np.dtype(astype)
 
     def encode(self, buf):
@@ -94,7 +93,7 @@ class Categorize(Codec):
         if self.dtype.kind == 'S':
             labels = [ensure_text(l) for l in self.labels]
         else:
-            labels = self.labels
+            labels = self.labels.tolist()
         config = dict(
             id=self.codec_id,
             labels=labels,
@@ -105,7 +104,7 @@ class Categorize(Codec):
 
     def __repr__(self):
         # make sure labels part is not too long
-        labels = repr(self.labels[:3])
+        labels = repr(self.labels[:3].tolist())
         if len(self.labels) > 3:
             labels = labels[:-1] + ', ...]'
         r = '%s(dtype=%r, astype=%r, labels=%s)' % \
