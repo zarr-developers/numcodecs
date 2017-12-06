@@ -184,7 +184,7 @@ class VLenBytes(Codec):
     >>> import numcodecs
     >>> import numpy as np
     >>> x = np.array([b'foo', b'bar', b'baz'], dtype='object')
-    >>> codec = numcodecs.VLenUTF8()
+    >>> codec = numcodecs.VLenBytes()
     >>> codec.decode(codec.encode(x))
     array([b'foo', b'bar', b'baz'], dtype=object)
 
