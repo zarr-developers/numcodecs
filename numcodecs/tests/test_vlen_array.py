@@ -11,8 +11,10 @@ try:
     from numcodecs.vlen import VLenArray
 except ImportError:  # pragma: no cover
     raise nose.SkipTest("vlen-array not available")
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility)
+from numcodecs.tests.common import (check_config, check_repr,
+                                    check_encode_decode_array,
+                                    check_backwards_compatibility,
+                                    assert_array_items_equal)
 
 
 arrays = [
@@ -88,3 +90,14 @@ def test_decode_errors():
         codec.decode(enc, out=123)
     with assert_raises(ValueError):
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
+
+
+def test_encode_none():
+    a = np.array([[1, 3], None, [4, 7]], dtype=object)
+    codec = VLenArray(int)
+    enc = codec.encode(a)
+    dec = codec.decode(enc)
+    expect = np.array([np.array([1, 3]),
+                       np.array([]),
+                       np.array([4, 7])], dtype=object)
+    assert_array_items_equal(expect, dec)

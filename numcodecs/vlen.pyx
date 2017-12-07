@@ -365,7 +365,11 @@ class VLenArray(Codec):
         # first iteration to convert to bytes
         data_length = 0
         for i in range(n_items):
-            v = np.ascontiguousarray(values[i], self.dtype)
+            v = values[i]
+            if v is None:
+                v = np.array([], dtype=self.dtype)
+            else:
+                v = np.ascontiguousarray(v, self.dtype)
             if v.ndim != 1:
                 raise ValueError('only 1-dimensional arrays are supported')
             l = v.nbytes
