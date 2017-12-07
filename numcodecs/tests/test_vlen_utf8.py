@@ -12,7 +12,8 @@ try:
 except ImportError:  # pragma: no cover
     raise nose.SkipTest("vlen-utf8 not available")
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings)
+                                    check_backwards_compatibility, greetings,
+                                    assert_array_items_equal)
 
 
 arrays = [
@@ -49,7 +50,7 @@ def test_encode_errors():
     with assert_raises(TypeError):
         codec.encode([1234, 5678])
     with assert_raises(TypeError):
-        codec.encode(np.zeros(10, dtype='i4'))
+        codec.encode(np.ones(10, dtype='i4'))
 
 
 def test_decode_errors():
@@ -76,3 +77,12 @@ def test_decode_errors():
         codec.decode(enc, out=123)
     with assert_raises(ValueError):
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
+
+
+def test_encode_utf8():
+    a = np.array([u'foo', None, u'bar'], dtype=object)
+    codec = VLenUTF8()
+    enc = codec.encode(a)
+    dec = codec.decode(enc)
+    expect = np.array([u'foo', u'', u'bar'], dtype=object)
+    assert_array_items_equal(expect, dec)

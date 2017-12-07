@@ -1,6 +1,13 @@
 Release notes
 =============
 
+.. _release_0.5.2:
+
+0.5.2
+-----
+
+* Add support for encoding None values in VLen... codecs (:issue:`59`).
+
 .. _release_0.5.1:
 
 0.5.1
