@@ -1,6 +1,17 @@
 Release notes
 =============
 
+.. _release_0.5.1:
+
+0.5.1
+-----
+
+* Fixed a compatibility issue with the Zlib codec to ensure it can handle
+  bytearray objects under Python 2.7 (:issue:`57`).
+* Restricted the :class:`numcodecs.categorize.Categorize` codec to object
+  ('O') and unicode ('U') dtypes and disallowed bytes ('S') dtypes because
+  these do not round-trip through JSON configuration.
+
 .. _release_0.5.0:
 
 0.5.0

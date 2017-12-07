@@ -85,17 +85,6 @@ def buffer_copy(buf, out=None):
     return out
 
 
-# def buffer_size(v):
-#     from array import array as _stdlib_array
-#     if PY2 and isinstance(v, _stdlib_array):  # pragma: no cover
-#         # special case array.array because does not support buffer
-#         # interface in PY2
-#         return v.buffer_info()[1] * v.itemsize
-#     else:
-#         v = memoryview(v)
-#         return reduce(operator.mul, v.shape) * v.itemsize
-
-
 def ndarray_from_buffer(buf, dtype):
     if isinstance(buf, np.ndarray):
         arr = buf.reshape(-1, order='A').view(dtype)
@@ -104,17 +93,10 @@ def ndarray_from_buffer(buf, dtype):
     return arr
 
 
-def ensure_bytes(l, encoding='utf-8'):
-    if isinstance(l, binary_type):
-        return l
-    else:
-        return l.encode(encoding=encoding)
-
-
 def ensure_text(l, encoding='utf-8'):
     if isinstance(l, text_type):
         return l
-    else:
+    else:  # pragma: py3 no cover
         return text_type(l, encoding=encoding)
 
 

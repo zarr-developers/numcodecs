@@ -4,7 +4,6 @@
 # cython: linetrace=False
 # cython: binding=False
 from __future__ import absolute_import, print_function, division
-import struct
 
 
 import cython
@@ -184,7 +183,7 @@ class VLenBytes(Codec):
     >>> import numcodecs
     >>> import numpy as np
     >>> x = np.array([b'foo', b'bar', b'baz'], dtype='object')
-    >>> codec = numcodecs.VLenUTF8()
+    >>> codec = numcodecs.VLenBytes()
     >>> codec.decode(codec.encode(x))
     array([b'foo', b'bar', b'baz'], dtype=object)
 
@@ -311,8 +310,8 @@ class VLenArray(Codec):
     >>> x = np.array([[1, 3, 5], [4], [7, 9]], dtype='object')
     >>> codec = numcodecs.VLenArray('<i4')
     >>> codec.decode(codec.encode(x))
-    array([array([1, 2, 3], dtype=int32), array([4], dtype=int32),
-           array([5, 6], dtype=int32)], dtype=object)
+    array([array([1, 3, 5], dtype=int32), array([4], dtype=int32),
+           array([7, 9], dtype=int32)], dtype=object)
 
     See Also
     --------

@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy, ensure_text, ensure_bytes
+from .compat import ndarray_from_buffer, buffer_copy, ensure_text
 
 
 import numpy as np
@@ -25,18 +25,18 @@ class Categorize(Codec):
     --------
     >>> import numcodecs
     >>> import numpy as np
-    >>> x = np.array([b'male', b'female', b'female', b'male', b'unexpected'])
+    >>> x = np.array(['male', 'female', 'female', 'male', 'unexpected'], dtype=object)
     >>> x
-    array([b'male', b'female', b'female', b'male', b'unexpected'],
-          dtype='|S10')
-    >>> codec = numcodecs.Categorize(labels=[b'female', b'male'], dtype=x.dtype)
+    array(['male', 'female', 'female', 'male', 'unexpected'],
+          dtype=object)
+    >>> codec = numcodecs.Categorize(labels=['female', 'male'], dtype=object)
     >>> y = codec.encode(x)
     >>> y
     array([2, 1, 1, 2, 0], dtype=uint8)
     >>> z = codec.decode(y)
     >>> z
-    array([b'male', b'female', b'female', b'male', b''],
-          dtype='|S10')
+    array(['male', 'female', 'female', 'male', ''],
+          dtype=object)
 
     """
 
@@ -44,12 +44,10 @@ class Categorize(Codec):
 
     def __init__(self, labels, dtype, astype='u1'):
         self.dtype = np.dtype(dtype)
-        if self.dtype.kind == 'S':
-            self.labels = [ensure_bytes(l) for l in labels]
-        elif self.dtype.kind == 'U':
-            self.labels = [ensure_text(l) for l in labels]
-        else:
-            self.labels = labels
+        if self.dtype.kind not in 'UO':
+            raise ValueError("only unicode ('U') and object ('O') dtypes are "
+                             "supported")
+        self.labels = [ensure_text(l) for l in labels]
         self.astype = np.dtype(astype)
 
     def encode(self, buf):
@@ -77,7 +75,7 @@ class Categorize(Codec):
             dec = out.reshape(-1, order='A')
             copy_needed = False
         else:
-            dec = np.zeros_like(enc, dtype=self.dtype)
+            dec = np.full_like(enc, fill_value=u'', dtype=self.dtype)
             copy_needed = True
 
         # apply decoding
@@ -91,13 +89,9 @@ class Categorize(Codec):
         return dec
 
     def get_config(self):
-        if self.dtype.kind == 'S':
-            labels = [ensure_text(l) for l in self.labels]
-        else:
-            labels = self.labels
         config = dict(
             id=self.codec_id,
-            labels=labels,
+            labels=self.labels,
             dtype=self.dtype.str,
             astype=self.astype.str
         )

@@ -62,8 +62,14 @@ def check_encode_decode(arr, codec, precision=None):
     dec = codec.decode(enc)
     compare_arrays(arr, dec, precision=precision)
 
-    # test encoding of raw bytes
+    # test encoding of bytes
     buf = arr.tobytes(order='A')
+    enc = codec.encode(buf)
+    dec = codec.decode(enc)
+    compare_arrays(arr, dec, precision=precision)
+
+    # test encoding of bytearray
+    buf = bytearray(arr.tobytes(order='A'))
     enc = codec.encode(buf)
     dec = codec.decode(enc)
     compare_arrays(arr, dec, precision=precision)
@@ -82,6 +88,10 @@ def check_encode_decode(arr, codec, precision=None):
 
     # test decoding of raw bytes
     dec = codec.decode(enc_bytes)
+    compare_arrays(arr, dec, precision=precision)
+
+    # test decoding of bytearray
+    dec = codec.decode(bytearray(enc_bytes))
     compare_arrays(arr, dec, precision=precision)
 
     # test decoding of array.array
