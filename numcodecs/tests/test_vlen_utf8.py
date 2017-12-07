@@ -80,9 +80,9 @@ def test_decode_errors():
 
 
 def test_encode_utf8():
-    a = np.array(['foo', None, 'bar'], dtype=object)
+    a = np.array([u'foo', None, u'bar'], dtype=object)
     codec = VLenUTF8()
     enc = codec.encode(a)
     dec = codec.decode(enc)
-    expect = np.array(['foo', '', 'bar'], dtype=object)
+    expect = np.array([u'foo', u'', u'bar'], dtype=object)
     assert_array_items_equal(expect, dec)
