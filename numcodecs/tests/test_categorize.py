@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq
+from nose.tools import assert_raises
 
 
 from numcodecs.categorize import Categorize
@@ -51,14 +51,14 @@ def test_encode():
         expect = np.array([1, 2, 1, 3, 0], dtype='u1')
         enc = codec.encode(arr)
         assert_array_equal(expect, enc)
-        eq(expect.dtype, enc.dtype)
+        assert expect.dtype == enc.dtype
 
         # test decoding with unexpected value
         dec = codec.decode(enc)
         expect = arr.copy()
         expect[expect == u'ƪùüx'] = u''
         assert_array_equal(expect, dec)
-        eq(arr.dtype, dec.dtype)
+        assert arr.dtype == dec.dtype
 
 
 def test_config():
@@ -77,7 +77,7 @@ def test_repr():
     else:  # pragma: py2 no cover
         expect += "labels=['foo', 'bar', 'baz', ...])"
     actual = repr(codec)
-    eq(expect, actual)
+    assert expect == actual
 
     if not PY2:  # pragma: py2 no cover
 
@@ -87,7 +87,7 @@ def test_repr():
         expect = "Categorize(dtype='<U4', astype='|u1', " \
                  "labels=['ƒöõ', 'ßàř', 'ßāẑ', ...])"
         actual = repr(codec)
-        eq(expect, actual)
+        assert expect == actual
 
 
 def test_backwards_compatibility():
@@ -97,3 +97,8 @@ def test_backwards_compatibility():
     codec = Categorize(labels=labels, dtype=object, astype='u1')
     check_backwards_compatibility(Categorize.codec_id, arrays_object,
                                   [codec], prefix='O')
+
+
+def test_errors():
+    with assert_raises(ValueError):
+        Categorize(labels=['foo', 'bar'], dtype='S6')

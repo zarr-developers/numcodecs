@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy, ensure_text, ensure_bytes
+from .compat import ndarray_from_buffer, buffer_copy, ensure_text
 
 
 import numpy as np
@@ -25,18 +25,18 @@ class Categorize(Codec):
     --------
     >>> import numcodecs
     >>> import numpy as np
-    >>> x = np.array([b'male', b'female', b'female', b'male', b'unexpected'])
+    >>> x = np.array(['male', 'female', 'female', 'male', 'unexpected'], dtype=object)
     >>> x
-    array([b'male', b'female', b'female', b'male', b'unexpected'],
-          dtype='|S10')
-    >>> codec = numcodecs.Categorize(labels=[b'female', b'male'], dtype=x.dtype)
+    array(['male', 'female', 'female', 'male', 'unexpected'],
+          dtype=object)
+    >>> codec = numcodecs.Categorize(labels=['female', 'male'], dtype=object)
     >>> y = codec.encode(x)
     >>> y
     array([2, 1, 1, 2, 0], dtype=uint8)
     >>> z = codec.decode(y)
     >>> z
-    array([b'male', b'female', b'female', b'male', b''],
-          dtype='|S10')
+    array(['male', 'female', 'female', 'male', ''],
+          dtype=object)
 
     """
 

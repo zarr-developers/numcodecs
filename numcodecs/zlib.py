@@ -40,7 +40,7 @@ class Zlib(Codec):
             if not buf.flags.c_contiguous:
                 buf = buf.tobytes(order='A')
 
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             # ensure bytes, PY2 cannot handle things like bytearray
             buf = buffer_tobytes(buf)
 
@@ -50,7 +50,7 @@ class Zlib(Codec):
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             # ensure bytes, PY2 cannot handle things like bytearray
             buf = buffer_tobytes(buf)
 
