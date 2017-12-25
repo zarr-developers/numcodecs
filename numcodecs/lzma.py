@@ -21,7 +21,7 @@ if _lzma:
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
         """Codec providing compression using lzma via the Python standard
-        library (only available under Python 3).
+        library (available on Python 3 and Python 2 with ``backports.lzma``).
 
         Parameters
         ----------
