@@ -76,6 +76,7 @@ Contents
     msgpacks
     vlen
     release
+    contributing
 
 Acknowledgments
 ---------------
