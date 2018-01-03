@@ -2,12 +2,12 @@
 from __future__ import absolute_import, print_function, division
 
 
-from nose.tools import assert_raises
+import pytest
 
 
 from numcodecs.registry import get_codec
 
 
 def test_registry_errors():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         get_codec({'id': 'foo'})

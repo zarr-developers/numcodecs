@@ -7,8 +7,8 @@ from glob import glob
 
 
 import numpy as np
-from nose.tools import eq_ as eq, assert_true, assert_raises
 from numpy.testing import assert_array_almost_equal, assert_array_equal
+import pytest
 
 
 from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
@@ -112,16 +112,17 @@ def check_encode_decode(arr, codec, precision=None):
     # test decoding directly into bytearray
     out = bytearray(arr.nbytes)
     codec.decode(enc_bytes, out=out)
+    # noinspection PyTypeChecker
     compare_arrays(arr, out, precision=precision)
 
 
 def assert_array_items_equal(res, arr):
 
-    assert_true(isinstance(res, np.ndarray))
+    assert isinstance(res, np.ndarray)
     res = res.reshape(-1, order='A')
     arr = arr.reshape(-1, order='A')
-    assert_true(res.shape == arr.shape)
-    assert_true(res.dtype == arr.dtype)
+    assert res.shape == arr.shape
+    assert res.dtype == arr.dtype
 
     # numpy asserts don't compare object arrays
     # properly; assert that we have the same nans
@@ -152,14 +153,14 @@ def check_config(codec):
     config = codec.get_config()
     # round-trip through JSON to check serialization
     config = _json.loads(_json.dumps(config))
-    eq(codec, get_codec(config))
+    assert codec == get_codec(config)
 
 
 def check_repr(stmt):
     # check repr matches instantiation statement
     codec = eval(stmt)
     actual = repr(codec)
-    eq(stmt, actual)
+    assert stmt == actual
 
 
 def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, prefix=None):
@@ -208,7 +209,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             # load config and compare with expectation
             with open(codec_fn, mode='r') as cf:
                 config = _json.load(cf)
-                eq(codec, get_codec(config))
+                assert codec == get_codec(config)
 
             enc_fn = os.path.join(codec_dir, 'encoded.{:02d}.dat'.format(i))
 
@@ -230,7 +231,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     assert_array_items_equal(arr, dec_arr)
                 else:
                     assert_array_equal(arr, dec_arr)
-                    eq(arr_bytes, buffer_tobytes(dec))
+                    assert arr_bytes == buffer_tobytes(dec)
 
 
 def check_err_decode_object_buffer(compressor):
@@ -238,7 +239,7 @@ def check_err_decode_object_buffer(compressor):
     a = np.arange(10)
     enc = compressor.encode(a)
     out = np.empty(10, dtype=object)
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         compressor.decode(enc, out=out)
     print(out[:])
 
@@ -246,5 +247,5 @@ def check_err_decode_object_buffer(compressor):
 def check_err_encode_object_buffer(compressor):
     # compressors cannot encode object array
     a = np.array(['foo', 'bar', 'baz'], dtype=object)
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         compressor.encode(a)

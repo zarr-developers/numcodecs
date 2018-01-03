@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
+import unittest
 
 
 import numpy as np
-import nose
+
 
 try:
     from numcodecs.msgpacks import MsgPack
 except ImportError:  # pragma: no cover
-    raise nose.SkipTest("msgpack-python not available")
+    raise unittest.SkipTest("msgpack-python not available")
+
 
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)

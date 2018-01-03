@@ -3,9 +3,9 @@ from __future__ import absolute_import, print_function, division
 import itertools
 
 
-from nose.tools import assert_raises
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
+import pytest
 
 
 from numcodecs.quantize import Quantize
@@ -64,11 +64,11 @@ def test_repr():
 
 
 def test_errors():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Quantize(digits=2, dtype='i4')
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Quantize(digits=2, dtype=object)
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Quantize(digits=2, dtype='f8', astype=object)
 
 
