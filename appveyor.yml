@@ -48,7 +48,7 @@ test_script:
   - "%CMD_IN_ENV% python -m pip install -U pip setuptools wheel"
   - "%CMD_IN_ENV% python -m pip install -rrequirements_dev.txt"
   - "%CMD_IN_ENV% python setup.py build_ext --inplace"
-  - "%CMD_IN_ENV% python -m nose -v"
+  - "%CMD_IN_ENV% python -m pytest -v numcodecs"
 
 after_test:
   - "%CMD_IN_ENV% python setup.py bdist_wheel"
