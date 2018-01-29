@@ -1,6 +1,17 @@
 Release notes
 =============
 
+.. _release_0.5.3:
+
+0.5.3
+-----
+
+* The test suite has been migrated to use pytest instead of nosetests
+  (:issue:`61`, :issue:`62`).
+
+* The bundled c-blosc library has been updated to version 1.13.4 (:issue:`63`,
+  :issue:`64`).
+
 .. _release_0.5.2:
 
 0.5.2
