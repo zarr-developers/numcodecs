@@ -4,41 +4,46 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/zstd-1.3.0/zstd.h"
+            "c-blosc/internal-complibs/zstd-1.3.3/zstd.h"
         ],
         "extra_compile_args": [
             "-msse2",
             "-mavx2"
         ],
         "include_dirs": [
-            "c-blosc/internal-complibs/zstd-1.3.0",
-            "c-blosc/internal-complibs/zstd-1.3.0/legacy",
-            "c-blosc/internal-complibs/zstd-1.3.0/compress",
-            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder",
-            "c-blosc/internal-complibs/zstd-1.3.0/deprecated",
-            "c-blosc/internal-complibs/zstd-1.3.0/common",
-            "c-blosc/internal-complibs/zstd-1.3.0/decompress",
-            "c-blosc/internal-complibs/zstd-1.3.0/dll"
+            "c-blosc/internal-complibs/zstd-1.3.3",
+            "c-blosc/internal-complibs/zstd-1.3.3/legacy",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress",
+            "c-blosc/internal-complibs/zstd-1.3.3/dictBuilder",
+            "c-blosc/internal-complibs/zstd-1.3.3/deprecated",
+            "c-blosc/internal-complibs/zstd-1.3.3/common",
+            "c-blosc/internal-complibs/zstd-1.3.3/decompress",
+            "c-blosc/internal-complibs/zstd-1.3.3/dll"
         ],
         "name": "numcodecs.zstd",
         "sources": [
             "numcodecs/zstd.pyx",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/threading.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/zstd_common.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/pool.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/fse_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/error_private.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/xxhash.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/common/entropy_common.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/compress/fse_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/compress/zstd_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/compress/huf_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/compress/zstdmt_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/decompress/zstd_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/decompress/huf_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/divsufsort.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/cover.c",
-            "c-blosc/internal-complibs/zstd-1.3.0/dictBuilder/zdict.c"
+            "c-blosc/internal-complibs/zstd-1.3.3/common/threading.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/zstd_common.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/pool.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/fse_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/error_private.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/xxhash.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/common/entropy_common.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/fse_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_ldm.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/huf_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_opt.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_lazy.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_fast.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstdmt_compress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/compress/zstd_double_fast.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/decompress/zstd_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/decompress/huf_decompress.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/dictBuilder/divsufsort.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/dictBuilder/cover.c",
+            "c-blosc/internal-complibs/zstd-1.3.3/dictBuilder/zdict.c"
         ]
     },
     "module_name": "numcodecs.zstd"
