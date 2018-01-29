@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq, assert_raises
+import pytest
 
 
 from numcodecs.delta import Delta
@@ -37,7 +37,7 @@ def test_encode():
     expect = np.array([10] + ([1] * 9), dtype=astype)
     actual = codec.encode(arr)
     assert_array_equal(expect, actual)
-    eq(np.dtype(astype), actual.dtype)
+    assert np.dtype(astype) == actual.dtype
 
 
 def test_config():
@@ -56,7 +56,7 @@ def test_backwards_compatibility():
 
 
 def test_errors():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Delta(dtype=object)
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Delta(dtype='i8', astype=object)

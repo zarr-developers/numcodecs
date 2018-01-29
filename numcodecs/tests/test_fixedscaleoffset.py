@@ -5,7 +5,7 @@ import itertools
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq, assert_raises
+import pytest
 
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
@@ -45,7 +45,7 @@ def test_encode():
     expect = np.array([0, 1, 2, 3, 4, 6, 7, 8, 9, 10], dtype=astype)
     actual = codec.encode(arr)
     assert_array_equal(expect, actual)
-    eq(np.dtype(astype), actual.dtype)
+    assert np.dtype(astype) == actual.dtype
 
 
 def test_config():
@@ -64,7 +64,7 @@ def test_backwards_compatibility():
 
 
 def test_errors():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         FixedScaleOffset(dtype=object, astype='i4', scale=10, offset=100)
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         FixedScaleOffset(dtype='f8', astype=object, scale=10, offset=100)

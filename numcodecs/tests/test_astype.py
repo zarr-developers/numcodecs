@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import eq_ as eq
 
 
 from numcodecs.astype import AsType
@@ -36,7 +35,7 @@ def test_decode():
     expect = arr.astype(decode_dtype)
     actual = codec.decode(arr)
     assert_array_equal(expect, actual)
-    eq(np.dtype(decode_dtype), actual.dtype)
+    assert np.dtype(decode_dtype) == actual.dtype
 
 
 def test_encode():
@@ -46,7 +45,7 @@ def test_encode():
     expect = arr.astype(encode_dtype)
     actual = codec.encode(arr)
     assert_array_equal(expect, actual)
-    eq(np.dtype(encode_dtype), actual.dtype)
+    assert np.dtype(encode_dtype) == actual.dtype
 
 
 def test_config():
@@ -62,17 +61,18 @@ def test_repr():
 def test_backwards_compatibility():
 
     # integers
-    arrays = [
+    arrs = [
         np.arange(1000, dtype='<i4'),
         np.random.randint(0, 200, size=1000, dtype='<i4').reshape(100, 10, order='F'),
     ]
     codec = AsType(encode_dtype='<i2', decode_dtype='<i4')
-    check_backwards_compatibility(AsType.codec_id, arrays, [codec], prefix='i')
+    check_backwards_compatibility(AsType.codec_id, arrs, [codec], prefix='i')
 
     # floats
-    arrays = [
+    arrs = [
         np.linspace(1000, 1001, 1000, dtype='<f8').reshape(100, 10, order='F'),
         np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('<f8'),
     ]
     codec = AsType(encode_dtype='<f4', decode_dtype='<f8')
-    check_backwards_compatibility(AsType.codec_id, arrays, [codec], precision=[3], prefix='f')
+    check_backwards_compatibility(AsType.codec_id, arrs, [codec], precision=[3],
+                                  prefix='f')

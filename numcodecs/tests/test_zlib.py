@@ -4,7 +4,6 @@ import itertools
 
 
 import numpy as np
-from nose.tools import eq_ as eq
 
 
 from numcodecs.zlib import Zlib
@@ -58,7 +57,7 @@ def test_repr():
 def test_alias():
     config = dict(id='gzip', level=1)
     codec = get_codec(config)
-    eq(Zlib(1), codec)
+    assert Zlib(1) == codec
 
 
 def test_eq():

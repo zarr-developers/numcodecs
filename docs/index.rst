@@ -76,12 +76,21 @@ Contents
     msgpacks
     vlen
     release
+    contributing
 
 Acknowledgments
 ---------------
 
-Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_
-library.
+The following people have contributed to the development of NumCodecs by contributing code,
+documentation, code reviews, comments and/or ideas:
+
+* :user:`Francesc Alted <FrancescAlted>`
+* :user:`Prakhar Goel <newt0311>`
+* :user:`John Kirkham <jakirkham>`
+* :user:`Alistair Miles <alimanfoo>`
+* :user:`Jeff Reback <jreback>`
+
+Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_ library.
 
 Development of this package is supported by the
 `MRC Centre for Genomics and Global Health <http://www.cggh.org>`_.

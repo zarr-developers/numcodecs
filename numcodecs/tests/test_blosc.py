@@ -6,7 +6,7 @@ from multiprocessing.pool import ThreadPool
 
 
 import numpy as np
-from nose.tools import assert_raises
+import pytest
 
 
 from numcodecs import blosc
@@ -105,7 +105,7 @@ def test_compress_blocksize():
         for bs in 2**7, 2**8:
             enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
             _, _, blocksize = blosc.cbuffer_sizes(enc)
-        assert blocksize == bs
+            assert blocksize == bs
 
 
 def test_compress_complib():
@@ -125,10 +125,10 @@ def test_compress_complib():
             complib = blosc.cbuffer_complib(enc)
             expected_complib = expected_complibs[cname]
             assert complib == expected_complib
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             # capitalized cname
             blosc.compress(arr, b'LZ4', 1)
-        with assert_raises(ValueError):
+        with pytest.raises(ValueError):
             # bad cname
             blosc.compress(arr, b'foo', 1)
 

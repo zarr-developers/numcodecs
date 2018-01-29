@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, division
 
 import numpy as np
 from numpy.testing import assert_array_equal
-from nose.tools import assert_raises
+import pytest
 
 
 from numcodecs.categorize import Categorize
@@ -100,5 +100,5 @@ def test_backwards_compatibility():
 
 
 def test_errors():
-    with assert_raises(ValueError):
+    with pytest.raises(ValueError):
         Categorize(labels=['foo', 'bar'], dtype='S6')

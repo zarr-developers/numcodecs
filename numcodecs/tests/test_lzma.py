@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import itertools
+import unittest
 
 
-import nose
 import numpy as np
+
 
 try:
     # noinspection PyProtectedMember
     from numcodecs.lzma import LZMA, _lzma
 except ImportError:  # pragma: no cover
-    raise nose.SkipTest("LZMA not available")
+    raise unittest.SkipTest("LZMA not available")
+
 
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,

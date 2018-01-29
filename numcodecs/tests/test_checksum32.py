@@ -4,7 +4,7 @@ import itertools
 
 
 import numpy as np
-from nose.tools import assert_raises
+import pytest
 
 
 from numcodecs.checksum32 import CRC32, Adler32
@@ -35,7 +35,7 @@ def test_encode_decode():
 def test_errors():
     for codec, arr in itertools.product(codecs, arrays):
         enc = codec.encode(arr)
-        with assert_raises(RuntimeError):
+        with pytest.raises(RuntimeError):
             codec.decode(enc[:-1])
 
 
