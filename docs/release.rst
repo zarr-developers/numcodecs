@@ -1,6 +1,15 @@
 Release notes
 =============
 
+
+.. _release_0.5.4:
+
+0.5.4
+-----
+
+* The bundled c-blosc sources have been upgraded to version 1.14.0 (:issue:`71`).
+
+
 .. _release_0.5.3:
 
 0.5.3
@@ -12,6 +21,7 @@ Release notes
 * The bundled c-blosc library has been updated to version 1.13.4 (:issue:`63`,
   :issue:`64`).
 
+
 .. _release_0.5.2:
 
 0.5.2
@@ -19,6 +29,7 @@ Release notes
 
 * Add support for encoding None values in VLen... codecs (:issue:`59`).
 
+ 
 .. _release_0.5.1:
 
 0.5.1
@@ -30,6 +41,7 @@ Release notes
   ('O') and unicode ('U') dtypes and disallowed bytes ('S') dtypes because
   these do not round-trip through JSON configuration.
 
+
 .. _release_0.5.0:
 
 0.5.0
@@ -40,6 +52,7 @@ Release notes
   (:class:`numcodecs.vlen.VLenBytes`) and variable-length numerical arrays
   ((:class:`numcodecs.vlen.VLenArray`) (:issue:`56`).
 
+
 .. _release_0.4.1:
 
 0.4.1
@@ -47,6 +60,7 @@ Release notes
 
 * Resolved an issue where providing an array with dtype ``object`` as the destination
   when decoding could cause segaults with some codecs (:issue:`55`).
+
 
 .. _release_0.4.0:
 
@@ -56,6 +70,7 @@ Release notes
 * Added a new :class:`numcodecs.json.JSON` codec as an alternative for encoding of
   object arrays (:issue:`54`).
 
+
 .. _release_0.3.1:
 
 0.3.1
@@ -64,6 +79,7 @@ Release notes
 * Revert the default shuffle argument to SHUFFLE (byte shuffle) for the
   :class:`numcodecs.blosc.Blosc` codec for compatibility and consistency with previous
   code.
+
 
 .. _release_0.3.0:
 
@@ -91,12 +107,14 @@ Release notes
 * Arrays with datetime64 or timedelta64 can now be passed directly to compressor codecs
   (:issue:`39`, :issue:`46`).
 
+
 .. _release_0.2.1:
 
 0.2.1
 -----
 
 The bundled c-blosc libary has been upgraded to version 1.11.3 (:issue:`34`, :issue:`35`).
+
 
 .. _release_0.2.0:
 
@@ -119,6 +137,7 @@ Maintenance work:
   that break backwards-compatibility with data encoded using a previous release of numcodecs
   (:issue:`30`, :issue:`33`).
 
+
 .. _release_0.1.1:
 
 0.1.1
@@ -127,6 +146,7 @@ Maintenance work:
 This release includes a small modification to the setup.py script to provide greater control over
 how compiler options for different instruction sets are configured (:issue:`24`,
 :issue:`27`).
+
 
 .. _release_0.1.0:
 
@@ -184,12 +204,14 @@ Maintenance work:
   `coveralls <https://coveralls.io/github/alimanfoo/numcodecs?branch=master>`_
   (:issue:`15`, :issue:`20`).
 
+
 .. _release_0.0.1:
 
 0.0.1
 -----
 
 Fixed project description in setup.py.
+
 
 .. _release_0.0.0:
 
