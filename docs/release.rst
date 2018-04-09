@@ -1,6 +1,13 @@
 Release notes
 =============
 
+.. _release_0.5.5:
+
+0.5.5
+-----
+
+* The bundled c-blosc sources have been upgraded to version 1.14.3 (:issue:`72`).
+
 
 .. _release_0.5.4:
 
