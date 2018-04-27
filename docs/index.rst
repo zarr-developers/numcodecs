@@ -86,6 +86,7 @@ documentation, code reviews, comments and/or ideas:
 
 * :user:`Francesc Alted <FrancescAlted>`
 * :user:`Prakhar Goel <newt0311>`
+* :user:`Jerome Kelleher <jeromekelleher>`
 * :user:`John Kirkham <jakirkham>`
 * :user:`Alistair Miles <alimanfoo>`
 * :user:`Jeff Reback <jreback>`
