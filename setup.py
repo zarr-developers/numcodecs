@@ -322,7 +322,7 @@ def run_setup(with_extensions):
             'numpy>=1.7',
         ],
         extras_require={
-            'msgpack':  ["msgpack-python"],
+            'msgpack':  ["msgpack"],
         },
         ext_modules=ext_modules,
         cmdclass=cmdclass,
