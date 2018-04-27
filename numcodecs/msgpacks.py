@@ -28,8 +28,7 @@ class MsgPack(Codec):
 
     Notes
     -----
-    Requires `msgpack-python <https://pypi.python.org/pypi/msgpack-python>`_ to be
-    installed.
+    Requires `msgpack <https://pypi.org/project/msgpack/>`_ to be installed.
 
     """
 
