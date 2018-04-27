@@ -1,6 +1,8 @@
 Release notes
 =============
 
+* Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`; :issue:`74`, :issue:`75`).
+
 .. _release_0.5.5:
 
 0.5.5

@@ -9,7 +9,7 @@ import numpy as np
 try:
     from numcodecs.msgpacks import MsgPack
 except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("msgpack-python not available")
+    raise unittest.SkipTest("msgpack not available")
 
 
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
