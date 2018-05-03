@@ -54,3 +54,23 @@ def test_repr():
 
 def test_backwards_compatibility():
     check_backwards_compatibility(JSON.codec_id, arrays, codecs)
+
+
+def test_non_numpy_inputs():
+    # numpy will infer a range of different shapes and dtypes for these inputs.
+    # Make sure that round-tripping through encode preserves this.
+    data = [
+        [0, 1],
+        [[0, 1], [2, 3]],
+        [[0], [1], [2, 3]],
+        [[[0, 0]], [[1, 1]], [[2, 3]]],
+        ["1"],
+        ["11", "11"],
+        ["11", "1", "1"],
+        [{}],
+        [{"key": "value"}, ["list", "of", "strings"]],
+    ]
+    for input_data in data:
+        for codec in codecs:
+            output_data = codec.decode(codec.encode(input_data))
+            assert np.array_equal(np.array(input_data), output_data)
