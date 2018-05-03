@@ -1,0 +1,15 @@
+{
+    "allow_nan": true,
+    "check_circular": true,
+    "encoding": "utf-8",
+    "ensure_ascii": true,
+    "id": "json2",
+    "indent": null,
+    "separators": [
+        ",",
+        ":"
+    ],
+    "skipkeys": false,
+    "sort_keys": true,
+    "strict": true
+}
