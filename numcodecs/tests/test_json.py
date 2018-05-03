@@ -6,15 +6,20 @@ import itertools
 import numpy as np
 
 
-from numcodecs.json import JSON
+from numcodecs.json import LegacyJSON, JSON
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
-
-
-codecs = [
+json_codecs = [
     JSON(),
     JSON(indent=True),
 ]
+
+legacy_json_codecs = [
+    LegacyJSON(),
+    LegacyJSON(indent=True),
+]
+
+codecs = json_codecs + legacy_json_codecs
 
 
 # object array with strings
@@ -50,10 +55,17 @@ def test_repr():
         "     strict=True)"
     )
     check_repr(r)
+    r = (
+        "LegacyJSON(encoding='utf-8', allow_nan=True, check_circular=True,\n"
+        "     ensure_ascii=True, indent=None, separators=(',', ':'), skipkeys=False,\n"
+        "     sort_keys=True, strict=True)"
+    )
+    check_repr(r)
 
 
 def test_backwards_compatibility():
-    check_backwards_compatibility(JSON.codec_id, arrays, codecs)
+    check_backwards_compatibility(LegacyJSON.codec_id, arrays, legacy_json_codecs)
+    check_backwards_compatibility(JSON.codec_id, arrays, json_codecs)
 
 
 def test_non_numpy_inputs():
@@ -74,3 +86,23 @@ def test_non_numpy_inputs():
         for codec in codecs:
             output_data = codec.decode(codec.encode(input_data))
             assert np.array_equal(np.array(input_data), output_data)
+
+
+def test_legacy_codec_broken():
+    # Simplest demonstration of why the JSON codec needed to be changed.
+    # The LegacyJSON codec didn't include shape information in the serialised
+    # bytes, which gave different shapes in the input and output under certain
+    # circumstances.
+    a = np.empty(2, dtype=object)
+    a[0] = [0, 1]
+    a[1] = [2, 3]
+    codec = LegacyJSON()
+    b = codec.decode(codec.encode(a))
+    assert a.shape == (2,)
+    assert b.shape == (2, 2)
+    assert not np.array_equal(a, b)
+
+    # Now show that the JSON codec handles this case properly.
+    codec = JSON()
+    b = codec.decode(codec.encode(a))
+    assert np.array_equal(a, b)
