@@ -230,3 +230,21 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Blosc())
+
+
+def test_decompression_error_handling():
+    for codec in codecs:
+        with pytest.raises(RuntimeError):
+            codec.decode(bytearray())
+        with pytest.raises(RuntimeError):
+            codec.decode(bytearray(0))
+
+
+def test_compression_error_handling():
+    a = np.zeros(2**31 - 1, dtype=np.int8)
+    # If we turn on thread support, we block on a mutex on the second codec that
+    # we try.
+    blosc.use_threads = False
+    for codec in codecs:
+        with pytest.raises(RuntimeError):
+            codec.encode(a)

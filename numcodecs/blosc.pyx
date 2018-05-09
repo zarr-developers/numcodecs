@@ -248,7 +248,8 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         char *source_ptr
         char *dest_ptr
         Buffer source_buffer
-        size_t nbytes, cbytes, itemsize
+        size_t nbytes, itemsize
+        int cbytes
         bytes dest
 
     # check valid cname early
