@@ -12,8 +12,11 @@ from .compat import buffer_tobytes
 
 
 class JSON(Codec):
-    """Codec to encode data as JSON. Useful for encoding an array of Python string
-    objects.
+    """Codec to encode data as JSON. Useful for encoding an array of Python objects.
+
+    .. versionchanged:: 0.6
+        The encoding format has been changed to include the array shape in the encoded
+        data, which ensures that all object arrays can be correctly encoded and decoded.
 
     Examples
     --------
@@ -89,10 +92,15 @@ class JSON(Codec):
 
 
 class LegacyJSON(JSON):
-    """Codec to encode data as JSON. Useful for encoding an array of Python string
-    objects.
+    """Deprecated JSON codec.
 
-    TODO: Deprecation documentation.
+    .. deprecated:: 0.6.0
+        This codec is maintained to enable decoding of data previously encoded, however
+        there may be issues with encoding and correctly decoding certain object arrays,
+        hence the :class:`JSON` codec should be used instead for encoding new data. See
+        https://github.com/zarr-developers/numcodecs/issues/76 and
+        https://github.com/zarr-developers/numcodecs/pull/77 for more information.
+
     """
 
     codec_id = 'json'
@@ -109,7 +117,6 @@ class LegacyJSON(JSON):
                                          indent=indent,
                                          separators=separators,
                                          strict=strict)
-        # TODO emit warning for using a broken codec?
 
     def encode(self, buf):
         buf = np.asanyarray(buf)
