@@ -241,7 +241,6 @@ def check_err_decode_object_buffer(compressor):
     out = np.empty(10, dtype=object)
     with pytest.raises(ValueError):
         compressor.decode(enc, out=out)
-    print(out[:])
 
 
 def check_err_encode_object_buffer(compressor):

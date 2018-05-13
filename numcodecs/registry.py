@@ -29,6 +29,7 @@ def get_codec(config):
     Zlib(level=1)
 
     """
+    config = dict(config)
     codec_id = config.pop('id', None)
     cls = codec_registry.get(codec_id, None)
     if cls is None:
