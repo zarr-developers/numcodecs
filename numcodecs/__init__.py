@@ -87,8 +87,9 @@ from numcodecs.pickles import Pickle
 register_codec(Pickle)
 
 try:
-    from numcodecs.msgpacks import MsgPack
+    from numcodecs.msgpacks import MsgPack, LegacyMsgPack
     register_codec(MsgPack)
+    register_codec(LegacyMsgPack)
 except ImportError: # pragma: no cover
     pass
 
