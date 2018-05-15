@@ -87,8 +87,9 @@ from numcodecs.pickles import Pickle
 register_codec(Pickle)
 
 try:
-    from numcodecs.msgpacks import MsgPack
+    from numcodecs.msgpacks import MsgPack, LegacyMsgPack
     register_codec(MsgPack)
+    register_codec(LegacyMsgPack)
 except ImportError: # pragma: no cover
     pass
 
@@ -96,8 +97,9 @@ from numcodecs.checksum32 import CRC32, Adler32
 register_codec(CRC32)
 register_codec(Adler32)
 
-from numcodecs.json import JSON
+from numcodecs.json import JSON, LegacyJSON
 register_codec(JSON)
+register_codec(LegacyJSON)
 
 try:
     from numcodecs import vlen

@@ -1,7 +1,22 @@
 Release notes
 =============
 
-* Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`; :issue:`74`, :issue:`75`).
+.. _release_0.6.0:
+
+0.6.0 (in development)
+----------------------
+
+* The encoding format used by the :class:`JSON` and :class:`MsgPack` codecs has been
+  changed to resolve an issue with correctly encoding and decoding some object arrays.
+  Now the encoded data includes the original shape of the array, which enables the
+  correct shape to be restored on decoding. The previous encoding format is still
+  supported, so that any data encoded using a previous version of numcodecs can still be
+  read. Thus no changes to user code and applications should be required, other
+  than upgrading numcodecs. By :user:`Jerome Kelleher <jeromekelleher>`; :issue:`74`,
+  :issue:`75`.
+
+* Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
+  :issue:`74`, :issue:`75`).
 
 .. _release_0.5.5:
 

@@ -12,8 +12,11 @@ from .compat import buffer_tobytes
 
 
 class JSON(Codec):
-    """Codec to encode data as JSON. Useful for encoding an array of Python string
-    objects.
+    """Codec to encode data as JSON. Useful for encoding an array of Python objects.
+
+    .. versionchanged:: 0.6
+        The encoding format has been changed to include the array shape in the encoded
+        data, which ensures that all object arrays can be correctly encoded and decoded.
 
     Examples
     --------
@@ -30,7 +33,7 @@ class JSON(Codec):
 
     """
 
-    codec_id = 'json'
+    codec_id = 'json2'
 
     def __init__(self, encoding='utf-8', skipkeys=False, ensure_ascii=True,
                  check_circular=True, allow_nan=True, sort_keys=True, indent=None,
@@ -56,12 +59,14 @@ class JSON(Codec):
         buf = np.asanyarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
+        items.append(buf.shape)
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
         buf = buffer_tobytes(buf)
         items = self._decoder.decode(buf.decode(self._text_encoding))
-        dec = np.array(items[:-1], dtype=items[-1])
+        dec = np.empty(items[-1], dtype=items[-2])
+        dec[:] = items[:-2]
         if out is not None:
             np.copyto(out, dec)
             return out
@@ -80,6 +85,51 @@ class JSON(Codec):
             params.append('%s=%r' % (k, v))
         for k, v in sorted(self._decoder_config.items()):
             params.append('%s=%r' % (k, v))
-        r = 'JSON(%s)' % (', '.join(params))
+        classname = type(self).__name__
+        r = '%s(%s)' % (classname, ', '.join(params))
         r = textwrap.fill(r, width=80, break_long_words=False, subsequent_indent='     ')
         return r
+
+
+class LegacyJSON(JSON):
+    """Deprecated JSON codec.
+
+    .. deprecated:: 0.6.0
+        This codec is maintained to enable decoding of data previously encoded, however
+        there may be issues with encoding and correctly decoding certain object arrays,
+        hence the :class:`JSON` codec should be used instead for encoding new data. See
+        https://github.com/zarr-developers/numcodecs/issues/76 and
+        https://github.com/zarr-developers/numcodecs/pull/77 for more information.
+
+    """
+
+    codec_id = 'json'
+
+    def __init__(self, encoding='utf-8', skipkeys=False, ensure_ascii=True,
+                 check_circular=True, allow_nan=True, sort_keys=True, indent=None,
+                 separators=None, strict=True):
+        super(LegacyJSON, self).__init__(encoding=encoding,
+                                         skipkeys=skipkeys,
+                                         ensure_ascii=ensure_ascii,
+                                         check_circular=check_circular,
+                                         allow_nan=allow_nan,
+                                         sort_keys=sort_keys,
+                                         indent=indent,
+                                         separators=separators,
+                                         strict=strict)
+
+    def encode(self, buf):
+        buf = np.asanyarray(buf)
+        items = buf.tolist()
+        items.append(buf.dtype.str)
+        return self._encoder.encode(items).encode(self._text_encoding)
+
+    def decode(self, buf, out=None):
+        buf = buffer_tobytes(buf)
+        items = self._decoder.decode(buf.decode(self._text_encoding))
+        dec = np.array(items[:-1], dtype=items[-1])
+        if out is not None:
+            np.copyto(out, dec)
+            return out
+        else:
+            return dec
