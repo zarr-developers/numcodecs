@@ -12,7 +12,7 @@ from .compat import buffer_tobytes
 
 class MsgPack(Codec):
     """Codec to encode data as msgpacked bytes. Useful for encoding an array of Python
-    string objects.
+    objects.
 
     .. versionchanged:: 0.6
         The encoding format has been changed to include the array shape in the encoded
