@@ -18,6 +18,8 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
+* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by :user:`Anand S <anandtrex>`)
+
 .. _release_0.5.5:
 
 0.5.5
