@@ -45,7 +45,7 @@ class GZip(Codec):
             buf = buffer_tobytes(buf)
 
         # do compression
-        compress = _zlib.compressobj(self.level, wbits=16 + 15)
+        compress = _zlib.compressobj(self.level, _zlib.DEFLATED, 16 + 15)
         compressed = compress.compress(buf)
         compressed += compress.flush()
 

@@ -55,7 +55,7 @@ def test_repr():
 
 
 def test_alias():
-    config = dict(id='gzip', level=1)
+    config = dict(id='zlib', level=1)
     codec = get_codec(config)
     assert Zlib(1) == codec
 
