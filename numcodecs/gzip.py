@@ -65,4 +65,3 @@ class GZip(Codec):
         # support direct decompression into buffer, so we have to copy into
         # out if given
         return buffer_copy(dec, out)
-
