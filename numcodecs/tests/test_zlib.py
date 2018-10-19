@@ -54,12 +54,6 @@ def test_repr():
     check_repr("Zlib(level=3)")
 
 
-def test_alias():
-    config = dict(id='zlib', level=1)
-    codec = get_codec(config)
-    assert Zlib(1) == codec
-
-
 def test_eq():
     assert Zlib() == Zlib()
     assert not Zlib() != Zlib()

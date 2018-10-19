@@ -54,12 +54,6 @@ def test_repr():
     check_repr("GZip(level=3)")
 
 
-def test_alias():
-    config = dict(id='gzip', level=1)
-    codec = get_codec(config)
-    assert GZip(1) == codec
-
-
 def test_eq():
     assert GZip() == GZip()
     assert not GZip() != GZip()
