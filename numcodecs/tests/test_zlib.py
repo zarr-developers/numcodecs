@@ -7,7 +7,6 @@ import numpy as np
 
 
 from numcodecs.zlib import Zlib
-from numcodecs.registry import get_codec
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
