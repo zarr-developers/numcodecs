@@ -18,6 +18,8 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
+* Add codec :class:`GZip` to replace ``gzip`` alias for ``zlib``.
+
 .. _release_0.5.5:
 
 0.5.5
