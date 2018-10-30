@@ -10,7 +10,7 @@ codecs for use in data storage and communication applications.
 .. image:: https://travis-ci.org/zarr-developers/numcodecs.svg?branch=master
     :target: https://travis-ci.org/zarr-developers/numcodecs
 
-.. image:: https://ci.appveyor.com/api/projects/status/r35av34952d9fcyn?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/jhaaaxotvel24n9g?svg=true
     :target: https://ci.appveyor.com/project/alimanfoo/numcodecs
 
 .. image:: https://coveralls.io/repos/github/alimanfoo/numcodecs/badge.svg?branch=master
