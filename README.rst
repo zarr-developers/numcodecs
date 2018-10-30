@@ -11,7 +11,7 @@ codecs for use in data storage and communication applications.
     :target: https://travis-ci.org/zarr-developers/numcodecs
 
 .. image:: https://ci.appveyor.com/api/projects/status/jhaaaxotvel24n9g?svg=true
-    :target: https://ci.appveyor.com/project/alimanfoo/numcodecs
+    :target: https://ci.appveyor.com/project/zarr-developers/numcodecs
 
 .. image:: https://coveralls.io/repos/github/zarr-developers/numcodecs/badge.svg?branch=master
     :target: https://coveralls.io/github/zarr-developers/numcodecs?branch=master
