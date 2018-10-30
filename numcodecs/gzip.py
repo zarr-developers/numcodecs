@@ -59,9 +59,9 @@ class GZip(Codec):
             buf = buffer_tobytes(buf)
 
         # do decompression
-        dec = _zlib.decompress(buf, 15 + 32)
+        decompressed = _zlib.decompress(buf, 15 + 32)
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return buffer_copy(dec, out)
+        return buffer_copy(decompressed, out)
