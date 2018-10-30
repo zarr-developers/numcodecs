@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
-import zlib as _zlib
+import gzip as _gzip
+import io
 
 
 import numpy as np
@@ -45,9 +46,12 @@ class GZip(Codec):
             buf = buffer_tobytes(buf)
 
         # do compression
-        compress = _zlib.compressobj(self.level, _zlib.DEFLATED, 16 + 15)
-        compressed = compress.compress(buf)
-        compressed += compress.flush()
+        compressed = io.BytesIO()
+        with _gzip.GzipFile(fileobj=compressed,
+                            mode='wb',
+                            compresslevel=self.level) as compressor:
+            compressor.write(buf)
+        compressed = compressed.getvalue()
 
         return compressed
 
@@ -59,7 +63,9 @@ class GZip(Codec):
             buf = buffer_tobytes(buf)
 
         # do decompression
-        decompressed = _zlib.decompress(buf, 15 + 32)
+        buf = io.BytesIO(buf)
+        with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
+            decompressed = decompressor.read()
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
