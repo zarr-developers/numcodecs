@@ -23,7 +23,7 @@ class PackBits(Codec):
     array([  4, 144], dtype=uint8)
     >>> z = codec.decode(y)
     >>> z
-    array([ True, False, False,  True], dtype=bool)
+    array([ True, False, False,  True])
 
     Notes
     -----
