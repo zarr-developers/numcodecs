@@ -49,6 +49,9 @@ coverage.xml
 .hypothesis/
 cover/
 
+# Cython annotation files
+numcodecs/*.html
+
 # Translations
 *.mo
 *.pot
