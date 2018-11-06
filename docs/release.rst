@@ -18,8 +18,9 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
-* Allow :class:`Blosc` compressor to run on systems where locks are not present (by 
-  :user:`Marcus Kinsella <mckinsel>`; :issue:`#83`).
+* Allow :class:`Blosc` compressor to run on systems where locks are not present (by
+  :user:`Marcus Kinsella <mckinsel>`, :issue:`83`; and :user:`Tom White <tomwhite>`,
+  :issue:`93`).
 
 * Drop Python 3.4 (by :user:`John Kirkham <jakirkham>`; :issue:`89`).
 
@@ -61,7 +62,7 @@ Release notes
 
 * Add support for encoding None values in VLen... codecs (:issue:`59`).
 
- 
+
 .. _release_0.5.1:
 
 0.5.1
