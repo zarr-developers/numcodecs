@@ -23,6 +23,8 @@ Release notes
 
 * Drop Python 3.4 (by :user:`John Kirkham <jakirkham>`; :issue:`89`).
 
+* Add Python 3.7 (by :user:`John Kirkham <jakirkham>`; :issue:`92`).
+
 
 .. _release_0.5.5:
 
