@@ -18,9 +18,13 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
+* Allow :class:`Blosc` compressor to run on systems where locks are not present (by 
+  :user:`Marcus Kinsella <mckinsel>`; :issue:`#83`).
+
 * Drop Python 3.4 (by :user:`John Kirkham <jakirkham>`; :issue:`89`).
 
 * Add Python 3.7 (by :user:`John Kirkham <jakirkham>`; :issue:`92`).
+
 
 .. _release_0.5.5:
 
