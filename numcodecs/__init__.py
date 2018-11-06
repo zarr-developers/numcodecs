@@ -28,7 +28,9 @@ from numcodecs.registry import get_codec, register_codec
 
 from numcodecs.zlib import Zlib
 register_codec(Zlib)
-register_codec(Zlib, 'gzip')  # alias
+
+from numcodecs.gzip import GZip
+register_codec(GZip)
 
 from numcodecs.bz2 import BZ2
 register_codec(BZ2)

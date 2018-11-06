@@ -62,6 +62,7 @@ Contents
     lz4
     zstd
     zlib
+    gzip
     bz2
     lzma
     delta

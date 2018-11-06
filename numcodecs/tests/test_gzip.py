@@ -6,7 +6,7 @@ import itertools
 import numpy as np
 
 
-from numcodecs.zlib import Zlib
+from numcodecs.gzip import GZip
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
@@ -14,12 +14,12 @@ from numcodecs.tests.common import (check_encode_decode, check_config, check_rep
 
 
 codecs = [
-    Zlib(),
-    Zlib(level=-1),
-    Zlib(level=0),
-    Zlib(level=1),
-    Zlib(level=5),
-    Zlib(level=9),
+    GZip(),
+    GZip(level=-1),
+    GZip(level=0),
+    GZip(level=1),
+    GZip(level=5),
+    GZip(level=9),
 ]
 
 
@@ -45,31 +45,31 @@ def test_encode_decode():
 
 
 def test_config():
-    codec = Zlib(level=3)
+    codec = GZip(level=3)
     check_config(codec)
 
 
 def test_repr():
-    check_repr("Zlib(level=3)")
+    check_repr("GZip(level=3)")
 
 
 def test_eq():
-    assert Zlib() == Zlib()
-    assert not Zlib() != Zlib()
-    assert Zlib(1) == Zlib(1)
-    assert Zlib(1) != Zlib(9)
-    assert Zlib() != 'foo'
-    assert 'foo' != Zlib()
-    assert not Zlib() == 'foo'
+    assert GZip() == GZip()
+    assert not GZip() != GZip()
+    assert GZip(1) == GZip(1)
+    assert GZip(1) != GZip(9)
+    assert GZip() != 'foo'
+    assert 'foo' != GZip()
+    assert not GZip() == 'foo'
 
 
 def test_backwards_compatibility():
-    check_backwards_compatibility(Zlib.codec_id, arrays, codecs)
+    check_backwards_compatibility(GZip.codec_id, arrays, codecs)
 
 
 def test_err_decode_object_buffer():
-    check_err_decode_object_buffer(Zlib())
+    check_err_decode_object_buffer(GZip())
 
 
 def test_err_encode_object_buffer():
-    check_err_encode_object_buffer(Zlib())
+    check_err_encode_object_buffer(GZip())
