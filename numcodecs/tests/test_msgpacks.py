@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
-from numcodecs.compat import text_type, binary_type
+from numcodecs.compat import text_type, binary_type, PY2
 
 
 # object array with strings
@@ -37,7 +37,7 @@ arrays = [
     np.array(greetings * 100),
     np.array(greetings * 100, dtype=object),
     np.array([b'foo', b'bar', b'baz'] * 300, dtype=object),
-    np.array([g.encode() for g in greetings] * 100, dtype=object),
+    np.array([g.encode('utf-8') for g in greetings] * 100, dtype=object),
 ]
 
 
@@ -139,7 +139,6 @@ def test_bytes():
     codec = MsgPack()
     # works for bytes array, round-trips bytes to bytes
     b = codec.decode(codec.encode(bytes_arr))
-    print(type(b), b)
     assert np.array_equal(bytes_arr, b)
     assert isinstance(b[0], binary_type)
     assert b[0] == b'foo'
@@ -158,7 +157,11 @@ def test_bytes():
     assert b[0] == b'foo'
     # broken for unicode array, round-trips unicode to bytes
     b = codec.decode(codec.encode(unicode_arr))
-    assert not np.array_equal(unicode_arr, b)
+    if PY2:
+        # PY2 considers b'foo' and u'foo' to be equal
+        assert np.array_equal(unicode_arr, b)
+    else:
+        assert not np.array_equal(unicode_arr, b)
     assert isinstance(b[0], binary_type)
     assert b[0] == b'foo'
 
@@ -168,7 +171,11 @@ def test_bytes():
         warnings.simplefilter('ignore', PendingDeprecationWarning)
         # broken for bytes array, round-trips bytes to unicode
         b = codec.decode(codec.encode(bytes_arr))
-        assert not np.array_equal(bytes_arr, b)
+        if PY2:
+            # PY2 considers b'foo' and u'foo' to be equal
+            assert np.array_equal(unicode_arr, b)
+        else:
+            assert not np.array_equal(bytes_arr, b)
         assert isinstance(b[0], text_type)
         assert b[0] == u'foo'
         # works for unicode array, round-trips unicode to unicode
