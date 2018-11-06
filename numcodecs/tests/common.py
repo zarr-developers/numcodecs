@@ -13,6 +13,8 @@ import pytest
 
 from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
 from numcodecs.registry import get_codec
+# star import needed for repr tests so eval finds names
+from numcodecs import *  # noqa
 
 
 greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!',
