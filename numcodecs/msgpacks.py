@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
+import warnings
 
 
 import numpy as np
@@ -17,6 +18,17 @@ class MsgPack(Codec):
     .. versionchanged:: 0.6
         The encoding format has been changed to include the array shape in the encoded
         data, which ensures that all object arrays can be correctly encoded and decoded.
+
+    Parameters
+    ----------
+    use_single_float : bool, optional
+        Use single precision float type for float.
+    use_bin_type : bool, optional
+        Use bin type introduced in msgpack spec 2.0 for bytes. It also enables str8 type
+        for unicode.
+    raw : bool, optional
+        If true, unpack msgpack raw to Python bytes. Otherwise, unpack to Python str
+        (or unicode on Python 2) by decoding with UTF-8 encoding.
 
     Examples
     --------
@@ -39,19 +51,22 @@ class MsgPack(Codec):
 
     codec_id = 'msgpack2'
 
-    def __init__(self, encoding='utf-8'):
-        self.encoding = encoding
+    def __init__(self, use_single_float=False, use_bin_type=True, raw=False):
+        self.use_single_float = use_single_float
+        self.use_bin_type = use_bin_type
+        self.raw = raw
 
     def encode(self, buf):
         buf = np.asanyarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         items.append(buf.shape)
-        return msgpack.packb(items, encoding=self.encoding)
+        return msgpack.packb(items, use_bin_type=self.use_bin_type,
+                             use_single_float=self.use_single_float)
 
     def decode(self, buf, out=None):
         buf = buffer_tobytes(buf)
-        items = msgpack.unpackb(buf, encoding=self.encoding)
+        items = msgpack.unpackb(buf, raw=self.raw)
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
         if out is not None:
@@ -62,13 +77,18 @@ class MsgPack(Codec):
 
     def get_config(self):
         return dict(id=self.codec_id,
-                    encoding=self.encoding)
+                    raw=self.raw,
+                    use_single_float=self.use_single_float,
+                    use_bin_type=self.use_bin_type)
 
     def __repr__(self):
-        return 'MsgPack(encoding=%r)' % self.encoding
+        return (
+            'MsgPack(raw={!r}, use_bin_type={!r}, use_single_float={!r})'
+            .format(self.raw, self.use_bin_type, self.use_single_float)
+        )
 
 
-class LegacyMsgPack(MsgPack):
+class LegacyMsgPack(Codec):
     """Deprecated MsgPack codec.
 
     .. deprecated:: 0.6.0
@@ -81,6 +101,9 @@ class LegacyMsgPack(MsgPack):
     """
 
     codec_id = 'msgpack'
+
+    def __init__(self, encoding='utf-8'):
+        self.encoding = encoding
 
     def encode(self, buf):
         buf = np.asanyarray(buf)
@@ -97,6 +120,10 @@ class LegacyMsgPack(MsgPack):
             return out
         else:
             return dec
+
+    def get_config(self):
+        return dict(id=self.codec_id,
+                    encoding=self.encoding)
 
     def __repr__(self):
         return 'LegacyMsgPack(encoding=%r)' % self.encoding
