@@ -20,7 +20,8 @@ Release notes
 
 * Drop Python 3.4 (by :user:`John Kirkham <jakirkham>`; :issue:`89`).
 
-* Add codec :class:`GZip` to replace ``gzip`` alias for ``zlib``.
+* Add codec :class:`numcodecs.gzip.GZip` to replace ``gzip`` alias for ``zlib``,
+  which was incorrect (by :user:`Jan Funke <funkey>`; :issue:`87`).
 
 .. _release_0.5.5:
 
