@@ -1,4 +1,4 @@
-cython
+cython==0.29
 numpy
 msgpack
 pytest
