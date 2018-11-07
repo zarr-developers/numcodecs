@@ -1,7 +1,7 @@
 setuptools
 setuptools_scm
 sphinx
-sphinx-issues
+sphinx-issues==1.1.0
 numpydoc
 mock
 numpy
