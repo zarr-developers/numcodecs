@@ -22,8 +22,8 @@ matrix:
 
 install:
   - pip install -U tox-travis coveralls pip setuptools wheel
-  - pip install -r requirements_dev.txt
   - python setup.py build_ext --inplace
+  - pip freeze
 
 script:
   - tox
