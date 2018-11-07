@@ -1,6 +1,6 @@
 coverage
 coveralls
-flake8
+flake8==3.6.0
 pytest
 pytest-cov
 setuptools
