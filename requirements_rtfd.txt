@@ -5,4 +5,4 @@ sphinx-issues
 numpydoc
 mock
 numpy
-cython
+cython==0.29
