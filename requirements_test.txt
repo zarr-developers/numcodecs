@@ -4,5 +4,5 @@ flake8==3.6.0
 pytest==3.10.0
 pytest-cov==2.6.0
 setuptools==40.5.0
-setuptools-scm
+setuptools-scm==3.1.0
 tox
