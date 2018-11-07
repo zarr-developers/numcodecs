@@ -1,4 +1,4 @@
 cython
 numpy
 msgpack
-pytest
+pytest==3.10.0
