@@ -1,4 +1,4 @@
 cython
 numpy
-msgpack
+msgpack==0.5.6
 pytest
