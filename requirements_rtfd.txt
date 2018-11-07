@@ -2,7 +2,7 @@ setuptools
 setuptools_scm
 sphinx
 sphinx-issues
-numpydoc
+numpydoc==0.8.0
 mock
 numpy
 cython
