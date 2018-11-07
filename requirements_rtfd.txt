@@ -1,4 +1,4 @@
-setuptools
+setuptools==40.5.0
 setuptools_scm
 sphinx
 sphinx-issues
