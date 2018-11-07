@@ -4,5 +4,5 @@ sphinx
 sphinx-issues
 numpydoc
 mock
-numpy
+numpy==1.15.4
 cython==0.29
