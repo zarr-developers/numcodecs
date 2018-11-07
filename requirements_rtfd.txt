@@ -3,6 +3,6 @@ setuptools_scm
 sphinx
 sphinx-issues
 numpydoc
-mock
+mock==2.0.0
 numpy
 cython
