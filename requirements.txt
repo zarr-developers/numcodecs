@@ -1,4 +1,4 @@
 cython==0.29
-numpy
+numpy==1.15.4
 msgpack
 pytest
