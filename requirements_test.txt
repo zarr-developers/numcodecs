@@ -3,6 +3,6 @@ coveralls
 flake8
 pytest
 pytest-cov
-setuptools
+setuptools==40.5.0
 setuptools-scm
 tox
