@@ -18,7 +18,6 @@ if PY2:  # pragma: py3 no cover
     binary_type = str
     integer_types = (int, long)
     reduce = reduce
-    buffer = buffer
 
 else:  # pragma: py2 no cover
 
@@ -26,7 +25,6 @@ else:  # pragma: py2 no cover
     binary_type = bytes
     integer_types = int,
     from functools import reduce
-    buffer = lambda a: a
 
 
 def buffer_tobytes(v):
@@ -35,8 +33,10 @@ def buffer_tobytes(v):
         return v
     elif isinstance(v, np.ndarray):
         return v.tobytes(order='A')
-    else:
-        return memoryview(buffer(v)).tobytes()
+    elif PY2:  # pragma: py3 no cover
+        v = buffer(v)
+
+    return memoryview(v).tobytes()
 
 
 def buffer_copy(buf, out=None):
