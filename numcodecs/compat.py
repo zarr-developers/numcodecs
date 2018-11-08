@@ -34,9 +34,9 @@ def buffer_tobytes(v):
     elif isinstance(v, np.ndarray):
         return v.tobytes(order='A')
     elif PY2:  # pragma: py3 no cover
-        return memoryview(buffer(v)).tobytes()
-    else:
-        return memoryview(v).tobytes()
+        v = buffer(v)
+
+    return memoryview(v).tobytes()
 
 
 def buffer_copy(buf, out=None):
