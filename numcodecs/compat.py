@@ -33,8 +33,8 @@ def buffer_tobytes(v):
         return v
     elif isinstance(v, np.ndarray):
         return v.tobytes(order='A')
-    elif PY2 and isinstance(v, array.array):  # pragma: py3 no cover
-        return v.tostring()
+    elif PY2:  # pragma: py3 no cover
+        return memoryview(buffer(v)).tobytes()
     else:
         return memoryview(v).tobytes()
 
