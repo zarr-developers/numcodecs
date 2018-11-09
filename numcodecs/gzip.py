@@ -8,7 +8,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import buffer_copy, handle_datetime, PY2
+from .compat import buffer, buffer_copy, handle_datetime, PY2
 
 
 class GZip(Codec):

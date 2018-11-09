@@ -14,6 +14,7 @@ PY2 = sys.version_info[0] == 2
 
 if PY2:  # pragma: py3 no cover
 
+    buffer = buffer
     text_type = unicode
     binary_type = str
     integer_types = (int, long)
