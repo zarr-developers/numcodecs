@@ -8,7 +8,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import buffer_copy, handle_datetime, buffer_tobytes, PY2
+from .compat import buffer_copy, handle_datetime, PY2
 
 
 class GZip(Codec):
@@ -42,8 +42,8 @@ class GZip(Codec):
                 buf = buf.tobytes(order='A')
 
         if PY2:  # pragma: py3 no cover
-            # ensure bytes, PY2 cannot handle things like bytearray
-            buf = buffer_tobytes(buf)
+            # ensure buffer, PY2 cannot handle things like bytearray
+            buf = buffer(buf)
 
         # do compression
         compressed = io.BytesIO()
@@ -59,8 +59,8 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         if PY2:  # pragma: py3 no cover
-            # ensure bytes, PY2 cannot handle things like bytearray
-            buf = buffer_tobytes(buf)
+            # ensure buffer, PY2 cannot handle things like bytearray
+            buf = buffer(buf)
 
         # do decompression
         buf = io.BytesIO(buf)
