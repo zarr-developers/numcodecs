@@ -187,8 +187,6 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
         # setup
         i = int(arr_fn.split('.')[-2])
         arr = np.load(arr_fn)
-        if arr.dtype.kind is not 'O':
-            arr_bytes = buffer_tobytes(arr)
         if arr.flags.f_contiguous:
             order = 'F'
         else:
@@ -234,7 +232,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     assert_array_items_equal(arr, dec_arr)
                 else:
                     assert_array_equal(arr, dec_arr)
-                    assert arr_bytes == buffer_tobytes(dec)
+                    assert buffer_tobytes(arr) == buffer_tobytes(dec)
 
 
 def check_err_decode_object_buffer(compressor):
