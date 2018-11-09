@@ -14,6 +14,7 @@ PY2 = sys.version_info[0] == 2
 
 if PY2:  # pragma: py3 no cover
 
+    buffer = buffer
     text_type = unicode
     binary_type = str
     integer_types = (int, long)
@@ -21,6 +22,7 @@ if PY2:  # pragma: py3 no cover
 
 else:  # pragma: py2 no cover
 
+    buffer = memoryview
     text_type = str
     binary_type = bytes
     integer_types = int,
