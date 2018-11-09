@@ -2,11 +2,20 @@
 from __future__ import absolute_import, print_function, division
 import array
 
+import pytest
 
 import numpy as np
 
 
 from numcodecs.compat import buffer_tobytes
+
+
+def test_buffer_tobytes_raises():
+    a = np.array([u'Xin chào thế giới'], dtype=object)
+    with pytest.raises(ValueError):
+        buffer_tobytes(a)
+    with pytest.raises(ValueError):
+        buffer_tobytes(memoryview(a))
 
 
 def test_buffer_tobytes():
