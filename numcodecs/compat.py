@@ -37,11 +37,11 @@ def to_buffer(v):
         if b.dtype.kind in 'Mm':
             b = b.view(np.uint8)
         b = buffer(b)
-    elif not PY2:  # pragma: py3 no cover
+    elif PY2:  # pragma: py3 no cover
+        b = buffer(b)
+    else:      # pragma: py2 no cover
         b = buffer(b)
         b = b.cast('B').cast(b.format)
-    else:
-        b = buffer(b)
 
     return b
 
