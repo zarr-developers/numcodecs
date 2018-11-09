@@ -34,12 +34,14 @@ def to_buffer(v):
     b = v
     if isinstance(b, np.ndarray):
         b = b.reshape(-1, order='A')
-        if b.dtype.kind != 'O':
+        if b.dtype.kind in 'Mm':
             b = b.view(np.uint8)
-
-    b = buffer(b)
-    if not PY2:  # pragma: py3 no cover
-        b = b.cast('B')
+        b = buffer(b)
+    elif not PY2:  # pragma: py3 no cover
+        b = buffer(b)
+        b = b.cast('B').cast(b.format)
+    else:
+        b = buffer(b)
 
     return b
 
