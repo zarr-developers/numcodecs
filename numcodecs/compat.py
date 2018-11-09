@@ -29,6 +29,21 @@ else:  # pragma: py2 no cover
     from functools import reduce
 
 
+def to_buffer(v):
+    """Obtain a `buffer` or `memoryview` for `v`."""
+    b = v
+    if isinstance(b, np.ndarray):
+        b = b.reshape(-1, order='A')
+        if b.dtype.kind != 'O':
+            b = b.view(np.uint8)
+
+    b = buffer(b)
+    if not PY2:  # pragma: py3 no cover
+        b = b.cast('B')
+
+    return b
+
+
 def buffer_tobytes(v):
     """Obtain a sequence of bytes for the memory buffer used by `v`."""
     if isinstance(v, binary_type):
