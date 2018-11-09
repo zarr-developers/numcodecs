@@ -37,7 +37,7 @@ def to_buffer(v):
             raise ValueError('cannot encode object array')
         b = b.reshape(-1, order='A')
         if b.dtype.kind in 'Mm':
-            b = b.view(np.uint8)
+            b = b.view(np.uint64)
         b = buffer(b)
     elif PY2:  # pragma: py3 no cover
         if not isinstance(b, array.array) and memoryview(b).format is 'O':
