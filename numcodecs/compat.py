@@ -22,6 +22,7 @@ if PY2:  # pragma: py3 no cover
 
 else:  # pragma: py2 no cover
 
+    buffer = memoryview
     text_type = str
     binary_type = bytes
     integer_types = int,
