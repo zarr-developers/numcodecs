@@ -46,14 +46,7 @@ def to_buffer(v):
 
 def buffer_tobytes(v):
     """Obtain a sequence of bytes for the memory buffer used by `v`."""
-    if isinstance(v, binary_type):
-        return v
-    elif isinstance(v, np.ndarray):
-        return v.tobytes(order='A')
-    elif PY2 and isinstance(v, array.array):  # pragma: py3 no cover
-        return v.tostring()
-    else:
-        return memoryview(v).tobytes()
+    return memoryview(to_buffer(v)).tobytes()
 
 
 def buffer_copy(buf, out=None):
