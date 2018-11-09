@@ -14,7 +14,6 @@ except ImportError:  # pragma: no cover
 
 if _lzma:
 
-    import numpy as np
     from .abc import Codec
     from .compat import buffer_copy, to_buffer
 
@@ -47,12 +46,6 @@ if _lzma:
             self.filters = filters
 
         def encode(self, buf):
-
-            if isinstance(buf, np.ndarray):
-
-                # cannot compress object array
-                if buf.dtype == object:
-                    raise ValueError('cannot encode object array')
 
             buf = to_buffer(buf)
 

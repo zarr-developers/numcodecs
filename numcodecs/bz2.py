@@ -3,9 +3,6 @@ from __future__ import absolute_import, print_function, division
 import bz2 as _bz2
 
 
-import numpy as np
-
-
 from numcodecs.abc import Codec
 from numcodecs.compat import buffer_copy, to_buffer
 
@@ -26,12 +23,6 @@ class BZ2(Codec):
         self.level = level
 
     def encode(self, buf):
-
-        if isinstance(buf, np.ndarray):
-
-            # cannot compress object array
-            if buf.dtype == object:
-                raise ValueError('cannot encode object array')
 
         buf = to_buffer(buf)
 

@@ -3,9 +3,6 @@ from __future__ import absolute_import, print_function, division
 import zlib as _zlib
 
 
-import numpy as np
-
-
 from .abc import Codec
 from .compat import buffer_copy, to_buffer
 
@@ -26,12 +23,6 @@ class Zlib(Codec):
         self.level = level
 
     def encode(self, buf):
-
-        if isinstance(buf, np.ndarray):
-
-            # cannot compress object array
-            if buf.dtype == object:
-                raise ValueError('cannot encode object array')
 
         buf = to_buffer(buf)
 
