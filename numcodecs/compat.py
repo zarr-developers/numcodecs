@@ -33,14 +33,20 @@ def to_buffer(v):
     """Obtain a `buffer` or `memoryview` for `v`."""
     b = v
     if isinstance(b, np.ndarray):
+        if b.dtype.kind is 'O':
+            raise ValueError('cannot encode object array')
         b = b.reshape(-1, order='A')
         if b.dtype.kind in 'Mm':
             b = b.view(np.uint8)
         b = buffer(b)
     elif PY2:  # pragma: py3 no cover
+        if not isinstance(b, array.array) and memoryview(b).format is 'O':
+            raise ValueError('cannot encode object array')
         b = buffer(b)
     else:      # pragma: py2 no cover
         b = buffer(b)
+        if b.format is 'O':
+            raise ValueError('cannot encode object array')
         b = b.cast('B').cast(b.format)
 
     return b
