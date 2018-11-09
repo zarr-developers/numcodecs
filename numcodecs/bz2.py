@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import bz2 as _bz2
-import array
 
 
 import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import buffer_copy, handle_datetime
+from numcodecs.compat import buffer_copy, to_buffer
 
 
 class BZ2(Codec):
@@ -28,18 +27,13 @@ class BZ2(Codec):
 
     def encode(self, buf):
 
-        # deal with lack of buffer support for datetime64 and timedelta64
-        buf = handle_datetime(buf)
-
         if isinstance(buf, np.ndarray):
 
             # cannot compress object array
             if buf.dtype == object:
                 raise ValueError('cannot encode object array')
 
-            # if numpy array, can only handle C contiguous directly
-            if not buf.flags.c_contiguous:
-                buf = buf.tobytes(order='A')
+        buf = to_buffer(buf)
 
         # do compression
         return _bz2.compress(buf, self.level)
@@ -47,10 +41,7 @@ class BZ2(Codec):
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
-        # BZ2 cannot handle ndarray directly at all, coerce everything to
-        # memoryview
-        if not isinstance(buf, array.array):
-            buf = memoryview(buf)
+        buf = to_buffer(buf)
 
         # do decompression
         dec = _bz2.decompress(buf)
