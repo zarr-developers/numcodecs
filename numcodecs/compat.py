@@ -40,8 +40,11 @@ def to_buffer(v):
             b = b.view(np.uint64)
         b = buffer(b)
     elif PY2:  # pragma: py3 no cover
-        if not isinstance(b, array.array) and memoryview(b).format is 'O':
-            raise ValueError('cannot encode object array')
+        try:
+            if memoryview(b).format is 'O':
+                raise ValueError('cannot encode object array')
+        except TypeError:
+            pass
         b = buffer(b)
     else:      # pragma: py2 no cover
         b = buffer(b)
