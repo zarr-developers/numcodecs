@@ -44,8 +44,8 @@ def to_buffer(v):
     else:
         if b.format is 'O':
             raise ValueError('cannot encode object array')
-
-        b = np.array(b, copy=False).reshape(-1, order='A')
+        else:
+            b = np.array(b, copy=False).reshape(-1, order='A')
 
     b = buffer(b)
 
