@@ -38,14 +38,14 @@ def to_buffer(v):
             b = b.view(np.uint64)
 
     try:
-        m = memoryview(b)
+        b = memoryview(b)
     except TypeError:  # pragma: py3 no cover
         pass
     else:
-        if m.format is 'O':
+        if b.format is 'O':
             raise ValueError('cannot encode object array')
 
-        b = np.array(m, copy=False).reshape(-1, order='A')
+        b = np.array(b, copy=False).reshape(-1, order='A')
 
     b = buffer(b)
 
