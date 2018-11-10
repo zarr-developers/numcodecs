@@ -19,6 +19,16 @@ def test_buffer_coercion_raises():
                 f(e)
 
 
+def test_buffer_readonly():
+    a = np.arange(100)
+    a.setflags(write=True)
+
+    b = to_buffer(a)
+    m = memoryview(b)
+
+    assert m.readonly
+
+
 def test_buffer_coercion():
     bufs = [
         b'adsdasdas',
