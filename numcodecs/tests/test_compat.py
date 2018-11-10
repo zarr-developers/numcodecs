@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import array
+import mmap
 
 import pytest
 
@@ -23,7 +24,8 @@ def test_buffer_tobytes():
         b'adsdasdas',
         bytes(20),
         np.arange(100),
-        array.array('l', b'qwertyuiqwertyui')
+        array.array('l', b'qwertyuiqwertyui'),
+        mmap.mmap(-1, 10)
     ]
     for buf in bufs:
         b = buffer_tobytes(buf)
