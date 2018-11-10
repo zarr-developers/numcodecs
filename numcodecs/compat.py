@@ -42,10 +42,10 @@ def to_buffer(v):
     except TypeError:  # pragma: py3 no cover
         pass
     else:
-        if b.format is 'O':
-            raise ValueError('cannot encode object array')
-        else:
+        if b.format is not 'O':
             b = np.array(b, copy=False).reshape(-1, order='A')
+        else:
+            raise ValueError('cannot encode object array')
 
     b = buffer(b)
 
