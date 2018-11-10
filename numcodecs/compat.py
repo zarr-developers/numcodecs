@@ -39,10 +39,12 @@ def to_buffer(v):
             b = b.view(np.uint64)
 
     try:
-        if memoryview(b).format is 'O':
-            raise ValueError('cannot encode object array')
+        m = memoryview(b)
     except TypeError:  # pragma: py3 no cover
         pass
+    else:
+        if m.format is 'O':
+            raise ValueError('cannot encode object array')
 
     b = buffer(b)
     if not PY2 and not isinstance(v, np.ndarray):  # pragma: py2 no cover
