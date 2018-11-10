@@ -8,18 +8,18 @@ import pytest
 import numpy as np
 
 
-from numcodecs.compat import buffer_tobytes
+from numcodecs.compat import buffer, to_buffer, buffer_tobytes
 
 
-def test_buffer_tobytes_raises():
+def test_buffer_coercion_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
-    with pytest.raises(ValueError):
-        buffer_tobytes(a)
-    with pytest.raises(ValueError):
-        buffer_tobytes(memoryview(a))
+    for e in [a, memoryview(a)]:
+        for f in [to_buffer, buffer_tobytes]:
+            with pytest.raises(ValueError):
+                f(e)
 
 
-def test_buffer_tobytes():
+def test_buffer_coercion():
     bufs = [
         b'adsdasdas',
         bytes(20),
@@ -28,5 +28,7 @@ def test_buffer_tobytes():
         mmap.mmap(-1, 10)
     ]
     for buf in bufs:
-        b = buffer_tobytes(buf)
-        assert isinstance(b, bytes)
+        b1 = to_buffer(buf)
+        assert isinstance(b1, buffer)
+        b2 = buffer_tobytes(buf)
+        assert isinstance(b2, bytes)
