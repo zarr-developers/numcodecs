@@ -34,7 +34,6 @@ def to_buffer(v):
     b = v
 
     if isinstance(b, np.ndarray):
-        b = b.reshape(-1, order='A')
         if b.dtype.kind in 'Mm':
             b = b.view(np.uint64)
 
@@ -46,9 +45,9 @@ def to_buffer(v):
         if m.format is 'O':
             raise ValueError('cannot encode object array')
 
+        b = np.array(m, copy=False).reshape(-1, order='A')
+
     b = buffer(b)
-    if not PY2 and not isinstance(v, np.ndarray):  # pragma: py2 no cover
-        b = b.cast('B').cast(b.format)
 
     return b
 
