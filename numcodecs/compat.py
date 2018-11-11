@@ -33,10 +33,7 @@ def to_buffer(v):
     """Obtain a `buffer` or `memoryview` for `v`."""
     b = v
 
-    if isinstance(b, np.ndarray):
-        if b.dtype.kind in 'Mm':
-            b = b.view(np.uint64)
-    else:
+    if not isinstance(b, np.ndarray):
         try:
             b = memoryview(b)
         except TypeError:  # pragma: py3 no cover
@@ -48,6 +45,8 @@ def to_buffer(v):
 
     if b.dtype.kind is 'O':
         raise ValueError('cannot encode object array')
+    elif b.dtype.kind in 'Mm':
+        b = b.view(np.uint64)
 
     b = b.reshape(-1, order='A')
     b.setflags(write=False)
