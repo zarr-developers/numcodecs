@@ -55,11 +55,6 @@ def to_buffer(v):
     return b
 
 
-def buffer_tobytes(v):
-    """Obtain a sequence of bytes for the memory buffer used by `v`."""
-    return to_buffer(v).tobytes()
-
-
 def buffer_copy(buf, out=None):
     """Copy the contents of the memory buffer from `buf` to `out`."""
 

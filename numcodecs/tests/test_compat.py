@@ -8,15 +8,14 @@ import pytest
 import numpy as np
 
 
-from numcodecs.compat import buffer, to_buffer, buffer_tobytes
+from numcodecs.compat import buffer, to_buffer
 
 
 def test_buffer_coercion_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
-        for f in [to_buffer, buffer_tobytes]:
-            with pytest.raises(ValueError):
-                f(e)
+        with pytest.raises(ValueError):
+            to_buffer(e)
 
 
 def test_buffer_readonly():
@@ -43,5 +42,5 @@ def test_buffer_coercion():
         buffer(b1)
         b1mv = memoryview(b1)
         assert b1mv.format is typ
-        b2 = buffer_tobytes(buf)
+        b2 = b1.tobytes()
         assert isinstance(b2, bytes)
