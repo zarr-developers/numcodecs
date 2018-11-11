@@ -31,24 +31,13 @@ else:  # pragma: py2 no cover
 
 def to_buffer(v):
     """Obtain a `buffer` or `memoryview` for `v`."""
-    b = v
 
-    if not isinstance(b, np.ndarray):
-        try:
-            b = memoryview(b)
-        except TypeError:  # pragma: py3 no cover
-            b = np.getbuffer(b)
-
-        b = np.array(b, copy=False)
-        if PY2 and isinstance(v, array.array):  # pragma: py3 no cover
-            b = b.view(v.typecode)
+    b = ndarray_from_buffer(v)
 
     if b.dtype.kind is 'O':
         raise ValueError('cannot encode object array')
     elif b.dtype.kind in 'Mm':
         b = b.view(np.uint64)
-
-    b = b.reshape(-1, order='A')
 
     return b
 
@@ -99,11 +88,22 @@ def buffer_copy(buf, out=None):
     return out
 
 
-def ndarray_from_buffer(buf, dtype):
-    if isinstance(buf, np.ndarray):
-        arr = buf.reshape(-1, order='A').view(dtype)
-    else:
-        arr = np.frombuffer(buf, dtype=dtype)
+def ndarray_from_buffer(buf, dtype=None):
+    arr = buf
+    if not isinstance(arr, np.ndarray):
+        try:
+            arr = memoryview(arr)
+        except TypeError:  # pragma: py3 no cover
+            arr = np.getbuffer(arr)
+
+        arr = np.array(arr, copy=False)
+        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
+            arr = arr.view(buf.typecode)
+
+    arr = arr.reshape(-1, order='A')
+    if dtype is not None:
+        arr = arr.view(dtype)
+
     return arr
 
 
