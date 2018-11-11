@@ -25,7 +25,7 @@ class GZip(Codec):
 
     def encode(self, buf):
 
-        buf = to_buffer(buf)
+        buf = memoryview(to_buffer(buf))
 
         # do compression
         compressed = io.BytesIO()

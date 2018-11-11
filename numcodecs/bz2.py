@@ -32,7 +32,7 @@ class BZ2(Codec):
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
-        buf = to_buffer(buf)
+        buf = memoryview(to_buffer(buf))
 
         # do decompression
         dec = _bz2.decompress(buf)
