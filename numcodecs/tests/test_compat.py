@@ -41,7 +41,3 @@ def test_buffer_coercion():
         assert isinstance(b1, np.ndarray)
         assert b1.dtype.kind is typ
         assert np.shares_memory(b1, buffer(buf))
-        buffer(b1)
-        memoryview(b1)
-        b2 = b1.tobytes()
-        assert isinstance(b2, bytes)
