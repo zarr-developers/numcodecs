@@ -30,17 +30,18 @@ def test_buffer_readonly():
 
 
 def test_buffer_coercion():
-    bufs = [
-        b'adsdasdas',
-        bytes(20),
-        np.arange(100, dtype=np.int64),
-        array.array('l', b'qwertyuiqwertyui'),
-        mmap.mmap(-1, 10)
+    typed_bufs = [
+        ('B', b'adsdasdas'),
+        ('B', bytes(20)),
+        ('l', np.arange(100, dtype=np.int64)),
+        ('l', array.array('l', b'qwertyuiqwertyui')),
+        ('B', mmap.mmap(-1, 10))
     ]
-    for buf in bufs:
+    for typ, buf in typed_bufs:
         b1 = to_buffer(buf)
-        buffer(b1)
-        memoryview(b1)
         assert isinstance(b1, np.ndarray)
+        buffer(b1)
+        b1mv = memoryview(b1)
+        assert b1mv.format is typ
         b2 = buffer_tobytes(buf)
         assert isinstance(b2, bytes)
