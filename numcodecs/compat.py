@@ -40,7 +40,7 @@ def to_buffer(v):
     try:
         b = memoryview(b)
     except TypeError:  # pragma: py3 no cover
-        b = buffer(b)
+        b = np.getbuffer(b)
 
     b = np.array(b, copy=False)
 
