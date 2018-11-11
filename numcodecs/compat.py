@@ -57,7 +57,7 @@ def to_buffer(v):
 
 def buffer_tobytes(v):
     """Obtain a sequence of bytes for the memory buffer used by `v`."""
-    return memoryview(to_buffer(v)).tobytes()
+    return to_buffer(v).tobytes()
 
 
 def buffer_copy(buf, out=None):
