@@ -33,7 +33,7 @@ def test_buffer_coercion():
     bufs = [
         b'adsdasdas',
         bytes(20),
-        np.arange(100),
+        np.arange(100, dtype=np.int64),
         array.array('l', b'qwertyuiqwertyui'),
         mmap.mmap(-1, 10)
     ]
