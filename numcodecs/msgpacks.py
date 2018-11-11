@@ -7,7 +7,7 @@ import msgpack
 
 
 from .abc import Codec
-from .compat import buffer_tobytes
+from .compat import to_buffer
 
 
 class MsgPack(Codec):
@@ -50,7 +50,7 @@ class MsgPack(Codec):
         return msgpack.packb(items, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        buf = buffer_tobytes(buf)
+        buf = to_buffer(buf).tobytes()
         items = msgpack.unpackb(buf, encoding=self.encoding)
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
@@ -89,7 +89,7 @@ class LegacyMsgPack(MsgPack):
         return msgpack.packb(items, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        buf = buffer_tobytes(buf)
+        buf = to_buffer(buf).tobytes()
         items = msgpack.unpackb(buf, encoding=self.encoding)
         dec = np.array(items[:-1], dtype=items[-1])
         if out is not None:
