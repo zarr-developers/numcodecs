@@ -36,15 +36,15 @@ def to_buffer(v):
     if isinstance(b, np.ndarray):
         if b.dtype.kind in 'Mm':
             b = b.view(np.uint64)
+    else:
+        try:
+            b = memoryview(b)
+        except TypeError:  # pragma: py3 no cover
+            b = np.getbuffer(b)
 
-    try:
-        b = memoryview(b)
-    except TypeError:  # pragma: py3 no cover
-        b = np.getbuffer(b)
-
-    b = np.array(b, copy=False)
-    if isinstance(v, array.array):
-        b = b.view(v.typecode)
+        b = np.array(b, copy=False)
+        if isinstance(v, array.array):
+            b = b.view(v.typecode)
 
     if b.dtype.kind is 'O':
         raise ValueError('cannot encode object array')
