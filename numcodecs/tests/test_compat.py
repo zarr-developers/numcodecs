@@ -39,6 +39,8 @@ def test_buffer_coercion():
     ]
     for buf in bufs:
         b1 = to_buffer(buf)
-        assert isinstance(b1, buffer)
+        buffer(b1)
+        memoryview(b1)
+        assert isinstance(b1, np.ndarray)
         b2 = buffer_tobytes(buf)
         assert isinstance(b2, bytes)
