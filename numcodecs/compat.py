@@ -40,7 +40,7 @@ def to_buffer(v):
             b = np.getbuffer(b)
 
         b = np.array(b, copy=False)
-        if isinstance(v, array.array):
+        if PY2 and isinstance(v, array.array):  # pragma: py3 no cover
             b = b.view(v.typecode)
 
     if b.dtype.kind is 'O':
