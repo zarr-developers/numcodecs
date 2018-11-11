@@ -40,15 +40,15 @@ def to_buffer(v):
     try:
         b = memoryview(b)
     except TypeError:  # pragma: py3 no cover
-        pass
-    else:
-        if b.format is not 'O':
-            b = np.array(b, copy=False).reshape(-1, order='A')
-            b.setflags(write=False)
-        else:
-            raise ValueError('cannot encode object array')
+        b = buffer(b)
 
-    b = buffer(b)
+    b = np.array(b, copy=False)
+
+    if b.dtype.kind is 'O':
+        raise ValueError('cannot encode object array')
+
+    b = b.reshape(-1, order='A')
+    b.setflags(write=False)
 
     return b
 
