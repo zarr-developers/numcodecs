@@ -39,6 +39,7 @@ def test_buffer_coercion():
     for typ, buf in typed_bufs:
         b1 = to_buffer(buf)
         assert isinstance(b1, np.ndarray)
+        assert np.shares_memory(b1, buffer(buf))
         buffer(b1)
         b1mv = memoryview(b1)
         assert b1mv.format is typ
