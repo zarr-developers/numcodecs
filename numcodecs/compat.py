@@ -43,6 +43,8 @@ def to_buffer(v):
         b = np.getbuffer(b)
 
     b = np.array(b, copy=False)
+    if isinstance(v, array.array):
+        b = b.view(v.typecode)
 
     if b.dtype.kind is 'O':
         raise ValueError('cannot encode object array')
