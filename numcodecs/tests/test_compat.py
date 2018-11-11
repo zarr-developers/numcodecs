@@ -18,14 +18,15 @@ def test_buffer_coercion_raises():
             to_buffer(e)
 
 
-def test_buffer_readonly():
-    a = np.arange(100)
-    a.setflags(write=True)
+def test_buffer_writable():
+    for writable in [False, True]:
+        a = np.arange(100)
+        a.setflags(write=writable)
 
-    b = to_buffer(a)
-    m = memoryview(b)
+        b = to_buffer(a)
+        m = memoryview(b)
 
-    assert m.readonly
+        assert m.readonly != writable
 
 
 def test_buffer_coercion():

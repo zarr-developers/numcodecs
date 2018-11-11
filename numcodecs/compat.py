@@ -49,7 +49,6 @@ def to_buffer(v):
         b = b.view(np.uint64)
 
     b = b.reshape(-1, order='A')
-    b.setflags(write=False)
 
     return b
 
