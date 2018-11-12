@@ -35,6 +35,7 @@ def test_buffer_coercion():
         ('u', bytes(20)),
         ('i', np.arange(100, dtype=np.int64)),
         ('i', array.array('l', b'qwertyuiqwertyui')),
+        ('u', array.array('u', u'qwertyuiqwertyui')),
         ('u', mmap.mmap(-1, 10))
     ]
     for typ, buf in typed_bufs:
