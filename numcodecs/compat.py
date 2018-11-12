@@ -81,10 +81,16 @@ def ndarray_from_buffer(buf):
             arr = memoryview(arr)
         except TypeError:  # pragma: py3 no cover
             arr = np.getbuffer(arr)
+        else:  # pragma: py2 no cover
+            if isinstance(buf, array.array) and buf.typecode is 'u':
+                arr = arr.cast('B')
 
         arr = np.array(arr, copy=False)
-        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
-            arr = arr.view(buf.typecode)
+        if isinstance(buf, array.array):
+            if buf.typecode is 'u':
+                arr = arr.view('u%i' % buf.itemsize)
+            elif PY2:  # pragma: py3 no cover
+                arr = arr.view(buf.typecode)
 
     return arr
 
