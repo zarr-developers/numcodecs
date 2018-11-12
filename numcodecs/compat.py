@@ -88,7 +88,7 @@ def buffer_copy(buf, out=None):
     return out
 
 
-def ndarray_from_buffer(buf, dtype=None):
+def ndarray_from_buffer(buf):
     arr = buf
     if not isinstance(arr, np.ndarray):
         try:
@@ -101,8 +101,6 @@ def ndarray_from_buffer(buf, dtype=None):
             arr = arr.view(buf.typecode)
 
     arr = arr.reshape(-1, order='A')
-    if dtype is not None:
-        arr = arr.view(dtype)
 
     return arr
 

@@ -64,7 +64,8 @@ class Quantize(Codec):
     def encode(self, buf):
 
         # interpret buffer as 1D array
-        arr = ndarray_from_buffer(buf).view(self.dtype)
+        arr = ndarray_from_buffer(buf)
+        arr = arr.view(self.dtype)
 
         # apply scaling
         precision = 10. ** -self.digits
@@ -84,7 +85,8 @@ class Quantize(Codec):
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
-        dec = ndarray_from_buffer(buf).view(self.astype)
+        dec = ndarray_from_buffer(buf)
+        dec = dec.view(self.astype)
         dec = dec.astype(self.dtype, copy=False)
         return buffer_copy(dec, out)
 
