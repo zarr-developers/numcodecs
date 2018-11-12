@@ -51,41 +51,25 @@ def buffer_copy(buf, out=None):
         # no-op
         return buf
 
-    # handle ndarray destination
-    if isinstance(out, np.ndarray):
+    # coerce to ndarrays
+    buf = ndarray_from_buffer(buf)
+    out = ndarray_from_buffer(out)
 
-        # view source as destination dtype
-        if isinstance(buf, np.ndarray):
-            buf = buf.view(dtype=out.dtype).reshape(-1, order='A')
+    # view source as destination dtype
+    if out.dtype.kind is not 'O':
+        buf = buf.view(out.dtype)
+
+    # ensure shapes are compatible
+    buf = buf.reshape(-1, order='A')
+    if buf.shape != out.shape:
+        if out.flags.f_contiguous:
+            order = 'F'
         else:
-            buf = np.frombuffer(buf, dtype=out.dtype)
+            order = 'C'
+        buf = buf.reshape(out.shape, order=order)
 
-        # ensure shapes are compatible
-        if buf.shape != out.shape:
-            if out.flags.f_contiguous:
-                order = 'F'
-            else:
-                order = 'C'
-            buf = buf.reshape(out.shape, order=order)
-
-        # copy via numpy
-        np.copyto(out, buf)
-
-    # handle generic buffer destination
-    else:
-
-        # obtain memoryview of destination
-        dest = memoryview(out)
-
-        # ensure source is 1D
-        if isinstance(buf, np.ndarray):
-            buf = buf.reshape(-1, order='A')
-            # try to match itemsize
-            dtype = 'u%s' % dest.itemsize
-            buf = buf.view(dtype=dtype)
-
-        # try to copy via memoryview
-        dest[:] = buf
+    # copy via numpy
+    np.copyto(out, buf)
 
     return out
 
