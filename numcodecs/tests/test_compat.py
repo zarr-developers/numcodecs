@@ -8,7 +8,7 @@ import pytest
 import numpy as np
 
 
-from numcodecs.compat import buffer, to_buffer
+from numcodecs.compat import getbuffer, to_buffer
 
 
 def test_buffer_coercion_raises():
@@ -42,4 +42,4 @@ def test_buffer_coercion():
         b1 = to_buffer(buf)
         assert isinstance(b1, np.ndarray)
         assert b1.dtype.kind is typ
-        assert np.shares_memory(b1, buffer(buf))
+        assert np.shares_memory(b1, getbuffer(buf))
