@@ -77,6 +77,9 @@ def buffer_copy(buf, out=None):
 def ndarray_from_buffer(buf):
     arr = buf
     if not isinstance(arr, np.ndarray):
+        if isinstance(arr, array.array) and arr.typecode == 'u':
+            raise ValueError("unicode arrays are not supported")
+
         try:
             arr = memoryview(arr)
         except TypeError:  # pragma: py3 no cover
