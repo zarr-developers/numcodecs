@@ -88,7 +88,7 @@ class FixedScaleOffset(Codec):
     def encode(self, buf):
 
         # interpret buffer as 1D array
-        arr = ndarray_from_buffer(buf, self.dtype)
+        arr = ndarray_from_buffer(buf).view(self.dtype)
 
         # compute scale offset
         enc = (arr - self.offset) * self.scale
@@ -104,7 +104,7 @@ class FixedScaleOffset(Codec):
     def decode(self, buf, out=None):
 
         # interpret buffer as 1D array
-        enc = ndarray_from_buffer(buf, self.astype)
+        enc = ndarray_from_buffer(buf).view(self.astype)
 
         # decode scale offset
         dec = (enc / self.scale) + self.offset

@@ -53,7 +53,7 @@ class Categorize(Codec):
     def encode(self, buf):
 
         # view input as ndarray
-        arr = ndarray_from_buffer(buf, self.dtype)
+        arr = ndarray_from_buffer(buf).view(self.dtype)
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -67,7 +67,7 @@ class Categorize(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as ndarray
-        enc = ndarray_from_buffer(buf, self.astype)
+        enc = ndarray_from_buffer(buf).view(self.astype)
 
         # setup output
         if isinstance(out, np.ndarray):

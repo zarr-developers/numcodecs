@@ -50,7 +50,7 @@ class AsType(Codec):
     def encode(self, buf):
 
         # view input data as 1D array
-        arr = ndarray_from_buffer(buf, self.decode_dtype)
+        arr = ndarray_from_buffer(buf).view(self.decode_dtype)
 
         # convert and copy
         enc = arr.astype(self.encode_dtype)
@@ -60,7 +60,7 @@ class AsType(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as 1D array
-        enc = ndarray_from_buffer(buf, self.encode_dtype)
+        enc = ndarray_from_buffer(buf).view(self.encode_dtype)
 
         # convert and copy
         dec = enc.astype(self.decode_dtype)
