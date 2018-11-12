@@ -29,6 +29,13 @@ else:  # pragma: py2 no cover
     from functools import reduce
 
 
+def getbuffer(v):
+    if PY2:
+        return np.getbuffer(v)
+    else:
+        return memoryview(v).cast('B')
+
+
 def to_buffer(v):
     """Obtain a `buffer` or `memoryview` for `v`."""
 
