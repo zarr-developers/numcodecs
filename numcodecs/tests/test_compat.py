@@ -13,7 +13,7 @@ from numcodecs.compat import buffer, to_buffer
 
 def test_buffer_coercion_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
-    for e in [a, memoryview(a)]:
+    for e in [a, memoryview(a), array.array('u', a[0])]:
         with pytest.raises(ValueError):
             to_buffer(e)
 
