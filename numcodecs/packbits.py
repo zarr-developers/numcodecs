@@ -41,7 +41,7 @@ class PackBits(Codec):
 
         # view input as ndarray
         arr = ndarray_from_buffer(buf)
-        arr = arr.view(bool)
+        arr = arr.view(bool).reshape(-1, order='A')
 
         # determine size of packed data
         n = arr.size
@@ -69,7 +69,7 @@ class PackBits(Codec):
 
         # view encoded data as ndarray
         enc = ndarray_from_buffer(buf)
-        enc = enc.view('u1')
+        enc = enc.view('u1').reshape(-1, order='A')
 
         # find out how many bits were padded
         n_bits_padded = int(enc[0])

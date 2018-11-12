@@ -39,6 +39,8 @@ def to_buffer(v):
     elif b.dtype.kind in 'Mm':
         b = b.view(np.uint64)
 
+    b = b.reshape(-1, order='A')
+
     return b
 
 
@@ -99,8 +101,6 @@ def ndarray_from_buffer(buf):
         arr = np.array(arr, copy=False)
         if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
             arr = arr.view(buf.typecode)
-
-    arr = arr.reshape(-1, order='A')
 
     return arr
 

@@ -51,7 +51,7 @@ class AsType(Codec):
 
         # view input data as 1D array
         arr = ndarray_from_buffer(buf)
-        arr = arr.view(self.decode_dtype)
+        arr = arr.view(self.decode_dtype).reshape(-1, order='A')
 
         # convert and copy
         enc = arr.astype(self.encode_dtype)
@@ -62,7 +62,7 @@ class AsType(Codec):
 
         # view encoded data as 1D array
         enc = ndarray_from_buffer(buf)
-        enc = enc.view(self.encode_dtype)
+        enc = enc.view(self.encode_dtype).reshape(-1, order='A')
 
         # convert and copy
         dec = enc.astype(self.decode_dtype)

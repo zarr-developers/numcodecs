@@ -28,7 +28,7 @@ def compare_arrays(arr, res, precision=None):
     # ensure numpy array
     if not isinstance(res, np.ndarray):
         res = ndarray_from_buffer(res)
-        res = res.view(arr.dtype)
+        res = res.view(arr.dtype).reshape(-1, order='A')
     elif res.dtype != arr.dtype:
         res = res.view(arr.dtype)
 
@@ -226,7 +226,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 enc = ef.read()
                 dec = codec.decode(enc)
                 dec_arr = ndarray_from_buffer(dec)
-                dec_arr = dec_arr.view(arr.dtype)
+                dec_arr = dec_arr.view(arr.dtype).reshape(-1, order='A')
                 dec_arr = dec_arr.reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])

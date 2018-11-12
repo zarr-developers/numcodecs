@@ -18,7 +18,7 @@ class Checksum32(Codec):
         if isinstance(buf, np.ndarray) and buf.dtype == object:
             raise ValueError('cannot encode object array')
         arr = ndarray_from_buffer(buf)
-        arr = arr.view('u1')
+        arr = arr.view('u1').reshape(-1, order='A')
         checksum = self.checksum(arr) & 0xffffffff
         enc = np.empty(arr.nbytes + 4, dtype='u1')
         enc[:4].view('<u4')[0] = checksum
@@ -27,7 +27,7 @@ class Checksum32(Codec):
 
     def decode(self, buf, out=None):
         arr = ndarray_from_buffer(buf)
-        arr = arr.view('u1')
+        arr = arr.view('u1').reshape(-1, order='A')
         expect = arr[:4].view('<u4')[0]
         checksum = self.checksum(arr[4:]) & 0xffffffff
         if expect != checksum:

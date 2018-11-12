@@ -54,7 +54,7 @@ class Categorize(Codec):
 
         # view input as ndarray
         arr = ndarray_from_buffer(buf)
-        arr = arr.view(self.dtype)
+        arr = arr.view(self.dtype).reshape(-1, order='A')
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -69,7 +69,7 @@ class Categorize(Codec):
 
         # view encoded data as ndarray
         enc = ndarray_from_buffer(buf)
-        enc = enc.view(self.astype)
+        enc = enc.view(self.astype).reshape(-1, order='A')
 
         # setup output
         if isinstance(out, np.ndarray):
