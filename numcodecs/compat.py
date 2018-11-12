@@ -90,13 +90,13 @@ def ndarray_from_buffer(buf):
             arr = np.getbuffer(arr)
         else:  # pragma: py2 no cover
             if isinstance(buf, array.array) and buf.typecode is 'u':
-                arr = arr.cast('B')
+                arr = arr.cast('B').cast(np.dtype('u%i' % buf.itemsize).char)
 
         arr = np.array(arr, copy=False)
-        if isinstance(buf, array.array):
+        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
             if buf.typecode is 'u':
                 arr = arr.view('u%i' % buf.itemsize)
-            elif PY2:  # pragma: py3 no cover
+            else:
                 arr = arr.view(buf.typecode)
 
     return arr
