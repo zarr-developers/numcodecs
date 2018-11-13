@@ -16,6 +16,8 @@ def test_buffer_coercion_raises():
     for e in [a, memoryview(a)]:
         with pytest.raises(ValueError):
             to_buffer(e)
+    with pytest.raises(TypeError):
+        to_buffer(a.tolist())
 
 
 def test_buffer_writable():
