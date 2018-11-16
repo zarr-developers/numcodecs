@@ -1,4 +1,6 @@
 {
-    "encoding": "utf-8",
-    "id": "msgpack2"
+    "id": "msgpack2",
+    "raw": false,
+    "use_bin_type": true,
+    "use_single_float": false
 }
