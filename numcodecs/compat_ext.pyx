@@ -21,7 +21,7 @@ cdef class Buffer:
         self.released = False
         if hasattr(obj, 'dtype'):
             if obj.dtype.kind in 'Mm':
-                obj = obj.view('u8')
+                obj = obj.view('i8')
             elif obj.dtype.kind == 'O':
                 raise ValueError('cannot obtain buffer from object array')
         if PY2 and isinstance(obj, array.array):
