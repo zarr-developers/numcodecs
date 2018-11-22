@@ -8,7 +8,7 @@ import pytest
 import numpy as np
 
 
-from numcodecs.compat import getbuffer, to_buffer
+from numcodecs.compat import PY2, to_buffer
 
 
 def test_buffer_coercion_raises():
@@ -44,4 +44,7 @@ def test_buffer_coercion():
         b1 = to_buffer(buf)
         assert isinstance(b1, np.ndarray)
         assert b1.dtype.kind is typ
-        assert np.shares_memory(b1, getbuffer(buf))
+        if PY2:
+            assert np.shares_memory(b1, np.getbuffer(buf))
+        else:
+            assert np.shares_memory(b1, memoryview(buf))
