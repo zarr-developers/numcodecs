@@ -4,11 +4,8 @@ import gzip as _gzip
 import io
 
 
-import numpy as np
-
-
 from .abc import Codec
-from .compat import buffer_copy, handle_datetime, buffer_tobytes, PY2
+from .compat import buffer_copy, ensure_memoryview
 
 
 class GZip(Codec):
@@ -28,22 +25,8 @@ class GZip(Codec):
 
     def encode(self, buf):
 
-        # deal with lack of buffer support for datetime64 and timedelta64
-        buf = handle_datetime(buf)
-
-        if isinstance(buf, np.ndarray):
-
-            # cannot compress object array
-            if buf.dtype == object:
-                raise ValueError('cannot encode object array')
-
-            # if numpy array, can only handle C contiguous directly
-            if not buf.flags.c_contiguous:
-                buf = buf.tobytes(order='A')
-
-        if PY2:  # pragma: py3 no cover
-            # ensure bytes, PY2 cannot handle things like bytearray
-            buf = buffer_tobytes(buf)
+        # normalise inputs
+        buf = ensure_memoryview(buf)
 
         # do compression
         compressed = io.BytesIO()
@@ -58,9 +41,8 @@ class GZip(Codec):
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
-        if PY2:  # pragma: py3 no cover
-            # ensure bytes, PY2 cannot handle things like bytearray
-            buf = buffer_tobytes(buf)
+        # normalise inputs
+        buf = ensure_memoryview(buf)
 
         # do decompression
         buf = io.BytesIO(buf)

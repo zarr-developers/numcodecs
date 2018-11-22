@@ -11,7 +11,7 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
 
 
-from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
+from numcodecs.compat import ensure_bytes, ndarray_from_buffer
 from numcodecs.registry import get_codec
 # star import needed for repr tests so eval finds names
 from numcodecs import *  # noqa
@@ -86,7 +86,7 @@ def check_encode_decode(arr, codec, precision=None):
     # as well as array.array in PY2
 
     # setup
-    enc_bytes = buffer_tobytes(enc)
+    enc_bytes = ensure_bytes(enc)
 
     # test decoding of raw bytes
     dec = codec.decode(enc_bytes)
@@ -187,6 +187,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
         # setup
         i = int(arr_fn.split('.')[-2])
         arr = np.load(arr_fn)
+        arr_bytes = arr.tobytes(order='A')
         if arr.flags.f_contiguous:
             order = 'F'
         else:
@@ -232,7 +233,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     assert_array_items_equal(arr, dec_arr)
                 else:
                     assert_array_equal(arr, dec_arr)
-                    assert buffer_tobytes(arr) == buffer_tobytes(dec)
+                    assert arr_bytes == ensure_bytes(dec)
 
 
 def check_err_decode_object_buffer(compressor):

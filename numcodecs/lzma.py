@@ -16,7 +16,7 @@ if _lzma:
 
     import numpy as np
     from .abc import Codec
-    from .compat import buffer_copy, handle_datetime
+    from .compat import buffer_copy, ensure_memoryview
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -48,18 +48,8 @@ if _lzma:
 
         def encode(self, buf):
 
-            # deal with lack of buffer support for datetime64 and timedelta64
-            buf = handle_datetime(buf)
-
-            if isinstance(buf, np.ndarray):
-
-                # cannot compress object array
-                if buf.dtype == object:
-                    raise ValueError('cannot encode object array')
-
-                # if numpy array, can only handle C contiguous directly
-                if not buf.flags.c_contiguous:
-                    buf = buf.tobytes(order='A')
+            # normalise inputs
+            buf = ensure_memoryview(buf)
 
             # do compression
             return _lzma.compress(buf, format=self.format, check=self.check,
@@ -67,9 +57,11 @@ if _lzma:
 
         def decode(self, buf, out=None):
 
+            # normalise inputs
+            buf = ensure_memoryview(buf)
+
             # do decompression
-            dec = _lzma.decompress(buf, format=self.format,
-                                   filters=self.filters)
+            dec = _lzma.decompress(buf, format=self.format, filters=self.filters)
 
             # handle destination
             return buffer_copy(dec, out)

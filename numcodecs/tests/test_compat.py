@@ -6,10 +6,10 @@ import array
 import numpy as np
 
 
-from numcodecs.compat import buffer_tobytes
+from numcodecs.compat import ensure_bytes
 
 
-def test_buffer_tobytes():
+def test_ensure_bytes():
     bufs = [
         b'adsdasdas',
         bytes(20),
@@ -17,5 +17,5 @@ def test_buffer_tobytes():
         array.array('l', b'qwertyuiqwertyui')
     ]
     for buf in bufs:
-        b = buffer_tobytes(buf)
+        b = ensure_bytes(buf)
         assert isinstance(b, bytes)
