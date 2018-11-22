@@ -44,13 +44,13 @@ def test_memory_sharing():
     for typ, siz, buf in typed_bufs:
         a = ensure_ndarray_from_memory(buf)
         assert isinstance(a, np.ndarray)
-        if PY2 and isinstance(buf, array.array):
+        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
             # array.array does not expose buffer interface on PY2 so type information
-            # is not propagated correctly, so skip array.array on PY2
+            # is not propagated correctly, so skip comparison of type and itemsize
             pass
         else:
-            assert a.dtype.kind is typ, buf
-            assert a.dtype.itemsize is siz
+            assert a.dtype.kind == typ
+            assert a.dtype.itemsize == siz
         if PY2:  # pragma: py3 no cover
             assert np.shares_memory(a, buffer(buf))  # noqa
             b = ensure_buffer(buf)
