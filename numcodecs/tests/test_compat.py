@@ -47,4 +47,4 @@ def test_buffer_coercion():
         if PY2:
             assert np.shares_memory(b1, np.getbuffer(buf))
         else:
-            assert np.shares_memory(b1, memoryview(buf))
+            assert np.shares_memory(b1, memoryview(buf).cast('B'))
