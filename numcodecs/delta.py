@@ -57,7 +57,7 @@ class Delta(Codec):
     def encode(self, buf):
 
         # view input data as 1D array
-        arr = ensure_ndarray_from_memory(buf).reshape(-1, order='A').view(self.dtype)
+        arr = ensure_ndarray_from_memory(buf).view(self.dtype)
 
         # setup encoded output
         enc = np.empty_like(arr, dtype=self.astype)
@@ -73,7 +73,7 @@ class Delta(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as 1D array
-        enc = ensure_ndarray_from_memory(buf).reshape(-1, order='A').view(self.astype)
+        enc = ensure_ndarray_from_memory(buf).view(self.astype)
 
         # setup decoded output
         if isinstance(out, np.ndarray):

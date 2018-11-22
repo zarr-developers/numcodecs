@@ -28,6 +28,7 @@ class Zlib(Codec):
 
         # normalise inputs
         if PY2:  # pragma: py3 no cover
+            # zlib does not like memoryviews on PY2, use old-style buffer instead
             buf = ensure_buffer(buf)
         else:  # pragma: py2 no cover
             buf = ensure_memoryview(buf)
@@ -40,6 +41,7 @@ class Zlib(Codec):
 
         # normalise inputs
         if PY2:  # pragma: py3 no cover
+            # zlib does not like memoryviews on PY2, use old-style buffer instead
             buf = ensure_buffer(buf)
         else:  # pragma: py2 no cover
             buf = ensure_memoryview(buf)
