@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import bz2 as _bz2
-import array
-
-
-import numpy as np
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import buffer_copy, ensure_memoryview
+from numcodecs.compat import memory_copy, ensure_memoryview
 
 
 class BZ2(Codec):
@@ -46,4 +42,4 @@ class BZ2(Codec):
         # handle destination - Python standard library bz2 module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return buffer_copy(dec, out)
+        return memory_copy(dec, out)

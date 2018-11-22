@@ -25,58 +25,21 @@ else:  # pragma: py2 no cover
     from functools import reduce
 
 
-def buffer_copy(buf, out=None):
+def memory_copy(buf, out=None):
     """Copy the contents of the memory buffer from `buf` to `out`."""
 
     if out is None:
         # no-op
         return buf
 
-    # handle ndarray destination
-    if isinstance(out, np.ndarray):
+    # obtain ndarrays, casting to the same data type
+    buf = ensure_ndarray_from_memory(buf).view('u1')
+    out = ensure_ndarray_from_memory(out).view('u1')
 
-        # view source as destination dtype
-        if isinstance(buf, np.ndarray):
-            buf = buf.view(dtype=out.dtype).reshape(-1, order='A')
-        else:
-            buf = np.frombuffer(buf, dtype=out.dtype)
-
-        # ensure shapes are compatible
-        if buf.shape != out.shape:
-            if out.flags.f_contiguous:
-                order = 'F'
-            else:
-                order = 'C'
-            buf = buf.reshape(out.shape, order=order)
-
-        # copy via numpy
-        np.copyto(out, buf)
-
-    # handle generic buffer destination
-    else:
-
-        # obtain memoryview of destination
-        dest = memoryview(out)
-
-        # ensure source is 1D
-        if isinstance(buf, np.ndarray):
-            buf = buf.reshape(-1, order='A')
-            # try to match itemsize
-            dtype = 'u%s' % dest.itemsize
-            buf = buf.view(dtype=dtype)
-
-        # try to copy via memoryview
-        dest[:] = buf
+    # copy memory
+    np.copyto(out, buf)
 
     return out
-
-
-def ndarray_from_buffer(buf, dtype):
-    if isinstance(buf, np.ndarray):
-        arr = buf.reshape(-1, order='A').view(dtype)
-    else:
-        arr = np.frombuffer(buf, dtype=dtype)
-    return arr
 
 
 def ensure_text(l, encoding='utf-8'):
@@ -86,7 +49,7 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_ndarray_from_memory(o):
+def ensure_ndarray_from_memory(o, flatten=True):
     """Convenience function to obtain a numpy ndarray using memory exposed by object `o`,
     ensuring that no memory copies are made, and that `o` is not an object array.
 
@@ -96,6 +59,8 @@ def ensure_ndarray_from_memory(o):
         Any object exposing a memory buffer. On Python 3 this must be an object exposing
         the new-style buffer interface. On Python 2 this can also be an object exposing
         the old-style buffer interface.
+    flatten : bool, optional
+        If True, flatten any multi-dimensional inputs into a one-dimensional memoryview.
 
     Returns
     -------
@@ -106,7 +71,7 @@ def ensure_ndarray_from_memory(o):
     if not isinstance(o, np.ndarray):
 
         # first try to obtain a memoryview or buffer, needed to ensure that we don't
-        # accidentally copy memory when going via np.array()
+        # subsequently copy memory when going via np.array()
 
         if PY2:  # pragma: py3 no cover
             # accept objects exposing either old-style or new-style buffer interface
@@ -120,12 +85,17 @@ def ensure_ndarray_from_memory(o):
 
         # N.B., this is not documented, but np.array() will accept an object exposing
         # a buffer interface, and will take a view of the memory rather than making a
-        # copy, preserving type information
+        # copy, preserving type information where present
         o = np.array(o, copy=False)
 
     # check for object arrays
     if o.dtype == object:
         raise ValueError('object arrays are not supported')
+
+    if flatten:
+
+        # flatten the array to 1 dimension
+        o = o.reshape(-1, order='A')
 
     return o
 
@@ -149,16 +119,11 @@ def ensure_memoryview(o, flatten=True):
     """
 
     # go via numpy, for convenience
-    o = ensure_ndarray_from_memory(o)
+    o = ensure_ndarray_from_memory(o, flatten=flatten)
 
     # check for datetime or timedelta ndarray, cannot take a memoryview of those
     if o.dtype.kind in 'Mm':
         o = o.view(np.int64)
-
-    if flatten:
-
-        # flatten the array
-        o = o.reshape(-1, order='A')
 
     # expose as memoryview
     o = memoryview(o)
@@ -202,9 +167,6 @@ if PY2:  # pragma: py3 no cover
 
         # go via numpy, for convenience
         o = ensure_ndarray_from_memory(o)
-
-        # N.B., no need to flatten multi-dimensional arrays, as the old-style buffer
-        # interface just exposes the flat memory
 
         # expose as buffer
         o = buffer(o)

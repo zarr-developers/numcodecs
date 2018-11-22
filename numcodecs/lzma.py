@@ -14,9 +14,8 @@ except ImportError:  # pragma: no cover
 
 if _lzma:
 
-    import numpy as np
     from .abc import Codec
-    from .compat import buffer_copy, ensure_memoryview
+    from .compat import memory_copy, ensure_memoryview
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -64,7 +63,7 @@ if _lzma:
             dec = _lzma.decompress(buf, format=self.format, filters=self.filters)
 
             # handle destination
-            return buffer_copy(dec, out)
+            return memory_copy(dec, out)
 
         def __repr__(self):
             r = '%s(format=%r, check=%r, preset=%r, filters=%r)' % \

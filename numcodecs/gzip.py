@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import buffer_copy, ensure_memoryview
+from .compat import memory_copy, ensure_memoryview
 
 
 class GZip(Codec):
@@ -52,4 +52,4 @@ class GZip(Codec):
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return buffer_copy(decompressed, out)
+        return memory_copy(decompressed, out)

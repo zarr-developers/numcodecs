@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy
+from .compat import ensure_ndarray_from_memory, memory_copy
 
 
 class PackBits(Codec):
@@ -40,7 +40,7 @@ class PackBits(Codec):
     def encode(self, buf):
 
         # view input as ndarray
-        arr = ndarray_from_buffer(buf, bool)
+        arr = ensure_ndarray_from_memory(buf).reshape(-1, order='A').view(bool)
 
         # determine size of packed data
         n = arr.size
@@ -67,7 +67,7 @@ class PackBits(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as ndarray
-        enc = ndarray_from_buffer(buf, 'u1')
+        enc = ensure_ndarray_from_memory(buf).reshape(-1, order='A').view('u1')
 
         # find out how many bits were padded
         n_bits_padded = int(enc[0])
@@ -83,4 +83,4 @@ class PackBits(Codec):
         dec = dec.view(bool)
 
         # handle destination
-        return buffer_copy(dec, out)
+        return memory_copy(dec, out)

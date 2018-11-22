@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy, ensure_text
+from .compat import ensure_ndarray_from_memory, memory_copy, ensure_text
 
 
 import numpy as np
@@ -53,7 +53,10 @@ class Categorize(Codec):
     def encode(self, buf):
 
         # view input as ndarray
-        arr = ndarray_from_buffer(buf, self.dtype)
+        if self.dtype == object:
+            arr = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+        else:
+            arr = ensure_ndarray_from_memory(buf).view(self.dtype)
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -67,7 +70,7 @@ class Categorize(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as ndarray
-        enc = ndarray_from_buffer(buf, self.astype)
+        enc = ensure_ndarray_from_memory(buf).view(self.astype)
 
         # setup output
         if isinstance(out, np.ndarray):
@@ -84,7 +87,7 @@ class Categorize(Codec):
 
         # handle output
         if copy_needed:
-            dec = buffer_copy(dec, out)
+            dec = memory_copy(dec, out)
 
         return dec
 

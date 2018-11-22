@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, division
 import numpy as np
 
 from .abc import Codec
-from .compat import buffer_copy, ndarray_from_buffer
+from .compat import memory_copy, ensure_ndarray_from_memory
 
 
 class AsType(Codec):
@@ -50,7 +50,7 @@ class AsType(Codec):
     def encode(self, buf):
 
         # view input data as 1D array
-        arr = ndarray_from_buffer(buf, self.decode_dtype)
+        arr = ensure_ndarray_from_memory(buf).view(self.decode_dtype)
 
         # convert and copy
         enc = arr.astype(self.encode_dtype)
@@ -60,13 +60,13 @@ class AsType(Codec):
     def decode(self, buf, out=None):
 
         # view encoded data as 1D array
-        enc = ndarray_from_buffer(buf, self.encode_dtype)
+        enc = ensure_ndarray_from_memory(buf).view(self.encode_dtype)
 
         # convert and copy
         dec = enc.astype(self.decode_dtype)
 
         # handle output
-        out = buffer_copy(dec, out)
+        out = memory_copy(dec, out)
 
         return out
 

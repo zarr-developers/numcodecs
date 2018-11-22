@@ -11,7 +11,7 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
 
 
-from numcodecs.compat import ensure_bytes, ndarray_from_buffer
+from numcodecs.compat import ensure_bytes, ensure_ndarray_from_memory
 from numcodecs.registry import get_codec
 # star import needed for repr tests so eval finds names
 from numcodecs import *  # noqa
@@ -25,11 +25,11 @@ greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!
 
 def compare_arrays(arr, res, precision=None):
 
-    # ensure numpy array
-    if not isinstance(res, np.ndarray):
-        res = ndarray_from_buffer(res, dtype=arr.dtype)
-    elif res.dtype != arr.dtype:
-        res = res.view(arr.dtype)
+    # ensure numpy array with matching dtype
+    if arr.dtype == object:
+        res = np.asanyarray(res, dtype=object)
+    else:
+        res = ensure_ndarray_from_memory(res).view(arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:
@@ -225,8 +225,11 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             with open(enc_fn, mode='rb') as ef:
                 enc = ef.read()
                 dec = codec.decode(enc)
-                dec_arr = ndarray_from_buffer(dec, dtype=arr.dtype)
-                dec_arr = dec_arr.reshape(arr.shape, order=order)
+                if isinstance(dec, np.ndarray):
+                    dec_arr = dec
+                else:
+                    dec_arr = ensure_ndarray_from_memory(dec)
+                dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])
                 elif arr.dtype == 'object':

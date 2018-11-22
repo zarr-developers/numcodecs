@@ -4,8 +4,8 @@ import zlib as _zlib
 
 
 from .abc import Codec
-from .compat import buffer_copy, PY2, ensure_memoryview
-if PY2:
+from .compat import memory_copy, PY2, ensure_memoryview
+if PY2:  # pragma: py3 no cover
     from .compat import ensure_buffer
 
 
@@ -27,9 +27,9 @@ class Zlib(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             buf = ensure_buffer(buf)
-        else:
+        else:  # pragma: py2 no cover
             buf = ensure_memoryview(buf)
 
         # do compression
@@ -39,9 +39,9 @@ class Zlib(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             buf = ensure_buffer(buf)
-        else:
+        else:  # pragma: py2 no cover
             buf = ensure_memoryview(buf)
 
         # do decompression
@@ -50,4 +50,4 @@ class Zlib(Codec):
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return buffer_copy(dec, out)
+        return memory_copy(dec, out)
