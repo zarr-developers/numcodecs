@@ -1451,7 +1451,7 @@ static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_O[] = "O";
 static const char __pyx_k_Mm[] = "Mm";
-static const char __pyx_k_u8[] = "u8";
+static const char __pyx_k_i8[] = "i8";
 static const char __pyx_k_PY2[] = "PY2";
 static const char __pyx_k_obj[] = "obj";
 static const char __pyx_k_sys[] = "sys";
@@ -1496,6 +1496,7 @@ static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_getstate;
+static PyObject *__pyx_n_s_i8;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_itemsize;
 static PyObject *__pyx_n_s_kind;
@@ -1512,7 +1513,6 @@ static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_sys;
 static PyObject *__pyx_n_s_test;
-static PyObject *__pyx_n_s_u8;
 static PyObject *__pyx_n_s_version_info;
 static PyObject *__pyx_n_s_view;
 static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9numcodecs_10compat_ext_Buffer *__pyx_v_self, PyObject *__pyx_v_obj, PyObject *__pyx_v_flags); /* proto */
@@ -1628,7 +1628,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  *         self.released = False
  *         if hasattr(obj, 'dtype'):             # <<<<<<<<<<<<<<
  *             if obj.dtype.kind in 'Mm':
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  */
   __pyx_t_1 = __Pyx_HasAttr(__pyx_v_obj, __pyx_n_s_dtype); if (unlikely(__pyx_t_1 == ((int)-1))) __PYX_ERR(0, 22, __pyx_L1_error)
   __pyx_t_2 = (__pyx_t_1 != 0);
@@ -1638,7 +1638,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  *         self.released = False
  *         if hasattr(obj, 'dtype'):
  *             if obj.dtype.kind in 'Mm':             # <<<<<<<<<<<<<<
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_obj, __pyx_n_s_dtype); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 23, __pyx_L1_error)
@@ -1654,7 +1654,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
       /* "numcodecs/compat_ext.pyx":24
  *         if hasattr(obj, 'dtype'):
  *             if obj.dtype.kind in 'Mm':
- *                 obj = obj.view('u8')             # <<<<<<<<<<<<<<
+ *                 obj = obj.view('i8')             # <<<<<<<<<<<<<<
  *             elif obj.dtype.kind == 'O':
  *                 raise ValueError('cannot obtain buffer from object array')
  */
@@ -1670,7 +1670,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
           __Pyx_DECREF_SET(__pyx_t_3, function);
         }
       }
-      __pyx_t_4 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_5, __pyx_n_s_u8) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_n_s_u8);
+      __pyx_t_4 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_5, __pyx_n_s_i8) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_n_s_i8);
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 24, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
@@ -1682,7 +1682,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  *         self.released = False
  *         if hasattr(obj, 'dtype'):
  *             if obj.dtype.kind in 'Mm':             # <<<<<<<<<<<<<<
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':
  */
       goto __pyx_L4;
@@ -1690,7 +1690,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
 
     /* "numcodecs/compat_ext.pyx":25
  *             if obj.dtype.kind in 'Mm':
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':             # <<<<<<<<<<<<<<
  *                 raise ValueError('cannot obtain buffer from object array')
  *         if PY2 and isinstance(obj, array.array):
@@ -1705,7 +1705,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
     if (unlikely(__pyx_t_1)) {
 
       /* "numcodecs/compat_ext.pyx":26
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':
  *                 raise ValueError('cannot obtain buffer from object array')             # <<<<<<<<<<<<<<
  *         if PY2 and isinstance(obj, array.array):
@@ -1719,7 +1719,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
 
       /* "numcodecs/compat_ext.pyx":25
  *             if obj.dtype.kind in 'Mm':
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':             # <<<<<<<<<<<<<<
  *                 raise ValueError('cannot obtain buffer from object array')
  *         if PY2 and isinstance(obj, array.array):
@@ -1732,7 +1732,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  *         self.released = False
  *         if hasattr(obj, 'dtype'):             # <<<<<<<<<<<<<<
  *             if obj.dtype.kind in 'Mm':
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  */
   }
 
@@ -3080,6 +3080,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
+  {&__pyx_n_s_i8, __pyx_k_i8, sizeof(__pyx_k_i8), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
   {&__pyx_n_s_kind, __pyx_k_kind, sizeof(__pyx_k_kind), 0, 0, 1, 1},
@@ -3096,7 +3097,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_sys, __pyx_k_sys, sizeof(__pyx_k_sys), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
-  {&__pyx_n_s_u8, __pyx_k_u8, sizeof(__pyx_k_u8), 0, 0, 1, 1},
   {&__pyx_n_s_version_info, __pyx_k_version_info, sizeof(__pyx_k_version_info), 0, 0, 1, 1},
   {&__pyx_n_s_view, __pyx_k_view, sizeof(__pyx_k_view), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
@@ -3115,7 +3115,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
   /* "numcodecs/compat_ext.pyx":26
- *                 obj = obj.view('u8')
+ *                 obj = obj.view('i8')
  *             elif obj.dtype.kind == 'O':
  *                 raise ValueError('cannot obtain buffer from object array')             # <<<<<<<<<<<<<<
  *         if PY2 and isinstance(obj, array.array):
