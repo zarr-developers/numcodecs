@@ -30,9 +30,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('i', 8, np.arange(100, dtype=np.int64)),
         ('f', 8, np.linspace(0, 1, 100, dtype=np.float64)),
         ('i', 4, array.array('i', b'qwertyuiqwertyui')),
-        ('i', 8, array.array('l', b'qwertyuiqwertyui')),
         ('u', 4, array.array('I', b'qwertyuiqwertyui')),
-        ('u', 8, array.array('L', b'qwertyuiqwertyui')),
         ('f', 4, array.array('f', b'qwertyuiqwertyui')),
         ('f', 8, array.array('d', b'qwertyuiqwertyui')),
         ('u', 1, mmap.mmap(-1, 10))
@@ -70,6 +68,6 @@ def test_ensure_contiguous_ndarray_memoryview_writable():
         assert m.flags.writeable == writeable
         m = ensure_contiguous_ndarray(memoryview(a))
         assert m.flags.writeable == writeable
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             m = ensure_contiguous_ndarray(np.getbuffer(a))
             assert m.flags.writeable == writeable

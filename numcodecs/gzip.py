@@ -27,6 +27,7 @@ class GZip(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
+        buf = memoryview(buf)  # needed on PY2 for unknown reasons
 
         # do compression
         compressed = io.BytesIO()

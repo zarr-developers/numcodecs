@@ -4,7 +4,7 @@ import zlib as _zlib
 
 
 from .abc import Codec
-from .compat import memory_copy, PY2, ensure_contiguous_ndarray
+from .compat import memory_copy, ensure_contiguous_ndarray
 
 
 class Zlib(Codec):
