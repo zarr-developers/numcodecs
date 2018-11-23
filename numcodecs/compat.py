@@ -96,7 +96,7 @@ def ensure_contiguous_ndarray(o):
         else:  # pragma: py2 no cover
             o = memoryview(o)
 
-        # N.B., this is not documented, but np.array() will accept an object exposing
+        # N.B., this is not well documented, but np.array() will accept an object exposing
         # a buffer interface, and will take a view of the memory rather than making a
         # copy, preserving type information where present
         o = np.array(o, copy=False)
@@ -106,7 +106,7 @@ def ensure_contiguous_ndarray(o):
     if o.dtype == object:
         raise ValueError('object arrays are not supported')
 
-    # check for datetime or timedelta ndarray, cannot take a memoryview of those
+    # check for datetime or timedelta ndarray, cannot take a memoryview of those directly
     if o.dtype.kind in 'Mm':
         o = o.view(np.int64)
 
@@ -123,7 +123,7 @@ def ensure_bytes(o):
 
     if not isinstance(o, binary_type):
 
-        # obtain memoryview
+        # view as numpy array with contiguous memory
         m = ensure_contiguous_ndarray(o)
 
         # create bytes from memory
