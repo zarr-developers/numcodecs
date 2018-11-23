@@ -37,6 +37,10 @@ arrays = [
     np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
+    (-np.random.randint(-2**30, 2**30, size=1000, dtype='i8')).view('M8[ns]'),
+    (-np.random.randint(-2**30, 2**30, size=1000, dtype='i8')).view('m8[ns]'),
+    (-np.random.randint(-2**12, 2**13, size=1000, dtype='i8')).view('M8[m]'),
+    (-np.random.randint(-2**12, 2**13, size=1000, dtype='i8')).view('m8[m]'),
 ]
 
 

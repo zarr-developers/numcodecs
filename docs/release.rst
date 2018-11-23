@@ -29,6 +29,9 @@ Release notes
 * Add codec :class:`numcodecs.gzip.GZip` to replace ``gzip`` alias for ``zlib``,
   which was incorrect (by :user:`Jan Funke <funkey>`; :issue:`87`).
 
+* Corrects handling of ``NaT`` in ``datetime64`` and ``timedelta64`` in various
+  compressors (by :user:`John Kirkham <jakirkham>`; :issue:`127`).
+
 .. _release_0.5.5:
 
 0.5.5

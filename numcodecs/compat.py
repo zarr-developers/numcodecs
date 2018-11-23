@@ -35,7 +35,7 @@ def to_buffer(v):
     if b.dtype.kind is 'O':
         raise ValueError('cannot encode object array')
     elif b.dtype.kind in 'Mm':
-        b = b.view(np.uint64)
+        b = b.view(np.int64)
 
     b = b.reshape(-1, order='A')
 
