@@ -21,8 +21,7 @@ matrix:
       sudo: true
 
 install:
-  - pip install -U tox-travis coveralls pip setuptools wheel
-  - pip install -v .
+  - pip install -U tox-travis coveralls pip setuptools wheel setuptools-scm py-cpuinfo
 
 script:
   - tox
