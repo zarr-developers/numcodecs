@@ -33,8 +33,8 @@ def memory_copy(buf, out=None):
         return buf
 
     # obtain ndarrays, casting to the same data type
-    buf = ensure_ndarray_from_memory(buf).view('u1')
-    out = ensure_ndarray_from_memory(out).view('u1')
+    buf = ensure_contiguous_ndarray(buf).view('u1')
+    out = ensure_contiguous_ndarray(out).view('u1')
 
     # copy memory
     np.copyto(out, buf)
@@ -49,9 +49,10 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_ndarray_from_memory(o, flatten=True):
+def ensure_contiguous_ndarray(o):
     """Convenience function to obtain a numpy ndarray using memory exposed by object `o`,
-    ensuring that no memory copies are made, and that `o` is not an object array.
+    ensuring that no memory copies are made if at all possible, and that `o` is not an
+    object array.
 
     Parameters
     ----------
@@ -59,8 +60,6 @@ def ensure_ndarray_from_memory(o, flatten=True):
         Any object exposing a memory buffer. On Python 3 this must be an object exposing
         the new-style buffer interface. On Python 2 this can also be an object exposing
         the old-style buffer interface.
-    flatten : bool, optional
-        If True, flatten any multi-dimensional inputs into a one-dimensional memoryview.
 
     Returns
     -------
@@ -88,19 +87,20 @@ def ensure_ndarray_from_memory(o, flatten=True):
         # copy, preserving type information where present
         o = np.array(o, copy=False)
 
-    # check for object arrays
+    # check for object arrays, these are just memory pointers, actual memory holding
+    # item data is scattered elsewhere
     if o.dtype == object:
         raise ValueError('object arrays are not supported')
 
-    if flatten:
-
-        # flatten the array to 1 dimension
-        o = o.reshape(-1, order='A')
+    # flatten the array to 1 dimension - this will also ensure the array is contiguous
+    # N.B., this will in some cases cause a memory copy to be made, see
+    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
+    o = o.reshape(-1, order='A')
 
     return o
 
 
-def ensure_memoryview(o, flatten=True):
+def ensure_memoryview(o):
     """Obtain a :class:`memoryview` with a view of memory exposed by `o`.
 
     Parameters
@@ -109,8 +109,6 @@ def ensure_memoryview(o, flatten=True):
         Any object exposing a memory buffer. On Python 3 this must be an object exposing
         the new-style buffer interface. On Python 2 this can also be an object exposing
         the old-style buffer interface.
-    flatten : bool, optional
-        If True, flatten any multi-dimensional inputs into a one-dimensional memoryview.
 
     Returns
     -------
@@ -119,7 +117,7 @@ def ensure_memoryview(o, flatten=True):
     """
 
     # go via numpy, for convenience
-    o = ensure_ndarray_from_memory(o, flatten=flatten)
+    o = ensure_contiguous_ndarray(o)
 
     # check for datetime or timedelta ndarray, cannot take a memoryview of those
     if o.dtype.kind in 'Mm':
@@ -166,7 +164,7 @@ if PY2:  # pragma: py3 no cover
         """
 
         # go via numpy, for convenience
-        o = ensure_ndarray_from_memory(o)
+        o = ensure_contiguous_ndarray(o)
 
         # expose as buffer
         o = buffer(o)

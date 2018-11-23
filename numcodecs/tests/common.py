@@ -11,7 +11,7 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
 
 
-from numcodecs.compat import ensure_bytes, ensure_ndarray_from_memory
+from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
 from numcodecs.registry import get_codec
 # star import needed for repr tests so eval finds names
 from numcodecs import *  # noqa
@@ -29,7 +29,7 @@ def compare_arrays(arr, res, precision=None):
     if arr.dtype == object:
         res = np.asanyarray(res, dtype=object)
     else:
-        res = ensure_ndarray_from_memory(res).view(arr.dtype)
+        res = ensure_contiguous_ndarray(res).view(arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:
@@ -228,7 +228,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 if isinstance(dec, np.ndarray):
                     dec_arr = dec
                 else:
-                    dec_arr = ensure_ndarray_from_memory(dec)
+                    dec_arr = ensure_contiguous_ndarray(dec)
                 dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])

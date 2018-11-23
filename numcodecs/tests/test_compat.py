@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import (ensure_bytes, ensure_ndarray_from_memory,
+from numcodecs.compat import (ensure_bytes, ensure_contiguous_ndarray,
                               ensure_memoryview, PY2)
 if PY2:  # pragma: py3 no cover
     from numcodecs.compat import ensure_buffer
@@ -42,7 +42,7 @@ def test_memory_sharing():
         ('u', 1, mmap.mmap(-1, 10))
     ]
     for typ, siz, buf in typed_bufs:
-        a = ensure_ndarray_from_memory(buf)
+        a = ensure_contiguous_ndarray(buf)
         assert isinstance(a, np.ndarray)
         if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
             # array.array does not expose buffer interface on PY2 so type information
@@ -65,14 +65,14 @@ def test_object_array_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(ValueError):
-            ensure_ndarray_from_memory(e)
+            ensure_contiguous_ndarray(e)
         with pytest.raises(ValueError):
             ensure_memoryview(e)
         if PY2:  # pragma: py3 no cover
             with pytest.raises(ValueError):
                 ensure_buffer(e)
     with pytest.raises(TypeError):
-        ensure_ndarray_from_memory(a.tolist())
+        ensure_contiguous_ndarray(a.tolist())
     with pytest.raises(TypeError):
         ensure_memoryview(a.tolist())
     if PY2:  # pragma: py3 no cover

@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ensure_ndarray_from_memory, memory_copy
+from .compat import ensure_contiguous_ndarray, memory_copy
 
 
 class FixedScaleOffset(Codec):
@@ -88,7 +88,7 @@ class FixedScaleOffset(Codec):
     def encode(self, buf):
 
         # interpret buffer as 1D array
-        arr = ensure_ndarray_from_memory(buf).view(self.dtype)
+        arr = ensure_contiguous_ndarray(buf).view(self.dtype)
 
         # compute scale offset
         enc = (arr - self.offset) * self.scale
@@ -104,7 +104,7 @@ class FixedScaleOffset(Codec):
     def decode(self, buf, out=None):
 
         # interpret buffer as 1D array
-        enc = ensure_ndarray_from_memory(buf).view(self.astype)
+        enc = ensure_contiguous_ndarray(buf).view(self.astype)
 
         # decode scale offset
         dec = (enc / self.scale) + self.offset
