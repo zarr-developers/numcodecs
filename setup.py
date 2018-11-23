@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function, division
 from glob import glob
 import os
 from setuptools import setup, Extension
-import cpuinfo
 import sys
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
@@ -23,9 +22,15 @@ PY3 = sys.version_info[0] == 3
 
 
 # determine CPU support for SSE2 and AVX2
-cpu_info = cpuinfo.get_cpu_info()
-have_sse2 = 'sse2' in cpu_info['flags']
-have_avx2 = 'avx2' in cpu_info['flags']
+try:
+    import cpuinfo
+except ImportError:
+    have_sse2 = False
+    have_avx2 = False
+else:
+    cpu_info = cpuinfo.get_cpu_info()
+    have_sse2 = 'sse2' in cpu_info['flags']
+    have_avx2 = 'avx2' in cpu_info['flags']
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
@@ -315,7 +320,8 @@ def run_setup(with_extensions):
         },
         setup_requires=[
             'setuptools>18.0',
-            'setuptools-scm>1.5.4'
+            'setuptools-scm>1.5.4',
+            'py-cpuinfo',
         ],
         install_requires=[
             'numpy>=1.7',
