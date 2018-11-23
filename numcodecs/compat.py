@@ -50,20 +50,34 @@ def ensure_text(l, encoding='utf-8'):
 
 
 def ensure_contiguous_ndarray(o):
-    """Convenience function to obtain a numpy ndarray using memory exposed by object `o`,
-    ensuring that no memory copies are made if at all possible, and that `o` is not an
-    object array.
+    """Convenience function to obtain a numpy ndarray using memory exposed by object
+    `o`. This function performs some additional checks and transformations to ensure
+    that the returned ndarray can export a new-style buffer interface, and that the
+    exposed memory is C contiguous.
 
     Parameters
     ----------
-    o : bytes-like
-        Any object exposing a memory buffer. On Python 3 this must be an object exposing
-        the new-style buffer interface. On Python 2 this can also be an object exposing
-        the old-style buffer interface.
+    o : array-like or bytes-like
+        A numpy ndarray or any object exposing a memory buffer. On Python 3 this must
+        be an object exposing the new-style buffer interface. On Python 2 this can also
+        be an object exposing the old-style buffer interface.
 
     Returns
     -------
     o : ndarray
+
+    Notes
+    -----
+    All efforts are made to ensure that no memory is copied, and that the returned
+    ndarray provides a view on whatever memory was exposed by the original object `o`.
+    However, in some circumstances a memory copy will be made, e.g., if the memory
+    exposed by `o` is not contiguous.
+
+    Arrays with an object dtype are not allowed as input to this function, as the memory
+    exposed by these objects is just the object pointers, and the actual object values
+    have memory scattered throughout the heap. In other words, there is no way to
+    obtain a completely contiguous view of the memory of all items in the array,
+    without some additional transformations that are beyond the scope of this function.
 
     """
 
@@ -77,7 +91,7 @@ def ensure_contiguous_ndarray(o):
             try:
                 o = memoryview(o)
             except TypeError:
-                o = buffer(o)
+                o = np.getbuffer(o)
 
         else:  # pragma: py2 no cover
             o = memoryview(o)
@@ -92,39 +106,14 @@ def ensure_contiguous_ndarray(o):
     if o.dtype == object:
         raise ValueError('object arrays are not supported')
 
-    # flatten the array to 1 dimension - this will also ensure the array is contiguous
-    # N.B., this will in some cases cause a memory copy to be made, see
-    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
-    o = o.reshape(-1, order='A')
-
-    return o
-
-
-def ensure_memoryview(o):
-    """Obtain a :class:`memoryview` with a view of memory exposed by `o`.
-
-    Parameters
-    ----------
-    o : bytes-like
-        Any object exposing a memory buffer. On Python 3 this must be an object exposing
-        the new-style buffer interface. On Python 2 this can also be an object exposing
-        the old-style buffer interface.
-
-    Returns
-    -------
-    o : memoryview
-
-    """
-
-    # go via numpy, for convenience
-    o = ensure_contiguous_ndarray(o)
-
     # check for datetime or timedelta ndarray, cannot take a memoryview of those
     if o.dtype.kind in 'Mm':
         o = o.view(np.int64)
 
-    # expose as memoryview
-    o = memoryview(o)
+    # flatten the array to 1 dimension - this will also ensure the array is contiguous
+    # N.B., this will in some cases cause a memory copy to be made, see
+    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
+    o = o.reshape(-1, order='A')
 
     return o
 
@@ -135,38 +124,9 @@ def ensure_bytes(o):
     if not isinstance(o, binary_type):
 
         # obtain memoryview
-        m = ensure_memoryview(o)
+        m = ensure_contiguous_ndarray(o)
 
         # create bytes from memory
         o = m.tobytes()
 
     return o
-
-
-if PY2:  # pragma: py3 no cover
-    # Under PY2 some codecs are happier if they are provided with a buffer object
-    # rather than a memoryview, so here we provide a convenience function to obtain a
-    # buffer object from a range of possible inputs.
-
-    def ensure_buffer(o):
-        """Obtain a :class:`buffer` with a view of memory exposed by `o`.
-
-        Parameters
-        ----------
-        o : bytes-like
-            Any object exposing a memory buffer. Can be an object exposing either
-            old-style or new-style buffer interface.
-
-        Returns
-        -------
-        o : buffer
-
-        """
-
-        # go via numpy, for convenience
-        o = ensure_contiguous_ndarray(o)
-
-        # expose as buffer
-        o = buffer(o)
-
-        return o

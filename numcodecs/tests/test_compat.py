@@ -8,10 +8,7 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import (ensure_bytes, ensure_contiguous_ndarray,
-                              ensure_memoryview, PY2)
-if PY2:  # pragma: py3 no cover
-    from numcodecs.compat import ensure_buffer
+from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, PY2
 
 
 def test_ensure_bytes():
@@ -26,8 +23,7 @@ def test_ensure_bytes():
         assert isinstance(b, bytes)
 
 
-def test_memory_sharing():
-    # test ensure_ndarray, ensure_memoryview and ensure_buffer
+def test_ensure_contiguous_ndarray_shares_memory():
     typed_bufs = [
         ('u', 1, b'adsdasdas'),
         ('u', 1, bytes(20)),
@@ -52,37 +48,28 @@ def test_memory_sharing():
             assert a.dtype.kind == typ
             assert a.dtype.itemsize == siz
         if PY2:  # pragma: py3 no cover
-            assert np.shares_memory(a, buffer(buf))  # noqa
-            b = ensure_buffer(buf)
-            assert np.shares_memory(b, buffer(buf))  # noqa
+            assert np.shares_memory(a, np.getbuffer(buf))
         else:  # pragma: py2 no cover
             assert np.shares_memory(a, memoryview(buf))
-            m = ensure_memoryview(buf)
-            assert np.shares_memory(m, memoryview(buf))
 
 
-def test_object_array_raises():
+def test_ensure_contiguous_ndarray_object_array_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(ValueError):
             ensure_contiguous_ndarray(e)
-        with pytest.raises(ValueError):
-            ensure_memoryview(e)
-        if PY2:  # pragma: py3 no cover
-            with pytest.raises(ValueError):
-                ensure_buffer(e)
     with pytest.raises(TypeError):
         ensure_contiguous_ndarray(a.tolist())
-    with pytest.raises(TypeError):
-        ensure_memoryview(a.tolist())
-    if PY2:  # pragma: py3 no cover
-        with pytest.raises(TypeError):
-            ensure_buffer(a.tolist())
 
 
-def test_memoryview_writable():
-    for writable in [False, True]:
+def test_ensure_contiguous_ndarray_memoryview_writable():
+    for writeable in [False, True]:
         a = np.arange(100)
-        a.setflags(write=writable)
-        m = ensure_memoryview(a)
-        assert m.readonly != writable
+        a.setflags(write=writeable)
+        m = ensure_contiguous_ndarray(a)
+        assert m.flags.writeable == writeable
+        m = ensure_contiguous_ndarray(memoryview(a))
+        assert m.flags.writeable == writeable
+        if PY2:
+            m = ensure_contiguous_ndarray(np.getbuffer(a))
+            assert m.flags.writeable == writeable

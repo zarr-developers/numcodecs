@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import memory_copy, ensure_memoryview
+from .compat import memory_copy, ensure_contiguous_ndarray
 
 
 class GZip(Codec):
@@ -26,7 +26,7 @@ class GZip(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        buf = ensure_memoryview(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
         # do compression
         compressed = io.BytesIO()
@@ -42,7 +42,7 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_memoryview(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
         # do decompression
         buf = io.BytesIO(buf)

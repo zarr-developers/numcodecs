@@ -4,9 +4,7 @@ import zlib as _zlib
 
 
 from .abc import Codec
-from .compat import memory_copy, PY2, ensure_memoryview
-if PY2:  # pragma: py3 no cover
-    from .compat import ensure_buffer
+from .compat import memory_copy, PY2, ensure_contiguous_ndarray
 
 
 class Zlib(Codec):
@@ -27,11 +25,7 @@ class Zlib(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        if PY2:  # pragma: py3 no cover
-            # zlib does not like memoryviews on PY2, use old-style buffer instead
-            buf = ensure_buffer(buf)
-        else:  # pragma: py2 no cover
-            buf = ensure_memoryview(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
         # do compression
         return _zlib.compress(buf, self.level)
@@ -40,11 +34,7 @@ class Zlib(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        if PY2:  # pragma: py3 no cover
-            # zlib does not like memoryviews on PY2, use old-style buffer instead
-            buf = ensure_buffer(buf)
-        else:  # pragma: py2 no cover
-            buf = ensure_memoryview(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
         # do decompression
         dec = _zlib.decompress(buf)
