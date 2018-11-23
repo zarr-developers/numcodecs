@@ -44,7 +44,7 @@ def test_buffer_coercion():
         b1 = to_buffer(buf)
         assert isinstance(b1, np.ndarray)
         assert b1.dtype.kind is typ
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             assert np.shares_memory(b1, np.getbuffer(buf))
-        else:
+        else:  # pragma: py2 no cover
             assert np.shares_memory(b1, memoryview(buf).cast('B'))
