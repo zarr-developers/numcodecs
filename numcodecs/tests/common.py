@@ -225,10 +225,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             with open(enc_fn, mode='rb') as ef:
                 enc = ef.read()
                 dec = codec.decode(enc)
-                if isinstance(dec, np.ndarray):
-                    dec_arr = dec
-                else:
-                    dec_arr = ensure_contiguous_ndarray(dec)
+                dec_arr = ensure_contiguous_ndarray(dec)
                 dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])
