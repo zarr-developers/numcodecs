@@ -240,11 +240,26 @@ def test_decompression_error_handling():
             codec.decode(bytearray(0))
 
 
-def test_compression_error_handling():
-    a = np.zeros(2**31 - 1, dtype=np.int8)
-    # If we turn on thread support, we block on a mutex on the second codec that
-    # we try.
-    blosc.use_threads = False
-    for codec in codecs:
-        with pytest.raises(RuntimeError):
-            codec.encode(a)
+def test_max_buffer_size():
+    for max_buffer_size in [4, 64, 1024]:
+        for codec in codecs:
+            old_max_buffer_size = codec.max_buffer_size
+            try:
+                codec.max_buffer_size = max_buffer_size
+                # Just up the max_buffer_size is fine.
+                codec.encode(np.zeros(max_buffer_size - 1, dtype=np.int8))
+                codec.encode(np.zeros(max_buffer_size, dtype=np.int8))
+
+                buffers = [
+                    bytes(b"x" * (max_buffer_size + 1)),
+                    np.zeros(max_buffer_size + 1, dtype=np.int8),
+                    np.zeros(max_buffer_size + 2, dtype=np.int8),
+                    np.zeros(max_buffer_size, dtype=np.int16),
+                    np.zeros(max_buffer_size, dtype=np.int32)]
+                for buf in buffers:
+                    with pytest.raises(ValueError):
+                        codec.encode(buf)
+                    with pytest.raises(ValueError):
+                        codec.decode(buf)
+            finally:
+                codec.max_buffer_size = old_max_buffer_size

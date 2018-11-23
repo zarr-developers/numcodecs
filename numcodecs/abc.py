@@ -30,6 +30,7 @@ other and vice versa.
 
 """
 from __future__ import absolute_import, print_function, division
+from numcodecs.compat import handle_datetime
 
 
 class Codec(object):
@@ -38,6 +39,19 @@ class Codec(object):
     # override in sub-class
     codec_id = None
     """Codec identifier."""
+
+    # 2GiB limit by default. Codecs can override this in subclasses if larger
+    # buffers are supported.
+    max_buffer_size = 2**31 - 1
+    """Maximum size of a buffer that can be encoded or decoded."""
+
+    def _check_buffer_size(self, buf):
+        buf = handle_datetime(buf)
+        bufsize = memoryview(buf).nbytes
+        if bufsize > self.max_buffer_size:
+            msg = "{} codec does not support buffers of > {} bytes".format(
+                self.codec_id, self.max_buffer_size)
+            raise ValueError(msg)
 
     def encode(self, buf):  # pragma: no cover
         """Encode data in `buf`.

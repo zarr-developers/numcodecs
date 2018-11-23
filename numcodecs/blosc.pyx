@@ -485,9 +485,11 @@ class Blosc(Codec):
         self.blocksize = blocksize
 
     def encode(self, buf):
+        self._check_buffer_size(buf)
         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
+        self._check_buffer_size(buf)
         return decompress(buf, out)
 
     def __repr__(self):
