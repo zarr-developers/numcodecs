@@ -157,10 +157,10 @@ def test_bytes():
     assert b[0] == b'foo'
     # broken for unicode array, round-trips unicode to bytes
     b = codec.decode(codec.encode(unicode_arr))
-    if PY2:
+    if PY2:  # pragma: py3 no cover
         # PY2 considers b'foo' and u'foo' to be equal
         assert np.array_equal(unicode_arr, b)
-    else:
+    else:  # pragma: py2 no cover
         assert not np.array_equal(unicode_arr, b)
     assert isinstance(b[0], binary_type)
     assert b[0] == b'foo'
@@ -171,10 +171,10 @@ def test_bytes():
         warnings.simplefilter('ignore', PendingDeprecationWarning)
         # broken for bytes array, round-trips bytes to unicode
         b = codec.decode(codec.encode(bytes_arr))
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             # PY2 considers b'foo' and u'foo' to be equal
             assert np.array_equal(unicode_arr, b)
-        else:
+        else:  # pragma: py2 no cover
             assert not np.array_equal(bytes_arr, b)
         assert isinstance(b[0], text_type)
         assert b[0] == u'foo'
