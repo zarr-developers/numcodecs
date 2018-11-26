@@ -4,7 +4,7 @@ import zlib as _zlib
 
 
 from .abc import Codec
-from .compat import memory_copy, ensure_contiguous_ndarray
+from .compat import memory_copy, ensure_c_contiguous_ndarray
 
 
 class Zlib(Codec):
@@ -25,7 +25,7 @@ class Zlib(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
 
         # do compression
         return _zlib.compress(buf, self.level)
@@ -34,7 +34,7 @@ class Zlib(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
 
         # do decompression
         dec = _zlib.decompress(buf)

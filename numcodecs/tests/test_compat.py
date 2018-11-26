@@ -8,7 +8,8 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, PY2
+from numcodecs.compat import (ensure_bytes, ensure_c_contiguous_ndarray, PY2,
+                              ensure_contiguous_ndarray)
 
 
 def test_ensure_bytes():
@@ -23,7 +24,7 @@ def test_ensure_bytes():
         assert isinstance(b, bytes)
 
 
-def test_ensure_contiguous_ndarray_shares_memory():
+def test_ensure_c_contiguous_ndarray_shares_memory():
     typed_bufs = [
         ('u', 1, b'adsdasdas'),
         ('u', 1, bytes(20)),
@@ -36,7 +37,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('u', 1, mmap.mmap(-1, 10))
     ]
     for typ, siz, buf in typed_bufs:
-        a = ensure_contiguous_ndarray(buf)
+        a = ensure_c_contiguous_ndarray(buf)
         assert isinstance(a, np.ndarray)
         if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
             # array.array does not expose buffer interface on PY2 so type information
@@ -51,23 +52,34 @@ def test_ensure_contiguous_ndarray_shares_memory():
             assert np.shares_memory(a, memoryview(buf))
 
 
-def test_ensure_contiguous_ndarray_object_array_raises():
+def test_ensure_c_contiguous_ndarray_object_array_raises():
     a = np.array([u'Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(ValueError):
-            ensure_contiguous_ndarray(e)
-    with pytest.raises(TypeError):
-        ensure_contiguous_ndarray(a.tolist())
+            ensure_c_contiguous_ndarray(e)
 
 
-def test_ensure_contiguous_ndarray_memoryview_writable():
+def test_ensure_c_contiguous_ndarray_writable():
     for writeable in [False, True]:
         a = np.arange(100)
         a.setflags(write=writeable)
-        m = ensure_contiguous_ndarray(a)
+        m = ensure_c_contiguous_ndarray(a)
         assert m.flags.writeable == writeable
-        m = ensure_contiguous_ndarray(memoryview(a))
+        m = ensure_c_contiguous_ndarray(memoryview(a))
         assert m.flags.writeable == writeable
         if PY2:  # pragma: py3 no cover
-            m = ensure_contiguous_ndarray(np.getbuffer(a))
+            m = ensure_c_contiguous_ndarray(np.getbuffer(a))
             assert m.flags.writeable == writeable
+
+
+def test_ensure_c_contiguous_ndarray_allow_copy():
+    a = np.arange(100)[::2]
+    with pytest.raises(ValueError):
+        ensure_c_contiguous_ndarray(a)
+    b = ensure_c_contiguous_ndarray(a, allow_copy=True)
+    assert isinstance(b, np.ndarray)
+
+
+def test_ensure_contiguous_ndarray():
+    with pytest.raises(ValueError):
+        ensure_contiguous_ndarray(np.arange(100)[::2])

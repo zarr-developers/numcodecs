@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import memory_copy, ensure_contiguous_ndarray
+from .compat import memory_copy, ensure_c_contiguous_ndarray
 
 
 class GZip(Codec):
@@ -26,7 +26,7 @@ class GZip(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
         buf = memoryview(buf)  # needed on PY2 for unknown reasons
 
         # do compression
@@ -43,7 +43,7 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
 
         # do decompression
         buf = io.BytesIO(buf)

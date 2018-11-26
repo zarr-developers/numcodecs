@@ -4,7 +4,7 @@ import bz2 as _bz2
 
 
 from numcodecs.abc import Codec
-from numcodecs.compat import memory_copy, ensure_contiguous_ndarray
+from numcodecs.compat import memory_copy, ensure_c_contiguous_ndarray
 
 
 class BZ2(Codec):
@@ -25,7 +25,7 @@ class BZ2(Codec):
     def encode(self, buf):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
 
         # do compression
         return _bz2.compress(buf, self.level)
@@ -34,7 +34,7 @@ class BZ2(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_c_contiguous_ndarray(buf)
         # N.B., bz2 cannot handle ndarray directly because of truth testing issues
         buf = memoryview(buf)
 
