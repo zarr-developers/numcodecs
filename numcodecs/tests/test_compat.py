@@ -33,18 +33,14 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('u', 4, array.array('I', b'qwertyuiqwertyui')),
         ('f', 4, array.array('f', b'qwertyuiqwertyui')),
         ('f', 8, array.array('d', b'qwertyuiqwertyui')),
+        ('U', 4, array.array('u', u'qwertyuiqwertyui')),
         ('u', 1, mmap.mmap(-1, 10))
     ]
     for typ, siz, buf in typed_bufs:
         a = ensure_contiguous_ndarray(buf)
         assert isinstance(a, np.ndarray)
-        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
-            # array.array does not expose buffer interface on PY2 so type information
-            # is not propagated correctly, so skip comparison of type and itemsize
-            pass
-        else:
-            assert a.dtype.kind == typ
-            assert a.dtype.itemsize == siz
+        assert typ == a.dtype.kind
+        assert siz == a.dtype.itemsize
         if PY2:  # pragma: py3 no cover
             assert np.shares_memory(a, np.getbuffer(buf))
         else:  # pragma: py2 no cover

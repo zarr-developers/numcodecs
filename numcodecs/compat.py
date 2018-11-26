@@ -2,6 +2,7 @@
 # flake8: noqa
 from __future__ import absolute_import, print_function, division
 import sys
+import array
 
 
 import numpy as np
@@ -32,44 +33,58 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_contiguous_ndarray(o):
+def ensure_contiguous_ndarray(buf):
     """TODO"""
 
-    if not isinstance(o, np.ndarray):
+    if not isinstance(buf, np.ndarray):
 
         # make that we create an array from a memory buffer with no copy
 
         if PY2:  # pragma: py3 no cover
             try:
-                o = memoryview(o)
+                mem = memoryview(buf)
             except TypeError:
                 # on PY2 also check if object exports old-style buffer interface
-                o = np.getbuffer(o)
+                mem = np.getbuffer(buf)
 
         else:  # pragma: py2 no cover
-            o = memoryview(o)
+            mem = memoryview(buf)
 
-        o = np.array(o, copy=False)
+        arr = np.array(mem, copy=False)
+
+        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
+
+            # type information will not have been propagated via the old-style buffer
+            # interface, so we have to manually hack it after the fact
+            if buf.typecode == 'u':
+                t = 'U1'
+            else:
+                t = buf.typecode
+            arr = arr.view(t)
+
+    else:
+
+        arr = buf
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
-    if o.dtype == object:
+    if arr.dtype == object:
         raise ValueError('object arrays are not supported')
 
     # check for datetime or timedelta ndarray, cannot take a memoryview of those
-    if o.dtype.kind in 'Mm':
-        o = o.view(np.int64)
+    if arr.dtype.kind in 'Mm':
+        arr = arr.view(np.int64)
 
     # check memory is contiguous, if so flatten
-    if o.flags.c_contiguous or o.flags.f_contiguous:
+    if arr.flags.c_contiguous or arr.flags.f_contiguous:
 
         # can flatten without copy
-        o = o.reshape(-1, order='A')
+        arr = arr.reshape(-1, order='A')
 
     else:
         raise ValueError('an array with contiguous memory is required')
 
-    return o
+    return arr
 
 
 def ensure_bytes(o):
