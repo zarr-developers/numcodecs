@@ -5,19 +5,19 @@
     "distutils": {
         "depends": [
             "numcodecs/stdint_compat.h"
-        ], 
+        ],
         "extra_compile_args": [
-            "-msse2", 
+            "-msse2",
             "-mavx2"
-        ], 
+        ],
         "include_dirs": [
             "numcodecs"
-        ], 
-        "name": "numcodecs.vlen", 
+        ],
+        "name": "numcodecs.vlen",
         "sources": [
             "numcodecs/vlen.pyx"
         ]
-    }, 
+    },
     "module_name": "numcodecs.vlen"
 }
 END: Cython Metadata */
@@ -843,9 +843,9 @@ static const char *__pyx_f[] = {
   "numcodecs/vlen.pyx",
   "stringsource",
   "numcodecs/compat_ext.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/type.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/bool.pxd",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/complex.pxd",
+  "type.pxd",
+  "bool.pxd",
+  "complex.pxd",
 };
 /* MemviewSliceStruct.proto */
 struct __pyx_memoryview_obj;

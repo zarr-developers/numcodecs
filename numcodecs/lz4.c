@@ -4,24 +4,24 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.h", 
+            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.h",
             "numcodecs/stdint_compat.h"
-        ], 
+        ],
         "extra_compile_args": [
-            "-msse2", 
+            "-msse2",
             "-mavx2"
-        ], 
+        ],
         "include_dirs": [
-            "numcodecs", 
+            "numcodecs",
             "c-blosc/internal-complibs/lz4-1.8.1.2"
-        ], 
-        "name": "numcodecs.lz4", 
+        ],
+        "name": "numcodecs.lz4",
         "sources": [
-            "numcodecs/lz4.pyx", 
-            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.c", 
+            "numcodecs/lz4.pyx",
+            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.c",
             "c-blosc/internal-complibs/lz4-1.8.1.2/lz4hc.c"
         ]
-    }, 
+    },
     "module_name": "numcodecs.lz4"
 }
 END: Cython Metadata */
@@ -843,7 +843,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/lz4.pyx",
-  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/type.pxd",
+  "type.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */
