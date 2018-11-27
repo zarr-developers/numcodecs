@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import memory_copy, ensure_contiguous_ndarray
+from .compat import ndarray_copy, ensure_contiguous_ndarray
 
 
 class GZip(Codec):
@@ -44,6 +44,8 @@ class GZip(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
+        if out is not None:
+            out = ensure_contiguous_ndarray(out)
 
         # do decompression
         buf = io.BytesIO(buf)
@@ -53,4 +55,4 @@ class GZip(Codec):
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return memory_copy(decompressed, out)
+        return ndarray_copy(decompressed, out)

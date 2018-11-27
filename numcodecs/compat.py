@@ -33,12 +33,17 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_contiguous_ndarray(buf):
+def ensure_ndarray(buf, dtype=None):
     """TODO"""
 
-    if not isinstance(buf, np.ndarray):
+    # make that we create an array from a memory buffer with no copy
 
-        # make that we create an array from a memory buffer with no copy
+    if isinstance(buf, np.ndarray):
+
+        # already a numpy array
+        arr = buf
+
+    else:
 
         if PY2:  # pragma: py3 no cover
             try:
@@ -50,6 +55,7 @@ def ensure_contiguous_ndarray(buf):
         else:  # pragma: py2 no cover
             mem = memoryview(buf)
 
+        # instantiate array from memoryview, ensures no copy
         arr = np.array(mem, copy=False)
 
         if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
@@ -62,18 +68,28 @@ def ensure_contiguous_ndarray(buf):
                 t = buf.typecode
             arr = arr.view(t)
 
-    else:
+    if dtype is not None:
 
-        arr = buf
+        # view as requested dtype
+        arr = arr.view(dtype)
+
+    return arr
+
+
+def ensure_contiguous_ndarray(buf, dtype=None):
+    """TODO"""
+
+    # ensure input is a numpy array
+    arr = ensure_ndarray(buf, dtype=dtype)
+
+    # check for datetime or timedelta ndarray, cannot take a memoryview of those
+    if isinstance(buf, np.ndarray) and buf.dtype.kind in 'Mm':
+        arr = arr.view(np.int64)
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
     if arr.dtype == object:
-        raise ValueError('object arrays are not supported')
-
-    # check for datetime or timedelta ndarray, cannot take a memoryview of those
-    if arr.dtype.kind in 'Mm':
-        arr = arr.view(np.int64)
+        raise TypeError('object arrays are not supported')
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
@@ -101,21 +117,31 @@ def ensure_bytes(o):
     return o
 
 
-def memory_copy(buf, out):
-    """Copy the contents of the memory buffer from `buf` to `out`."""
+def ndarray_copy(src, dst):
+    """Copy the contents of the array from `src` to `dst`."""
 
-    if out is None:
+    if dst is None:
         # no-op
-        return buf
+        return src
 
-    # ensure ndarrays viewing memory
-    buf = ensure_contiguous_ndarray(buf)
-    out = ensure_contiguous_ndarray(out)
+    # ensure ndarrays
+    src = ensure_ndarray(src)
+    dst = ensure_ndarray(dst)
 
-    # ensure same data type, required for copy
-    buf = buf.view(out.dtype)
+    # ensure same data type
+    if dst.dtype != object:
+        src = src.view(dst.dtype)
+
+    # reshape source to match destination
+    src = src.reshape(-1, order='A')
+    if src.shape != dst.shape:
+        if dst.flags.f_contiguous:
+            order = 'F'
+        else:
+            order = 'C'
+        src = src.reshape(dst.shape, order=order)
 
     # copy via numpy
-    np.copyto(out, buf)
+    np.copyto(dst, src)
 
-    return out
+    return dst

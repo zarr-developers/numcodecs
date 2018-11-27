@@ -4,7 +4,7 @@ import zlib as _zlib
 
 
 from .abc import Codec
-from .compat import memory_copy, ensure_contiguous_ndarray
+from .compat import ndarray_copy, ensure_contiguous_ndarray
 
 
 class Zlib(Codec):
@@ -35,6 +35,8 @@ class Zlib(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
+        if out is not None:
+            out = ensure_contiguous_ndarray(out)
 
         # do decompression
         dec = _zlib.decompress(buf)
@@ -42,4 +44,4 @@ class Zlib(Codec):
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return memory_copy(dec, out)
+        return ndarray_copy(dec, out)

@@ -3,14 +3,12 @@
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
+# cython: language_level=2
 from __future__ import absolute_import, print_function, division
-import sys
-from cpython cimport array
-import array
 from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release
 
 
-PY2 = sys.version_info[0] == 2
+from .compat import ensure_contiguous_ndarray
 
 
 cdef class Buffer:
@@ -18,29 +16,17 @@ cdef class Buffer:
     new-style buffer interface in PY2."""
 
     def __cinit__(self, obj, flags):
-        self.released = False
-        if hasattr(obj, 'dtype'):
-            if obj.dtype.kind in 'Mm':
-                obj = obj.view('i8')
-            elif obj.dtype.kind == 'O':
-                raise ValueError('cannot obtain buffer from object array')
-        if PY2 and isinstance(obj, array.array):
-            self.new_buffer = False
-            self.arr = obj
-            self.ptr = <char *> self.arr.data.as_voidptr
-            self.itemsize = self.arr.itemsize
-            self.nbytes = self.arr.buffer_info()[1] * self.itemsize
-        else:
-            self.new_buffer = True
-            PyObject_GetBuffer(obj, &(self.buffer), flags)
-            self.ptr = <char *> self.buffer.buf
-            self.itemsize = self.buffer.itemsize
-            self.nbytes = self.buffer.len
+        arr = ensure_contiguous_ndarray(obj)
+        PyObject_GetBuffer(arr, &(self.buffer), flags)
+        self.acquired = True
+        self.ptr = <char *> self.buffer.buf
+        self.itemsize = self.buffer.itemsize
+        self.nbytes = self.buffer.len
 
     cpdef release(self):
-        if self.new_buffer and not self.released:
+        if self.acquired:
             PyBuffer_Release(&(self.buffer))
-            self.released = True
+            self.acquired = False
 
     def __dealloc__(self):
         self.release()

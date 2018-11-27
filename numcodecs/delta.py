@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ensure_contiguous_ndarray, memory_copy
+from .compat import ensure_ndarray, ndarray_copy
 
 
 class Delta(Codec):
@@ -56,8 +56,11 @@ class Delta(Codec):
 
     def encode(self, buf):
 
-        # view input data as 1D array
-        arr = ensure_contiguous_ndarray(buf).view(self.dtype)
+        # normalise input
+        arr = ensure_ndarray(buf, dtype=self.dtype)
+
+        # flatten to simplify implementation
+        arr = arr.reshape(-1, order='A')
 
         # setup encoded output
         enc = np.empty_like(arr, dtype=self.astype)
@@ -72,8 +75,11 @@ class Delta(Codec):
 
     def decode(self, buf, out=None):
 
-        # view encoded data as 1D array
-        enc = ensure_contiguous_ndarray(buf).view(self.astype)
+        # normalise input
+        enc = ensure_ndarray(buf, dtype=self.astype)
+
+        # flatten to simplify implementation
+        enc = enc.reshape(-1, order='A')
 
         # setup decoded output
         dec = np.empty_like(enc, dtype=self.dtype)
@@ -82,7 +88,7 @@ class Delta(Codec):
         np.cumsum(enc, out=dec)
 
         # handle output
-        out = memory_copy(dec, out)
+        out = ndarray_copy(dec, out)
 
         return out
 

@@ -52,7 +52,7 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
     # object array not allowed
     a = np.array([u'Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             ensure_contiguous_ndarray(e)
 
     # non-contiguous arrays not allowed

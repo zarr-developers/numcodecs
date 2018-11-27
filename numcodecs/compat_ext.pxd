@@ -1,5 +1,4 @@
-from cpython cimport array
-import array
+# cython: language_level=2
 
 
 cdef class Buffer:
@@ -8,8 +7,6 @@ cdef class Buffer:
         Py_buffer buffer
         size_t nbytes
         size_t itemsize
-        array.array arr
-        bint new_buffer
-        bint released
+        bint acquired
 
     cpdef release(self)

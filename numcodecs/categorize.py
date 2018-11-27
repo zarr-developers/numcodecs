@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 
 
 from .abc import Codec
-from .compat import ensure_contiguous_ndarray, memory_copy, ensure_text
+from .compat import ensure_ndarray, ndarray_copy, ensure_text
 
 
 import numpy as np
@@ -49,14 +49,19 @@ class Categorize(Codec):
                              "supported")
         self.labels = [ensure_text(l) for l in labels]
         self.astype = np.dtype(astype)
+        if self.astype == object:
+            raise ValueError('encoding as object array not supported')
 
     def encode(self, buf):
 
-        # view input as ndarray
+        # normalise input
         if self.dtype == object:
-            arr = np.asarray(buf, dtype=object).reshape(-1, order='A')
+            arr = np.asanyarray(buf, dtype=object)
         else:
-            arr = ensure_contiguous_ndarray(buf).view(self.dtype)
+            arr = ensure_ndarray(buf, dtype=self.dtype)
+
+        # flatten to simplify implementation
+        arr = arr.reshape(-1, order='A')
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -69,8 +74,11 @@ class Categorize(Codec):
 
     def decode(self, buf, out=None):
 
-        # view input as ndarray
-        enc = ensure_contiguous_ndarray(buf).view(self.astype)
+        # normalise input
+        enc = ensure_ndarray(buf, dtype=self.astype)
+
+        # flatten to simplify implementation
+        enc = enc.reshape(-1, order='A')
 
         # setup output
         dec = np.full_like(enc, fill_value=u'', dtype=self.dtype)
@@ -80,7 +88,7 @@ class Categorize(Codec):
             dec[enc == (i + 1)] = l
 
         # handle output
-        dec = memory_copy(dec, out)
+        dec = ndarray_copy(dec, out)
 
         return dec
 

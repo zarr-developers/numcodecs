@@ -244,12 +244,12 @@ def check_err_decode_object_buffer(compressor):
     a = np.arange(10)
     enc = compressor.encode(a)
     out = np.empty(10, dtype=object)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         compressor.decode(enc, out=out)
 
 
 def check_err_encode_object_buffer(compressor):
     # compressors cannot encode object array
     a = np.array(['foo', 'bar', 'baz'], dtype=object)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         compressor.encode(a)
