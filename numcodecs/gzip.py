@@ -29,6 +29,7 @@ class GZip(Codec):
         buf = ensure_contiguous_ndarray(buf)
         if PY2:  # pragma: py3 no cover
             # view as u1 needed on PY2
+            # ref: https://github.com/zarr-developers/numcodecs/pull/128#discussion_r236786466
             buf = buf.view('u1')
 
         # do compression
