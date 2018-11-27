@@ -30,7 +30,7 @@ other and vice versa.
 
 """
 from __future__ import absolute_import, print_function, division
-from numcodecs.compat import handle_datetime
+from numcodecs.compat import ensure_ndarray
 
 
 class Codec(object):
@@ -46,8 +46,7 @@ class Codec(object):
     """Maximum size of a buffer that can be encoded or decoded."""
 
     def _check_buffer_size(self, buf):
-        buf = handle_datetime(buf)
-        bufsize = memoryview(buf).nbytes
+        bufsize = ensure_ndarray(buf).nbytes
         if bufsize > self.max_buffer_size:
             msg = "{} codec does not support buffers of > {} bytes".format(
                 self.codec_id, self.max_buffer_size)
