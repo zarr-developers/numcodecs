@@ -34,16 +34,41 @@ def ensure_text(l, encoding='utf-8'):
 
 
 def ensure_ndarray(buf, dtype=None):
-    """TODO"""
+    """Convenience function to coerce `buf` to a numpy array, if it is not already a
+    numpy array.
 
-    # make that we create an array from a memory buffer with no copy
+    Parameters
+    ----------
+    buf : array-like or bytes-like
+        A numpy array or any object exporting a buffer interface.
+    dtype : dtype, optional
+        Request that the data be viewed as the given dtype.
+
+    Returns
+    -------
+    arr : ndarray
+        A numpy array, sharing memory with `buf`.
+
+    Notes
+    -----
+    This function will not create a copy under any circumstances, it is guaranteed to
+    return a view on memory exported by `buf`.
+
+    """
 
     if isinstance(buf, np.ndarray):
-
         # already a numpy array
         arr = buf
 
+    elif isinstance(buf, array.array) and buf.typecode == 'u':
+        # guard condition, do not support array.array with unicode type, this is
+        # problematic because numpy does not support it on all platforms
+        raise TypeError('array.array with unicode type is not supported')
+
     else:
+
+        # N.B., first take a memoryview to make sure that we subsequently create a
+        # numpy array from a memory buffer with no copy
 
         if PY2:  # pragma: py3 no cover
             try:
@@ -59,17 +84,11 @@ def ensure_ndarray(buf, dtype=None):
         arr = np.array(mem, copy=False)
 
         if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
-
             # type information will not have been propagated via the old-style buffer
-            # interface, so we have to manually hack it after the fact
-            if buf.typecode == 'u':
-                t = 'U1'
-            else:
-                t = buf.typecode
-            arr = arr.view(t)
+            # interface, so we have to manually hack it back in after the fact
+            arr = arr.view(buf.typecode)
 
     if dtype is not None:
-
         # view as requested dtype
         arr = arr.view(dtype)
 
@@ -77,12 +96,33 @@ def ensure_ndarray(buf, dtype=None):
 
 
 def ensure_contiguous_ndarray(buf, dtype=None):
-    """TODO"""
+    """Convenience function to coerce `buf` to a numpy array, if it is not already a
+    numpy array. Also ensures that the returned value exports fully contiguous memory,
+    and supports the new-style buffer interface.
+
+    Parameters
+    ----------
+    buf : array-like or bytes-like
+        A numpy array or any object exporting a buffer interface.
+    dtype : dtype, optional
+        Request that the data be viewed as the given dtype.
+
+    Returns
+    -------
+    arr : ndarray
+        A numpy array, sharing memory with `buf`.
+
+    Notes
+    -----
+    This function will not create a copy under any circumstances, it is guaranteed to
+    return a view on memory exported by `buf`.
+
+    """
 
     # ensure input is a numpy array
     arr = ensure_ndarray(buf, dtype=dtype)
 
-    # check for datetime or timedelta ndarray, cannot take a memoryview of those
+    # check for datetime or timedelta ndarray, the buffer interface doesn't support those
     if isinstance(buf, np.ndarray) and buf.dtype.kind in 'Mm':
         arr = arr.view(np.int64)
 
@@ -93,7 +133,6 @@ def ensure_contiguous_ndarray(buf, dtype=None):
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
-
         # can flatten without copy
         arr = arr.reshape(-1, order='A')
 
@@ -103,18 +142,18 @@ def ensure_contiguous_ndarray(buf, dtype=None):
     return arr
 
 
-def ensure_bytes(o):
-    """Obtain a bytes object from memory exposed by `o`."""
+def ensure_bytes(buf):
+    """Obtain a bytes object from memory exposed by `buf`."""
 
-    if not isinstance(o, binary_type):
+    if not isinstance(buf, binary_type):
 
         # go via numpy, for convenience
-        a = ensure_contiguous_ndarray(o)
+        arr = ensure_ndarray(buf)
 
         # create bytes
-        o = a.tobytes()
+        buf = arr.tobytes(order='A')
 
-    return o
+    return buf
 
 
 def ndarray_copy(src, dst):

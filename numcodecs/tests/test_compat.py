@@ -33,14 +33,22 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('u', 4, array.array('I', b'qwertyuiqwertyui')),
         ('f', 4, array.array('f', b'qwertyuiqwertyui')),
         ('f', 8, array.array('d', b'qwertyuiqwertyui')),
-        ('U', 4, array.array('u', u'qwertyuiqwertyui')),
+        ('i', 1, array.array('b', b'qwertyuiqwertyui')),
+        ('u', 1, array.array('B', b'qwertyuiqwertyui')),
         ('u', 1, mmap.mmap(-1, 10))
     ]
-    for typ, siz, buf in typed_bufs:
+    if PY2:  # pragma: py3 no cover
+        typed_bufs.append(
+            ('S', 1, array.array('c', b'qwertyuiqwertyui')),
+        )
+    for expected_kind, expected_itemsize, buf in typed_bufs:
         a = ensure_contiguous_ndarray(buf)
         assert isinstance(a, np.ndarray)
-        assert typ == a.dtype.kind
-        assert siz == a.dtype.itemsize
+        assert expected_kind == a.dtype.kind
+        if isinstance(buf, array.array):
+            assert buf.itemsize == a.dtype.itemsize
+        else:
+            assert expected_itemsize == a.dtype.itemsize
         if PY2:  # pragma: py3 no cover
             assert np.shares_memory(a, np.getbuffer(buf))
         else:  # pragma: py2 no cover
@@ -59,8 +67,13 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
     with pytest.raises(ValueError):
         ensure_contiguous_ndarray(np.arange(100)[::2])
 
+    # unicode array.array not allowed
+    a = array.array('u', u'qwertyuiqwertyui')
+    with pytest.raises(TypeError):
+        ensure_contiguous_ndarray(a)
 
-def test_ensure_contiguous_ndarray_writable():
+
+def test_ensure_contiguous_ndarray_writeable():
     # check that the writeability of the underlying buffer is preserved
     for writeable in [False, True]:
         a = np.arange(100)
