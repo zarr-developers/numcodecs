@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy, ensure_text
+from .compat import ensure_ndarray, ndarray_copy, ensure_text
 
 
 import numpy as np
@@ -45,15 +45,23 @@ class Categorize(Codec):
     def __init__(self, labels, dtype, astype='u1'):
         self.dtype = np.dtype(dtype)
         if self.dtype.kind not in 'UO':
-            raise ValueError("only unicode ('U') and object ('O') dtypes are "
-                             "supported")
+            raise TypeError("only unicode ('U') and object ('O') dtypes are "
+                            "supported")
         self.labels = [ensure_text(l) for l in labels]
         self.astype = np.dtype(astype)
+        if self.astype == object:
+            raise TypeError('encoding as object array not supported')
 
     def encode(self, buf):
 
-        # view input as ndarray
-        arr = ndarray_from_buffer(buf, self.dtype)
+        # normalise input
+        if self.dtype == object:
+            arr = np.asarray(buf, dtype=object)
+        else:
+            arr = ensure_ndarray(buf).view(self.dtype)
+
+        # flatten to simplify implementation
+        arr = arr.reshape(-1, order='A')
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -66,25 +74,21 @@ class Categorize(Codec):
 
     def decode(self, buf, out=None):
 
-        # view encoded data as ndarray
-        enc = ndarray_from_buffer(buf, self.astype)
+        # normalise input
+        enc = ensure_ndarray(buf).view(self.astype)
+
+        # flatten to simplify implementation
+        enc = enc.reshape(-1, order='A')
 
         # setup output
-        if isinstance(out, np.ndarray):
-            # optimization, decode directly to output
-            dec = out.reshape(-1, order='A')
-            copy_needed = False
-        else:
-            dec = np.full_like(enc, fill_value=u'', dtype=self.dtype)
-            copy_needed = True
+        dec = np.full_like(enc, fill_value=u'', dtype=self.dtype)
 
         # apply decoding
         for i, l in enumerate(self.labels):
             dec[enc == (i + 1)] = l
 
         # handle output
-        if copy_needed:
-            dec = buffer_copy(dec, out)
+        dec = ndarray_copy(dec, out)
 
         return dec
 

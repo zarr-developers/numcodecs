@@ -3,6 +3,7 @@
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
+# cython: language_level=2
 from __future__ import absolute_import, print_function, division
 import threading
 import multiprocessing
@@ -76,8 +77,10 @@ AUTOSHUFFLE = -1
 AUTOBLOCKS = 0
 
 # synchronization
-mutex = multiprocessing.Lock()
-
+try:
+    mutex = multiprocessing.Lock()
+except OSError:
+    mutex = None
 
 # store ID of process that first loads the module, so we can detect a fork later
 _importer_pid = os.getpid()
@@ -404,6 +407,10 @@ use_threads = None
 def _get_use_threads():
     global use_threads
     proc = multiprocessing.current_process()
+
+    # check if locks are available, and if not no threads
+    if not mutex:
+        return False
 
     # check for fork
     if proc.pid != _importer_pid:

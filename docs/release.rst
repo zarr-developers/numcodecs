@@ -18,7 +18,29 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
-* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by :user:`Anand S <anandtrex>`)
+* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by 
+  :user:`Anand S <anandtrex>`; :issue:`82`).
+
+* Allow :class:`Blosc` compressor to run on systems where locks are not present (by
+  :user:`Marcus Kinsella <mckinsel>`, :issue:`83`; and :user:`Tom White <tomwhite>`,
+  :issue:`93`).
+
+* Drop Python 3.4 (by :user:`John Kirkham <jakirkham>`; :issue:`89`).
+
+* Add Python 3.7 (by :user:`John Kirkham <jakirkham>`; :issue:`92`).
+
+* Add codec :class:`numcodecs.gzip.GZip` to replace ``gzip`` alias for ``zlib``,
+  which was incorrect (by :user:`Jan Funke <funkey>`; :issue:`87`).
+
+* Corrects handling of ``NaT`` in ``datetime64`` and ``timedelta64`` in various
+  compressors (by :user:`John Kirkham <jakirkham>`; :issue:`127`, :issue:`131`).
+
+* Improvements to the compatibility layer used for normalising inputs to encode
+  and decode methods in most codecs. This removes unnecessary memory copies for
+  some codecs, and also simplifies the implementation of some codecs, improving
+  code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
+  :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
+
 
 .. _release_0.5.5:
 
@@ -55,7 +77,7 @@ Release notes
 
 * Add support for encoding None values in VLen... codecs (:issue:`59`).
 
- 
+
 .. _release_0.5.1:
 
 0.5.1

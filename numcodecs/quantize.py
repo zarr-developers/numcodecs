@@ -7,7 +7,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy
+from .compat import ensure_ndarray, ndarray_copy
 
 
 class Quantize(Codec):
@@ -28,20 +28,20 @@ class Quantize(Codec):
     >>> import numpy as np
     >>> x = np.linspace(0, 1, 10, dtype='f8')
     >>> x
-    array([ 0.        ,  0.11111111,  0.22222222,  0.33333333,  0.44444444,
-            0.55555556,  0.66666667,  0.77777778,  0.88888889,  1.        ])
+    array([0.        , 0.11111111, 0.22222222, 0.33333333, 0.44444444,
+           0.55555556, 0.66666667, 0.77777778, 0.88888889, 1.        ])
     >>> codec = numcodecs.Quantize(digits=1, dtype='f8')
     >>> codec.encode(x)
-    array([ 0.    ,  0.125 ,  0.25  ,  0.3125,  0.4375,  0.5625,  0.6875,
-            0.75  ,  0.875 ,  1.    ])
+    array([0.    , 0.125 , 0.25  , 0.3125, 0.4375, 0.5625, 0.6875,
+           0.75  , 0.875 , 1.    ])
     >>> codec = numcodecs.Quantize(digits=2, dtype='f8')
     >>> codec.encode(x)
-    array([ 0.       ,  0.109375 ,  0.21875  ,  0.3359375,  0.4453125,
-            0.5546875,  0.6640625,  0.78125  ,  0.890625 ,  1.       ])
+    array([0.       , 0.109375 , 0.21875  , 0.3359375, 0.4453125,
+           0.5546875, 0.6640625, 0.78125  , 0.890625 , 1.       ])
     >>> codec = numcodecs.Quantize(digits=3, dtype='f8')
     >>> codec.encode(x)
-    array([ 0.        ,  0.11132812,  0.22265625,  0.33300781,  0.44433594,
-            0.55566406,  0.66699219,  0.77734375,  0.88867188,  1.        ])
+    array([0.        , 0.11132812, 0.22265625, 0.33300781, 0.44433594,
+           0.55566406, 0.66699219, 0.77734375, 0.88867188, 1.        ])
 
     See Also
     --------
@@ -63,8 +63,8 @@ class Quantize(Codec):
 
     def encode(self, buf):
 
-        # interpret buffer as 1D array
-        arr = ndarray_from_buffer(buf, self.dtype)
+        # normalise input
+        arr = ensure_ndarray(buf).view(self.dtype)
 
         # apply scaling
         precision = 10. ** -self.digits
@@ -84,9 +84,9 @@ class Quantize(Codec):
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
-        dec = ndarray_from_buffer(buf, self.astype)
+        dec = ensure_ndarray(buf).view(self.astype)
         dec = dec.astype(self.dtype, copy=False)
-        return buffer_copy(dec, out)
+        return ndarray_copy(dec, out)
 
     def get_config(self):
         # override to handle encoding dtypes

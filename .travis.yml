@@ -11,15 +11,17 @@ addons:
     packages:
       - liblzma-dev
 
-python:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
+matrix:
+  include:
+    - python: 2.7
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
+      dist: xenial
+      sudo: true
 
 install:
   - pip install -U tox-travis coveralls pip setuptools wheel
-  - pip install -r requirements_dev.txt
   - python setup.py build_ext --inplace
 
 script:

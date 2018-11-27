@@ -40,7 +40,7 @@ architecture::
 
 To work with Numcodecs source code in development, install from GitHub::
 
-    $ git clone --recursive https://github.com/alimanfoo/numcodecs.git
+    $ git clone --recursive https://github.com/zarr-developers/numcodecs.git
     $ cd numcodecs
     $ python setup.py install
 
@@ -62,6 +62,7 @@ Contents
     lz4
     zstd
     zlib
+    gzip
     bz2
     lzma
     delta

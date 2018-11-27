@@ -4,10 +4,10 @@ import itertools
 
 
 import numpy as np
+import pytest
 
 
 from numcodecs.zlib import Zlib
-from numcodecs.registry import get_codec
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
@@ -37,6 +37,10 @@ arrays = [
     np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
+    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[ns]'),
+    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[ns]'),
+    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[m]'),
+    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
 
@@ -52,12 +56,6 @@ def test_config():
 
 def test_repr():
     check_repr("Zlib(level=3)")
-
-
-def test_alias():
-    config = dict(id='gzip', level=1)
-    codec = get_codec(config)
-    assert Zlib(1) == codec
 
 
 def test_eq():
@@ -80,3 +78,18 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Zlib())
+
+
+def test_err_encode_list():
+    data = ['foo', 'bar', 'baz']
+    for codec in codecs:
+        with pytest.raises(TypeError):
+            codec.encode(data)
+
+
+def test_err_encode_non_contiguous():
+    # non-contiguous memory
+    arr = np.arange(1000, dtype='i4')[::2]
+    for codec in codecs:
+        with pytest.raises(ValueError):
+            codec.encode(arr)

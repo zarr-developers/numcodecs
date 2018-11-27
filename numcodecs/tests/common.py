@@ -11,8 +11,10 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
 
 
-from numcodecs.compat import buffer_tobytes, ndarray_from_buffer
-from numcodecs import *  # flake8: noqa
+from numcodecs.compat import ensure_bytes, ensure_ndarray
+from numcodecs.registry import get_codec
+# star import needed for repr tests so eval finds names
+from numcodecs import *  # noqa
 
 
 greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!',
@@ -23,11 +25,8 @@ greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!
 
 def compare_arrays(arr, res, precision=None):
 
-    # ensure numpy array
-    if not isinstance(res, np.ndarray):
-        res = ndarray_from_buffer(res, dtype=arr.dtype)
-    elif res.dtype != arr.dtype:
-        res = res.view(arr.dtype)
+    # ensure numpy array with matching dtype
+    res = ensure_ndarray(res).view(arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:
@@ -84,7 +83,7 @@ def check_encode_decode(arr, codec, precision=None):
     # as well as array.array in PY2
 
     # setup
-    enc_bytes = buffer_tobytes(enc)
+    enc_bytes = ensure_bytes(enc)
 
     # test decoding of raw bytes
     dec = codec.decode(enc_bytes)
@@ -185,7 +184,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
         # setup
         i = int(arr_fn.split('.')[-2])
         arr = np.load(arr_fn)
-        arr_bytes = buffer_tobytes(arr)
+        arr_bytes = arr.tobytes(order='A')
         if arr.flags.f_contiguous:
             order = 'F'
         else:
@@ -223,15 +222,18 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             with open(enc_fn, mode='rb') as ef:
                 enc = ef.read()
                 dec = codec.decode(enc)
-                dec_arr = ndarray_from_buffer(dec, dtype=arr.dtype)
-                dec_arr = dec_arr.reshape(arr.shape, order=order)
+                if isinstance(dec, np.ndarray):
+                    dec_arr = dec.reshape(-1, order='A')
+                else:
+                    dec_arr = ensure_ndarray(dec)
+                dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])
                 elif arr.dtype == 'object':
                     assert_array_items_equal(arr, dec_arr)
                 else:
                     assert_array_equal(arr, dec_arr)
-                    assert arr_bytes == buffer_tobytes(dec)
+                    assert arr_bytes == ensure_bytes(dec)
 
 
 def check_err_decode_object_buffer(compressor):
@@ -239,12 +241,12 @@ def check_err_decode_object_buffer(compressor):
     a = np.arange(10)
     enc = compressor.encode(a)
     out = np.empty(10, dtype=object)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         compressor.decode(enc, out=out)
 
 
 def check_err_encode_object_buffer(compressor):
     # compressors cannot encode object array
     a = np.array(['foo', 'bar', 'baz'], dtype=object)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         compressor.encode(a)
