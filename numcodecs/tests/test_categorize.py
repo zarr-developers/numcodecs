@@ -97,5 +97,7 @@ def test_backwards_compatibility():
 
 
 def test_errors():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         Categorize(labels=['foo', 'bar'], dtype='S6')
+    with pytest.raises(TypeError)
+        Categorize(labels=['foo', 'bar'], dtype='U6', astype=object)

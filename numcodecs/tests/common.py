@@ -11,7 +11,7 @@ from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
 
 
-from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
+from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
 # star import needed for repr tests so eval finds names
 from numcodecs import *  # noqa
@@ -26,10 +26,7 @@ greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!
 def compare_arrays(arr, res, precision=None):
 
     # ensure numpy array with matching dtype
-    if arr.dtype == object:
-        res = np.asanyarray(res, dtype=object)
-    else:
-        res = ensure_contiguous_ndarray(res).view(arr.dtype)
+    res = ensure_ndarray(res, dtype=arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:
