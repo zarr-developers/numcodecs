@@ -3,16 +3,16 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [],
+        "depends": [], 
         "extra_compile_args": [
-            "-msse2",
+            "-msse2", 
             "-mavx2"
-        ],
-        "name": "numcodecs.compat_ext",
+        ], 
+        "name": "numcodecs.compat_ext", 
         "sources": [
             "numcodecs/compat_ext.pyx"
         ]
-    },
+    }, 
     "module_name": "numcodecs.compat_ext"
 }
 END: Cython Metadata */

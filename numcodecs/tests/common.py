@@ -26,7 +26,7 @@ greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!
 def compare_arrays(arr, res, precision=None):
 
     # ensure numpy array with matching dtype
-    res = ensure_ndarray(res, dtype=arr.dtype)
+    res = ensure_ndarray(res).view(arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:

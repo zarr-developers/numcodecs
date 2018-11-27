@@ -37,10 +37,6 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('u', 1, array.array('B', b'qwertyuiqwertyui')),
         ('u', 1, mmap.mmap(-1, 10))
     ]
-    if PY2:  # pragma: py3 no cover
-        typed_bufs.append(
-            ('S', 1, array.array('c', b'qwertyuiqwertyui')),
-        )
     for expected_kind, expected_itemsize, buf in typed_bufs:
         a = ensure_contiguous_ndarray(buf)
         assert isinstance(a, np.ndarray)
@@ -71,6 +67,12 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
     a = array.array('u', u'qwertyuiqwertyui')
     with pytest.raises(TypeError):
         ensure_contiguous_ndarray(a)
+
+    if PY2:  # pragma: py3 no cover
+        # char array.array not allowed
+        a = array.array('c', b'qwertyuiqwertyui')
+        with pytest.raises(TypeError):
+            ensure_contiguous_ndarray(a)
 
 
 def test_ensure_contiguous_ndarray_writeable():

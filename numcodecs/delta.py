@@ -57,7 +57,7 @@ class Delta(Codec):
     def encode(self, buf):
 
         # normalise input
-        arr = ensure_ndarray(buf, dtype=self.dtype)
+        arr = ensure_ndarray(buf).view(self.dtype)
 
         # flatten to simplify implementation
         arr = arr.reshape(-1, order='A')
@@ -76,7 +76,7 @@ class Delta(Codec):
     def decode(self, buf, out=None):
 
         # normalise input
-        enc = ensure_ndarray(buf, dtype=self.astype)
+        enc = ensure_ndarray(buf).view(self.astype)
 
         # flatten to simplify implementation
         enc = enc.reshape(-1, order='A')

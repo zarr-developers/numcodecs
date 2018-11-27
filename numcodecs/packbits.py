@@ -40,7 +40,7 @@ class PackBits(Codec):
     def encode(self, buf):
 
         # normalise input
-        arr = ensure_ndarray(buf, dtype=bool)
+        arr = ensure_ndarray(buf).view(bool)
 
         # flatten to simplify implementation
         arr = arr.reshape(-1, order='A')
@@ -70,7 +70,7 @@ class PackBits(Codec):
     def decode(self, buf, out=None):
 
         # normalise input
-        enc = ensure_ndarray(buf, dtype='u1')
+        enc = ensure_ndarray(buf).view('u1')
 
         # flatten to simplify implementation
         enc = enc.reshape(-1, order='A')

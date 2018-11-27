@@ -33,7 +33,7 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_ndarray(buf, dtype=None):
+def ensure_ndarray(buf):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
 
@@ -41,8 +41,6 @@ def ensure_ndarray(buf, dtype=None):
     ----------
     buf : array-like or bytes-like
         A numpy array or any object exporting a buffer interface.
-    dtype : dtype, optional
-        Request that the data be viewed as the given dtype.
 
     Returns
     -------
@@ -60,10 +58,11 @@ def ensure_ndarray(buf, dtype=None):
         # already a numpy array
         arr = buf
 
-    elif isinstance(buf, array.array) and buf.typecode == 'u':
-        # guard condition, do not support array.array with unicode type, this is
-        # problematic because numpy does not support it on all platforms
-        raise TypeError('array.array with unicode type is not supported')
+    elif isinstance(buf, array.array) and buf.typecode in 'cu':
+        # Guard condition, do not support array.array with unicode type, this is
+        # problematic because numpy does not support it on all platforms. Also do not
+        # support char as it was removed in Python 3.
+        raise TypeError('array.array with char or unicode type is not supported')
 
     else:
 
@@ -88,14 +87,10 @@ def ensure_ndarray(buf, dtype=None):
             # interface, so we have to manually hack it back in after the fact
             arr = arr.view(buf.typecode)
 
-    if dtype is not None:
-        # view as requested dtype
-        arr = arr.view(dtype)
-
     return arr
 
 
-def ensure_contiguous_ndarray(buf, dtype=None):
+def ensure_contiguous_ndarray(buf):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface.
@@ -104,8 +99,6 @@ def ensure_contiguous_ndarray(buf, dtype=None):
     ----------
     buf : array-like or bytes-like
         A numpy array or any object exporting a buffer interface.
-    dtype : dtype, optional
-        Request that the data be viewed as the given dtype.
 
     Returns
     -------
@@ -120,7 +113,7 @@ def ensure_contiguous_ndarray(buf, dtype=None):
     """
 
     # ensure input is a numpy array
-    arr = ensure_ndarray(buf, dtype=dtype)
+    arr = ensure_ndarray(buf)
 
     # check for datetime or timedelta ndarray, the buffer interface doesn't support those
     if isinstance(buf, np.ndarray) and buf.dtype.kind in 'Mm':
@@ -167,12 +160,14 @@ def ndarray_copy(src, dst):
     src = ensure_ndarray(src)
     dst = ensure_ndarray(dst)
 
+    # flatten source array
+    src = src.reshape(-1, order='A')
+
     # ensure same data type
     if dst.dtype != object:
         src = src.view(dst.dtype)
 
     # reshape source to match destination
-    src = src.reshape(-1, order='A')
     if src.shape != dst.shape:
         if dst.flags.f_contiguous:
             order = 'F'

@@ -56,7 +56,7 @@ class MsgPack(Codec):
         self.raw = raw
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         items.append(buf.shape)
@@ -105,7 +105,7 @@ class LegacyMsgPack(Codec):
         self.encoding = encoding
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         return msgpack.packb(items, encoding=self.encoding)

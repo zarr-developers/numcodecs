@@ -56,9 +56,9 @@ class Categorize(Codec):
 
         # normalise input
         if self.dtype == object:
-            arr = np.asanyarray(buf, dtype=object)
+            arr = np.asarray(buf, dtype=object)
         else:
-            arr = ensure_ndarray(buf, dtype=self.dtype)
+            arr = ensure_ndarray(buf).view(self.dtype)
 
         # flatten to simplify implementation
         arr = arr.reshape(-1, order='A')
@@ -75,7 +75,7 @@ class Categorize(Codec):
     def decode(self, buf, out=None):
 
         # normalise input
-        enc = ensure_ndarray(buf, dtype=self.astype)
+        enc = ensure_ndarray(buf).view(self.astype)
 
         # flatten to simplify implementation
         enc = enc.reshape(-1, order='A')

@@ -88,7 +88,7 @@ class VLenUTF8(Codec):
             object u
 
         # normalise input
-        input_values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+        input_values = np.asarray(buf, dtype=object).reshape(-1, order='A')
 
         # determine number of items
         n_items = input_values.shape[0]
@@ -218,7 +218,7 @@ class VLenBytes(Codec):
             char* data
 
         # normalise input
-        values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+        values = np.asarray(buf, dtype=object).reshape(-1, order='A')
 
         # determine number of items
         n_items = values.shape[0]
@@ -358,7 +358,7 @@ class VLenArray(Codec):
             object v
 
         # normalise input
-        values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')
+        values = np.asarray(buf, dtype=object).reshape(-1, order='A')
 
         # determine number of items
         n_items = values.shape[0]

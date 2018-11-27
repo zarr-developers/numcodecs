@@ -5,19 +5,19 @@
     "distutils": {
         "depends": [
             "numcodecs/stdint_compat.h"
-        ],
+        ], 
         "extra_compile_args": [
-            "-msse2",
+            "-msse2", 
             "-mavx2"
-        ],
+        ], 
         "include_dirs": [
             "numcodecs"
-        ],
-        "name": "numcodecs.vlen",
+        ], 
+        "name": "numcodecs.vlen", 
         "sources": [
             "numcodecs/vlen.pyx"
         ]
-    },
+    }, 
     "module_name": "numcodecs.vlen"
 }
 END: Cython Metadata */
@@ -843,9 +843,9 @@ static const char *__pyx_f[] = {
   "numcodecs/vlen.pyx",
   "stringsource",
   "numcodecs/compat_ext.pxd",
-  "type.pxd",
-  "bool.pxd",
-  "complex.pxd",
+  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".tox/py27/local/lib/python2.7/site-packages/Cython/Includes/cpython/complex.pxd",
 };
 /* MemviewSliceStruct.proto */
 struct __pyx_memoryview_obj;
@@ -2047,6 +2047,7 @@ static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_values[] = "values";
+static const char __pyx_k_asarray[] = "asarray";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_lengths[] = "lengths";
 static const char __pyx_k_memview[] = "memview";
@@ -2074,7 +2075,6 @@ static const char __pyx_k_s_dtype_r[] = "%s(dtype=%r)";
 static const char __pyx_k_vlen_utf8[] = "vlen-utf8";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
-static const char __pyx_k_asanyarray[] = "asanyarray";
 static const char __pyx_k_compat_ext[] = "compat_ext";
 static const char __pyx_k_frombuffer[] = "frombuffer";
 static const char __pyx_k_get_config[] = "get_config";
@@ -2202,7 +2202,7 @@ static PyObject *__pyx_kp_u__5;
 static PyObject *__pyx_n_s_abc;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_array;
-static PyObject *__pyx_n_s_asanyarray;
+static PyObject *__pyx_n_s_asarray;
 static PyObject *__pyx_n_s_ascontiguousarray;
 static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_base;
@@ -2848,13 +2848,13 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_8VLenUTF8_2encode(CYTHON_UNUSED PyObj
   /* "numcodecs/vlen.pyx":91
  * 
  *         # normalise input
- *         input_values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         input_values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asanyarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
@@ -3921,13 +3921,13 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenBytes_2encode(CYTHON_UNUSED PyOb
   /* "numcodecs/vlen.pyx":221
  * 
  *         # normalise input
- *         values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asanyarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
@@ -5221,13 +5221,13 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenArray_6encode(CYTHON_UNUSED PyOb
   /* "numcodecs/vlen.pyx":361
  * 
  *         # normalise input
- *         values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asanyarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 361, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 361, __pyx_L1_error)
@@ -19815,7 +19815,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
-  {&__pyx_n_s_asanyarray, __pyx_k_asanyarray, sizeof(__pyx_k_asanyarray), 0, 0, 1, 1},
+  {&__pyx_n_s_asarray, __pyx_k_asarray, sizeof(__pyx_k_asarray), 0, 0, 1, 1},
   {&__pyx_n_s_ascontiguousarray, __pyx_k_ascontiguousarray, sizeof(__pyx_k_ascontiguousarray), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
@@ -20009,7 +20009,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/vlen.pyx":91
  * 
  *         # normalise input
- *         input_values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         input_values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */
@@ -20053,7 +20053,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/vlen.pyx":221
  * 
  *         # normalise input
- *         values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */
@@ -20097,7 +20097,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/vlen.pyx":361
  * 
  *         # normalise input
- *         values = np.asanyarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
+ *         values = np.asarray(buf, dtype=object).reshape(-1, order='A')             # <<<<<<<<<<<<<<
  * 
  *         # determine number of items
  */

@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ndarray_copy, ensure_contiguous_ndarray
+from .compat import ndarray_copy, ensure_contiguous_ndarray, PY2
 
 
 class GZip(Codec):
@@ -27,7 +27,9 @@ class GZip(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
-        buf = memoryview(buf)  # needed on PY2 for unknown reasons
+        if PY2:
+            # view as u1 needed on PY2
+            buf = buf.view('u1')
 
         # do compression
         compressed = io.BytesIO()

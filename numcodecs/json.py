@@ -56,7 +56,7 @@ class JSON(Codec):
         self._decoder = _json.JSONDecoder(**self._decoder_config)
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         items.append(buf.shape)
@@ -119,7 +119,7 @@ class LegacyJSON(JSON):
                                          strict=strict)
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         return self._encoder.encode(items).encode(self._text_encoding)
