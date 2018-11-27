@@ -7,7 +7,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ndarray_from_buffer, buffer_copy
+from .compat import ensure_ndarray, ndarray_copy
 
 
 class Quantize(Codec):
@@ -63,8 +63,8 @@ class Quantize(Codec):
 
     def encode(self, buf):
 
-        # interpret buffer as 1D array
-        arr = ndarray_from_buffer(buf, self.dtype)
+        # normalise input
+        arr = ensure_ndarray(buf).view(self.dtype)
 
         # apply scaling
         precision = 10. ** -self.digits
@@ -84,9 +84,9 @@ class Quantize(Codec):
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
-        dec = ndarray_from_buffer(buf, self.astype)
+        dec = ensure_ndarray(buf).view(self.astype)
         dec = dec.astype(self.dtype, copy=False)
-        return buffer_copy(dec, out)
+        return ndarray_copy(dec, out)
 
     def get_config(self):
         # override to handle encoding dtypes

@@ -32,6 +32,12 @@ Release notes
 * Corrects handling of ``NaT`` in ``datetime64`` and ``timedelta64`` in various
   compressors (by :user:`John Kirkham <jakirkham>`; :issue:`127`, :issue:`131`).
 
+* Improvements to the compatibility layer used for normalising inputs to encode
+  and decode methods in most codecs. This removes unnecessary memory copies for
+  some codecs, and also simplifies the implementation of some codecs, improving
+  code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
+  :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
+
 .. _release_0.5.5:
 
 0.5.5

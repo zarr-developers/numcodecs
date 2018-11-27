@@ -4,6 +4,7 @@ import itertools
 
 
 import numpy as np
+import pytest
 
 
 from numcodecs.gzip import GZip
@@ -77,3 +78,18 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(GZip())
+
+
+def test_err_encode_list():
+    data = ['foo', 'bar', 'baz']
+    for codec in codecs:
+        with pytest.raises(TypeError):
+            codec.encode(data)
+
+
+def test_err_encode_non_contiguous():
+    # non-contiguous memory
+    arr = np.arange(1000, dtype='i4')[::2]
+    for codec in codecs:
+        with pytest.raises(ValueError):
+            codec.encode(arr)

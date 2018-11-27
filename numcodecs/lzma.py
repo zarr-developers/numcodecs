@@ -14,9 +14,8 @@ except ImportError:  # pragma: no cover
 
 if _lzma:
 
-    import numpy as np
     from .abc import Codec
-    from .compat import buffer_copy, handle_datetime
+    from .compat import ndarray_copy, ensure_contiguous_ndarray
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -48,18 +47,8 @@ if _lzma:
 
         def encode(self, buf):
 
-            # deal with lack of buffer support for datetime64 and timedelta64
-            buf = handle_datetime(buf)
-
-            if isinstance(buf, np.ndarray):
-
-                # cannot compress object array
-                if buf.dtype == object:
-                    raise ValueError('cannot encode object array')
-
-                # if numpy array, can only handle C contiguous directly
-                if not buf.flags.c_contiguous:
-                    buf = buf.tobytes(order='A')
+            # normalise inputs
+            buf = ensure_contiguous_ndarray(buf)
 
             # do compression
             return _lzma.compress(buf, format=self.format, check=self.check,
@@ -67,12 +56,16 @@ if _lzma:
 
         def decode(self, buf, out=None):
 
+            # normalise inputs
+            buf = ensure_contiguous_ndarray(buf)
+            if out is not None:
+                out = ensure_contiguous_ndarray(out)
+
             # do decompression
-            dec = _lzma.decompress(buf, format=self.format,
-                                   filters=self.filters)
+            dec = _lzma.decompress(buf, format=self.format, filters=self.filters)
 
             # handle destination
-            return buffer_copy(dec, out)
+            return ndarray_copy(dec, out)
 
         def __repr__(self):
             r = '%s(format=%r, check=%r, preset=%r, filters=%r)' % \

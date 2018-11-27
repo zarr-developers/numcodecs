@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 
+from numcodecs.compat import PY2
 try:
     from numcodecs.vlen import VLenArray
 except ImportError:  # pragma: no cover
@@ -69,8 +70,6 @@ def test_encode_errors():
 def test_decode_errors():
     codec = VLenArray('<i8')
     with pytest.raises(TypeError):
-        codec.decode(u'foo')
-    with pytest.raises(TypeError):
         codec.decode(1234)
     # these should look like corrupt data
     with pytest.raises(ValueError):
@@ -79,6 +78,9 @@ def test_decode_errors():
         codec.decode(np.arange(2, 3, dtype='i4'))
     with pytest.raises(ValueError):
         codec.decode(np.arange(10, 20, dtype='i4'))
+    with pytest.raises(ValueError if PY2 else TypeError):
+        # exports old-style buffer interface on PY2, hence ValueError
+        codec.decode(u'foo')
 
     # test out parameter
     enc = codec.encode(arrays[0])

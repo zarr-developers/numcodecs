@@ -8,7 +8,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import buffer_tobytes
+from .compat import ensure_bytes
 
 
 class JSON(Codec):
@@ -56,14 +56,14 @@ class JSON(Codec):
         self._decoder = _json.JSONDecoder(**self._decoder_config)
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         items.append(buf.shape)
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
-        buf = buffer_tobytes(buf)
+        buf = ensure_bytes(buf)
         items = self._decoder.decode(buf.decode(self._text_encoding))
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
@@ -119,13 +119,13 @@ class LegacyJSON(JSON):
                                          strict=strict)
 
     def encode(self, buf):
-        buf = np.asanyarray(buf)
+        buf = np.asarray(buf)
         items = buf.tolist()
         items.append(buf.dtype.str)
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
-        buf = buffer_tobytes(buf)
+        buf = ensure_bytes(buf)
         items = self._decoder.decode(buf.decode(self._text_encoding))
         dec = np.array(items[:-1], dtype=items[-1])
         if out is not None:

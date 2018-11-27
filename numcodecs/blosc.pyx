@@ -3,6 +3,7 @@
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
+# cython: language_level=2
 from __future__ import absolute_import, print_function, division
 import threading
 import multiprocessing

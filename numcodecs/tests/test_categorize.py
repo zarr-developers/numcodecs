@@ -9,7 +9,8 @@ import pytest
 
 from numcodecs.categorize import Categorize
 from numcodecs.tests.common import (check_encode_decode, check_config,
-                                    check_backwards_compatibility, compare_arrays)
+                                    check_backwards_compatibility,
+                                    check_encode_decode_array)
 from numcodecs.compat import PY2
 
 
@@ -33,11 +34,7 @@ def test_encode_decode():
     # object dtype
     for arr in arrays_object:
         codec = Categorize(labels, dtype=arr.dtype)
-        # can't do the full check because can only accept object array for
-        # encoding
-        enc = codec.encode(arr)
-        dec = codec.decode(enc)
-        compare_arrays(arr, dec)
+        check_encode_decode_array(arr, codec)
 
 
 def test_encode():
@@ -100,5 +97,7 @@ def test_backwards_compatibility():
 
 
 def test_errors():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         Categorize(labels=['foo', 'bar'], dtype='S6')
+    with pytest.raises(TypeError):
+        Categorize(labels=['foo', 'bar'], dtype='U6', astype=object)
