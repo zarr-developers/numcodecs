@@ -27,7 +27,7 @@ class GZip(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             # view as u1 needed on PY2
             buf = buf.view('u1')
 
