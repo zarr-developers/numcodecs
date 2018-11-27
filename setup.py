@@ -105,7 +105,7 @@ def blosc_extension():
         info('compiling Blosc extension with AVX2 support')
         extra_compile_args.append('-DSHUFFLE_AVX2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'avx2' in f]
-        if os.name == 'nt':
+        if os.name == 'nt' and not PY2:
             define_macros += [('__AVX2__', 1)]
     else:
         info('compiling Blosc extension without AVX2 support')
