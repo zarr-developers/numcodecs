@@ -57,7 +57,7 @@ class GZip(Codec):
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
             if out is not None:
                 decompressed = ensure_contiguous_ndarray(out)
-                decompressor.readinto(decompressed.view('u1'))
+                decompressor.readinto(decompressed)
             else:
                 decompressed = ensure_ndarray(decompressor.read())
 
