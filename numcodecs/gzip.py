@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ensure_ndarray, ensure_contiguous_ndarray, PY2
+from .compat import ensure_bytes, ensure_ndarray, ensure_contiguous_ndarray, PY2
 
 
 class GZip(Codec):
@@ -50,7 +50,10 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
+        if PY2:  # pragma: py3 no cover
+            buf = ensure_contiguous_ndarray(buf)
+        else:  # pragma: py2 no cover
+            buf = ensure_bytes(buf)
 
         # do decompression
         buf = io.BytesIO(buf)
