@@ -18,6 +18,9 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
+* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by 
+  :user:`Anand S <anandtrex>`; :issue:`82`).
+
 * Allow :class:`Blosc` compressor to run on systems where locks are not present (by
   :user:`Marcus Kinsella <mckinsel>`, :issue:`83`; and :user:`Tom White <tomwhite>`,
   :issue:`93`).
@@ -37,6 +40,7 @@ Release notes
   some codecs, and also simplifies the implementation of some codecs, improving
   code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
   :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
+
 
 .. _release_0.5.5:
 

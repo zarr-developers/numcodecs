@@ -24,11 +24,14 @@ PY3 = sys.version_info[0] == 3
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
-have_sse2 = 'sse2' in cpu_info['flags']
-have_avx2 = 'avx2' in cpu_info['flags']
+flags = cpu_info.get('flags', [])
+have_sse2 = 'sse2' in flags
+have_avx2 = 'avx2' in flags
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
-
+if PY2 and os.name == 'nt':
+    # force no AVX2 on windows PY27
+    disable_avx2 = True
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
