@@ -29,7 +29,9 @@ have_sse2 = 'sse2' in flags
 have_avx2 = 'avx2' in flags
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
-
+if PY2 and os.name == 'nt':
+    # force no AVX2 on windows PY27
+    disable_avx2 = True
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
@@ -105,7 +107,7 @@ def blosc_extension():
         info('compiling Blosc extension with AVX2 support')
         extra_compile_args.append('-DSHUFFLE_AVX2_ENABLED')
         blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'avx2' in f]
-        if os.name == 'nt' and not PY2:
+        if os.name == 'nt':
             define_macros += [('__AVX2__', 1)]
     else:
         info('compiling Blosc extension without AVX2 support')
