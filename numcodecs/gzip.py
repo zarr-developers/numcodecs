@@ -38,9 +38,13 @@ class GZip(Codec):
                             mode='wb',
                             compresslevel=self.level) as compressor:
             compressor.write(buf)
-        compressed = compressed.getvalue()
 
-        return compressed
+        try:
+            compressed = compressed.getbuffer()
+        except AttributeError:  # pragma: py3 no cover
+            compressed = memoryview(compressed.getvalue())
+
+        return np.array(compressed, copy=False)
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
