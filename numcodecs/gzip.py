@@ -57,7 +57,10 @@ class GZip(Codec):
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
             if out is not None:
                 decompressed = ensure_contiguous_ndarray(out)
-                decompressor.readinto(decompressed)
+                nbytes = decompressor.readinto(decompressed)
+                nbytes += len(decompressor.read())
+                if nbytes != decompressed.nbytes:
+                    raise ValueError("`out` unable to fit %i bytes" % nbytes)
             else:
                 decompressed = ensure_ndarray(decompressor.read())
 
