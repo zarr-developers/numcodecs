@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ndarray_copy, ensure_contiguous_ndarray, PY2
+from .compat import ensure_ndarray, ensure_contiguous_ndarray, PY2
 
 
 class GZip(Codec):
@@ -42,24 +42,26 @@ class GZip(Codec):
         try:
             compressed = compressed.getbuffer()
         except AttributeError:  # pragma: py3 no cover
-            compressed = memoryview(compressed.getvalue())
+            compressed = compressed.getvalue()
 
-        return np.array(compressed, copy=False)
+        return ensure_ndarray(compressed)
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
-        if out is not None:
-            out = ensure_contiguous_ndarray(out)
 
         # do decompression
         buf = io.BytesIO(buf)
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
-            decompressed = decompressor.read()
+            if out is not None:
+                decompressed = ensure_contiguous_ndarray(out)
+                decompressor.readinto(decompressed.view('u1'))
+            else:
+                decompressed = ensure_ndarray(decompressor.read())
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return ndarray_copy(decompressed, out)
+        return decompressed
