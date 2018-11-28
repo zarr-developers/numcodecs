@@ -56,15 +56,15 @@ class GZip(Codec):
         buf = io.BytesIO(buf)
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
             if out is not None:
-                decompressed = ensure_contiguous_ndarray(out)
-                nbytes = decompressor.readinto(decompressed)
+                out = ensure_contiguous_ndarray(out)
+                nbytes = decompressor.readinto(out)
                 nbytes += len(decompressor.read())
-                if nbytes != decompressed.nbytes:
+                if nbytes != out.nbytes:
                     raise ValueError("`out` unable to fit %i bytes" % nbytes)
             else:
-                decompressed = ensure_ndarray(decompressor.read())
+                out = ensure_ndarray(decompressor.read())
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return decompressed
+        return out
