@@ -59,7 +59,7 @@ class GZip(Codec):
                 out = ensure_contiguous_ndarray(out)
                 nbytes = decompressor.readinto(out)
                 nbytes += len(decompressor.read())
-                if nbytes != out.nbytes:
+                if nbytes > out.nbytes:
                     raise ValueError("`out` unable to fit %i bytes" % nbytes)
             else:
                 out = ensure_ndarray(decompressor.read())

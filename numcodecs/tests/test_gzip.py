@@ -104,11 +104,10 @@ def test_err_out_too_small():
             codec.decode(codec.encode(arr), out)
 
 
-def test_err_out_too_large():
+def test_out_too_large():
     # non-contiguous memory
     out = np.empty((10,), dtype='i4')
     arr = out[:-1]
     arr[:] = 5
     for codec in codecs:
-        with pytest.raises(ValueError):
-            codec.decode(codec.encode(arr), out)
+        codec.decode(codec.encode(arr), out)
