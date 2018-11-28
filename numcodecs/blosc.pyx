@@ -16,7 +16,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2, text_type
+from .compat import PY2, text_type, ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -473,6 +473,7 @@ class Blosc(Codec):
     SHUFFLE = SHUFFLE
     BITSHUFFLE = BITSHUFFLE
     AUTOSHUFFLE = AUTOSHUFFLE
+    max_buffer_size = 2**31 - 1
 
     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
@@ -485,11 +486,11 @@ class Blosc(Codec):
         self.blocksize = blocksize
 
     def encode(self, buf):
-        self._check_buffer_size(buf)
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
-        self._check_buffer_size(buf)
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
     def __repr__(self):

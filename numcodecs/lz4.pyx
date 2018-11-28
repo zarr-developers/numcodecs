@@ -13,7 +13,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2
+from .compat import PY2, ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -211,14 +211,17 @@ class LZ4(Codec):
     """
 
     codec_id = 'lz4'
+    max_buffer_size = 0x7E000000
 
     def __init__(self, acceleration=DEFAULT_ACCELERATION):
         self.acceleration = acceleration
 
     def encode(self, buf):
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return compress(buf, self.acceleration)
 
     def decode(self, buf, out=None):
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
     def __repr__(self):

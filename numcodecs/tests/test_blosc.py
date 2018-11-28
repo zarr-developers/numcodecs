@@ -14,7 +14,8 @@ from numcodecs.blosc import Blosc
 from numcodecs.tests.common import (check_encode_decode, check_config,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
-                                    check_err_encode_object_buffer)
+                                    check_err_encode_object_buffer,
+                                    check_max_buffer_size)
 
 
 codecs = [
@@ -241,25 +242,6 @@ def test_decompression_error_handling():
 
 
 def test_max_buffer_size():
-    for max_buffer_size in [4, 64, 1024]:
-        for codec in codecs:
-            old_max_buffer_size = codec.max_buffer_size
-            try:
-                codec.max_buffer_size = max_buffer_size
-                # Just up the max_buffer_size is fine.
-                codec.encode(np.zeros(max_buffer_size - 1, dtype=np.int8))
-                codec.encode(np.zeros(max_buffer_size, dtype=np.int8))
-
-                buffers = [
-                    bytes(b"x" * (max_buffer_size + 1)),
-                    np.zeros(max_buffer_size + 1, dtype=np.int8),
-                    np.zeros(max_buffer_size + 2, dtype=np.int8),
-                    np.zeros(max_buffer_size, dtype=np.int16),
-                    np.zeros(max_buffer_size, dtype=np.int32)]
-                for buf in buffers:
-                    with pytest.raises(ValueError):
-                        codec.encode(buf)
-                    with pytest.raises(ValueError):
-                        codec.decode(buf)
-            finally:
-                codec.max_buffer_size = old_max_buffer_size
+    for codec in codecs:
+        assert codec.max_buffer_size == 2**31 - 1
+        check_max_buffer_size(codec)
