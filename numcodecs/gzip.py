@@ -51,8 +51,12 @@ class GZip(Codec):
 
         # normalise inputs
         if PY2:  # pragma: py3 no cover
+            # On Python 2, BytesIO always copies.
+            # Merely ensure the data supports the (new) buffer protocol.
             buf = ensure_contiguous_ndarray(buf)
         else:  # pragma: py2 no cover
+            # BytesIO only copies if the data is not of `bytes` type.
+            # This allows `bytes` objects to pass through without copying.
             buf = ensure_bytes(buf)
 
         # do decompression
