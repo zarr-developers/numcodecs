@@ -167,7 +167,8 @@ def decompress(source, dest=None):
             dest = PyBytes_FromStringAndSize(NULL, dest_size)
             dest_ptr = PyBytes_AS_STRING(dest)
         else:
-            dest_buffer = Buffer(dest, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+            arr = ensure_contiguous_ndarray(dest)
+            dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
             dest_ptr = dest_buffer.ptr
             if dest_buffer.nbytes < dest_size:
                 raise ValueError('destination buffer too small; expected at least %s, '

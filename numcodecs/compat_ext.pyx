@@ -16,8 +16,7 @@ cdef class Buffer:
     new-style buffer interface in PY2."""
 
     def __cinit__(self, obj, flags):
-        arr = ensure_contiguous_ndarray(obj)
-        PyObject_GetBuffer(arr, &(self.buffer), flags)
+        PyObject_GetBuffer(obj, &(self.buffer), flags)
         self.acquired = True
         self.ptr = <char *> self.buffer.buf
         self.itemsize = self.buffer.itemsize
