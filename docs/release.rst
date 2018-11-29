@@ -3,8 +3,8 @@ Release notes
 
 .. _release_0.6.0:
 
-0.6.0 (in development)
-----------------------
+0.6.0
+-----
 
 * The encoding format used by the :class:`JSON` and :class:`MsgPack` codecs has been
   changed to resolve an issue with correctly encoding and decoding some object arrays.
