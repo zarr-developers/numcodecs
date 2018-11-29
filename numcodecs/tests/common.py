@@ -250,3 +250,27 @@ def check_err_encode_object_buffer(compressor):
     a = np.array(['foo', 'bar', 'baz'], dtype=object)
     with pytest.raises(TypeError):
         compressor.encode(a)
+
+
+def check_max_buffer_size(codec):
+    for max_buffer_size in [4, 64, 1024]:
+        old_max_buffer_size = codec.max_buffer_size
+        try:
+            codec.max_buffer_size = max_buffer_size
+            # Just up the max_buffer_size is fine.
+            codec.encode(np.zeros(max_buffer_size - 1, dtype=np.int8))
+            codec.encode(np.zeros(max_buffer_size, dtype=np.int8))
+
+            buffers = [
+                bytes(b"x" * (max_buffer_size + 1)),
+                np.zeros(max_buffer_size + 1, dtype=np.int8),
+                np.zeros(max_buffer_size + 2, dtype=np.int8),
+                np.zeros(max_buffer_size, dtype=np.int16),
+                np.zeros(max_buffer_size, dtype=np.int32)]
+            for buf in buffers:
+                with pytest.raises(ValueError):
+                    codec.encode(buf)
+                with pytest.raises(ValueError):
+                    codec.decode(buf)
+        finally:
+            codec.max_buffer_size = old_max_buffer_size
