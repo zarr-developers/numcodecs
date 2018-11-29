@@ -223,7 +223,7 @@ class LZ4(Codec):
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return decompress(buf, out)
+        return ensure_ndarray(decompress(buf, out))
 
     def __repr__(self):
         r = '%s(acceleration=%r)' % \

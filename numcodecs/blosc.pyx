@@ -493,7 +493,8 @@ class Blosc(Codec):
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return decompress(buf, out)
+        out = decompress(buf, out)
+        return ensure_ndarray(out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \

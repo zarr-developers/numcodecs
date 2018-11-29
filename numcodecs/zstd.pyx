@@ -218,7 +218,7 @@ class Zstd(Codec):
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
-        return decompress(buf, out)
+        return ensure_ndarray(decompress(buf, out))
 
     def __repr__(self):
         r = '%s(level=%r)' % \
