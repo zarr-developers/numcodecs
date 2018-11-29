@@ -13,7 +13,7 @@ import numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import ensure_contiguous_ndarray
+from .compat import ensure_ndarray, ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
@@ -130,7 +130,7 @@ class VLenUTF8(Codec):
             memcpy(data, encv, l)
             data += l
 
-        return out
+        return ensure_ndarray(out)
 
     @cython.wraparound(False)
     @cython.boundscheck(False)

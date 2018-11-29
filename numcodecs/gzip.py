@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ndarray_copy, ensure_contiguous_ndarray, PY2
+from .compat import ndarray_copy, ensure_ndarray, ensure_contiguous_ndarray, PY2
 
 
 class GZip(Codec):
@@ -38,9 +38,13 @@ class GZip(Codec):
                             mode='wb',
                             compresslevel=self.level) as compressor:
             compressor.write(buf)
-        compressed = compressed.getvalue()
 
-        return compressed
+        try:
+            compressed = compressed.getbuffer()
+        except AttributeError:  # pragma: py3 no cover
+            compressed = compressed.getvalue()
+
+        return ensure_ndarray(compressed)
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):

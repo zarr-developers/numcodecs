@@ -13,7 +13,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import ensure_contiguous_ndarray
+from .compat import ensure_ndarray, ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -214,7 +214,7 @@ class Zstd(Codec):
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
-        return compress(buf, self.level)
+        return ensure_ndarray(compress(buf, self.level))
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
