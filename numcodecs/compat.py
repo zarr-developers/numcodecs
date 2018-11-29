@@ -90,15 +90,20 @@ def ensure_ndarray(buf):
     return arr
 
 
-def ensure_contiguous_ndarray(buf):
+def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
-    and supports the new-style buffer interface.
+    and supports the new-style buffer interface. If the optional max_buffer_size is
+    provided, raise a ValueError if the number of bytes consumed by the returned
+    array exceeds this value.
 
     Parameters
     ----------
     buf : array-like or bytes-like
         A numpy array or any object exporting a buffer interface.
+    max_buffer_size : int
+        If specified, the largest allowable value of arr.nbytes, where arr
+        is the retured array.
 
     Returns
     -------
@@ -131,6 +136,10 @@ def ensure_contiguous_ndarray(buf):
 
     else:
         raise ValueError('an array with contiguous memory is required')
+
+    if max_buffer_size is not None and arr.nbytes > max_buffer_size:
+        msg = "Codec does not support buffers of > {} bytes".format(max_buffer_size)
+        raise ValueError(msg)
 
     return arr
 

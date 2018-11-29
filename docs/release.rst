@@ -40,6 +40,11 @@ Release notes
   some codecs, and also simplifies the implementation of some codecs, improving
   code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
   :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
+  
+* Improvements to handling of errors in the :class:`numcodecs.blosc.Blosc` and 
+  :class:`numcodecs.lz4.LZ4` codecs when the maximum allowed size of an input 
+  buffer is exceeded. By :user:`Jerome Kelleher <jeromekelleher>`, :issue:`80`,
+  :issue:`81`.
 
 
 .. _release_0.5.5:

@@ -10,7 +10,8 @@ from numcodecs.lz4 import LZ4
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
-                                    check_err_encode_object_buffer)
+                                    check_err_encode_object_buffer,
+                                    check_max_buffer_size)
 
 
 codecs = [
@@ -69,3 +70,9 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(LZ4())
+
+
+def test_max_buffer_size():
+    for codec in codecs:
+        assert codec.max_buffer_size == 0x7E000000
+        check_max_buffer_size(codec)

@@ -13,6 +13,7 @@ import numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
+from .compat import ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
@@ -141,6 +142,7 @@ class VLenUTF8(Codec):
             Py_ssize_t i, l, n_items, data_length, input_length
 
         # accept any buffer
+        buf = ensure_contiguous_ndarray(buf)
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
         input_length = input_buffer.nbytes
 
@@ -268,6 +270,7 @@ class VLenBytes(Codec):
             Py_ssize_t i, l, n_items, data_length, input_length
 
         # accept any buffer
+        buf = ensure_contiguous_ndarray(buf)
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
         input_length = input_buffer.nbytes
 
@@ -414,6 +417,7 @@ class VLenArray(Codec):
             Py_ssize_t i, l, n_items, data_length, input_length
 
         # accept any buffer
+        buf = ensure_contiguous_ndarray(buf)
         input_buffer = Buffer(buf, PyBUF_ANY_CONTIGUOUS)
         input_length = input_buffer.nbytes
 

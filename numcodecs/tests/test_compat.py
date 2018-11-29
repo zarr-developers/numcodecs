@@ -87,3 +87,20 @@ def test_ensure_contiguous_ndarray_writeable():
         if PY2:  # pragma: py3 no cover
             m = ensure_contiguous_ndarray(np.getbuffer(a))
             assert m.flags.writeable == writeable
+
+
+def test_ensure_contiguous_ndarray_max_buffer_size():
+    for max_buffer_size in [4, 64, 1024]:
+        ensure_contiguous_ndarray(
+            np.zeros(max_buffer_size - 1, dtype=np.int8), max_buffer_size)
+        ensure_contiguous_ndarray(
+            np.zeros(max_buffer_size, dtype=np.int8), max_buffer_size)
+        buffers = [
+            bytes(b"x" * (max_buffer_size + 1)),
+            np.zeros(max_buffer_size + 1, dtype=np.int8),
+            np.zeros(max_buffer_size + 2, dtype=np.int8),
+            np.zeros(max_buffer_size, dtype=np.int16),
+            np.zeros(max_buffer_size, dtype=np.int32)]
+        for buf in buffers:
+            with pytest.raises(ValueError):
+                ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)
