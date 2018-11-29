@@ -30,7 +30,7 @@ Release notes
 * Add Python 3.7 (by :user:`John Kirkham <jakirkham>`; :issue:`92`).
 
 * Add codec :class:`numcodecs.gzip.GZip` to replace ``gzip`` alias for ``zlib``,
-  which was incorrect (by :user:`Jan Funke <funkey>`; :issue:`87`).
+  which was incorrect (by :user:`Jan Funke <funkey>`; :issue:`87`; and :user:`John Kirkham <jakirkham>`, :issue:`134`).
 
 * Corrects handling of ``NaT`` in ``datetime64`` and ``timedelta64`` in various
   compressors (by :user:`John Kirkham <jakirkham>`; :issue:`127`, :issue:`131`).

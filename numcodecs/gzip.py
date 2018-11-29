@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ndarray_copy, ensure_contiguous_ndarray, PY2
+from .compat import ensure_bytes, ensure_ndarray, ensure_contiguous_ndarray, PY2
 
 
 class GZip(Codec):
@@ -38,24 +38,39 @@ class GZip(Codec):
                             mode='wb',
                             compresslevel=self.level) as compressor:
             compressor.write(buf)
-        compressed = compressed.getvalue()
 
-        return compressed
+        try:
+            compressed = compressed.getbuffer()
+        except AttributeError:  # pragma: py3 no cover
+            compressed = compressed.getvalue()
+
+        return ensure_ndarray(compressed)
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = ensure_contiguous_ndarray(buf)
-        if out is not None:
-            out = ensure_contiguous_ndarray(out)
+        if PY2:  # pragma: py3 no cover
+            # On Python 2, BytesIO always copies.
+            # Merely ensure the data supports the (new) buffer protocol.
+            buf = ensure_contiguous_ndarray(buf)
+        else:  # pragma: py2 no cover
+            # BytesIO only copies if the data is not of `bytes` type.
+            # This allows `bytes` objects to pass through without copying.
+            buf = ensure_bytes(buf)
 
         # do decompression
         buf = io.BytesIO(buf)
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
-            decompressed = decompressor.read()
+            if out is not None:
+                out_view = ensure_contiguous_ndarray(out)
+                decompressor.readinto(out_view)
+                if decompressor.read(1) != b'':
+                    raise ValueError("Unable to fit data into `out`")
+            else:
+                out = ensure_ndarray(decompressor.read())
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into
         # out if given
-        return ndarray_copy(decompressed, out)
+        return out
