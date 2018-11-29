@@ -16,7 +16,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2, text_type, ensure_contiguous_ndarray
+from .compat import PY2, text_type, ensure_ndarray, ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -488,11 +488,13 @@ class Blosc(Codec):
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
+        out = compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
+        return  ensure_ndarray(out)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return decompress(buf, out)
+        out = decompress(buf, out)
+        return ensure_ndarray(out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \

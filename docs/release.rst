@@ -41,6 +41,10 @@ Release notes
   code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
   :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
   
+* Return values from encode() and decode() methods are now returned as numpy 
+  arrays for consistency across codecs. By :user:`John Kirkham <jakirkham>`, 
+  :issue:`136`.
+
 * Improvements to handling of errors in the :class:`numcodecs.blosc.Blosc` and 
   :class:`numcodecs.lz4.LZ4` codecs when the maximum allowed size of an input 
   buffer is exceeded. By :user:`Jerome Kelleher <jeromekelleher>`, :issue:`80`,
