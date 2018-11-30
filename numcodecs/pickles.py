@@ -48,9 +48,9 @@ class Pickle(Codec):
         return pickle.dumps(buf, protocol=self.protocol)
 
     def decode(self, buf, out=None):
-        if PY2:
+        if PY2:  # pragma: py3 no cover
             buf = ensure_bytes(buf)
-        else:
+        else:  # pragma: py2 no cover
             buf = ensure_contiguous_ndarray(buf)
 
         dec = pickle.loads(buf)
