@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import PY2
+from .compat import PY2, ensure_bytes
 
 
 if PY2:  # pragma: py3 no cover
@@ -48,6 +48,9 @@ class Pickle(Codec):
         return pickle.dumps(buf, protocol=self.protocol)
 
     def decode(self, buf, out=None):
+        if PY2:
+            buf = ensure_bytes(buf)
+
         dec = pickle.loads(buf)
         if out is not None:
             np.copyto(out, dec)
