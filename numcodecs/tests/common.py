@@ -215,6 +215,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             # one time encode and save array
             if not os.path.exists(enc_fn):  # pragma: no cover
                 enc = codec.encode(arr)
+                enc = ensure_bytes(enc)
                 with open(enc_fn, mode='wb') as ef:
                     ef.write(enc)
 
@@ -222,10 +223,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             with open(enc_fn, mode='rb') as ef:
                 enc = ef.read()
                 dec = codec.decode(enc)
-                if isinstance(dec, np.ndarray):
-                    dec_arr = dec.reshape(-1, order='A')
-                else:
-                    dec_arr = ensure_ndarray(dec)
+                dec_arr = ensure_ndarray(dec).reshape(-1, order='A')
                 dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])
