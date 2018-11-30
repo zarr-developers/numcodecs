@@ -1,6 +1,15 @@
 Release notes
 =============
 
+.. _release_0.6.2:
+
+0.6.2
+-----
+
+* Handle (new) buffer protocol conforming types in ``Pickle.decode``.
+  (by :user:`John Kirkham <jakirkham>`, :issue:`143`).
+
+
 .. _release_0.6.1:
 
 0.6.1
