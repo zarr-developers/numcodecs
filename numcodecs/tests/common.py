@@ -147,6 +147,10 @@ def check_encode_decode_array(arr, codec):
     codec.decode(enc, out=out)
     assert_array_items_equal(arr, out)
 
+    enc = codec.encode(arr)
+    dec = codec.decode(ensure_ndarray(enc))
+    assert_array_items_equal(arr, dec)
+
 
 def check_config(codec):
     config = codec.get_config()
