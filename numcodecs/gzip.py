@@ -70,7 +70,4 @@ class GZip(Codec):
             else:
                 out = ensure_ndarray(decompressor.read())
 
-        # handle destination - Python standard library zlib module does not
-        # support direct decompression into buffer, so we have to copy into
-        # out if given
         return out
