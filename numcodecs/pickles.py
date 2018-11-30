@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import PY2, ensure_bytes
+from .compat import PY2, ensure_bytes, ensure_contiguous_ndarray
 
 
 if PY2:  # pragma: py3 no cover
@@ -50,6 +50,8 @@ class Pickle(Codec):
     def decode(self, buf, out=None):
         if PY2:
             buf = ensure_bytes(buf)
+        else:
+            buf = ensure_contiguous_ndarray(buf)
 
         dec = pickle.loads(buf)
         if out is not None:
