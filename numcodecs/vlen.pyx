@@ -258,7 +258,7 @@ class VLenBytes(Codec):
             memcpy(data, encv, l)
             data += l
 
-        return out
+        return ensure_ndarray(out)
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
@@ -405,7 +405,7 @@ class VLenArray(Codec):
             data += l
             value_buffer.release()
 
-        return out
+        return ensure_ndarray(out)
 
     @cython.wraparound(False)
     @cython.boundscheck(False)

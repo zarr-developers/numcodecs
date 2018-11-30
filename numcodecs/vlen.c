@@ -4315,7 +4315,7 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenBytes_2encode(CYTHON_UNUSED PyOb
  *             memcpy(data, encv, l)
  *             data += l             # <<<<<<<<<<<<<<
  * 
- *         return out
+ *         return ensure_ndarray(out)
  */
     __pyx_v_data = (__pyx_v_data + __pyx_v_l);
   }
@@ -4323,13 +4323,30 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenBytes_2encode(CYTHON_UNUSED PyOb
   /* "numcodecs/vlen.pyx":261
  *             data += l
  * 
- *         return out             # <<<<<<<<<<<<<<
+ *         return ensure_ndarray(out)             # <<<<<<<<<<<<<<
  * 
  *     @cython.wraparound(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_out);
-  __pyx_r = __pyx_v_out;
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ensure_ndarray); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_6);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_6, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_3, __pyx_v_out) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_out);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
   /* "numcodecs/vlen.pyx":212
@@ -5808,7 +5825,7 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenArray_6encode(CYTHON_UNUSED PyOb
  *             data += l
  *             value_buffer.release()             # <<<<<<<<<<<<<<
  * 
- *         return out
+ *         return ensure_ndarray(out)
  */
     __pyx_t_1 = ((struct __pyx_vtabstruct_9numcodecs_10compat_ext_Buffer *)__pyx_v_value_buffer->__pyx_vtab)->release(__pyx_v_value_buffer, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 406, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -5818,13 +5835,30 @@ static PyObject *__pyx_pf_9numcodecs_4vlen_9VLenArray_6encode(CYTHON_UNUSED PyOb
   /* "numcodecs/vlen.pyx":408
  *             value_buffer.release()
  * 
- *         return out             # <<<<<<<<<<<<<<
+ *         return ensure_ndarray(out)             # <<<<<<<<<<<<<<
  * 
  *     @cython.wraparound(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_out);
-  __pyx_r = __pyx_v_out;
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ensure_ndarray); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_4);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_4, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_3, __pyx_v_out) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_out);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 408, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
   /* "numcodecs/vlen.pyx":350
