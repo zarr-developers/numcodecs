@@ -1,6 +1,15 @@
 Release notes
 =============
 
+.. _release_0.6.2:
+
+0.6.2
+-----
+
+* Fix other ``VLen*`` encode() methods to return numpy arrays as well.
+  By :user:`John Kirkham <jakirkham>`, :issue:`144`.
+
+
 .. _release_0.6.1:
 
 0.6.1
