@@ -6,11 +6,10 @@ import itertools
 import numpy as np
 
 
-from numcodecs.compat import PY2, ensure_ndarray
+from numcodecs.compat import PY2
 from numcodecs.pickles import Pickle
-from numcodecs.tests.common import (assert_array_items_equal, check_config, check_repr,
-                                    check_encode_decode_array, check_backwards_compatibility,
-                                    greetings)
+from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
+                                    check_backwards_compatibility, greetings)
 
 
 codecs = [
@@ -42,12 +41,6 @@ arrays = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode_array(arr, codec)
-
-
-def test_decode_ndarray():
-    for arr, codec in itertools.product(arrays, codecs):
-        buf = ensure_ndarray(codec.encode(arr))
-        assert_array_items_equal(arr, codec.decode(buf))
 
 
 def test_config():
