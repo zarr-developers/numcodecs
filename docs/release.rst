@@ -1,6 +1,15 @@
 Release notes
 =============
 
+.. _release_0.6.1:
+
+0.6.1
+-----
+
+* Resolved minor issue in backwards-compatibility tests (by :user:`Alistair Miles
+  <alimanfoo>`, :issue:`138`, :issue:`139`).
+
+
 .. _release_0.6.0:
 
 0.6.0
@@ -18,10 +27,10 @@ Release notes
 * Updated the msgpack dependency (by :user:`Jerome Kelleher <jeromekelleher>`;
   :issue:`74`, :issue:`75`).
 
-* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by 
+* Added support for ppc64le architecture by updating `cpuinfo.py` from upstream (by
   :user:`Anand S <anandtrex>`; :issue:`82`).
 
-* Allow :class:`Blosc` compressor to run on systems where locks are not present (by
+* Allow :class:`numcodecs.blosc.Blosc` compressor to run on systems where locks are not present (by
   :user:`Marcus Kinsella <mckinsel>`, :issue:`83`; and :user:`Tom White <tomwhite>`,
   :issue:`93`).
 
@@ -40,13 +49,13 @@ Release notes
   some codecs, and also simplifies the implementation of some codecs, improving
   code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
   :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
-  
-* Return values from encode() and decode() methods are now returned as numpy 
-  arrays for consistency across codecs. By :user:`John Kirkham <jakirkham>`, 
+
+* Return values from encode() and decode() methods are now returned as numpy
+  arrays for consistency across codecs. By :user:`John Kirkham <jakirkham>`,
   :issue:`136`.
 
-* Improvements to handling of errors in the :class:`numcodecs.blosc.Blosc` and 
-  :class:`numcodecs.lz4.LZ4` codecs when the maximum allowed size of an input 
+* Improvements to handling of errors in the :class:`numcodecs.blosc.Blosc` and
+  :class:`numcodecs.lz4.LZ4` codecs when the maximum allowed size of an input
   buffer is exceeded. By :user:`Jerome Kelleher <jeromekelleher>`, :issue:`80`,
   :issue:`81`.
 
