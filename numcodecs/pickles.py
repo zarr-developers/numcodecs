@@ -6,11 +6,12 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import PY2, ensure_bytes, ensure_contiguous_ndarray
+from .compat import PY2, ensure_contiguous_ndarray
 
 
 if PY2:  # pragma: py3 no cover
     import cPickle as pickle
+    from cStringIO import StringIO
 else:  # pragma: py2 no cover
     import pickle
 
@@ -48,12 +49,13 @@ class Pickle(Codec):
         return pickle.dumps(buf, protocol=self.protocol)
 
     def decode(self, buf, out=None):
-        if PY2:  # pragma: py3 no cover
-            buf = ensure_bytes(buf)
-        else:  # pragma: py2 no cover
-            buf = ensure_contiguous_ndarray(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
-        dec = pickle.loads(buf)
+        if PY2:  # pragma: py3 no cover
+            dec = pickle.load(StringIO(buf))
+        else:  # pragma: py2 no cover
+            dec = pickle.loads(buf)
+
         if out is not None:
             np.copyto(out, dec)
             return out
