@@ -6,7 +6,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import PY2, ensure_bytes, ensure_contiguous_ndarray
+from .compat import PY2, ensure_bytes, ensure_contiguous_ndarray, ensure_ndarray
 
 
 if PY2:  # pragma: py3 no cover
@@ -45,7 +45,7 @@ class Pickle(Codec):
         self.protocol = protocol
 
     def encode(self, buf):
-        return pickle.dumps(buf, protocol=self.protocol)
+        return ensure_ndarray(pickle.dumps(buf, protocol=self.protocol))
 
     def decode(self, buf, out=None):
         if PY2:  # pragma: py3 no cover
