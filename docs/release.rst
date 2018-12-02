@@ -7,7 +7,7 @@ Release notes
 -----
 
 * Handle (new) buffer protocol conforming types in ``Pickle.decode``.
-  By :user:`John Kirkham <jakirkham>`, :issue:`143`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`143`, :issue:`150`.
 
 * Fix other ``VLen*`` encode() methods to return numpy arrays as well.
   By :user:`John Kirkham <jakirkham>`, :issue:`144`.
