@@ -7,7 +7,7 @@ import msgpack
 
 
 from .abc import Codec
-from .compat import ensure_bytes
+from .compat import ensure_contiguous_ndarray
 
 
 class MsgPack(Codec):
@@ -64,7 +64,7 @@ class MsgPack(Codec):
                              use_single_float=self.use_single_float)
 
     def decode(self, buf, out=None):
-        buf = ensure_bytes(buf)
+        buf = ensure_contiguous_ndarray(buf)
         items = msgpack.unpackb(buf, raw=self.raw)
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
@@ -111,7 +111,7 @@ class LegacyMsgPack(Codec):
         return msgpack.packb(items, encoding=self.encoding)
 
     def decode(self, buf, out=None):
-        buf = ensure_bytes(buf)
+        buf = ensure_contiguous_ndarray(buf)
         items = msgpack.unpackb(buf, encoding=self.encoding)
         dec = np.array(items[:-1], dtype=items[-1])
         if out is not None:
