@@ -8,6 +8,10 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, PY2, MemoryViewIO
 
 
+if PY2:  # pragma: py3 no cover
+    from cStringIO import StringIO
+
+
 class GZip(Codec):
     """Codec providing gzip compression using zlib via the Python standard library.
 
@@ -46,7 +50,13 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        buf = MemoryViewIO(buf)
+        buf = ensure_contiguous_ndarray(buf)
+        if PY2:  # pragma: py3 no cover
+            # On Python 2, StringIO always uses the buffer protocol.
+            buf = StringIO(buf)
+        else:  # pragma: py2 no cover
+            # MemoryViewIO always uses the buffer protocol.
+            buf = MemoryViewIO(buf)
 
         # do decompression
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
