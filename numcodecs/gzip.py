@@ -44,11 +44,11 @@ class GZip(Codec):
             compressor.write(buf)
 
         try:
-            compressed = compressed.getbuffer()
+            compressed = ensure_ndarray(compressed.getbuffer())
         except AttributeError:  # pragma: py3 no cover
             compressed = compressed.getvalue()
 
-        return ensure_ndarray(compressed)
+        return compressed
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
