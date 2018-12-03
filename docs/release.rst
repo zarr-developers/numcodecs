@@ -1,6 +1,10 @@
 Release notes
 =============
 
+
+* Drop support for 32-bit Windows. By :user:`Alistair Miles <alimanfoo>`, :issue:`97`, :issue:`156`.
+
+
 .. _release_0.6.2:
 
 0.6.2
