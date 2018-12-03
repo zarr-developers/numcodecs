@@ -70,6 +70,6 @@ class GZip(Codec):
                 if decompressor.read(1) != b'':
                     raise ValueError("Unable to fit data into `out`")
             else:
-                out = ensure_ndarray(decompressor.read())
+                out = decompressor.read()
 
         return out
