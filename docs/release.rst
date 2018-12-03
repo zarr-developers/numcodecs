@@ -15,6 +15,9 @@ Release notes
 * Use (new) buffer protocol in ``MsgPack`` codec `decode()` method.
   By :user:`John Kirkham <jakirkham>`, :issue:`148`.
 
+* Use (new) buffer protocol in ``JSON`` codec `decode()` method.
+  By :user:`John Kirkham <jakirkham>`, :issue:`151`.
+
 * Avoid copying into data in ``GZip``'s `decode()` method on Python 2.
   By :user:`John Kirkham <jakirkham>`, :issue:`152`.
 
