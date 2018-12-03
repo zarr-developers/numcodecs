@@ -24,6 +24,8 @@ Release notes
 * Revert ndarray coercion of encode returned data.
   By :user:`John Kirkham <jakirkham>`, :issue:`155`.
 
+* The bundled c-blosc sources have been upgraded to version 1.15.0. By
+  :user:`Alistair Miles <alimanfoo>` and :user:`John Kirkham <jakirkham>`, :issue:`142`, :issue:`145`.
 
 .. _release_0.6.1:
 
