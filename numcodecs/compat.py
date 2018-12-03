@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa
 from __future__ import absolute_import, print_function, division
+import io
 import sys
 import array
 
@@ -188,3 +189,71 @@ def ndarray_copy(src, dst):
     np.copyto(dst, src)
 
     return dst
+
+
+class MemoryViewIO(io.RawIOBase):
+    def __init__(self, buf):
+        self._pos = 0
+        self._buf = ensure_contiguous_ndarray(buf).view('u1')
+
+    def peek(self, size=1):
+        if size >= 0:
+            sl = slice(self._pos, self._pos + size)
+        else:
+            sl = slice(self._pos, None)
+
+        data = self._buf[sl].tobytes()
+
+        return data
+
+    def read(self, size=-1):
+        data = self.peek(size=size)
+
+        self._pos += len(data)
+
+        return data
+
+    def read1(self, n=-1):
+        return self.read(size=n)
+
+    def readable(self):
+        return True
+
+    def readall(self):
+        return self.read(size=-1)
+
+    def readinto(self, buf):
+        buf_view = ensure_contiguous_ndarray(buf)
+        size = len(buf_view)
+
+        sl = slice(self._pos, self._pos + size)
+        _buf_view = self._buf[sl]
+        size = min(size, len(_buf_view))
+
+        np.copyto(buf_view[:size], _buf_view[:size])
+        self._pos += size
+
+        return buf
+
+    def readinto1(self, buf):
+        return self.readinto(buf)
+
+    def seek(self, offset, whence=io.SEEK_SET):
+        if offset == io.SEEK_SET:
+            self._pos = offset
+        elif offset == io.SEEK_CUR:
+            self._pos += offset
+        elif offset == io.SEEK_END:
+            self._pos = len(self._buf) + offset
+        else:
+            raise ValueError("Invalid whence = %s" % str(whence))
+
+        self._pos = np.clip(self._pos, 0, len(self._buf))
+
+        return self._pos
+
+    def seekable(self):
+        return True
+
+    def tell(self):
+        return self._pos
