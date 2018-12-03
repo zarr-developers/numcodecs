@@ -8,7 +8,7 @@
         ],
         "extra_compile_args": [
             "-msse2",
-            "-mavx2"
+            "-mno-avx2"
         ],
         "include_dirs": [
             "numcodecs"

@@ -4,22 +4,22 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.h",
+            "c-blosc/internal-complibs/lz4-1.8.3/lz4.h",
             "numcodecs/stdint_compat.h"
         ],
         "extra_compile_args": [
             "-msse2",
-            "-mavx2"
+            "-mno-avx2"
         ],
         "include_dirs": [
             "numcodecs",
-            "c-blosc/internal-complibs/lz4-1.8.1.2"
+            "c-blosc/internal-complibs/lz4-1.8.3"
         ],
         "name": "numcodecs.lz4",
         "sources": [
             "numcodecs/lz4.pyx",
-            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4.c",
-            "c-blosc/internal-complibs/lz4-1.8.1.2/lz4hc.c"
+            "c-blosc/internal-complibs/lz4-1.8.3/lz4.c",
+            "c-blosc/internal-complibs/lz4-1.8.3/lz4hc.c"
         ]
     },
     "module_name": "numcodecs.lz4"
