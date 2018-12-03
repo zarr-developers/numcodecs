@@ -5,7 +5,7 @@ import io
 
 
 from .abc import Codec
-from .compat import ensure_bytes, ensure_ndarray, ensure_contiguous_ndarray, PY2
+from .compat import ensure_bytes, ensure_contiguous_ndarray, PY2
 
 
 if PY2:  # pragma: py3 no cover
@@ -42,13 +42,9 @@ class GZip(Codec):
                             mode='wb',
                             compresslevel=self.level) as compressor:
             compressor.write(buf)
+        compressed = compressed.getvalue()
 
-        try:
-            compressed = compressed.getbuffer()
-        except AttributeError:  # pragma: py3 no cover
-            compressed = compressed.getvalue()
-
-        return ensure_ndarray(compressed)
+        return compressed
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
@@ -70,6 +66,6 @@ class GZip(Codec):
                 if decompressor.read(1) != b'':
                     raise ValueError("Unable to fit data into `out`")
             else:
-                out = ensure_ndarray(decompressor.read())
+                out = decompressor.read()
 
         return out

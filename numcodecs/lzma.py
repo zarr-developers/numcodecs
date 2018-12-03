@@ -15,7 +15,7 @@ except ImportError:  # pragma: no cover
 if _lzma:
 
     from .abc import Codec
-    from .compat import ndarray_copy, ensure_ndarray, ensure_contiguous_ndarray
+    from .compat import ndarray_copy, ensure_contiguous_ndarray
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -51,8 +51,8 @@ if _lzma:
             buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            return ensure_ndarray(_lzma.compress(buf, format=self.format, check=self.check,
-                                                 preset=self.preset, filters=self.filters))
+            return _lzma.compress(buf, format=self.format, check=self.check,
+                                  preset=self.preset, filters=self.filters)
 
         def decode(self, buf, out=None):
 

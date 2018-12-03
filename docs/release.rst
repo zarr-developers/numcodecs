@@ -21,6 +21,9 @@ Release notes
 * Avoid copying into data in ``GZip``'s `decode()` method on Python 2.
   By :user:`John Kirkham <jakirkham>`, :issue:`152`.
 
+* Revert ndarray coercion of encode returned data.
+  By :user:`John Kirkham <jakirkham>`, :issue:`155`.
+
 
 .. _release_0.6.1:
 
