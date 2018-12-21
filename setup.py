@@ -9,7 +9,6 @@ from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
 
-
 try:
     from Cython.Build import cythonize
 except ImportError:
@@ -205,6 +204,42 @@ def lz4_extension():
 
     return extensions
 
+def zfp_extension():
+    import numpy
+    info('setting up ZFP extension')
+
+    extra_compile_args = list(base_compile_args)
+    define_macros = []
+
+    # setup sources - use ZFP bundled in blosc
+    zfp_sources = glob('c-blosc/internal-complibs/zfp*/*.c')
+    include_dirs = [d for d in glob('c-blosc/internal-complibs/zfp*') if os.path.isdir(d)]
+    include_dirs += ['numcodecs']
+    include_dirs += [numpy.get_include()]
+    # define_macros += [('CYTHON_TRACE', '1')]
+    extra_compile_args += [
+       '-std=c99', 
+    ]
+
+    if have_cython:
+        sources = ['numcodecs/zfp.pyx']
+    else:
+        sources = ['numcodecs/zfp.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.zfp',
+                  sources=sources + zfp_sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
 
 def vlen_extension():
     info('setting up vlen extension')
@@ -300,8 +335,8 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
-                       compat_extension() + vlen_extension())
+        ext_modules = (blosc_extension() +  lz4_extension() + zstd_extension() +
+                       zfp_extension() + compat_extension() + vlen_extension())
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
