@@ -146,7 +146,7 @@ def compress(input_array,method):
   elif input_array.dtype == np.int64:
      the_type = zfp_type_int64
   else:
-     print("The type of data should be int32, int64, float or double")
+     raise ValueError("The type of data should be int32, int64, float or double")
   zfp_field_set_type(field,the_type)
   zfp_field_set_pointer(field,source_ptr)
   print(input_array.shape)
@@ -162,7 +162,7 @@ def compress(input_array,method):
      print(input_array.shape)
      zfp_field_set_size_4d(field,input_array.shape[3],input_array.shape[2],input_array.shape[1],input_array.shape[0])
   else:
-     print("The dimension of data should be equal or less than 4, please reshape")
+     raise ValueError("The dimension of data should be equal or less than 4, please reshape")
 
   # setup compression mode
   zfp=zfp_stream_open(NULL)
@@ -175,7 +175,7 @@ def compress(input_array,method):
   elif zfpmode =='c':
      zfp_stream_set_params(zfp,method.minbits,method.maxbits,method.maxprec,method.minexp)
   else:
-     print('Must specify zfp mode')
+     raise ValueError('Must specify zfp mode')
 
   # setup destination
   dest_size = zfp_stream_maximum_size(zfp,field)
@@ -189,10 +189,10 @@ def compress(input_array,method):
   # perform compression
   ret = zfp_write_header(zfp,field,ZFP_HEADER_FULL)
   if not ret:
-     print("zfp_write_header failed")
+     raise RuntimeError("zfp_write_header failed")
   compressed_size = zfp_compress(zfp,field)
   if not compressed_size:
-     print("zfp_compress is failed")
+     raise RuntimeError("zfp_compress is failed")
 
   # release buffers
   source_buffer.release()
@@ -244,7 +244,7 @@ def decompress(source):
  # read zfp header
  ret = zfp_read_header(zfp,field,ZFP_HEADER_FULL);
  if not ret:
-    print("zfp_read_header failed")
+    raise RuntimeError("zfp_read_header failed")
 
  # determine destination data type 
  if field._type == zfp_type_float:
@@ -276,7 +276,7 @@ def decompress(source):
  # perform decompression
  ret = zfp_decompress(zfp,field)
  if not ret: 
-    print("decompress failed")
+    raise RuntimeError("decompress failed")
 
  # release buffers
  source_buffer.release()
@@ -350,7 +350,7 @@ class Zfp(Codec):
  '''
  codec_id = 'zfp'
 
- def __init__(self, mode = 'a',tol = 0.01, prec = 32, rate = 16, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC):
+ def __init__(self, mode = 'a',tol = 0.0, prec = ZFP_MAX_PREC, rate = 0, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC):
     self.mode=mode
     the_method=CompressMethod()
     
@@ -377,7 +377,7 @@ class Zfp(Codec):
        the_method.set_minexp(minexp)
        the_method.set_maxprec(maxprec)
     else:
-         print("Wrong mode, please set mode to 'a', 'p', 'r' or 'c'")
+         raise ValueError("Wrong mode, please set mode to 'a', 'p', 'r' or 'c'")
     self.the_method=the_method
 
  def encode(self,buf):

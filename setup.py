@@ -85,6 +85,8 @@ def blosc_extension():
                      if os.path.isdir(d)]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*')
                      if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*')
+                     if os.path.isdir(d)]
     define_macros += [('HAVE_LZ4', 1),
                       ('HAVE_SNAPPY', 1),
                       ('HAVE_ZLIB', 1),
@@ -212,8 +214,8 @@ def zfp_extension():
     define_macros = []
 
     # setup sources - use ZFP bundled in blosc
-    zfp_sources = glob('c-blosc/internal-complibs/zfp*/src/*.c')
-    include_dirs = [d for d in glob('c-blosc/internal-complibs/zfp*/*') if os.path.isdir(d)]
+    zfp_sources = glob('zfp*/src/*.c')
+    include_dirs = [d for d in glob('zfp*/*') if os.path.isdir(d)]
     include_dirs += ['numcodecs']
     include_dirs += [numpy.get_include()]
     # define_macros += [('CYTHON_TRACE', '1')]
@@ -335,7 +337,7 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = (blosc_extension() +  lz4_extension() + # zstd_extension() +
+        ext_modules = (blosc_extension() +  lz4_extension() + zstd_extension() +
                        zfp_extension() + compat_extension() + vlen_extension())
         cmdclass = dict(build_ext=ve_build_ext)
     else:
