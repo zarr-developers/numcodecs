@@ -152,6 +152,11 @@ def ensure_bytes(buf):
         # go via numpy, for convenience
         arr = ensure_ndarray(buf)
 
+        # check for object arrays, these are just memory pointers,
+        # actual memory holding item data is scattered elsewhere
+        if arr.dtype == object:
+            raise TypeError('object arrays are not supported')
+
         # create bytes
         buf = arr.tobytes(order='A')
 
