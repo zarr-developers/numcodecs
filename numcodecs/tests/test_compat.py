@@ -51,6 +51,15 @@ def test_ensure_contiguous_ndarray_shares_memory():
             assert np.shares_memory(a, memoryview(buf))
 
 
+def test_ensure_bytes_invalid_inputs():
+
+    # object array not allowed
+    a = np.array([u'Xin chào thế giới'], dtype=object)
+    for e in [a, memoryview(a)]:
+        with pytest.raises(TypeError):
+            ensure_bytes(e)
+
+
 def test_ensure_contiguous_ndarray_invalid_inputs():
 
     # object array not allowed
