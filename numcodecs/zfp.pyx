@@ -79,6 +79,10 @@ cdef extern from "zfp.h":
    void zfp_field_set_size_2d(zfp_field*,unsigned int nx,unsigned int nx)
    void zfp_field_set_size_3d(zfp_field*,unsigned int nx,unsigned int nx,unsigned int nz)
    void zfp_field_set_size_4d(zfp_field*,unsigned int nx,unsigned int nx,unsigned int nz,unsigned int nw)
+   void zfp_field_set_stride_1d(zfp_field* field, int sx)
+   void zfp_field_set_stride_2d(zfp_field* field, int sx, int sy)
+   void zfp_field_set_stride_3d(zfp_field* field, int sx, int sy, int sz)
+   void zfp_field_set_stride_4d(zfp_field* field, int sx, int sy, int sz, int sw)
    zfp_field* zfp_field_alloc()
    void zfp_field_free(zfp_field* field)
    size_t zfp_stream_maximum_size(const zfp_stream*,const zfp_field*)
@@ -106,7 +110,7 @@ def compress(input_array,method):
      Data to be compressed. zfp can compress data better with arrays that have
      larger number of dimensions (1-4). So we want to reserve the dimension of the data
 
-  method : an object has compression mode and its relate compression parameters
+  method : a dictionary has compression mode and its relate compression parameters
   
   Returns
   -------
@@ -118,6 +122,7 @@ def compress(input_array,method):
   cdef bitstream* stream
   cdef zfp_field* field
   cdef size_t bufsize
+  cdef int stride[4]
 
   cdef:
      char *source_ptr
@@ -125,9 +130,8 @@ def compress(input_array,method):
      Buffer source_buffer
      int dest_size,compressed_size
      bytes dest
-
   # get compression mode
-  zfpmode = method.zfpmode
+  zfpmode = method['mode']
 
   # allocate an object to store all parameters
   field = zfp_field_alloc()
@@ -137,6 +141,9 @@ def compress(input_array,method):
   source_ptr = source_buffer.ptr
 
   # determine type
+  #if type(input_array) == bytes:
+  #   the_type=
+  #else:
   if input_array.dtype == np.float32:
      the_type = zfp_type_float
   elif input_array.dtype == np.float64:
@@ -146,34 +153,40 @@ def compress(input_array,method):
   elif input_array.dtype == np.int64:
      the_type = zfp_type_int64
   else:
-     raise ValueError("The type of data should be int32, int64, float or double")
+     raise TypeError("The type of data should be int32, int64, float or double")
+ 
   zfp_field_set_type(field,the_type)
   zfp_field_set_pointer(field,source_ptr)
-  print(input_array.shape)
 
-  # determine the dimensions
+  # convert F order array to C order array 
+  if input_array.flags.f_contiguous:
+     input_array=np.ascontiguousarray(input_array)
+
+  # determine the dimensions and set dimensions of C order array
   if input_array.ndim == 1:
      zfp_field_set_size_1d(field,input_array.shape[0])
+     zfp_field_set_stride_1d(field,input_array.strides[0]/input_array.itemsize)
   elif input_array.ndim == 2:
      zfp_field_set_size_2d(field,input_array.shape[1],input_array.shape[0])
+     zfp_field_set_stride_2d(field,input_array.strides[1]/input_array.itemsize,input_array.strides[0]/input_array.itemsize)
   elif input_array.ndim == 3:
      zfp_field_set_size_3d(field,input_array.shape[2],input_array.shape[1],input_array.shape[0])
+     zfp_field_set_stride_3d(field,input_array.strides[2]/input_array.itemsize,input_array.strides[1]/input_array.itemsize,input_array.strides[0]/input_array.itemsize)
   elif input_array.ndim == 4:
-     print(input_array.shape)
      zfp_field_set_size_4d(field,input_array.shape[3],input_array.shape[2],input_array.shape[1],input_array.shape[0])
+     zfp_field_set_stride_4d(field,input_array.strides[3]/input_array.itemsize,input_array.strides[2]/input_array.itemsize,input_array.strides[1]/input_array.itemsize,input_array.strides[0]/input_array.itemsize)
   else:
      raise ValueError("The dimension of data should be equal or less than 4, please reshape")
-
   # setup compression mode
   zfp=zfp_stream_open(NULL)
   if zfpmode == 'a':
-     zfp_stream_set_accuracy(zfp,method.tolerance)
+     zfp_stream_set_accuracy(zfp,method['tol'])
   elif zfpmode == 'p':
-     zfp_stream_set_precision(zfp,method.precision)
+     zfp_stream_set_precision(zfp,method['prec'])
   elif zfpmode == 'r':
-     zfp_stream_set_rate(zfp,method.rate,the_type,input_array.ndim,0)
+     zfp_stream_set_rate(zfp,method['rate'],the_type,input_array.ndim,0)
   elif zfpmode =='c':
-     zfp_stream_set_params(zfp,method.minbits,method.maxbits,method.maxprec,method.minexp)
+     zfp_stream_set_params(zfp,method['minbits'],method['maxbits'],method['maxprec'],method['minexp'])
   else:
      raise ValueError('Must specify zfp mode')
 
@@ -202,7 +215,7 @@ def compress(input_array,method):
  
   return dest[:compressed_size]
 
-def decompress(source):
+def decompress(source,dest=None):
  '''Decompress data.
 
  Parameters
@@ -210,6 +223,7 @@ def decompress(source):
  source : bytes-like
      Compressed data, including zfp header. Can be any object supporting the
      buffer protocol
+ dest : array-like, optional
  
  Returns 
  -------
@@ -222,7 +236,7 @@ def decompress(source):
      bitstream* stream
      zfp_field* field
      Buffer source_buffer
-     Buffer dest_buffer 
+     Buffer dest_buffer = None 
      char *source_ptr
      char *dest_ptr
      int source_size
@@ -239,7 +253,6 @@ def decompress(source):
  stream = stream_open(source_ptr,source_size)
  zfp_stream_set_bit_stream(zfp,stream)
  zfp_stream_rewind(zfp)
- print(source_size)
 
  # read zfp header
  ret = zfp_read_header(zfp,field,ZFP_HEADER_FULL);
@@ -269,8 +282,13 @@ def decompress(source):
  zfp_stream_set_execution(zfp,zfp_exec_serial)
 
  # setup destination buffer
- dest = PyBytes_FromStringAndSize(NULL,datashape*type_size)
- dest_ptr = PyBytes_AS_STRING(dest)
+ if dest is None:
+    dest = PyBytes_FromStringAndSize(NULL,datashape*type_size)
+    dest_ptr = PyBytes_AS_STRING(dest)
+ else:
+    arr = ensure_contiguous_ndarray(dest)
+    dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+    dest_ptr = dest_buffer.ptr
  zfp_field_set_pointer(field,dest_ptr)
 
  # perform decompression
@@ -280,6 +298,8 @@ def decompress(source):
 
  # release buffers
  source_buffer.release()
+ if dest_buffer is not None:
+    dest_buffer.release()
  zfp_field_free(field)
  zfp_stream_close(zfp)
  stream_close(stream)
@@ -293,10 +313,8 @@ def decompress(source):
    buf_shape=(nz,ny,nx)
  else:
    buf_shape=(nw,nz,ny,nx)
- print(buf_shape)
  dest = ensure_ndarray(dest).view(the_type)
  dest = dest.reshape(buf_shape)
-
  return dest
 
 class CompressMethod:
@@ -350,53 +368,54 @@ class Zfp(Codec):
  '''
  codec_id = 'zfp'
 
- def __init__(self, mode = 'a',tol = 0.0, prec = ZFP_MAX_PREC, rate = 0, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC):
+ def __init__(self, mode = 'a',tol = 0.0, prec = ZFP_MAX_PREC, rate = 0, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC,the_method=None):
     self.mode=mode
-    the_method=CompressMethod()
+    #the_method=CompressMethod()
+    self.the_method={}
     
     if mode == 'a':
-       self.tolerance=tol
-       the_method.set_mode(mode)
-       the_method.set_tolerance(tol)
+       self.tol=tol
+       self.the_method['mode']=mode
+       self.the_method['tol']=tol
     elif mode == 'p':
-       self.maxprec = prec
-       the_method.set_mode(mode)
-       the_method.set_precision(prec)
+       self.prec = prec
+       self.the_method['mode']=mode
+       self.the_method['prec']=prec
     elif mode == 'r':
        self.rate = rate
-       the_method.set_mode(mode)
-       the_method.set_rate(rate)
+       self.the_method['mode']=mode
+       self.the_method['rate']=rate
     elif mode == 'c':
        self.minbits = minbits
        self.maxbits = maxbits
        self.maxprec = maxprec
        self.minexp  = minexp
-       the_method.set_mode(mode)
-       the_method.set_minbits(minbits)
-       the_method.set_maxbits(maxbits)
-       the_method.set_minexp(minexp)
-       the_method.set_maxprec(maxprec)
+       self.the_method['mode']=mode
+       self.the_method['minbits']=minbits
+       self.the_method['maxbits']=maxbits
+       self.the_method['minexp']=minexp
+       self.the_method['maxprec']=maxprec
     else:
          raise ValueError("Wrong mode, please set mode to 'a', 'p', 'r' or 'c'")
-    self.the_method=the_method
+    #self.the_method=the_method
 
  def encode(self,buf):
       #buf = ensure_contiguous_ndarray(buf)
       return compress(buf,self.the_method)
 
- def decode(self,buf):
+ def decode(self,buf,out=None):
      buf=ensure_contiguous_ndarray(buf)
-     return decompress(buf)
+     return decompress(buf,out)
 
  def __repr__(self):
      if self.mode == 'a':
-        r= '%r(mode=%r,minexp=%s)' % (type(self).__name__, self.mode,self.minexp)
+        r= '%s(mode=%r,tol=%s)' % (type(self).__name__, self.mode,self.tol)
      elif self.mode == 'p':
-        r= '%r(mode=%r,maxprec=%s)' % (type(self).__name__,self.mode,self.maxprec)
+        r= '%s(mode=%r,prec=%s)' % (type(self).__name__,self.mode,self.prec)
      elif self.mode == 'r':
-        r= '%r(mode=%r,rate=%s)' % (type(self).__name__,self.mode,self.rate)
+        r= '%s(mode=%r,rate=%s)' % (type(self).__name__,self.mode,self.rate)
      elif self.mode == 'c':
-        r= '%r(mode=%r,minbits=%s,maxbits=%s,maxprec=%s,minexp=%s)' % (type(self).__name__,self.mode,self.minbits,self.maxbits,self.maxprec,self.minexp)
+        r= '%s(mode=%r,minbits=%s,maxbits=%s,minexp=%s,maxprec=%s)' % (type(self).__name__,self.mode,self.minbits,self.maxbits,self.minexp,self.maxprec)
      else:
         r="WRONG MODE"
      return r

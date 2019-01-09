@@ -17,8 +17,8 @@ contribute code, please `raise an issue on GitHub
 <https://github.com/alimanfoo/numcodecs/issues>`_.
 
 """
-
 from __future__ import absolute_import, print_function, division
+import os, sys; sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import multiprocessing
 import atexit
 
@@ -67,6 +67,13 @@ try:
     from numcodecs import lz4
     from numcodecs.lz4 import LZ4
     register_codec(LZ4)
+except ImportError:  # pragma: no cover
+    pass
+
+try:
+    from numcodecs import zfp
+    from numcodecs.zfp import Zfp
+    register_codec(Zfp)
 except ImportError:  # pragma: no cover
     pass
 

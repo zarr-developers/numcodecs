@@ -9,7 +9,7 @@
         ],
         "extra_compile_args": [
             "-msse2",
-            "-mno-avx2"
+            "-mavx2"
         ],
         "include_dirs": [
             "numcodecs",
@@ -18,8 +18,8 @@
         "name": "numcodecs.lz4",
         "sources": [
             "numcodecs/lz4.pyx",
-            "c-blosc/internal-complibs/lz4-1.8.3/lz4.c",
-            "c-blosc/internal-complibs/lz4-1.8.3/lz4hc.c"
+            "c-blosc/internal-complibs/lz4-1.8.3/lz4hc.c",
+            "c-blosc/internal-complibs/lz4-1.8.3/lz4.c"
         ]
     },
     "module_name": "numcodecs.lz4"
