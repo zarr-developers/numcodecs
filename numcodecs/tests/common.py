@@ -203,7 +203,6 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
             # file with codec configuration information
             codec_fn = os.path.join(codec_dir, 'config.json')
-         
             # one time save config
             if not os.path.exists(codec_fn):  # pragma: no cover
                 with open(codec_fn, mode='w') as cf:

@@ -10,17 +10,15 @@ from numcodecs.zfp import Zfp
 from numcodecs.tests.common import (check_encode_decode_array, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
-                                    check_err_encode_object_buffer,
-                                    check_max_buffer_size)
+                                    check_err_encode_object_buffer)
 
 
 codecs = [
     Zfp(),
-    Zfp(mode='a',tol=0),
-    Zfp(mode='p',prec=64),
-    Zfp(mode='r',rate=60),
+    Zfp(mode='a',tol=0), 
+    Zfp(mode='p',prec=64), 
+    Zfp(mode='r',rate=60), 
     Zfp(mode='c'),
- 
 ]
 
 
@@ -62,5 +60,3 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Zfp())
-
-
