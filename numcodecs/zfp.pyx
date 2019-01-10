@@ -61,10 +61,10 @@ cdef extern from "zfp.h":
        unsigned int maxprec
        int minexp
        bitstream* stream
-       zfp_execution _exec 
+       zfp_execution _exec "exec" 
    
    ctypedef struct zfp_field:
-       zfp_type _type
+       zfp_type _type "type"
        unsigned int nx,ny,nz,nw
        int sx,sy,sz,sw
        void* data
