@@ -15,9 +15,9 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
 
 codecs = [
     Zfp(),
-    Zfp(mode='a',tol=0), 
-    Zfp(mode='p',prec=64), 
-    Zfp(mode='r',rate=60), 
+    Zfp(mode='a', tol=0),
+    Zfp(mode='p', prec=64),
+    Zfp(mode='r', rate=60),
     Zfp(mode='c'),
 ]
 
