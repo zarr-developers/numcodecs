@@ -251,6 +251,11 @@ how compiler options for different instruction sets are configured (:issue:`24`,
 
 New codecs:
 
+* One new compressor codec :class:`numcodecs.zfp.Zfp` 
+  have been added (:issue:`160`). These provide direct support for
+  compression/decompression using `zfp <https://github.com/LLNL/zfp>`_ to perfrom
+  encoding/decoding.
+
 * Two new compressor codecs :class:`numcodecs.zstd.Zstd` and :class:`numcodecs.lz4.LZ4`
   have been added (:issue:`3`, :issue:`22`). These provide direct support for
   compression/decompression using `Zstandard <https://github.com/facebook/zstd>`_ and
