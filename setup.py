@@ -222,7 +222,7 @@ def zfp_extension():
     extra_compile_args.append('-DZFP_WITH_OPENMP=OFF')
     extra_compile_args.append('-DBUILD_CFP=OFF')
     extra_compile_args += [
-       '-std=c99', 
+       '-std=gnu99', 
     ]
 
     if have_cython:
