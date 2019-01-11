@@ -64,7 +64,7 @@ cdef extern from "zfp.h":
        zfp_execution _exec "exec" 
    
    ctypedef struct zfp_field:
-       zfp_type _type "type"
+       zfp_type _type "_type"
        unsigned int nx,ny,nz,nw
        int sx,sy,sz,sw
        void* data
