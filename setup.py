@@ -216,13 +216,14 @@ def zfp_extension():
     # setup sources - use ZFP bundled in blosc
     zfp_sources = glob('zfp-0.5.4/src/*.c')
     include_dirs = [d for d in glob('zfp-0.5.4/*') if os.path.isdir(d)]
+    include_dirs += [d for d in glob('zfp-0.5.4/src/*/*') if os.path.isdir(d)]
     include_dirs += ['numcodecs']
     include_dirs += [numpy.get_include()]
     # define_macros += [('CYTHON_TRACE', '1')]
     extra_compile_args.append('-DZFP_WITH_OPENMP=OFF')
     extra_compile_args.append('-DBUILD_CFP=OFF')
     extra_compile_args += [
-       '-std=gnu99', 
+       '-std=c99','-std=c++98' 
     ]
 
     if have_cython:
