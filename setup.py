@@ -215,6 +215,7 @@ def zfp_extension():
 
     # setup sources - use ZFP bundled in blosc
     zfp_sources = glob('zfp-0.5.4/src/*.c')
+    zfp_sources += glob('zfp-0.5.4/src/*/*.c')
     include_dirs = [d for d in glob('zfp-0.5.4/*') if os.path.isdir(d)]
     include_dirs += [d for d in glob('zfp-0.5.4/*/*') if os.path.isdir(d)]
     include_dirs += ['numcodecs']
@@ -223,7 +224,7 @@ def zfp_extension():
     extra_compile_args.append('-DZFP_WITH_OPENMP=OFF')
     extra_compile_args.append('-DBUILD_CFP=OFF')
     extra_compile_args += [
-       '-std=c99','-std=c++98' 
+       '-std=c99'
     ]
 
     if have_cython:
