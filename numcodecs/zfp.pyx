@@ -102,7 +102,7 @@ __version__ = VERSION_STRING
 
 
 def compress(input_array,method):
-  '''Compress data. 
+  """Compress data. 
   
   Parameters
   ----------
@@ -117,7 +117,7 @@ def compress(input_array,method):
   dest : bytes
      Compressed data
 
-  '''
+  """
   cdef zfp_stream* zfp
   cdef bitstream* stream
   cdef zfp_field* field
@@ -216,7 +216,7 @@ def compress(input_array,method):
   return dest[:compressed_size]
 
 def decompress(source,dest=None):
- '''Decompress data.
+ """Decompress data.
 
  Parameters
  ----------
@@ -230,7 +230,7 @@ def decompress(source,dest=None):
  dest : array-like
      Object containing decompressed data
  
- '''
+ """
  cdef:
      zfp_stream* zfp
      bitstream* stream
@@ -317,60 +317,43 @@ def decompress(source,dest=None):
  dest = dest.reshape(buf_shape)
  return dest
 
-class CompressMethod:
- '''
- Create a CompressMethod object to store zfp mode and 
- its parameters in Zfp class
- 
- '''
-
- # Initilize with defaults
- def __init__(self):
-    self.zfpmode='a'
-    self.tolerance=0.01
-
- def set_mode(self,mode):
-     self.zfpmode=mode
- def set_tolerance(self,tol):
-     self.tolerance=tol
- def set_precision(self,prec):
-     self.precision=prec
- def set_rate(self,rate):
-     self.rate=rate
- def set_minbits(self,minbits):
-     self.minbits=minbits
- def set_maxbits(self,maxbits):
-     self.maxbits=maxbits
- def set_maxprec(self,maxprec):
-     self.maxprec=maxprec
- def set_minexp(self,minexp):
-     self.minexp=minexp
      
 class Zfp(Codec):
- '''Codec providing compression using zfp via the Python standard library.
+ """Codec providing compression using zfp via the Python standard library.
  
- Parameters
+ Attributes
  ----------
- mode : a
- tolerance : float (absolue error tolerance), default 0.01
+ mode(mode='a')
+    Accuracy method.
+ tol : float 
+    Absolue error tolerance, default 0.0
  
- mode : p
- precision : int (uncompressed bits per value), can be 0-64 for double precision
+ mode(mode='p')
+    Precision method.
+ prec : int 
+    Uncompressed bits per value, can be 0-64 for double precision
 
- mode : r
- rate : int (compressed bits per floating-point value), can be 0-64 for double precision
+ mode(mode='r')
+   Rate method.
+ rate : int 
+   Compressed bits per floating-point value, can be 0-64 for double precision
 
- mode : c
- minbits : int (min bits per 4^d values in d dimensions)
- maxbits : int (max bits per 4^d values in d dimensions), 0 for unlimited
- minexp : int (min bit plane : -1074 for all bit planes)
- maxprec : int (max bits of precision per value), 0 for full
- '''
+ mode(mode='c')
+   Custom method.
+ minbits : int
+   Min bits per 4^d values in d dimensions
+ maxbits : int
+   Max bits per 4^d values in d dimensions, 0 for unlimited
+ minexp : int
+   Min bit plane, -1074 for all bit planes
+ maxprec : int
+   Max bits of precision per value, 0 for full
+
+ """
  codec_id = 'zfp'
 
- def __init__(self, mode = 'a',tol = 0.0, prec = ZFP_MAX_PREC, rate = 0, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC,the_method=None):
+ def __init__(self, mode = 'a',tol = 0.0, prec = ZFP_MAX_PREC, rate = 0, minbits = ZFP_MIN_BITS, maxbits = ZFP_MAX_BITS, minexp = ZFP_MIN_EXP, maxprec = ZFP_MAX_PREC, the_method = None):
     self.mode=mode
-    #the_method=CompressMethod()
     self.the_method={}
     
     if mode == 'a':
@@ -397,7 +380,6 @@ class Zfp(Codec):
        self.the_method['maxprec']=maxprec
     else:
          raise ValueError("Wrong mode, please set mode to 'a', 'p', 'r' or 'c'")
-    #self.the_method=the_method
 
  def encode(self,buf):
       #buf = ensure_contiguous_ndarray(buf)
