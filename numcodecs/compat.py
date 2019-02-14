@@ -120,14 +120,14 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     # ensure input is a numpy array
     arr = ensure_ndarray(buf)
 
-    # check for datetime or timedelta ndarray, the buffer interface doesn't support those
-    if arr.dtype.kind in 'Mm':
-        arr = arr.view(np.int64)
-
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
     if arr.dtype == object:
         raise TypeError('object arrays are not supported')
+
+    # check for datetime or timedelta ndarray, the buffer interface doesn't support those
+    if arr.dtype.kind in 'Mm':
+        arr = arr.view(np.int64)
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
