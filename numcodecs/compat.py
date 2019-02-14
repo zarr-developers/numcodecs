@@ -121,7 +121,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     arr = ensure_ndarray(buf)
 
     # check for datetime or timedelta ndarray, the buffer interface doesn't support those
-    if isinstance(buf, np.ndarray) and buf.dtype.kind in 'Mm':
+    if arr.dtype.kind in 'Mm':
         arr = arr.view(np.int64)
 
     # check for object arrays, these are just memory pointers, actual memory holding
