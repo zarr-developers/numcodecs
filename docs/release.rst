@@ -7,8 +7,8 @@ Release notes
 * Raise a ``TypeError`` if an ``object`` array is passed to ``ensure_bytes``.
   By :user:`John Kirkham <jakirkham>`, :issue:`162`.
 
-* Update Cython to 0.29.3.
-  By :user:`John Kirkham <jakirkham>`, :issue:`165`.
+* Update Cython to 0.29.5.
+  By :user:`John Kirkham <jakirkham>`, :issue:`168`.
 
 
 .. _release_0.6.2:
