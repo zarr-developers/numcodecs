@@ -10,6 +10,10 @@ Release notes
 * Update Cython to 0.29.5.
   By :user:`John Kirkham <jakirkham>`, :issue:`168`.
 
+* Add a ``subok`` option to the ``ensure_*`` functions to handle their behavior
+  with subclasses of the expected type.
+  By :user:`John Kirkham <jakirkham>`, :issue:`173`.
+
 
 .. _release_0.6.2:
 
