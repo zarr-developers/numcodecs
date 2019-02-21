@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 import array
+import itertools
 import mmap
 
 
@@ -21,6 +22,24 @@ def test_ensure_bytes():
     for buf in bufs:
         b = ensure_bytes(buf)
         assert isinstance(b, bytes)
+
+
+def test_ensure_bytes_subok():
+    class MyBytes(bytes):
+        pass
+
+    bufs = [
+        b'adsdasdas',
+        MyBytes(b'adsdasdas'),
+    ]
+    suboks = [True, False]
+    for buf, subok in itertools.product(bufs, suboks):
+        b = ensure_bytes(buf, subok=subok)
+        assert isinstance(b, bytes)
+        if subok:
+            assert type(b) is type(buf)
+        else:
+            assert type(b) is bytes
 
 
 def test_ensure_contiguous_ndarray_shares_memory():
@@ -49,6 +68,21 @@ def test_ensure_contiguous_ndarray_shares_memory():
             assert np.shares_memory(a, np.getbuffer(buf))
         else:  # pragma: py2 no cover
             assert np.shares_memory(a, memoryview(buf))
+
+
+def test_ensure_contiguous_ndarray_subok():
+    bufs = [
+        np.arange(100, dtype=np.int64),
+        np.ma.arange(100, dtype=np.int64),
+    ]
+    suboks = [True, False]
+    for buf, subok in itertools.product(bufs, suboks):
+        a = ensure_contiguous_ndarray(buf, subok=subok)
+        assert isinstance(a, np.ndarray)
+        if subok:
+            assert type(a) is type(buf)
+        else:
+            assert type(a) is np.ndarray
 
 
 def test_ensure_bytes_invalid_inputs():
