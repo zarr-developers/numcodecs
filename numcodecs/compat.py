@@ -33,7 +33,7 @@ def ensure_text(l, encoding='utf-8'):
         return text_type(l, encoding=encoding)
 
 
-def ensure_ndarray(buf):
+def ensure_ndarray(buf, subok=True):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
 
@@ -41,6 +41,8 @@ def ensure_ndarray(buf):
     ----------
     buf : array-like or bytes-like
         A numpy array or any object exporting a buffer interface.
+    subok : bool
+        Whether to allow `ndarray` subclasses or not
 
     Returns
     -------
@@ -54,7 +56,11 @@ def ensure_ndarray(buf):
 
     """
 
-    if isinstance(buf, np.ndarray):
+    if type(buf) is np.ndarray:
+        # already a numpy array
+        arr = buf
+
+    elif subok and isinstance(buf, np.ndarray):
         # already a numpy array
         arr = buf
 
@@ -90,7 +96,7 @@ def ensure_ndarray(buf):
     return arr
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None):
+def ensure_contiguous_ndarray(buf, max_buffer_size=None, subok=True):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -104,6 +110,8 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     max_buffer_size : int
         If specified, the largest allowable value of arr.nbytes, where arr
         is the retured array.
+    subok : bool
+        Whether to allow `ndarray` subclasses or not
 
     Returns
     -------
@@ -118,7 +126,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     """
 
     # ensure input is a numpy array
-    arr = ensure_ndarray(buf)
+    arr = ensure_ndarray(buf, subok=subok)
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
@@ -144,10 +152,10 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     return arr
 
 
-def ensure_bytes(buf):
+def ensure_bytes(buf, subok=True):
     """Obtain a bytes object from memory exposed by `buf`."""
 
-    if not isinstance(buf, binary_type):
+    if not (type(buf) is binary_type or (subok and isinstance(buf, binary_type))):
 
         # go via numpy, for convenience
         arr = ensure_ndarray(buf)
