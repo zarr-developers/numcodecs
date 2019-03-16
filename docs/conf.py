@@ -16,10 +16,15 @@
 
 import sys
 import os
-from mock import Mock as MagicMock
 
 
 PY2 = sys.version_info[0] == 2
+
+
+if PY2:
+    from mock import Mock as MagicMock
+else:
+    from unittest.mock import Mock as MagicMock
 
 
 class Mock(MagicMock):
