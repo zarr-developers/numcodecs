@@ -63,7 +63,7 @@ def test_backwards_compatibility():
     # integers
     arrs = [
         np.arange(1000, dtype='<i4'),
-        np.random.randint(0, 200, size=1000, dtype='<i4').reshape(100, 10, order='F'),
+        np.random.randint(0, 200, size=1000, dtype='i4').astype('<i4').reshape(100, 10, order='F'),
     ]
     codec = AsType(encode_dtype='<i2', decode_dtype='<i4')
     check_backwards_compatibility(AsType.codec_id, arrs, [codec], prefix='i')
