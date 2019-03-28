@@ -16,10 +16,10 @@ from numcodecs.tests.common import (check_encode_decode, check_config, check_rep
 # mix of shapes: 1D, 2D, 3D
 # mix of orders: C, F
 arrays = [
-    np.arange(1000, dtype='i4'),
-    np.linspace(1000, 1001, 1000, dtype='f4').reshape(100, 10),
-    np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('f8'),
-    np.random.randint(0, 200, size=1000, dtype='u2').reshape(100, 10, order='F'),
+    np.arange(1000, dtype='<i4'),
+    np.linspace(1000, 1001, 1000, dtype='<f4').reshape(100, 10),
+    np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('<f8'),
+    np.random.randint(0, 200, size=1000, dtype='u2').astype('<u2').reshape(100, 10, order='F'),
 ]
 
 
