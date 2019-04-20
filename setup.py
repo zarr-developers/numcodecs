@@ -350,7 +350,7 @@ def run_setup(with_extensions):
         author_email='alimanfoo@googlemail.com',
         maintainer='Alistair Miles',
         maintainer_email='alimanfoo@googlemail.com',
-        url='https://github.com/alimanfoo/numcodecs',
+        url='https://github.com/zarr-developers/numcodecs',
         license='MIT',
     )
 
