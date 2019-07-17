@@ -30,12 +30,12 @@ matrix:
       language: generic
 
 install:
-  - pip install -U tox-travis coveralls pip setuptools wheel
-  - pip install -e .
+  - pip install -U tox-travis coveralls pip setuptools wheel pytest
+  - pip install -v -e .
 
 script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then tox; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pytest -v numcodecs; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pytest -v --pyargs numcodecs; fi
 
 after_success:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then coveralls; fi
