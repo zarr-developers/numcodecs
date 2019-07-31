@@ -8,8 +8,15 @@ sudo: false
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main'
+        key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
     packages:
       - liblzma-dev
+      - gcc-9
+      - g++-9
+      - clang-8
 
 matrix:
   include:
@@ -20,9 +27,18 @@ matrix:
       dist: xenial
       sudo: true
 
+env:
+  - CXX=g++-9 CC=gcc-9
+  - CXX=clang++-8 CC=clang-8
+
 install:
   - pip install -U tox-travis coveralls pip setuptools wheel
   - python setup.py build_ext --inplace
+
+before_script:
+  - ${CXX} --version
+  - ${CC} --version
+  - python --version
 
 script:
   - tox
