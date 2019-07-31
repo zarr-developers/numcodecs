@@ -15,6 +15,10 @@ Release notes
 * Update Cython to 0.29.6.
   By :user:`John Kirkham <jakirkham>`, :issue:`168`, :issue:`177`.
 
+* The bundled c-blosc sources have been upgraded to version 1.17.0.
+  This fixes compilation with newer versions of gcc.
+  By :user:`Joe Jevnik <llllllllll>`
+
 
 .. _release_0.6.2:
 
