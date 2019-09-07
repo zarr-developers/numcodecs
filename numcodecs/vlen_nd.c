@@ -4520,7 +4520,7 @@ static PyObject *__pyx_pf_9numcodecs_7vlen_nd_11VLenNDArray_8decode(CYTHON_UNUSE
  *             if data + l > data_end:
  *                 raise ValueError('corrupt buffer, data seem truncated')             # <<<<<<<<<<<<<<
  *             d = np.frombuffer(data[:l], dtype=self.dtype)
- *             out[i] = d.reshape(s,  order='A')
+ *             if n > 0:
  */
       __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
@@ -4541,8 +4541,8 @@ static PyObject *__pyx_pf_9numcodecs_7vlen_nd_11VLenNDArray_8decode(CYTHON_UNUSE
  *             if data + l > data_end:
  *                 raise ValueError('corrupt buffer, data seem truncated')
  *             d = np.frombuffer(data[:l], dtype=self.dtype)             # <<<<<<<<<<<<<<
- *             out[i] = d.reshape(s,  order='A')
- *             data += l
+ *             if n > 0:
+ *                 out[i] = d.reshape(s,  order='A')
  */
     __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 221, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
@@ -4573,31 +4573,63 @@ static PyObject *__pyx_pf_9numcodecs_7vlen_nd_11VLenNDArray_8decode(CYTHON_UNUSE
     /* "numcodecs/vlen_nd.pyx":222
  *                 raise ValueError('corrupt buffer, data seem truncated')
  *             d = np.frombuffer(data[:l], dtype=self.dtype)
- *             out[i] = d.reshape(s,  order='A')             # <<<<<<<<<<<<<<
+ *             if n > 0:             # <<<<<<<<<<<<<<
+ *                 out[i] = d.reshape(s,  order='A')
+ *             else:
+ */
+    __pyx_t_7 = ((__pyx_v_n > 0) != 0);
+    if (__pyx_t_7) {
+
+      /* "numcodecs/vlen_nd.pyx":223
+ *             d = np.frombuffer(data[:l], dtype=self.dtype)
+ *             if n > 0:
+ *                 out[i] = d.reshape(s,  order='A')             # <<<<<<<<<<<<<<
+ *             else:
+ *                 out[i] = d
+ */
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_d, __pyx_n_s_reshape); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_v_s);
+      __Pyx_GIVEREF(__pyx_v_s);
+      PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_s);
+      __pyx_t_10 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      if (PyDict_SetItem(__pyx_t_10, __pyx_n_s_order, __pyx_n_s_A) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_out, __pyx_v_i, __pyx_t_3, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0) < 0)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "numcodecs/vlen_nd.pyx":222
+ *                 raise ValueError('corrupt buffer, data seem truncated')
+ *             d = np.frombuffer(data[:l], dtype=self.dtype)
+ *             if n > 0:             # <<<<<<<<<<<<<<
+ *                 out[i] = d.reshape(s,  order='A')
+ *             else:
+ */
+      goto __pyx_L13;
+    }
+
+    /* "numcodecs/vlen_nd.pyx":225
+ *                 out[i] = d.reshape(s,  order='A')
+ *             else:
+ *                 out[i] = d             # <<<<<<<<<<<<<<
  *             data += l
  * 
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_d, __pyx_n_s_reshape); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_INCREF(__pyx_v_s);
-    __Pyx_GIVEREF(__pyx_v_s);
-    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_s);
-    __pyx_t_10 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    if (PyDict_SetItem(__pyx_t_10, __pyx_n_s_order, __pyx_n_s_A) < 0) __PYX_ERR(0, 222, __pyx_L1_error)
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_out, __pyx_v_i, __pyx_t_3, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0) < 0)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    /*else*/ {
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_out, __pyx_v_i, __pyx_v_d, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0) < 0)) __PYX_ERR(0, 225, __pyx_L1_error)
+    }
+    __pyx_L13:;
 
-    /* "numcodecs/vlen_nd.pyx":223
- *             d = np.frombuffer(data[:l], dtype=self.dtype)
- *             out[i] = d.reshape(s,  order='A')
+    /* "numcodecs/vlen_nd.pyx":226
+ *             else:
+ *                 out[i] = d
  *             data += l             # <<<<<<<<<<<<<<
  * 
  *         return out
@@ -4605,7 +4637,7 @@ static PyObject *__pyx_pf_9numcodecs_7vlen_nd_11VLenNDArray_8decode(CYTHON_UNUSE
     __pyx_v_data = (__pyx_v_data + __pyx_v_l);
   }
 
-  /* "numcodecs/vlen_nd.pyx":225
+  /* "numcodecs/vlen_nd.pyx":228
  *             data += l
  * 
  *         return out             # <<<<<<<<<<<<<<

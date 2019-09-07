@@ -219,7 +219,10 @@ class VLenNDArray(Codec):
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             d = np.frombuffer(data[:l], dtype=self.dtype)
-            out[i] = d.reshape(s,  order='A')
+            if n > 0:
+                out[i] = d.reshape(s,  order='A')
+            else:
+                out[i] = d
             data += l
 
         return out
