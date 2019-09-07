@@ -6,12 +6,16 @@
         "depends": [
             "numcodecs/stdint_compat.h"
         ],
+        "extra_compile_args": [
+            "-msse2",
+            "-mavx2"
+        ],
         "include_dirs": [
             "numcodecs"
         ],
         "name": "numcodecs.vlen",
         "sources": [
-            "/Users/nicholassofroniew/Github/numcodecs/numcodecs/vlen.pyx"
+            "numcodecs/vlen.pyx"
         ]
     },
     "module_name": "numcodecs.vlen"
@@ -823,9 +827,9 @@ static const char *__pyx_f[] = {
   "numcodecs/vlen.pyx",
   "stringsource",
   "numcodecs/compat_ext.pxd",
-  "type.pxd",
-  "bool.pxd",
-  "complex.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/complex.pxd",
 };
 /* MemviewSliceStruct.proto */
 struct __pyx_memoryview_obj;

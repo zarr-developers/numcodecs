@@ -840,7 +840,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/blosc.pyx",
-  "type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */
