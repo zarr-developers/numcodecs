@@ -2,6 +2,7 @@
 # flake8: noqa
 from __future__ import absolute_import, print_function, division
 import sys
+import codecs
 import array
 
 
@@ -27,10 +28,10 @@ else:  # pragma: py2 no cover
 
 
 def ensure_text(l, encoding='utf-8'):
-    if isinstance(l, text_type):
-        return l
-    else:  # pragma: py3 no cover
-        return text_type(l, encoding=encoding)
+    if not isinstance(l, text_type):
+        l = ensure_contiguous_ndarray(l)
+        l = codecs.decode(l, 'ascii')
+    return l
 
 
 def ensure_ndarray(buf):
