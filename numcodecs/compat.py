@@ -27,11 +27,11 @@ else:  # pragma: py2 no cover
     from functools import reduce
 
 
-def ensure_text(l, encoding='utf-8'):
-    if not isinstance(l, text_type):
-        l = ensure_contiguous_ndarray(l)
-        l = codecs.decode(l, 'ascii')
-    return l
+def ensure_text(s, encoding='utf-8'):
+    if not isinstance(s, text_type):
+        s = ensure_contiguous_ndarray(s)
+        s = codecs.decode(s, 'ascii')
+    return s
 
 
 def ensure_ndarray(buf):
