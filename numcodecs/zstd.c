@@ -3,50 +3,14 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [
-            "c-blosc/internal-complibs/zstd-1.3.7/zstd.h"
-        ],
+        "depends": [],
         "extra_compile_args": [
             "-msse2",
-            "-mno-avx2"
-        ],
-        "include_dirs": [
-            "c-blosc/internal-complibs/zstd-1.3.7",
-            "c-blosc/internal-complibs/zstd-1.3.7/common",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress",
-            "c-blosc/internal-complibs/zstd-1.3.7/decompress",
-            "c-blosc/internal-complibs/zstd-1.3.7/deprecated",
-            "c-blosc/internal-complibs/zstd-1.3.7/dictBuilder",
-            "c-blosc/internal-complibs/zstd-1.3.7/dll",
-            "c-blosc/internal-complibs/zstd-1.3.7/legacy"
+            "-mavx2"
         ],
         "name": "numcodecs.zstd",
         "sources": [
-            "numcodecs/zstd.pyx",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/debug.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/entropy_common.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/error_private.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/fse_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/pool.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/threading.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/xxhash.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/common/zstd_common.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/fse_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/hist.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/huf_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_double_fast.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_fast.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_lazy.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_ldm.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstd_opt.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/compress/zstdmt_compress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/decompress/huf_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/decompress/zstd_decompress.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/dictBuilder/cover.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/dictBuilder/divsufsort.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/dictBuilder/fastcover.c",
-            "c-blosc/internal-complibs/zstd-1.3.7/dictBuilder/zdict.c"
+            "numcodecs/zstd.pyx"
         ]
     },
     "module_name": "numcodecs.zstd"
@@ -853,7 +817,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/zstd.pyx",
-  "type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */

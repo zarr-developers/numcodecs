@@ -4,22 +4,18 @@
 {
     "distutils": {
         "depends": [
-            "c-blosc/internal-complibs/lz4-1.8.3/lz4.h",
             "numcodecs/stdint_compat.h"
         ],
         "extra_compile_args": [
             "-msse2",
-            "-mno-avx2"
+            "-mavx2"
         ],
         "include_dirs": [
-            "numcodecs",
-            "c-blosc/internal-complibs/lz4-1.8.3"
+            "numcodecs"
         ],
         "name": "numcodecs.lz4",
         "sources": [
-            "numcodecs/lz4.pyx",
-            "c-blosc/internal-complibs/lz4-1.8.3/lz4.c",
-            "c-blosc/internal-complibs/lz4-1.8.3/lz4hc.c"
+            "numcodecs/lz4.pyx"
         ]
     },
     "module_name": "numcodecs.lz4"
@@ -827,7 +823,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/lz4.pyx",
-  "type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */

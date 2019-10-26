@@ -114,3 +114,10 @@ try:
     register_codec(VLenArray)
 except ImportError:  # pragma: no cover
     pass
+
+try:
+    from numcodecs import vlen_nd
+    from numcodecs.vlen_nd import VLenNDArray
+    register_codec(VLenNDArray)
+except ImportError:  # pragma: no cover
+    pass

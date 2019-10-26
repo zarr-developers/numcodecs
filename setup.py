@@ -237,6 +237,37 @@ def vlen_extension():
     return extensions
 
 
+def vlen_nd_extension():
+    info('setting up vlen_nd extension')
+
+    extra_compile_args = list(base_compile_args)
+    define_macros = []
+
+    # setup sources
+    include_dirs = ['numcodecs']
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    if have_cython:
+        sources = ['numcodecs/vlen_nd.pyx']
+    else:
+        sources = ['numcodecs/vlen_nd.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.vlen_nd',
+                  sources=sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
 def compat_extension():
     info('setting up compat extension')
 
@@ -301,7 +332,8 @@ def run_setup(with_extensions):
 
     if with_extensions:
         ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
-                       compat_extension() + vlen_extension())
+                       compat_extension() + vlen_extension() +
+                       vlen_nd_extension())
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
