@@ -14,20 +14,20 @@ from numcodecs.tests.common import (check_encode_decode, check_config, check_rep
 
 
 arrays = [
-    np.linspace(1000, 1001, 1000, dtype='f8'),
-    np.random.normal(loc=1000, scale=1, size=1000).astype('f8'),
-    np.linspace(1000, 1001, 1000, dtype='f8').reshape(100, 10),
-    np.linspace(1000, 1001, 1000, dtype='f8').reshape(100, 10, order='F'),
-    np.linspace(1000, 1001, 1000, dtype='f8').reshape(10, 10, 10),
+    np.linspace(1000, 1001, 1000, dtype='<f8'),
+    np.random.normal(loc=1000, scale=1, size=1000).astype('<f8'),
+    np.linspace(1000, 1001, 1000, dtype='<f8').reshape(100, 10),
+    np.linspace(1000, 1001, 1000, dtype='<f8').reshape(100, 10, order='F'),
+    np.linspace(1000, 1001, 1000, dtype='<f8').reshape(10, 10, 10),
 ]
 
 
 codecs = [
-    FixedScaleOffset(offset=1000, scale=10, dtype='f8', astype='i1'),
-    FixedScaleOffset(offset=1000, scale=10**2, dtype='f8', astype='i2'),
-    FixedScaleOffset(offset=1000, scale=10**6, dtype='f8', astype='i4'),
-    FixedScaleOffset(offset=1000, scale=10**12, dtype='f8', astype='i8'),
-    FixedScaleOffset(offset=1000, scale=10**12, dtype='f8'),
+    FixedScaleOffset(offset=1000, scale=10, dtype='<f8', astype='<i1'),
+    FixedScaleOffset(offset=1000, scale=10**2, dtype='<f8', astype='<i2'),
+    FixedScaleOffset(offset=1000, scale=10**6, dtype='<f8', astype='<i4'),
+    FixedScaleOffset(offset=1000, scale=10**12, dtype='<f8', astype='<i8'),
+    FixedScaleOffset(offset=1000, scale=10**12, dtype='<f8'),
 ]
 
 

@@ -14,20 +14,20 @@ from numcodecs.tests.common import check_encode_decode, check_config, \
 
 
 arrays = [
-    np.linspace(100, 200, 1000, dtype='f8'),
-    np.random.normal(loc=0, scale=1, size=1000).astype('f8'),
-    np.linspace(100, 200, 1000, dtype='f8').reshape(100, 10),
-    np.linspace(100, 200, 1000, dtype='f8').reshape(100, 10, order='F'),
-    np.linspace(100, 200, 1000, dtype='f8').reshape(10, 10, 10),
+    np.linspace(100, 200, 1000, dtype='<f8'),
+    np.random.normal(loc=0, scale=1, size=1000).astype('<f8'),
+    np.linspace(100, 200, 1000, dtype='<f8').reshape(100, 10),
+    np.linspace(100, 200, 1000, dtype='<f8').reshape(100, 10, order='F'),
+    np.linspace(100, 200, 1000, dtype='<f8').reshape(10, 10, 10),
 ]
 
 
 codecs = [
-    Quantize(digits=-1, dtype='f8', astype='f2'),
-    Quantize(digits=0, dtype='f8', astype='f2'),
-    Quantize(digits=1, dtype='f8', astype='f2'),
-    Quantize(digits=5, dtype='f8', astype='f4'),
-    Quantize(digits=12, dtype='f8', astype='f8'),
+    Quantize(digits=-1, dtype='<f8', astype='<f2'),
+    Quantize(digits=0, dtype='<f8', astype='<f2'),
+    Quantize(digits=1, dtype='<f8', astype='<f2'),
+    Quantize(digits=5, dtype='<f8', astype='<f4'),
+    Quantize(digits=12, dtype='<f8', astype='<f8'),
 ]
 
 
