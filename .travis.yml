@@ -1,4 +1,3 @@
-language: python
 
 branches:
   only:
@@ -13,19 +12,31 @@ addons:
 
 matrix:
   include:
-    - python: 2.7
-    - python: 3.5
-    - python: 3.6
-    - python: 3.7
+    - os: linux
+      language: python
+      python: 2.7
+    - os: linux
+      language: python
+      python: 3.5
+    - os: linux
+      language: python
+      python: 3.6
+    - os: linux
+      language: python
+      python: 3.7
       dist: xenial
       sudo: true
+    - os: osx
+      language: generic
 
 install:
-  - pip install -U tox-travis coveralls pip setuptools wheel
-  - python setup.py build_ext --inplace
+  - pip install -U tox-travis coveralls pip setuptools wheel pytest
+  - pip install -v -e .
 
 script:
-  - tox
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then tox; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pytest -v --pyargs numcodecs; fi
 
 after_success:
-  - coveralls
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then coveralls; fi
+

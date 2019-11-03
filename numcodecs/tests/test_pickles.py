@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
-import itertools
 
+import itertools
+import sys
 
 import numpy as np
-
+import pytest
 
 from numcodecs.compat import PY2
 from numcodecs.pickles import Pickle
@@ -54,5 +55,7 @@ def test_repr():
     check_repr("Pickle(protocol=-1)")
 
 
+@pytest.mark.skipif(sys.byteorder != 'little',
+                    reason='Pickle does not restore byte orders')
 def test_backwards_compatibility():
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)
