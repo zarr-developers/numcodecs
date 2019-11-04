@@ -2,6 +2,19 @@ Release notes
 =============
 
 
+.. _release_0.6.4:
+
+0.6.4
+-----
+
+* Update Cython to 0.29.6.
+  By :user:`John Kirkham <jakirkham>`, :issue:`168`, :issue:`177`.
+
+* The bundled c-blosc sources have been upgraded to version 1.17.0.
+  This fixes compilation with newer versions of gcc.
+  By :user:`Joe Jevnik <llllllllll>`
+
+
 .. _release_0.6.3:
 
 0.6.3
@@ -13,12 +26,8 @@ Release notes
 * Raise a ``TypeError`` if an ``object`` array is passed to ``ensure_bytes``.
   By :user:`John Kirkham <jakirkham>`, :issue:`162`.
 
-* Update Cython to 0.29.6.
-  By :user:`John Kirkham <jakirkham>`, :issue:`168`, :issue:`177`.
-
-* The bundled c-blosc sources have been upgraded to version 1.17.0.
-  This fixes compilation with newer versions of gcc.
-  By :user:`Joe Jevnik <llllllllll>`
+* Update Cython to 0.29.3.
+  By :user:`John Kirkham <jakirkham>`, :issue:`165`.
 
 
 .. _release_0.6.2:
