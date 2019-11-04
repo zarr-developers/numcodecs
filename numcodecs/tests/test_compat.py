@@ -8,7 +8,19 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import ensure_bytes, PY2, ensure_contiguous_ndarray
+from numcodecs.compat import ensure_text, ensure_bytes, PY2, ensure_contiguous_ndarray, text_type
+
+
+def test_ensure_text():
+    bufs = [
+        b'adsdasdas',
+        u'adsdasdas',
+        np.asarray(memoryview(b'adsdasdas')),
+        array.array('B', b'qwertyuiqwertyui')
+    ]
+    for buf in bufs:
+        b = ensure_text(buf)
+        assert isinstance(b, text_type)
 
 
 def test_ensure_bytes():
