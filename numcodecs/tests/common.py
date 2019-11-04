@@ -187,7 +187,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
         # setup
         i = int(arr_fn.split('.')[-2])
-        arr = np.load(arr_fn)
+        arr = np.load(arr_fn, allow_pickle=True)
         arr_bytes = arr.tobytes(order='A')
         if arr.flags.f_contiguous:
             order = 'F'
