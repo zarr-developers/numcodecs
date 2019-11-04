@@ -14,6 +14,35 @@ Release notes
   This fixes compilation with newer versions of gcc.
   By :user:`Joe Jevnik <llllllllll>`, :issue:`194`
 
+* Create ``.pep8speaks.yml``. By :user:`Alistair Miles <alimanfoo>`
+
+* Simplify datetime/timedelta check.
+  By :user:`John Kirkham <jakirkham>`, :issue:`170`, :issue:`171`.
+
+* Update URL metadata for PyPI.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`178`.
+
+* Enable pytest rewriting in test helper functions.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`185`.
+
+* Rewrites the `ensure_text` implementation
+  By :user:`John Kirkham <jakirkham>`, :issue:`201`.
+
+* Add macOS to CI.
+  By :user:`Alistair Miles <alimanfoo>`, :issue:`192`.
+
+* Fix test failures on big-endian systems.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`186`.
+
+* Use unittest.mock on Python 3.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`179`.
+
+* BLD: don't mask compile errors in setup.py.
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`197`
+
+* Allow pickles when loading test fixture data.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`193`.
+
 
 .. _release_0.6.3:
 
