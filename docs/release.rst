@@ -12,7 +12,7 @@ Release notes
 
 * The bundled c-blosc sources have been upgraded to version 1.17.0.
   This fixes compilation with newer versions of gcc.
-  By :user:`Joe Jevnik <llllllllll>`
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`194`
 
 
 .. _release_0.6.3:
