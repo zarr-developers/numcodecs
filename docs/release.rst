@@ -7,7 +7,8 @@ Release notes
 0.6.3
 -----
 
-* Drop support for 32-bit Windows. By :user:`Alistair Miles <alimanfoo>`, :issue:`97`, :issue:`156`.
+* Drop support for 32-bit Windows.
+  By :user:`Alistair Miles <alimanfoo>`, :issue:`97`, :issue:`156`.
 
 * Raise a ``TypeError`` if an ``object`` array is passed to ``ensure_bytes``.
   By :user:`John Kirkham <jakirkham>`, :issue:`162`.
