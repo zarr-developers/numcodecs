@@ -358,12 +358,4 @@ def run_setup(with_extensions):
 if __name__ == '__main__':
     is_pypy = hasattr(sys, 'pypy_translation_info')
     with_extensions = not is_pypy and 'DISABLE_NUMCODECS_CEXT' not in os.environ
-
-    try:
-        run_setup(with_extensions)
-    except BuildFailed:
-        error('*' * 75)
-        error('compilation of C extensions failed.')
-        error('retrying installation without C extensions...')
-        error('*' * 75)
-        run_setup(False)
+    run_setup(with_extensions)
