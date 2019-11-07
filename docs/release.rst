@@ -43,6 +43,9 @@ Release notes
 * Allow pickles when loading test fixture data.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`193`.
 
+* Update `cpuinfo.py`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`202`.
+
 
 .. _release_0.6.3:
 
