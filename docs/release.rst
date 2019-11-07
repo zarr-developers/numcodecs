@@ -14,7 +14,7 @@ Release notes
   This fixes compilation with newer versions of gcc.
   By :user:`Joe Jevnik <llllllllll>`, :issue:`194`.
 
-* Create ``.pep8speaks.yml``. By :user:`Alistair Miles <alimanfoo>`
+* Create ``.pep8speaks.yml``. By :user:`Alistair Miles <alimanfoo>`.
 
 * Simplify datetime/timedelta check.
   By :user:`John Kirkham <jakirkham>`, :issue:`170`, :issue:`171`.
