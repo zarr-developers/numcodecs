@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
-import codecs
 import json as _json
 import textwrap
 
@@ -9,7 +8,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ensure_contiguous_ndarray
+from .compat import ensure_text
 
 
 class JSON(Codec):
@@ -64,8 +63,7 @@ class JSON(Codec):
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
-        buf = ensure_contiguous_ndarray(buf)
-        items = self._decoder.decode(codecs.decode(buf, self._text_encoding))
+        items = self._decoder.decode(ensure_text(buf, self._text_encoding))
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
         if out is not None:
@@ -126,8 +124,7 @@ class LegacyJSON(JSON):
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
-        buf = ensure_contiguous_ndarray(buf)
-        items = self._decoder.decode(codecs.decode(buf, self._text_encoding))
+        items = self._decoder.decode(ensure_text(buf, self._text_encoding))
         dec = np.array(items[:-1], dtype=items[-1])
         if out is not None:
             np.copyto(out, dec)
