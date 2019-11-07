@@ -27,13 +27,6 @@ else:  # pragma: py2 no cover
     from functools import reduce
 
 
-def ensure_text(s, encoding='utf-8'):
-    if not isinstance(s, text_type):
-        s = ensure_contiguous_ndarray(s)
-        s = codecs.decode(s, 'ascii')
-    return s
-
-
 def ensure_ndarray(buf):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
@@ -162,6 +155,13 @@ def ensure_bytes(buf):
         buf = arr.tobytes(order='A')
 
     return buf
+
+
+def ensure_text(s, encoding='utf-8'):
+    if not isinstance(s, text_type):
+        s = ensure_contiguous_ndarray(s)
+        s = codecs.decode(s, encoding)
+    return s
 
 
 def ndarray_copy(src, dst):
