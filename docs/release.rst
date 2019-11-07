@@ -46,6 +46,9 @@ Release notes
 * Update `cpuinfo.py`.
   By :user:`John Kirkham <jakirkham>`, :issue:`202`.
 
+* Use `ensure_text` in JSON codecs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`207`.
+
 
 .. _release_0.6.3:
 
