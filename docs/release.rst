@@ -38,7 +38,7 @@ Release notes
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`179`.
 
 * Don't mask compile errors in setup.py.
-  By :user:`Joe Jevnik <llllllllll>`, :issue:`197`
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`197`.
 
 * Allow pickles when loading test fixture data.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`193`.
