@@ -25,7 +25,7 @@ Release notes
 * Enable pytest rewriting in test helper functions.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`185`.
 
-* Rewrites the `ensure_text` implementation.
+* Rewrites the ``ensure_text`` implementation.
   By :user:`John Kirkham <jakirkham>`, :issue:`201`, :issue:`205`, :issue:`206`.
 
 * Add macOS to CI.
@@ -43,10 +43,10 @@ Release notes
 * Allow pickles when loading test fixture data.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`193`.
 
-* Update `cpuinfo.py`.
+* Update ``cpuinfo.py``.
   By :user:`John Kirkham <jakirkham>`, :issue:`202`.
 
-* Use `ensure_text` in JSON codecs.
+* Use ``ensure_text`` in JSON codecs.
   By :user:`John Kirkham <jakirkham>`, :issue:`207`.
 
 
