@@ -25,7 +25,7 @@ Release notes
 * Enable pytest rewriting in test helper functions.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`185`.
 
-* Rewrites the `ensure_text` implementation
+* Rewrites the `ensure_text` implementation.
   By :user:`John Kirkham <jakirkham>`, :issue:`201`.
 
 * Add macOS to CI.
