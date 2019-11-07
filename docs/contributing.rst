@@ -90,7 +90,7 @@ you have cloned the NumCodecs source code and your current working directory is 
 the repository, you can do something like the following::
 
     $ mkdir -p ~/pyenv/numcodecs-dev
-    $ virtualenv --no-site-packages --python=/usr/bin/python3.7 ~/pyenv/numcodecs-dev
+    $ virtualenv --no-site-packages --python=/usr/bin/python3.8 ~/pyenv/numcodecs-dev
     $ source ~/pyenv/numcodecs-dev/bin/activate
     $ pip install -r requirements_dev.txt
     $ python setup.py build_ext --inplace
@@ -145,11 +145,11 @@ To also run the doctests within docstrings, run::
 Tests can be run under different Python versions using tox. E.g. (assuming you have the
 corresponding Python interpreters installed on your system)::
 
-    $ tox -e py27,py35,py36,py37
+    $ tox -e py27,py35,py36,py37,py38
 
-NumCodecs currently supports Python 2.7 and Python 3.5-3.7, so the above command must
-succeed before code can be accepted into the main code base. Note that only the py37
-tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.7.
+NumCodecs currently supports Python 2.7 and Python 3.5-3.8, so the above command must
+succeed before code can be accepted into the main code base. Note that only the py38
+tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.8.
 
 All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
 integration services for every pull request. Tests must pass under both services before
@@ -164,14 +164,14 @@ Conformance can be checked by running::
 
     $ flake8 --max-line-length=100 numcodecs
 
-This is automatically run when invoking ``tox -e py37``.
+This is automatically run when invoking ``tox -e py38``.
 
 Test coverage
 ~~~~~~~~~~~~~
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
-Python 3.7). Both unit tests and docstring doctests are included when computing
-coverage. Running ``tox -e py37`` will automatically run the test suite with coverage
+Python 3.8). Both unit tests and docstring doctests are included when computing
+coverage. Running ``tox -e py38`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 
@@ -185,7 +185,7 @@ Documentation
 Docstrings for user-facing classes and functions should follow the `numpydoc
 <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
-under Python 3.7.
+under Python 3.8.
 
 NumCodecs uses Sphinx for documentation, hosted on readthedocs.org. Documentation is
 written in the RestructuredText markup language (.rst files) in the ``docs`` folder.
