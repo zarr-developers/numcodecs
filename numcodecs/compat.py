@@ -30,7 +30,7 @@ else:  # pragma: py2 no cover
 def ensure_text(s, encoding='utf-8'):
     if not isinstance(s, text_type):
         s = ensure_contiguous_ndarray(s)
-        s = codecs.decode(s, 'ascii')
+        s = codecs.decode(s, encoding)
     return s
 
 
