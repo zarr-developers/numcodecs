@@ -37,7 +37,7 @@ Release notes
 * Use unittest.mock on Python 3.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`179`.
 
-* BLD: don't mask compile errors in setup.py.
+* Don't mask compile errors in setup.py.
   By :user:`Joe Jevnik <llllllllll>`, :issue:`197`
 
 * Allow pickles when loading test fixture data.
