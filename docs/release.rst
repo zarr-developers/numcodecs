@@ -49,6 +49,9 @@ Release notes
 * Use ``ensure_text`` in JSON codecs.
   By :user:`John Kirkham <jakirkham>`, :issue:`207`.
 
+* Support Python 3.8.
+  By :user:`John Kirkham <jakirkham>`, :issue:`208`.
+
 
 .. _release_0.6.3:
 
