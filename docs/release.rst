@@ -12,7 +12,7 @@ Release notes
 
 * The bundled c-blosc sources have been upgraded to version 1.17.0.
   This fixes compilation with newer versions of gcc.
-  By :user:`Joe Jevnik <llllllllll>`, :issue:`194`
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`194`.
 
 * Create ``.pep8speaks.yml``. By :user:`Alistair Miles <alimanfoo>`
 
