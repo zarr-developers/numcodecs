@@ -2,22 +2,67 @@ Release notes
 =============
 
 
+.. _release_0.6.4:
+
+0.6.4
+-----
+
+* Update Cython to 0.29.14.
+  By :user:`John Kirkham <jakirkham>`, :issue:`168`, :issue:`177`, :issue:`204`.
+
+* The bundled c-blosc sources have been upgraded to version 1.17.0.
+  This fixes compilation with newer versions of gcc.
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`194`.
+
+* Create ``.pep8speaks.yml``. By :user:`Alistair Miles <alimanfoo>`.
+
+* Simplify datetime/timedelta check.
+  By :user:`John Kirkham <jakirkham>`, :issue:`170`, :issue:`171`.
+
+* Update URL metadata for PyPI.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`178`.
+
+* Enable pytest rewriting in test helper functions.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`185`.
+
+* Rewrites the ``ensure_text`` implementation.
+  By :user:`John Kirkham <jakirkham>`, :issue:`201`, :issue:`205`, :issue:`206`.
+
+* Add macOS to CI.
+  By :user:`Alistair Miles <alimanfoo>`, :issue:`192`.
+
+* Fix test failures on big-endian systems.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`186`.
+
+* Use unittest.mock on Python 3.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`179`.
+
+* Don't mask compile errors in setup.py.
+  By :user:`Joe Jevnik <llllllllll>`, :issue:`197`.
+
+* Allow pickles when loading test fixture data.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`193`.
+
+* Update ``cpuinfo.py``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`202`.
+
+* Use ``ensure_text`` in JSON codecs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`207`.
+
+
 .. _release_0.6.3:
 
 0.6.3
 -----
 
-* Drop support for 32-bit Windows. By :user:`Alistair Miles <alimanfoo>`, :issue:`97`, :issue:`156`.
+* Drop support for 32-bit Windows.
+  By :user:`Alistair Miles <alimanfoo>`, :issue:`97`, :issue:`156`.
 
 * Raise a ``TypeError`` if an ``object`` array is passed to ``ensure_bytes``.
   By :user:`John Kirkham <jakirkham>`, :issue:`162`.
 
-* Update Cython to 0.29.6.
-  By :user:`John Kirkham <jakirkham>`, :issue:`168`, :issue:`177`.
-
-* The bundled c-blosc sources have been upgraded to version 1.17.0.
-  This fixes compilation with newer versions of gcc.
-  By :user:`Joe Jevnik <llllllllll>`
+* Update Cython to 0.29.3.
+  By :user:`John Kirkham <jakirkham>`, :issue:`165`.
 
 
 .. _release_0.6.2:
