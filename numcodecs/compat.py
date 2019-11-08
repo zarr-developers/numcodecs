@@ -6,6 +6,7 @@ import codecs
 import array
 
 
+import cupy as cp
 import numpy as np
 
 
@@ -48,8 +49,8 @@ def ensure_ndarray(buf):
 
     """
 
-    if isinstance(buf, np.ndarray):
-        # already a numpy array
+    if isinstance(buf, (np.ndarray, cp.ndarray)):
+        # already an array
         arr = buf
 
     elif isinstance(buf, array.array) and buf.typecode in 'cu':
