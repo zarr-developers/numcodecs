@@ -167,6 +167,12 @@ def ensure_bytes(buf):
 def ensure_text(s, encoding='utf-8'):
     if not isinstance(s, text_type):
         s = ensure_contiguous_ndarray(s)
+
+        # Force CuPy arrays to NumPy arrays
+        # as they support the buffer protocol
+        if isinstance(s, cp.ndarray):
+            s = s.get()
+
         s = codecs.decode(s, encoding)
     return s
 
