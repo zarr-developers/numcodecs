@@ -152,6 +152,12 @@ def ensure_bytes(buf):
         if arr.dtype == object:
             raise TypeError('object arrays are not supported')
 
+        # Force CuPy arrays to NumPy arrays
+        # because they don't have a `tobytes` method (yet)
+        # xref: https://github.com/cupy/cupy/pull/2617
+        if isinstance(arr, cp.ndarray):
+            arr = arr.get()
+
         # create bytes
         buf = arr.tobytes(order='A')
 
