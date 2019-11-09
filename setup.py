@@ -51,6 +51,10 @@ elif os.name == 'posix':
 # workaround lack of support for "inline" in MSVC when building for Python 2.7 64-bit
 if PY2 and os.name == 'nt':
     base_compile_args.append('-Dinline=__inline')
+# Force libc++ in case the system tries to use `stdlibc++`, which is often
+# absent from systems.
+if sys.platform == 'darwin':
+    base_compile_args.append('-stdlib=libc++')
 
 
 def info(*msg):
