@@ -159,7 +159,7 @@ def ensure_bytes(buf):
 
 def ensure_text(s, encoding='utf-8'):
     if not isinstance(s, text_type):
-        s = ensure_contiguous_ndarray(s)
+        s = ensure_bytes(s)
         s = codecs.decode(s, encoding)
     return s
 
