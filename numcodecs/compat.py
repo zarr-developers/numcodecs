@@ -159,7 +159,13 @@ def ensure_bytes(buf):
 
 def ensure_text(s, encoding='utf-8'):
     if not isinstance(s, text_type):
-        s = ensure_bytes(s)
+        s = ensure_contiguous_ndarray(s)
+
+        try:
+            memoryview(s)
+        except TypeError:  # pragma: no cover
+            s = ensure_bytes(s)
+
         s = codecs.decode(s, encoding)
     return s
 
