@@ -302,6 +302,10 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     assert_array_equal(arr, dec_arr)
                     assert arr_bytes == ensure_bytes(dec)
 
+    if os.path.exists(fixture_dir):
+        import shutil
+        shutil.rmtree(fixture_dir)
+
 
 def check_err_decode_object_buffer(compressor):
     # cannot decode directly into object array, leads to segfaults
