@@ -210,6 +210,7 @@ def lz4_extension():
 
     return extensions
 
+
 def zfp_extension():
     import numpy
     info('setting up ZFP extension')
@@ -224,7 +225,7 @@ def zfp_extension():
     include_dirs += [numpy.get_include()]
     # define_macros += [('CYTHON_TRACE', '1')]
     extra_compile_args += [
-       '-std=c99', 
+       '-std=c99',
     ]
 
     if have_cython:
@@ -341,7 +342,7 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = (blosc_extension() +  lz4_extension() + zstd_extension() +
+        ext_modules = (blosc_extension() + lz4_extension() + zstd_extension() +
                        zfp_extension() + compat_extension() + vlen_extension())
         cmdclass = dict(build_ext=ve_build_ext)
     else:
