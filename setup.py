@@ -220,8 +220,8 @@ def zfp_extension():
 
     # setup sources - use ZFP bundled in blosc
     zfp_sources = glob('zfp/src/*.c')
-    include_dirs = [d for d in glob('zfp/*') if os.path.isdir(d)]
-    include_dirs += [d for d in glob('zfp/*/*') if os.path.isdir(d)]
+    include_dirs = [d for d in glob('zfp/include') if os.path.isdir(d)]
+    include_dirs += [d for d in glob('zfp/include/zfp/*') if os.path.isdir(d)]
     include_dirs += ['numcodecs']
     include_dirs += [numpy.get_include()]
     # define_macros += [('CYTHON_TRACE', '1')]
