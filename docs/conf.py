@@ -16,10 +16,15 @@
 
 import sys
 import os
-from mock import Mock as MagicMock
 
 
 PY2 = sys.version_info[0] == 2
+
+
+if PY2:  # pragma: py3 no cover
+    from mock import Mock as MagicMock
+else:    # pragma: py2 no cover
+    from unittest.mock import Mock as MagicMock
 
 
 class Mock(MagicMock):

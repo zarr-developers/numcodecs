@@ -50,6 +50,10 @@ elif os.name == 'posix':
 # workaround lack of support for "inline" in MSVC when building for Python 2.7 64-bit
 if PY2 and os.name == 'nt':
     base_compile_args.append('-Dinline=__inline')
+# On macOS, force libc++ in case the system tries to use `stdlibc++`.
+# The latter is often absent from modern macOS systems.
+if sys.platform == 'darwin':
+    base_compile_args.append('-stdlib=libc++')
 
 
 def info(*msg):
@@ -382,12 +386,13 @@ def run_setup(with_extensions):
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
         ],
         author='Alistair Miles',
         author_email='alimanfoo@googlemail.com',
         maintainer='Alistair Miles',
         maintainer_email='alimanfoo@googlemail.com',
-        url='https://github.com/alimanfoo/numcodecs',
+        url='https://github.com/zarr-developers/numcodecs',
         license='MIT',
     )
 
@@ -395,12 +400,4 @@ def run_setup(with_extensions):
 if __name__ == '__main__':
     is_pypy = hasattr(sys, 'pypy_translation_info')
     with_extensions = not is_pypy and 'DISABLE_NUMCODECS_CEXT' not in os.environ
-
-    try:
-        run_setup(with_extensions)
-    except BuildFailed:
-        error('*' * 75)
-        error('compilation of C extensions failed.')
-        error('retrying installation without C extensions...')
-        error('*' * 75)
-        run_setup(False)
+    run_setup(with_extensions)

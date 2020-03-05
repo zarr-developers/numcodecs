@@ -2,6 +2,7 @@
 # flake8: noqa
 from __future__ import absolute_import, print_function, division
 import sys
+import codecs
 import array
 
 
@@ -24,13 +25,6 @@ else:  # pragma: py2 no cover
     binary_type = bytes
     integer_types = int,
     from functools import reduce
-
-
-def ensure_text(l, encoding='utf-8'):
-    if isinstance(l, text_type):
-        return l
-    else:  # pragma: py3 no cover
-        return text_type(l, encoding=encoding)
 
 
 def ensure_ndarray(buf):
@@ -120,14 +114,14 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     # ensure input is a numpy array
     arr = ensure_ndarray(buf)
 
-    # check for datetime or timedelta ndarray, the buffer interface doesn't support those
-    if isinstance(buf, np.ndarray) and buf.dtype.kind in 'Mm':
-        arr = arr.view(np.int64)
-
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
     if arr.dtype == object:
         raise TypeError('object arrays are not supported')
+
+    # check for datetime or timedelta ndarray, the buffer interface doesn't support those
+    if arr.dtype.kind in 'Mm':
+        arr = arr.view(np.int64)
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
@@ -161,6 +155,13 @@ def ensure_bytes(buf):
         buf = arr.tobytes(order='A')
 
     return buf
+
+
+def ensure_text(s, encoding='utf-8'):
+    if not isinstance(s, text_type):
+        s = ensure_contiguous_ndarray(s)
+        s = codecs.decode(s, encoding)
+    return s
 
 
 def ndarray_copy(src, dst):
