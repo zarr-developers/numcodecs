@@ -42,5 +42,5 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pytest -v --pyargs numcodecs; fi
 
 after_success:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then coveralls; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then coveralls --service=travis-pro; fi
 
