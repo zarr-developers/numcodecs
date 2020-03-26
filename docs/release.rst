@@ -1,6 +1,12 @@
 Release notes
 =============
 
+Upcoming Release
+----------------
+
+* Remove LegacyMsgPack codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`218`.
+
 
 .. _release_0.6.4:
 
