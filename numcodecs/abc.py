@@ -115,10 +115,6 @@ class Codec:
         except AttributeError:
             return False
 
-    def __ne__(self, other):
-        # only needed for PY2
-        return not self == other
-
     def __repr__(self):
 
         # override in sub-class if need special representation

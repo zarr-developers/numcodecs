@@ -1,13 +1,8 @@
 import gzip as _gzip
 import io
 
-
 from .abc import Codec
-from .compat import ensure_bytes, ensure_contiguous_ndarray, PY2
-
-
-if PY2:  # pragma: py3 no cover
-    from cStringIO import StringIO
+from .compat import ensure_bytes, ensure_contiguous_ndarray
 
 
 class GZip(Codec):
@@ -29,10 +24,6 @@ class GZip(Codec):
 
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
-        if PY2:  # pragma: py3 no cover
-            # view as u1 needed on PY2
-            # ref: https://github.com/zarr-developers/numcodecs/pull/128#discussion_r236786466
-            buf = buf.view('u1')
 
         # do compression
         compressed = io.BytesIO()
@@ -48,13 +39,9 @@ class GZip(Codec):
     def decode(self, buf, out=None):
 
         # normalise inputs
-        if PY2:  # pragma: py3 no cover
-            # On Python 2, StringIO always uses the buffer protocol.
-            buf = StringIO(ensure_contiguous_ndarray(buf))
-        else:  # pragma: py2 no cover
-            # BytesIO only copies if the data is not of `bytes` type.
-            # This allows `bytes` objects to pass through without copying.
-            buf = io.BytesIO(ensure_bytes(buf))
+        # BytesIO only copies if the data is not of `bytes` type.
+        # This allows `bytes` objects to pass through without copying.
+        buf = io.BytesIO(ensure_bytes(buf))
 
         # do decompression
         with _gzip.GzipFile(fileobj=buf, mode='rb') as decompressor:
