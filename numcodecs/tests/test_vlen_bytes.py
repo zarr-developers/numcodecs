@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import unittest
 
 
@@ -71,14 +69,14 @@ def test_decode_errors():
         codec.decode(np.arange(10, 20, dtype='i4'))
     with pytest.raises(ValueError if PY2 else TypeError):
         # exports old-style buffer interface on PY2, hence ValueError
-        codec.decode(u'foo')
+        codec.decode('foo')
 
     # test out parameter
     enc = codec.encode(arrays[0])
     with pytest.raises(TypeError):
         codec.decode(enc, out=b'foo')
     with pytest.raises(TypeError):
-        codec.decode(enc, out=u'foo')
+        codec.decode(enc, out='foo')
     with pytest.raises(TypeError):
         codec.decode(enc, out=123)
     with pytest.raises(ValueError):

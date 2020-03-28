@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
-
 import numpy as np
 from numpy.testing import assert_array_equal
 import pytest
@@ -14,7 +10,7 @@ from numcodecs.tests.common import (check_encode_decode, check_config,
 from numcodecs.compat import PY2
 
 
-labels = [u'ƒöõ', u'ßàř', u'ßāẑ', u'ƪùüx']
+labels = ['ƒöõ', 'ßàř', 'ßāẑ', 'ƪùüx']
 arrays = [
     np.random.choice(labels, size=1000),
     np.random.choice(labels, size=(100, 10)),
@@ -40,7 +36,7 @@ def test_encode_decode():
 def test_encode():
     for dtype in 'U', object:
 
-        arr = np.array([u'ƒöõ', u'ßàř', u'ƒöõ', u'ßāẑ', u'ƪùüx'], dtype=dtype)
+        arr = np.array(['ƒöõ', 'ßàř', 'ƒöõ', 'ßāẑ', 'ƪùüx'], dtype=dtype)
         # miss off quux
         codec = Categorize(labels=labels[:-1], dtype=arr.dtype, astype='u1')
 
@@ -53,7 +49,7 @@ def test_encode():
         # test decoding with unexpected value
         dec = codec.decode(enc)
         expect = arr.copy()
-        expect[expect == u'ƪùüx'] = u''
+        expect[expect == 'ƪùüx'] = ''
         assert_array_equal(expect, dec)
         assert arr.dtype == dec.dtype
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import array
 import json as _json
 import os
@@ -17,10 +15,10 @@ from numcodecs.registry import get_codec
 from numcodecs import *  # noqa
 
 
-greetings = [u'¡Hola mundo!', u'Hej Världen!', u'Servus Woid!', u'Hei maailma!',
-             u'Xin chào thế giới', u'Njatjeta Botë!', u'Γεια σου κόσμε!',
-             u'こんにちは世界', u'世界，你好！', u'Helló, világ!', u'Zdravo svete!',
-             u'เฮลโลเวิลด์']
+greetings = ['¡Hola mundo!', 'Hej Världen!', 'Servus Woid!', 'Hei maailma!',
+             'Xin chào thế giới', 'Njatjeta Botë!', 'Γεια σου κόσμε!',
+             'こんにちは世界', '世界，你好！', 'Helló, világ!', 'Zdravo svete!',
+             'เฮลโลเวิลด์']
 
 
 def compare_arrays(arr, res, precision=None):

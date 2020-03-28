@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module defines the :class:`Codec` base class, a common interface for
 all codec classes.
 
@@ -29,10 +28,9 @@ configuration, one class could correctly decode data encoded by the
 other and vice versa.
 
 """
-from __future__ import absolute_import, print_function, division
 
 
-class Codec(object):
+class Codec:
     """Codec abstract base class."""
 
     # override in sub-class
@@ -129,7 +127,7 @@ class Codec(object):
         # parameters and valid keyword arguments to constructor function
 
         r = '%s(' % type(self).__name__
-        params = ['%s=%r' % (k, getattr(self, k))
+        params = ['{}={!r}'.format(k, getattr(self, k))
                   for k in sorted(self.__dict__)
                   if not k.startswith('_')]
         r += ', '.join(params) + ')'

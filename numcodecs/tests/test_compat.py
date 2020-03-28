@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import array
 import mmap
 
@@ -14,7 +12,7 @@ from numcodecs.compat import ensure_text, ensure_bytes, PY2, ensure_contiguous_n
 def test_ensure_text():
     bufs = [
         b'adsdasdas',
-        u'adsdasdas',
+        'adsdasdas',
         np.asarray(memoryview(b'adsdasdas')),
         array.array('B', b'qwertyuiqwertyui')
     ]
@@ -66,7 +64,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
 def test_ensure_bytes_invalid_inputs():
 
     # object array not allowed
-    a = np.array([u'Xin chào thế giới'], dtype=object)
+    a = np.array(['Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(TypeError):
             ensure_bytes(e)
@@ -75,7 +73,7 @@ def test_ensure_bytes_invalid_inputs():
 def test_ensure_contiguous_ndarray_invalid_inputs():
 
     # object array not allowed
-    a = np.array([u'Xin chào thế giới'], dtype=object)
+    a = np.array(['Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(TypeError):
             ensure_contiguous_ndarray(e)
@@ -85,7 +83,7 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
         ensure_contiguous_ndarray(np.arange(100)[::2])
 
     # unicode array.array not allowed
-    a = array.array('u', u'qwertyuiqwertyui')
+    a = array.array('u', 'qwertyuiqwertyui')
     with pytest.raises(TypeError):
         ensure_contiguous_ndarray(a)
 
