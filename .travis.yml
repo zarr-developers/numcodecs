@@ -29,6 +29,7 @@ matrix:
       sudo: true
     - os: osx
       language: generic
+      python: 3.8
 
 install:
   - pip install -U tox-travis coveralls pip setuptools wheel pytest
