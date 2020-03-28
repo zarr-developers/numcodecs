@@ -51,8 +51,7 @@ def check_encode_decode(arr, codec, precision=None):
     # we just require that the results of the encode/decode round-trip can
     # be compared to the original array.
 
-    # encoding should support any object exporting the buffer protocol,
-    # as well as array.array in PY2
+    # encoding should support any object exporting the buffer protocol
 
     # test encoding of numpy array
     enc = codec.encode(arr)
@@ -78,7 +77,6 @@ def check_encode_decode(arr, codec, precision=None):
     compare_arrays(arr, dec, precision=precision)
 
     # decoding should support any object exporting the buffer protocol,
-    # as well as array.array in PY2
 
     # setup
     enc_bytes = ensure_bytes(enc)

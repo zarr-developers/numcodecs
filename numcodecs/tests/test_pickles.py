@@ -4,21 +4,12 @@ import sys
 import numpy as np
 import pytest
 
-from numcodecs.compat import PY2
 from numcodecs.pickles import Pickle
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
 
 
-codecs = [
-    Pickle(protocol=0),
-    Pickle(protocol=1),
-    Pickle(protocol=2),
-]
-if not PY2:  # pragma: py2 no cover
-    codecs.append(Pickle(protocol=3))
-    codecs.append(Pickle(protocol=4))
-
+codecs = [Pickle(protocol=i) for i in range(5)]
 
 # object array with strings
 # object array with mix strings / nans

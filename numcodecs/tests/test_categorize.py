@@ -7,7 +7,6 @@ from numcodecs.categorize import Categorize
 from numcodecs.tests.common import (check_encode_decode, check_config,
                                     check_backwards_compatibility,
                                     check_encode_decode_array)
-from numcodecs.compat import PY2
 
 
 labels = ['ƒöõ', 'ßàř', 'ßāẑ', 'ƪùüx']
@@ -64,23 +63,16 @@ def test_repr():
     astype = '|u1'
     codec = Categorize(labels=['foo', 'bar', 'baz', 'qux'],
                        dtype=dtype, astype=astype)
-    expect = "Categorize(dtype='<U3', astype='|u1', "
-    if PY2:  # pragma: py3 no cover
-        expect += "labels=[u'foo', u'bar', u'baz', ...])"
-    else:  # pragma: py2 no cover
-        expect += "labels=['foo', 'bar', 'baz', ...])"
+    expect = "Categorize(dtype='<U3', astype='|u1', labels=['foo', 'bar', 'baz', ...])"
     actual = repr(codec)
     assert expect == actual
 
-    if not PY2:  # pragma: py2 no cover
-
-        dtype = '<U4'
-        astype = '|u1'
-        codec = Categorize(labels=labels, dtype=dtype, astype=astype)
-        expect = "Categorize(dtype='<U4', astype='|u1', " \
-                 "labels=['ƒöõ', 'ßàř', 'ßāẑ', ...])"
-        actual = repr(codec)
-        assert expect == actual
+    dtype = '<U4'
+    astype = '|u1'
+    codec = Categorize(labels=labels, dtype=dtype, astype=astype)
+    expect = "Categorize(dtype='<U4', astype='|u1', labels=['ƒöõ', 'ßàř', 'ßāẑ', ...])"
+    actual = repr(codec)
+    assert expect == actual
 
 
 def test_backwards_compatibility():

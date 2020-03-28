@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import ensure_text, ensure_bytes, PY2, ensure_contiguous_ndarray, text_type
+from numcodecs.compat import ensure_text, ensure_bytes, ensure_contiguous_ndarray
 
 
 def test_ensure_text():
@@ -18,7 +18,7 @@ def test_ensure_text():
     ]
     for buf in bufs:
         b = ensure_text(buf)
-        assert isinstance(b, text_type)
+        assert isinstance(b, str)
 
 
 def test_ensure_bytes():
@@ -55,10 +55,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
             assert buf.itemsize == a.dtype.itemsize
         else:
             assert expected_itemsize == a.dtype.itemsize
-        if PY2:  # pragma: py3 no cover
-            assert np.shares_memory(a, np.getbuffer(buf))
-        else:  # pragma: py2 no cover
-            assert np.shares_memory(a, memoryview(buf))
+        assert np.shares_memory(a, memoryview(buf))
 
 
 def test_ensure_bytes_invalid_inputs():
@@ -87,12 +84,6 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
     with pytest.raises(TypeError):
         ensure_contiguous_ndarray(a)
 
-    if PY2:  # pragma: py3 no cover
-        # char array.array not allowed
-        a = array.array('c', b'qwertyuiqwertyui')
-        with pytest.raises(TypeError):
-            ensure_contiguous_ndarray(a)
-
 
 def test_ensure_contiguous_ndarray_writeable():
     # check that the writeability of the underlying buffer is preserved
@@ -103,9 +94,6 @@ def test_ensure_contiguous_ndarray_writeable():
         assert m.flags.writeable == writeable
         m = ensure_contiguous_ndarray(memoryview(a))
         assert m.flags.writeable == writeable
-        if PY2:  # pragma: py3 no cover
-            m = ensure_contiguous_ndarray(np.getbuffer(a))
-            assert m.flags.writeable == writeable
 
 
 def test_ensure_contiguous_ndarray_max_buffer_size():

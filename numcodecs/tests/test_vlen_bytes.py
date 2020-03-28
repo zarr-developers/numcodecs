@@ -1,11 +1,8 @@
 import unittest
 
-
 import numpy as np
 import pytest
 
-
-from numcodecs.compat import PY2
 try:
     from numcodecs.vlen import VLenBytes
 except ImportError:  # pragma: no cover
@@ -67,8 +64,7 @@ def test_decode_errors():
         codec.decode(np.arange(2, 3, dtype='i4'))
     with pytest.raises(ValueError):
         codec.decode(np.arange(10, 20, dtype='i4'))
-    with pytest.raises(ValueError if PY2 else TypeError):
-        # exports old-style buffer interface on PY2, hence ValueError
+    with pytest.raises(TypeError):
         codec.decode('foo')
 
     # test out parameter
