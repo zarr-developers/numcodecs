@@ -1,6 +1,12 @@
 Release notes
 =============
 
+Upcoming Release
+----------------
+
+* Drop support for Python 2.
+  By :user:`James Bourbeau <jrbourbeau>`, :issue:`220`.
+
 
 .. _release_0.6.4:
 
