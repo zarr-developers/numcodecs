@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # cython: embedsignature=True
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
-# cython: language_level=2
-from __future__ import absolute_import, print_function, division
+# cython: language_level=3
 
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
@@ -13,7 +11,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2, ensure_contiguous_ndarray
+from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -44,8 +42,7 @@ cdef extern from "stdint_compat.h":
 
 
 VERSION_STRING = LZ4_versionString()
-if not PY2:
-    VERSION_STRING = str(VERSION_STRING, 'ascii')
+VERSION_STRING = str(VERSION_STRING, 'ascii')
 __version__ = VERSION_STRING
 DEFAULT_ACCELERATION = 1
 

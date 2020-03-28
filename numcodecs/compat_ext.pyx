@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # cython: embedsignature=True
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
-# cython: language_level=2
-from __future__ import absolute_import, print_function, division
+# cython: language_level=3
 from cpython.buffer cimport PyObject_GetBuffer, PyBuffer_Release
 
 
