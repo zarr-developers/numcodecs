@@ -10,7 +10,7 @@ from .compat import ensure_contiguous_ndarray
 
 
 cdef class Buffer:
-    """Convenience class for buffer interface"""
+    """Convenience class for buffer interface."""
 
     def __cinit__(self, obj, flags):
         PyObject_GetBuffer(obj, &(self.buffer), flags)
