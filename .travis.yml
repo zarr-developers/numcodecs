@@ -27,18 +27,14 @@ matrix:
       python: 3.8
       dist: xenial
       sudo: true
-    # Skip OSX build for now
-    # - os: osx
-    #   language: generic
 
 install:
   - pip install -U tox-travis coveralls pip setuptools wheel pytest
   - pip install -v -e .
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then tox; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pytest -v --pyargs numcodecs; fi
+  - tox
 
 after_success:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then coveralls --service=travis-pro; fi
+  - coveralls --service=travis-pro
 
