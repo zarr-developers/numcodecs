@@ -23,7 +23,7 @@ class MsgPack(Codec):
         for unicode.
     raw : bool, optional
         If true, unpack msgpack raw to Python bytes. Otherwise, unpack to Python str
-        (or unicode on Python 2) by decoding with UTF-8 encoding.
+        by decoding with UTF-8 encoding.
 
     Examples
     --------

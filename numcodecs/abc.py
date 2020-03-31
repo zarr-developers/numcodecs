@@ -3,8 +3,7 @@ all codec classes.
 
 Codec classes must implement :func:`Codec.encode` and :func:`Codec.decode`
 methods. Inputs to and outputs from these methods may be any Python object
-exporting a contiguous buffer via the new-style Python protocol
-or :class:`array.array` under Python 2.
+exporting a contiguous buffer via the new-style Python protocol.
 
 Codec classes must implement a :func:`Codec.get_config` method,
 which must return a dictionary holding all configuration parameters
@@ -44,13 +43,13 @@ class Codec:
         ----------
         buf : buffer-like
             Data to be encoded. May be any object supporting the new-style
-            buffer protocol or `array.array` under Python 2.
+            buffer protocol.
 
         Returns
         -------
         enc : buffer-like
             Encoded data. May be any object supporting the new-style buffer
-            protocol or `array.array` under Python 2.
+            protocol.
 
         """
         # override in sub-class
@@ -63,7 +62,7 @@ class Codec:
         ----------
         buf : buffer-like
             Encoded data. May be any object supporting the new-style buffer
-            protocol or `array.array` under Python 2.
+            protocol.
         out : buffer-like, optional
             Writeable buffer to store decoded data. N.B. if provided, this buffer must
             be exactly the right size to store the decoded data.
@@ -72,7 +71,7 @@ class Codec:
         -------
         dec : buffer-like
             Decoded data. May be any object supporting the new-style
-            buffer protocol or `array.array` under Python 2.
+            buffer protocol.
 
         """
         # override in sub-class
