@@ -10,8 +10,7 @@ from .compat import ensure_contiguous_ndarray
 
 
 cdef class Buffer:
-    """Compatibility class to work around fact that array.array does not support
-    new-style buffer interface in PY2."""
+    """Convenience class for buffer interface"""
 
     def __cinit__(self, obj, flags):
         PyObject_GetBuffer(obj, &(self.buffer), flags)
