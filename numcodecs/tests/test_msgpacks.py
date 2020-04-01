@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import unittest
 import warnings
 
@@ -20,7 +18,6 @@ except ImportError:  # pragma: no cover
 
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
                                     check_backwards_compatibility, greetings)
-from numcodecs.compat import text_type, binary_type, PY2
 
 
 # object array with strings
@@ -28,12 +25,12 @@ from numcodecs.compat import text_type, binary_type, PY2
 # object array with mix of string, int, float
 # ...
 arrays = [
-    np.array([u'foo', u'bar', u'baz'] * 300, dtype=object),
-    np.array([[u'foo', u'bar', np.nan]] * 300, dtype=object),
-    np.array([u'foo', 1.0, 2] * 300, dtype=object),
+    np.array(['foo', 'bar', 'baz'] * 300, dtype=object),
+    np.array([['foo', 'bar', np.nan]] * 300, dtype=object),
+    np.array(['foo', 1.0, 2] * 300, dtype=object),
     np.arange(1000, dtype='i4'),
-    np.array([u'foo', u'bar', u'baz'] * 300),
-    np.array([u'foo', [u'bar', 1.0, 2], {u'a': u'b', u'c': 42}] * 300, dtype=object),
+    np.array(['foo', 'bar', 'baz'] * 300),
+    np.array(['foo', ['bar', 1.0, 2], {'a': 'b', 'c': 42}] * 300, dtype=object),
     np.array(greetings * 100),
     np.array(greetings * 100, dtype=object),
     np.array([b'foo', b'bar', b'baz'] * 300, dtype=object),
@@ -83,11 +80,11 @@ def test_non_numpy_inputs():
         [[0, 1], [2, 3]],
         [[0], [1], [2, 3]],
         [[[0, 0]], [[1, 1]], [[2, 3]]],
-        [u"1"],
-        [u"11", u"11"],
-        [u"11", u"1", u"1"],
+        ["1"],
+        ["11", "11"],
+        ["11", "1", "1"],
         [{}],
-        [{u"key": u"value"}, [u"list", u"of", u"strings"]],
+        [{"key": "value"}, ["list", "of", "strings"]],
         [b"1"],
         [b"11", b"11"],
         [b"11", b"1", b"1"],
@@ -133,36 +130,32 @@ def test_encode_decode_shape_dtype_preserved():
 def test_bytes():
     # test msgpack behaviour with bytes and str (unicode)
     bytes_arr = np.array([b'foo', b'bar', b'baz'], dtype=object)
-    unicode_arr = np.array([u'foo', u'bar', u'baz'], dtype=object)
+    unicode_arr = np.array(['foo', 'bar', 'baz'], dtype=object)
 
     # raw=False (default)
     codec = MsgPack()
     # works for bytes array, round-trips bytes to bytes
     b = codec.decode(codec.encode(bytes_arr))
     assert np.array_equal(bytes_arr, b)
-    assert isinstance(b[0], binary_type)
+    assert isinstance(b[0], bytes)
     assert b[0] == b'foo'
     # works for unicode array, round-trips unicode to unicode
     b = codec.decode(codec.encode(unicode_arr))
     assert np.array_equal(unicode_arr, b)
-    assert isinstance(b[0], text_type)
-    assert b[0] == u'foo'
+    assert isinstance(b[0], str)
+    assert b[0] == 'foo'
 
     # raw=True
     codec = MsgPack(raw=True)
     # works for bytes array, round-trips bytes to bytes
     b = codec.decode(codec.encode(bytes_arr))
     assert np.array_equal(bytes_arr, b)
-    assert isinstance(b[0], binary_type)
+    assert isinstance(b[0], bytes)
     assert b[0] == b'foo'
     # broken for unicode array, round-trips unicode to bytes
     b = codec.decode(codec.encode(unicode_arr))
-    if PY2:  # pragma: py3 no cover
-        # PY2 considers b'foo' and u'foo' to be equal
-        assert np.array_equal(unicode_arr, b)
-    else:  # pragma: py2 no cover
-        assert not np.array_equal(unicode_arr, b)
-    assert isinstance(b[0], binary_type)
+    assert not np.array_equal(unicode_arr, b)
+    assert isinstance(b[0], bytes)
     assert b[0] == b'foo'
 
     # legacy codec
@@ -171,15 +164,11 @@ def test_bytes():
         warnings.simplefilter('ignore', PendingDeprecationWarning)
         # broken for bytes array, round-trips bytes to unicode
         b = codec.decode(codec.encode(bytes_arr))
-        if PY2:  # pragma: py3 no cover
-            # PY2 considers b'foo' and u'foo' to be equal
-            assert np.array_equal(unicode_arr, b)
-        else:  # pragma: py2 no cover
-            assert not np.array_equal(bytes_arr, b)
-        assert isinstance(b[0], text_type)
-        assert b[0] == u'foo'
+        assert not np.array_equal(bytes_arr, b)
+        assert isinstance(b[0], str)
+        assert b[0] == 'foo'
         # works for unicode array, round-trips unicode to unicode
         b = codec.decode(codec.encode(unicode_arr))
         assert np.array_equal(unicode_arr, b)
-        assert isinstance(b[0], text_type)
-        assert b[0] == u'foo'
+        assert isinstance(b[0], str)
+        assert b[0] == 'foo'

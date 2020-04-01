@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 """This module defines the :class:`Codec` base class, a common interface for
 all codec classes.
 
 Codec classes must implement :func:`Codec.encode` and :func:`Codec.decode`
 methods. Inputs to and outputs from these methods may be any Python object
-exporting a contiguous buffer via the new-style Python protocol
-or :class:`array.array` under Python 2.
+exporting a contiguous buffer via the new-style Python protocol.
 
 Codec classes must implement a :func:`Codec.get_config` method,
 which must return a dictionary holding all configuration parameters
@@ -29,10 +27,9 @@ configuration, one class could correctly decode data encoded by the
 other and vice versa.
 
 """
-from __future__ import absolute_import, print_function, division
 
 
-class Codec(object):
+class Codec:
     """Codec abstract base class."""
 
     # override in sub-class
@@ -46,13 +43,13 @@ class Codec(object):
         ----------
         buf : buffer-like
             Data to be encoded. May be any object supporting the new-style
-            buffer protocol or `array.array` under Python 2.
+            buffer protocol.
 
         Returns
         -------
         enc : buffer-like
             Encoded data. May be any object supporting the new-style buffer
-            protocol or `array.array` under Python 2.
+            protocol.
 
         """
         # override in sub-class
@@ -65,7 +62,7 @@ class Codec(object):
         ----------
         buf : buffer-like
             Encoded data. May be any object supporting the new-style buffer
-            protocol or `array.array` under Python 2.
+            protocol.
         out : buffer-like, optional
             Writeable buffer to store decoded data. N.B. if provided, this buffer must
             be exactly the right size to store the decoded data.
@@ -74,7 +71,7 @@ class Codec(object):
         -------
         dec : buffer-like
             Decoded data. May be any object supporting the new-style
-            buffer protocol or `array.array` under Python 2.
+            buffer protocol.
 
         """
         # override in sub-class
@@ -117,10 +114,6 @@ class Codec(object):
         except AttributeError:
             return False
 
-    def __ne__(self, other):
-        # only needed for PY2
-        return not self == other
-
     def __repr__(self):
 
         # override in sub-class if need special representation
@@ -129,7 +122,7 @@ class Codec(object):
         # parameters and valid keyword arguments to constructor function
 
         r = '%s(' % type(self).__name__
-        params = ['%s=%r' % (k, getattr(self, k))
+        params = ['{}={!r}'.format(k, getattr(self, k))
                   for k in sorted(self.__dict__)
                   if not k.startswith('_')]
         r += ', '.join(params) + ')'

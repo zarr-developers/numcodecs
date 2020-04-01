@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import json as _json
 import textwrap
 
@@ -81,11 +79,11 @@ class JSON(Codec):
     def __repr__(self):
         params = ['encoding=%r' % self._text_encoding]
         for k, v in sorted(self._encoder_config.items()):
-            params.append('%s=%r' % (k, v))
+            params.append('{}={!r}'.format(k, v))
         for k, v in sorted(self._decoder_config.items()):
-            params.append('%s=%r' % (k, v))
+            params.append('{}={!r}'.format(k, v))
         classname = type(self).__name__
-        r = '%s(%s)' % (classname, ', '.join(params))
+        r = '{}({})'.format(classname, ', '.join(params))
         r = textwrap.fill(r, width=80, break_long_words=False, subsequent_indent='     ')
         return r
 
@@ -107,15 +105,15 @@ class LegacyJSON(JSON):
     def __init__(self, encoding='utf-8', skipkeys=False, ensure_ascii=True,
                  check_circular=True, allow_nan=True, sort_keys=True, indent=None,
                  separators=None, strict=True):
-        super(LegacyJSON, self).__init__(encoding=encoding,
-                                         skipkeys=skipkeys,
-                                         ensure_ascii=ensure_ascii,
-                                         check_circular=check_circular,
-                                         allow_nan=allow_nan,
-                                         sort_keys=sort_keys,
-                                         indent=indent,
-                                         separators=separators,
-                                         strict=strict)
+        super().__init__(encoding=encoding,
+                         skipkeys=skipkeys,
+                         ensure_ascii=ensure_ascii,
+                         check_circular=check_circular,
+                         allow_nan=allow_nan,
+                         sort_keys=sort_keys,
+                         indent=indent,
+                         separators=separators,
+                         strict=strict)
 
     def encode(self, buf):
         buf = np.asarray(buf)

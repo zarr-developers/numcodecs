@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 from glob import glob
 import os
 from setuptools import setup, Extension
@@ -9,18 +7,12 @@ from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
 
-
 try:
     from Cython.Build import cythonize
 except ImportError:
     have_cython = False
 else:
     have_cython = True
-
-
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -29,9 +21,6 @@ have_sse2 = 'sse2' in flags
 have_avx2 = 'avx2' in flags
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
-if PY2 and os.name == 'nt':
-    # force no AVX2 on windows PY27
-    disable_avx2 = True
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
@@ -48,9 +37,6 @@ elif os.name == 'posix':
         base_compile_args.append('-mno-avx2')
     elif have_avx2:
         base_compile_args.append('-mavx2')
-# workaround lack of support for "inline" in MSVC when building for Python 2.7 64-bit
-if PY2 and os.name == 'nt':
-    base_compile_args.append('-Dinline=__inline')
 # On macOS, force libc++ in case the system tries to use `stdlibc++`.
 # The latter is often absent from modern macOS systems.
 if sys.platform == 'darwin':
@@ -343,8 +329,6 @@ def run_setup(with_extensions):
             'Programming Language :: Python',
             'Topic :: Software Development :: Libraries :: Python Modules',
             'Operating System :: Unix',
-            'Programming Language :: Python :: 2',
-            'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',

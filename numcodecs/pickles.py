@@ -1,19 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
+import pickle
 
 import numpy as np
 
-
 from .abc import Codec
-from .compat import PY2, ensure_contiguous_ndarray
-
-
-if PY2:  # pragma: py3 no cover
-    import cPickle as pickle
-    from cStringIO import StringIO
-else:  # pragma: py2 no cover
-    import pickle
+from .compat import ensure_contiguous_ndarray
 
 
 class Pickle(Codec):
@@ -50,11 +40,7 @@ class Pickle(Codec):
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
-
-        if PY2:  # pragma: py3 no cover
-            dec = pickle.load(StringIO(buf))
-        else:  # pragma: py2 no cover
-            dec = pickle.loads(buf)
+        dec = pickle.loads(buf)
 
         if out is not None:
             np.copyto(out, dec)

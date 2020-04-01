@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # flake8: noqa
 """Numcodecs is a Python package providing buffer compression and
 transformation codecs for use in data storage and communication
@@ -18,7 +17,6 @@ contribute code, please `raise an issue on GitHub
 
 """
 
-from __future__ import absolute_import, print_function, division
 import multiprocessing
 import atexit
 
