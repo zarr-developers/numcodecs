@@ -4,6 +4,9 @@ Release notes
 Upcoming Release
 ----------------
 
+* Remove LegacyMsgPack codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`218`.
+
 * Drop support for Python 2.
   By :user:`James Bourbeau <jrbourbeau>`, :issue:`220`.
 
