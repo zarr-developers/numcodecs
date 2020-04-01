@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import array
 import mmap
 
@@ -8,19 +6,19 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import ensure_text, ensure_bytes, PY2, ensure_contiguous_ndarray, text_type
+from numcodecs.compat import ensure_text, ensure_bytes, ensure_contiguous_ndarray
 
 
 def test_ensure_text():
     bufs = [
         b'adsdasdas',
-        u'adsdasdas',
+        'adsdasdas',
         np.asarray(memoryview(b'adsdasdas')),
         array.array('B', b'qwertyuiqwertyui')
     ]
     for buf in bufs:
         b = ensure_text(buf)
-        assert isinstance(b, text_type)
+        assert isinstance(b, str)
 
 
 def test_ensure_bytes():
@@ -57,16 +55,13 @@ def test_ensure_contiguous_ndarray_shares_memory():
             assert buf.itemsize == a.dtype.itemsize
         else:
             assert expected_itemsize == a.dtype.itemsize
-        if PY2:  # pragma: py3 no cover
-            assert np.shares_memory(a, np.getbuffer(buf))
-        else:  # pragma: py2 no cover
-            assert np.shares_memory(a, memoryview(buf))
+        assert np.shares_memory(a, memoryview(buf))
 
 
 def test_ensure_bytes_invalid_inputs():
 
     # object array not allowed
-    a = np.array([u'Xin chào thế giới'], dtype=object)
+    a = np.array(['Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(TypeError):
             ensure_bytes(e)
@@ -75,7 +70,7 @@ def test_ensure_bytes_invalid_inputs():
 def test_ensure_contiguous_ndarray_invalid_inputs():
 
     # object array not allowed
-    a = np.array([u'Xin chào thế giới'], dtype=object)
+    a = np.array(['Xin chào thế giới'], dtype=object)
     for e in [a, memoryview(a)]:
         with pytest.raises(TypeError):
             ensure_contiguous_ndarray(e)
@@ -85,15 +80,9 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
         ensure_contiguous_ndarray(np.arange(100)[::2])
 
     # unicode array.array not allowed
-    a = array.array('u', u'qwertyuiqwertyui')
+    a = array.array('u', 'qwertyuiqwertyui')
     with pytest.raises(TypeError):
         ensure_contiguous_ndarray(a)
-
-    if PY2:  # pragma: py3 no cover
-        # char array.array not allowed
-        a = array.array('c', b'qwertyuiqwertyui')
-        with pytest.raises(TypeError):
-            ensure_contiguous_ndarray(a)
 
 
 def test_ensure_contiguous_ndarray_writeable():
@@ -105,9 +94,6 @@ def test_ensure_contiguous_ndarray_writeable():
         assert m.flags.writeable == writeable
         m = ensure_contiguous_ndarray(memoryview(a))
         assert m.flags.writeable == writeable
-        if PY2:  # pragma: py3 no cover
-            m = ensure_contiguous_ndarray(np.getbuffer(a))
-            assert m.flags.writeable == writeable
 
 
 def test_ensure_contiguous_ndarray_max_buffer_size():
