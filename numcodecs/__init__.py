@@ -99,9 +99,8 @@ from numcodecs.checksum32 import CRC32, Adler32
 register_codec(CRC32)
 register_codec(Adler32)
 
-from numcodecs.json import JSON, LegacyJSON
+from numcodecs.json import JSON
 register_codec(JSON)
-register_codec(LegacyJSON)
 
 try:
     from numcodecs import vlen
