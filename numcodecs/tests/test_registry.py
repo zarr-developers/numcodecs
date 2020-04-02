@@ -11,7 +11,7 @@ def test_registry_errors():
 
 def test_get_codec_argument():
     # Check that get_codec doesn't modify its argument.
-    arg = {"id": "json"}
+    arg = {"id": "json2"}
     before = dict(arg)
     get_codec(arg)
     assert before == arg

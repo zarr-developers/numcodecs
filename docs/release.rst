@@ -4,6 +4,9 @@ Release notes
 Upcoming Release
 ----------------
 
+* Remove LegacyJSON codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`226`.
+
 * Remove LegacyMsgPack codec.
   By :user:`James Bourbeau  <jrbourbeau>`, :issue:`218`.
 
