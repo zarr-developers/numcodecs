@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # flake8: noqa
 """Numcodecs is a Python package providing buffer compression and
 transformation codecs for use in data storage and communication
@@ -17,7 +16,6 @@ contribute code, please `raise an issue on GitHub
 <https://github.com/alimanfoo/numcodecs/issues>`_.
 
 """
-from __future__ import absolute_import, print_function, division
 import multiprocessing
 import atexit
 
@@ -98,9 +96,8 @@ from numcodecs.pickles import Pickle
 register_codec(Pickle)
 
 try:
-    from numcodecs.msgpacks import MsgPack, LegacyMsgPack
+    from numcodecs.msgpacks import MsgPack
     register_codec(MsgPack)
-    register_codec(LegacyMsgPack)
 except ImportError: # pragma: no cover
     pass
 
@@ -108,9 +105,8 @@ from numcodecs.checksum32 import CRC32, Adler32
 register_codec(CRC32)
 register_codec(Adler32)
 
-from numcodecs.json import JSON, LegacyJSON
+from numcodecs.json import JSON
 register_codec(JSON)
-register_codec(LegacyJSON)
 
 try:
     from numcodecs import vlen

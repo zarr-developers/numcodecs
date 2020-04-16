@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import json as _json
 import textwrap
 
@@ -81,53 +79,10 @@ class JSON(Codec):
     def __repr__(self):
         params = ['encoding=%r' % self._text_encoding]
         for k, v in sorted(self._encoder_config.items()):
-            params.append('%s=%r' % (k, v))
+            params.append('{}={!r}'.format(k, v))
         for k, v in sorted(self._decoder_config.items()):
-            params.append('%s=%r' % (k, v))
+            params.append('{}={!r}'.format(k, v))
         classname = type(self).__name__
-        r = '%s(%s)' % (classname, ', '.join(params))
+        r = '{}({})'.format(classname, ', '.join(params))
         r = textwrap.fill(r, width=80, break_long_words=False, subsequent_indent='     ')
         return r
-
-
-class LegacyJSON(JSON):
-    """Deprecated JSON codec.
-
-    .. deprecated:: 0.6.0
-        This codec is maintained to enable decoding of data previously encoded, however
-        there may be issues with encoding and correctly decoding certain object arrays,
-        hence the :class:`JSON` codec should be used instead for encoding new data. See
-        https://github.com/zarr-developers/numcodecs/issues/76 and
-        https://github.com/zarr-developers/numcodecs/pull/77 for more information.
-
-    """
-
-    codec_id = 'json'
-
-    def __init__(self, encoding='utf-8', skipkeys=False, ensure_ascii=True,
-                 check_circular=True, allow_nan=True, sort_keys=True, indent=None,
-                 separators=None, strict=True):
-        super(LegacyJSON, self).__init__(encoding=encoding,
-                                         skipkeys=skipkeys,
-                                         ensure_ascii=ensure_ascii,
-                                         check_circular=check_circular,
-                                         allow_nan=allow_nan,
-                                         sort_keys=sort_keys,
-                                         indent=indent,
-                                         separators=separators,
-                                         strict=strict)
-
-    def encode(self, buf):
-        buf = np.asarray(buf)
-        items = buf.tolist()
-        items.append(buf.dtype.str)
-        return self._encoder.encode(items).encode(self._text_encoding)
-
-    def decode(self, buf, out=None):
-        items = self._decoder.decode(ensure_text(buf, self._text_encoding))
-        dec = np.array(items[:-1], dtype=items[-1])
-        if out is not None:
-            np.copyto(out, dec)
-            return out
-        else:
-            return dec

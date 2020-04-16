@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # cython: embedsignature=True
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
-# cython: language_level=2
-from __future__ import absolute_import, print_function, division
+# cython: language_level=3
 import threading
 import multiprocessing
 import os
@@ -16,7 +14,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2, text_type, ensure_contiguous_ndarray
+from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -64,9 +62,8 @@ MAX_THREADS = BLOSC_MAX_THREADS
 MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
 VERSION_STRING = <char *> BLOSC_VERSION_STRING
 VERSION_DATE = <char *> BLOSC_VERSION_DATE
-if not PY2:
-    VERSION_STRING = VERSION_STRING.decode()
-    VERSION_DATE = VERSION_DATE.decode()
+VERSION_STRING = VERSION_STRING.decode()
+VERSION_DATE = VERSION_DATE.decode()
 __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
@@ -100,7 +97,7 @@ def compname_to_compcode(cname):
     """Return the compressor code associated with the compressor name. If the compressor
     name is not recognized, or there is not support for it in this build, -1 is returned
     instead."""
-    if isinstance(cname, text_type):
+    if isinstance(cname, str):
         cname = cname.encode('ascii')
     return blosc_compname_to_compcode(cname)
 
@@ -108,8 +105,7 @@ def compname_to_compcode(cname):
 def list_compressors():
     """Get a list of compressors supported in the current build."""
     s = blosc_list_compressors()
-    if not PY2:
-        s = s.decode('ascii')
+    s = s.decode('ascii')
     return s.split(',')
 
 
@@ -167,8 +163,7 @@ def cbuffer_complib(source):
     # release buffers
     buffer.release()
 
-    if not PY2:
-        complib = complib.decode('ascii')
+    complib = complib.decode('ascii')
 
     return complib
 
@@ -253,10 +248,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         bytes dest
 
     # check valid cname early
-    if PY2:
-        cname_str = cname
-    else:
-        cname_str = cname.decode('ascii')
+    cname_str = cname.decode('ascii')
     if cname_str not in list_compressors():
         err_bad_cname(cname_str)
 
@@ -478,7 +470,7 @@ class Blosc(Codec):
 
     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
-        if isinstance(cname, text_type):
+        if isinstance(cname, str):
             self._cname_bytes = cname.encode('ascii')
         else:
             self._cname_bytes = cname

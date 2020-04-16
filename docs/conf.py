@@ -16,16 +16,7 @@
 
 import sys
 import os
-
-
-PY2 = sys.version_info[0] == 2
-
-
-if PY2:  # pragma: py3 no cover
-    from mock import Mock as MagicMock
-else:    # pragma: py2 no cover
-    from unittest.mock import Mock as MagicMock
-
+from unittest.mock import Mock as MagicMock
 
 class Mock(MagicMock):
     @classmethod
@@ -34,10 +25,6 @@ class Mock(MagicMock):
 
 
 MOCK_MODULES = ['msgpack']
-if PY2:
-    MOCK_MODULES.append('lzma')
-
-
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
