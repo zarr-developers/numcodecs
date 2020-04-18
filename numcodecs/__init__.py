@@ -68,9 +68,8 @@ except ImportError:  # pragma: no cover
     pass
 
 try:
-    from numcodecs import zfp
-    from numcodecs.zfp import Zfp
-    register_codec(Zfp)
+    from numcodecs.zfpy import ZFPY
+    register_codec(ZFPY)
 except ImportError:  # pragma: no cover
     pass
 
