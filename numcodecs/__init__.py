@@ -3,7 +3,7 @@
 transformation codecs for use in data storage and communication
 applications. These include:
 
-* Compression codecs, e.g., Zlib, BZ2, LZMA and Blosc.
+* Compression codecs, e.g., Zlib, BZ2, LZMA, ZFPY and Blosc.
 * Pre-compression filters, e.g., Delta, Quantize, FixedScaleOffset,
   PackBits, Categorize.
 * Integrity checks, e.g., CRC32, Adler32.

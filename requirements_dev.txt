@@ -1,3 +1,4 @@
 Cython==0.29.6
 msgpack==0.6.1
 numpy==1.16.2
+zfpy==0.5.5rc1
