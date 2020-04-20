@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import itertools
 import unittest
 
@@ -21,11 +19,11 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
 
 
 codecs = [
-    ZFPY(),
-    ZFPY(mode=_zfpy.mode_fixed_accuracy, tolerance=0.1),
-    ZFPY(mode=_zfpy.mode_fixed_precision, precision=64),
-    ZFPY(mode=_zfpy.mode_fixed_rate, rate=60),
-    ZFPY(mode='c'),
+    #ZFPY(),
+    #ZFPY(mode=_zfpy.mode_fixed_accuracy, tolerance=-1),
+    #ZFPY(mode=_zfpy.mode_fixed_precision, precision=-1),
+    ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),
+    #ZFPY(mode='c'),
 ]
 
 
@@ -35,15 +33,24 @@ codecs = [
 arrays = [
     np.linspace(1000, 1001, 1000, dtype='f4'),
     np.linspace(1000, 1001, 1000, dtype='f8'),
-    np.random.normal(loc=1000, scale=1, size=(200, 100, 50)),
-    np.random.normal(loc=1000, scale=1, size=(200, 100, 50, 10)),
-    np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(150, 350, 50))),
+    np.random.normal(loc=1000, scale=1, size=(100, 10)),
+    np.random.normal(loc=1000, scale=1, size=(10, 10, 10)),
+    np.random.normal(loc=1000, scale=1, size=(2, 5, 10, 10)),
+    np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(5, 10, 20))),
+    np.random.randint(-2**31, -2**31 + 20, size=1000, dtype='i4').reshape(100,10),
+    #np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').reshape(10,10,10),
 ]
 
 
 def test_encode_decode():
-    for arr, codec in itertools.product(arrays, codecs):
-        check_encode_decode_array(arr, codec)
+    for arr in arrays:
+        if arr.dtype == np.int32 or arr.dtype == np.int64:
+            codec = [codecs[-1]]
+        else:
+            codec = codecs
+        for code in codec:
+            check_encode_decode_array(arr, code)
+
 
 
 def test_config():
@@ -52,13 +59,20 @@ def test_config():
 
 
 def test_repr():
-    check_repr("ZFPY(mode=_zfpy.mode_fixed_accuracy,tolerance=0.1)")
-    check_repr("ZFPY(mode=zfpy.mode_fixed_precision,precision=64)")
-    check_repr("ZFPY(mode=_zfpy.mode_fixed_rate,rate=0)")
+    check_repr("ZFPY(mode=4, tolerance=-1)")
+    check_repr("ZFPY(mode=3, precision=-1)")
+    check_repr("ZFPY(mode=2, rate=-1)")
 
 
 def test_backwards_compatibility():
-    check_backwards_compatibility(ZFPY.codec_id, arrays, codecs)
+    for i, code in enumerate(codecs):
+        if code.mode == _zfpy.mode_fixed_rate :
+            codec = [code]
+            check_backwards_compatibility(ZFPY.codec_id, arrays, codec)
+        else:
+            codec = codecs
+            array = arrays[:len(arrays)-2]
+            check_backwards_compatibility(ZFPY.codec_id, array, codec)
 
 
 def test_err_decode_object_buffer():

@@ -8,7 +8,7 @@ except ImportError:  # pragma: no cover
 if _zfpy:
 
     from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray
+    from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):
@@ -18,21 +18,20 @@ if _zfpy:
         Parameters
         ----------
         mode : integer
-            One of the zfpy mode choice, e.g., ``zfpy.FORMAT_XZ``.
+            One of the zfpy mode choice, e.g., ``zfpy.mode_fixed_accuracy``.
         tolerance : double, optional
             A double-precision number, specifying the compression accuracy needed.
-        preset : integer, optional
-            An integer between 0 and 9 inclusive, specifying the compression
-            level.
-        filters : list, optional
-            A list of dictionaries specifying compression filters. If
-            filters are provided, 'preset' must be None.
+        rate : double, optional
+            A double-precision number, specifying the compression rate needed.
+        precision : int, optional
+            A integer number, specifying the compression precision needed.
 
         """
 
         codec_id = 'zfpy'
 
-        def __init__(self, mode=_zfpy.mode_fixed_accuracy, tolerance=-1, rate=-1, precision=-1):
+        def __init__(self, mode=_zfpy.mode_fixed_accuracy, tolerance=-1, 
+                     rate=-1, precision=-1, compression_kwargs=None):
             self.mode = mode
             if mode == _zfpy.mode_fixed_accuracy:
                self.compression_kwargs = {
@@ -46,6 +45,9 @@ if _zfpy:
                self.compression_kwargs = {
                    "precision" : precision
                }
+            else:
+               raise ValueError('Wrong mode, please set mode 2 - rate, % \
+                                3 - precision, 4 - tolerance')
             self.tolerance = tolerance
             self.rate = rate
             self.precision = precision
@@ -56,21 +58,25 @@ if _zfpy:
             buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            return _zfpy.compress_numpy(buf, write_head=False, **self.compression_kwargs)
+            comp_arr = _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
+
+            return comp_arr
 
         def decode(self, buf, out=None):
 
             # normalise inputs
-            buf = ensure_contiguous_ndarray(buf)
+            buf = ensure_bytes(buf)
             if out is not None:
                 out = ensure_contiguous_ndarray(out)
 
             # do decompression
-            dec = _zfpy._decompress(buf, _zfpy.dtype_to_ztype(out.dtype),
-                 out.shape, out=out)
+            dec = _zfpy.decompress_numpy(buf)
 
             # handle destination
-            return ndarray_copy(dec, out)
+            if out is not None:
+                return ndarray_copy(dec, out)
+            else:
+                return dec
 
         def __repr__(self):
             if self.mode == _zfpy.mode_fixed_accuracy:
@@ -80,5 +86,5 @@ if _zfpy:
             elif self.mode == _zfpy.mode_fixed_precision:
                 r = '%s(mode=%r, precision=%s)' % (type(self).__name__, self.mode, self.precision)
             else:
-                r="WRONG MODE"
+                r="Wrong mode"
             return r
