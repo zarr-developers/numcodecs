@@ -19,11 +19,10 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
 
 
 codecs = [
-    #ZFPY(),
-    #ZFPY(mode=_zfpy.mode_fixed_accuracy, tolerance=-1),
-    #ZFPY(mode=_zfpy.mode_fixed_precision, precision=-1),
     ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),
-    #ZFPY(mode='c'),
+    ZFPY(),
+    ZFPY(mode=_zfpy.mode_fixed_accuracy, tolerance=-1),
+    ZFPY(mode=_zfpy.mode_fixed_precision, precision=-1),
 ]
 
 
@@ -38,7 +37,7 @@ arrays = [
     np.random.normal(loc=1000, scale=1, size=(2, 5, 10, 10)),
     np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(5, 10, 20))),
     np.random.randint(-2**31, -2**31 + 20, size=1000, dtype='i4').reshape(100,10),
-    #np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').reshape(10,10,10),
+    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').reshape(10,10,10),
 ]
 
 
@@ -50,7 +49,6 @@ def test_encode_decode():
             codec = codecs
         for code in codec:
             check_encode_decode_array(arr, code)
-
 
 
 def test_config():
@@ -66,13 +64,11 @@ def test_repr():
 
 def test_backwards_compatibility():
     for i, code in enumerate(codecs):
-        if code.mode == _zfpy.mode_fixed_rate :
+        if code.mode == _zfpy.mode_fixed_rate:
             codec = [code]
             check_backwards_compatibility(ZFPY.codec_id, arrays, codec)
         else:
-            codec = codecs
-            array = arrays[:len(arrays)-2]
-            check_backwards_compatibility(ZFPY.codec_id, array, codec)
+            check_backwards_compatibility(ZFPY.codec_id, arrays[:len(arrays)-2], codecs)
 
 
 def test_err_decode_object_buffer():

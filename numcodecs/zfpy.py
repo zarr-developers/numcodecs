@@ -30,23 +30,23 @@ if _zfpy:
 
         codec_id = 'zfpy'
 
-        def __init__(self, mode=_zfpy.mode_fixed_accuracy, tolerance=-1, 
+        def __init__(self, mode=_zfpy.mode_fixed_accuracy, tolerance=-1,
                      rate=-1, precision=-1, compression_kwargs=None):
             self.mode = mode
             if mode == _zfpy.mode_fixed_accuracy:
-               self.compression_kwargs = {
-                   "tolerance" : tolerance
-               }
+                self.compression_kwargs = {
+                    "tolerance" : tolerance
+                }
             elif mode == _zfpy.mode_fixed_rate:
-               self.compression_kwargs = {
-                   "rate" : rate
-               }
+                self.compression_kwargs = {
+                    "rate" : rate
+                }
             elif mode == _zfpy.mode_fixed_precision:
-               self.compression_kwargs = {
-                   "precision" : precision
-               }
+                self.compression_kwargs = {
+                    "precision" : precision
+                }
             else:
-               pass
+                pass
 
             self.tolerance = tolerance
             self.rate = rate
