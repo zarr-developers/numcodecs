@@ -46,8 +46,8 @@ if _zfpy:
                    "precision" : precision
                }
             else:
-               raise ValueError('Wrong mode, please set mode 2 - rate, % \
-                                3 - precision, 4 - tolerance')
+               pass
+
             self.tolerance = tolerance
             self.rate = rate
             self.precision = precision
@@ -86,5 +86,5 @@ if _zfpy:
             elif self.mode == _zfpy.mode_fixed_precision:
                 r = '%s(mode=%r, precision=%s)' % (type(self).__name__, self.mode, self.precision)
             else:
-                r="Wrong mode"
+                pass
             return r
