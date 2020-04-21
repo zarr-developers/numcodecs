@@ -6,3 +6,5 @@ numpydoc
 mock
 numpy
 cython
+--extra-index-url https://test.pypi.org/simple/
+zfpy==0.5.5rc1
