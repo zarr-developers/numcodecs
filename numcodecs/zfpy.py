@@ -35,15 +35,15 @@ if _zfpy:
             self.mode = mode
             if mode == _zfpy.mode_fixed_accuracy:
                 self.compression_kwargs = {
-                    "tolerance" : tolerance
+                    "tolerance": tolerance
                 }
             elif mode == _zfpy.mode_fixed_rate:
                 self.compression_kwargs = {
-                    "rate" : rate
+                    "rate": rate
                 }
             elif mode == _zfpy.mode_fixed_precision:
                 self.compression_kwargs = {
-                    "precision" : precision
+                    "precision": precision
                 }
             else:
                 pass
