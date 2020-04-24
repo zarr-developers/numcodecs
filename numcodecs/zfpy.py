@@ -1,6 +1,3 @@
-import sys
-
-
 _zfpy = None
 try:
     import zfpy as _zfpy
