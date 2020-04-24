@@ -8,7 +8,7 @@ except ImportError:  # pragma: no cover
     pass
 
 
-if _zfpy and sys.version_info < (3, 8):
+if _zfpy and not sys.platform.startswith("darwin"):
 
     from .abc import Codec
     from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
@@ -67,8 +67,7 @@ if _zfpy and sys.version_info < (3, 8):
         def decode(self, buf, out=None):
 
             # normalise inputs
-            #buf = ensure_bytes(buf)
-            buf = ensure_contiguous_ndarray(buf)
+            buf = ensure_bytes(buf)
             if out is not None:
                 out = ensure_contiguous_ndarray(out)
 
