@@ -8,7 +8,7 @@ except ImportError:  # pragma: no cover
     pass
 
 
-if _zfpy and not sys.platform.startswith("darwin"):
+if _zfpy:
 
     from .abc import Codec
     from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
@@ -61,8 +61,8 @@ if _zfpy and not sys.platform.startswith("darwin"):
             buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            return _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
-
+            return _zfpy.compress_numpy(buf, write_header=True,
+                                        **self.compression_kwargs)
 
         def decode(self, buf, out=None):
 
