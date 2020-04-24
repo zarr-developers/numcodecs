@@ -1,3 +1,6 @@
+import sys
+
+
 _zfpy = None
 try:
     import zfpy as _zfpy
@@ -58,14 +61,14 @@ if _zfpy and sys.version_info < (3, 8):
             buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            comp_arr = _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
+            return _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
 
-            return comp_arr
 
         def decode(self, buf, out=None):
 
             # normalise inputs
-            buf = ensure_bytes(buf)
+            #buf = ensure_bytes(buf)
+            buf = ensure_contiguous_ndarray(buf)
             if out is not None:
                 out = ensure_contiguous_ndarray(out)
 

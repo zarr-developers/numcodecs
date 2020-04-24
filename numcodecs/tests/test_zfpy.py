@@ -18,9 +18,6 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
                                     check_err_decode_object_buffer,
                                     check_err_encode_object_buffer)
 
-@pytest.mark.skipif(sys.version_info >= (3, 8),
-                    reason="requires python3.7 and lower")
-
 
 codecs = [
     ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),
