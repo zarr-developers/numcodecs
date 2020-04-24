@@ -1,5 +1,7 @@
 import itertools
 import unittest
+import sys
+import pytest
 
 
 import numpy as np
@@ -17,6 +19,8 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
                                     check_err_decode_object_buffer,
                                     check_err_encode_object_buffer)
 
+if sys.platform.startswith("osx") or sys.version_info >= (3, 8):
+    pytest.skip("skipping osx-only tests", allow_module_level=True)
 
 codecs = [
     ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),
@@ -39,7 +43,6 @@ arrays = [
     np.random.randint(-2**31, -2**31 + 20, size=1000, dtype='i4').reshape(100, 10),
     np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').reshape(10, 10, 10),
 ]
-
 
 def test_encode_decode():
     for arr in arrays:

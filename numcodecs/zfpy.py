@@ -67,7 +67,7 @@ if _zfpy:
         def decode(self, buf, out=None):
 
             # normalise inputs
-            buf = ensure_contiguous_ndarray(buf)
+            buf = ensure_bytes(buf)
             if out is not None:
                 out = ensure_contiguous_ndarray(out)
 
