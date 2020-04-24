@@ -5,7 +5,7 @@ except ImportError:  # pragma: no cover
     pass
 
 
-if _zfpy:
+if _zfpy and sys.version_info < (3, 8):
 
     from .abc import Codec
     from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes

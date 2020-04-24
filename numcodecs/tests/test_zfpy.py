@@ -1,4 +1,3 @@
-import itertools
 import unittest
 import sys
 
@@ -19,9 +18,8 @@ from numcodecs.tests.common import (check_encode_decode_array, check_config, che
                                     check_err_decode_object_buffer,
                                     check_err_encode_object_buffer)
 
-
-if not sys.platform.startswith("darwin") or sys.version_info <= (3, 7):
-    pytest.skip("skipping osx-only tests", allow_module_level=True)
+@pytest.mark.skipif(sys.version_info >= (3, 8),
+                    reason="requires python3.7 and lower")
 
 
 codecs = [
