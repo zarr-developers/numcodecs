@@ -7,8 +7,10 @@ except ImportError:  # pragma: no cover
 
 if _zfpy:
 
+
     from .abc import Codec
     from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
+    from .compat_ext import Buffer
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):
@@ -65,7 +67,7 @@ if _zfpy:
         def decode(self, buf, out=None):
 
             # normalise inputs
-            buf = ensure_bytes(buf)
+            buf = ensure_contiguous_ndarray(buf)
             if out is not None:
                 out = ensure_contiguous_ndarray(out)
 
