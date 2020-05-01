@@ -79,6 +79,6 @@ if _zfpy:
 
         def __repr__(self):
             r = '%s(mode=%r, tolerance=%s, rate=%s, precision=%s)' % \
-                (type(self).__name__, self.mode, self.tolerance, self.rate, 
+                (type(self).__name__, self.mode, self.tolerance, self.rate,
                  self.precision)
             return r

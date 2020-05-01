@@ -56,7 +56,7 @@ def test_config():
 
 
 def test_repr():
-    check_repr("ZFPY(mode=4, tolerance=-1, rate=-1, precision=-1)")
+    check_repr("ZFPY(mode=4, tolerance=0.001, rate=-1, precision=-1)")
 
 
 def test_backwards_compatibility():
