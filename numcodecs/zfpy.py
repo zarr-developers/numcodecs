@@ -78,12 +78,7 @@ if _zfpy:
                 return dec
 
         def __repr__(self):
-            if self.mode == _zfpy.mode_fixed_accuracy:
-                r = '%s(mode=%r, tolerance=%s)' % (type(self).__name__, self.mode, self.tolerance)
-            elif self.mode == _zfpy.mode_fixed_rate:
-                r = '%s(mode=%r, rate=%s)' % (type(self).__name__, self.mode, self.rate)
-            elif self.mode == _zfpy.mode_fixed_precision:
-                r = '%s(mode=%r, precision=%s)' % (type(self).__name__, self.mode, self.precision)
-            else:
-                pass
+            r = '%s(mode=%r, tolerance=%s, rate=%s, precision=%s)' % \
+                (type(self).__name__, self.mode, self.tolerance, self.rate, 
+                 self.precision)
             return r
