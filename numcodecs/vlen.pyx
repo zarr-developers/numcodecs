@@ -1,7 +1,7 @@
 # cython: embedsignature=True
 # cython: profile=False
 # cython: linetrace=False
-# cython: binding=False
+# cython: binding=True
 # cython: language_level=3
 
 
