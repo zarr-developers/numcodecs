@@ -24,7 +24,8 @@ greetings = ['¡Hola mundo!', 'Hej Världen!', 'Servus Woid!', 'Hei maailma!',
 def compare_arrays(arr, res, precision=None):
 
     # ensure numpy array with matching dtype
-    res = ensure_ndarray(res).view(arr.dtype)
+    res = ensure_ndarray(res)
+    res = res.view(arr.dtype)
 
     # convert to correct shape
     if arr.flags.f_contiguous:
@@ -109,6 +110,77 @@ def check_encode_decode(arr, codec, precision=None):
     codec.decode(enc_bytes, out=out)
     # noinspection PyTypeChecker
     compare_arrays(arr, out, precision=precision)
+
+
+def check_encode_decode_partial(arr, codec, precision=None):
+
+    # N.B., watch out here with blosc compressor, if the itemsize of
+    # the source buffer is different then the results of encoding
+    # (i.e., compression) may be different. Hence we *do not* require that
+    # the results of encoding be identical for all possible inputs, rather
+    # we just require that the results of the encode/decode round-trip can
+    # be compared to the original array.
+
+    # encoding should support any object exporting the buffer protocol
+
+    start, nitems = 5, 10
+    compare_arr = arr[start:start+nitems]
+    # test encoding of numpy array
+    enc = codec.encode(arr)
+    dec = codec.decode_partial(enc, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test encoding of bytes
+    buf = arr.tobytes(order='A')
+    enc = codec.encode(buf)
+    dec = codec.decode_partial(enc, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test encoding of bytearray
+    buf = bytearray(arr.tobytes(order='A'))
+    enc = codec.encode(buf)
+    dec = codec.decode_partial(enc, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test encoding of array.array
+    buf = array.array('b', arr.tobytes(order='A'))
+    enc = codec.encode(buf)
+    dec = codec.decode_partial(enc, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # decoding should support any object exporting the buffer protocol,
+
+    # setup
+    enc_bytes = ensure_bytes(enc)
+
+    # test decoding of raw bytes
+    dec = codec.decode_partial(enc_bytes, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test decoding of bytearray
+    dec = codec.decode_partial(bytearray(enc_bytes), start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test decoding of array.array
+    buf = array.array('b', enc_bytes)
+    dec = codec.decode_partial(buf, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test decoding of numpy array
+    buf = np.frombuffer(enc_bytes, dtype='u1')
+    dec = codec.decode_partial(buf, start, nitems)
+    compare_arrays(compare_arr, dec, precision=precision)
+
+    # test decoding directly into numpy array
+    out = np.empty_like(arr)
+    codec.decode_partial(enc_bytes, start, nitems, out=out)
+    compare_arrays(compare_arr, out, precision=precision)
+
+    # test decoding directly into bytearray
+    out = bytearray(arr.nbytes)
+    codec.decode_partial(enc_bytes, start, nitems, out=out)
+    # noinspection PyTypeChecker
+    compare_arrays(compare_arr, out, precision=precision)
 
 
 def assert_array_items_equal(res, arr):

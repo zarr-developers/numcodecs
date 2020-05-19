@@ -1,6 +1,7 @@
 import itertools
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
+import logging
 
 
 import numpy as np
@@ -9,7 +10,9 @@ import pytest
 
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import (check_encode_decode, check_config,
+from numcodecs.tests.common import (check_encode_decode,
+                                    check_encode_decode_partial,
+                                    check_config,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
                                     check_err_encode_object_buffer,
@@ -56,6 +59,10 @@ arrays = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
+
+def test_partial_decode():
+    for arr, codec in itertools.product(arrays, codecs):
+        check_encode_decode_partial(arr, codec)
 
 
 def test_config():

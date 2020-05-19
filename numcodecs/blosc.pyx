@@ -43,6 +43,7 @@ cdef extern from "blosc.h":
     int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                        void* src, void* dest, size_t destsize) nogil
     int blosc_decompress(void *src, void *dest, size_t destsize) nogil
+    int blosc_getitem(void* src, int start, int nitems, void* dest)
     int blosc_compname_to_compcode(const char* compname)
     int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                            const void* src, void* dest, size_t destsize,
@@ -393,6 +394,65 @@ def decompress(source, dest=None):
     return dest
 
 
+def decompress_partial(source, start, nitems, dest=None):
+    """Decompress data.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Compressed data, including blosc header. Can be any object supporting the buffer
+        protocol.
+    dest : array-like, optional
+        Object to decompress into.
+
+    Returns
+    -------
+    dest : bytes
+        Object containing decompressed data.
+
+    """
+    cdef:
+        int ret
+        int nbitems = nitems * 4
+        char *source_ptr
+        char *dest_ptr
+        Buffer source_buffer
+        Buffer dest_buffer = None
+        size_t nbytes, cbytes, blocksize
+    
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
+
+    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+
+    if dest is None:
+        dest = PyBytes_FromStringAndSize(NULL, nbitems)
+        dest_ptr = PyBytes_AS_STRING(dest)
+        dest_nbytes = nbitems
+    else:
+        arr = ensure_contiguous_ndarray(dest)
+        dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+        dest_ptr = dest_buffer.ptr
+        dest_nbytes = dest_buffer.nbytes
+    try:
+        
+        if dest_nbytes < nitems:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (nitems, dest_nbytes))
+
+        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
+
+    finally:
+        source_buffer.release()
+        if dest_buffer is not None:
+            dest_buffer.release()
+
+    if ret <= 0:
+        raise RuntimeError('error during blosc partial decompression: %d, start: %d, nbytes: %d' % (ret, start, nbytes))
+
+    return dest
+        
+
 # set the value of this variable to True or False to override the
 # default adaptive behaviour
 use_threads = None
@@ -485,6 +545,10 @@ class Blosc(Codec):
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
+
+    def decode_partial(self, buf, int start, int nitems, out=None):
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
+        return decompress_partial(buf, start, nitems, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
