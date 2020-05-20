@@ -413,17 +413,28 @@ def decompress_partial(source, start, nitems, dest=None):
     """
     cdef:
         int ret
-        int nbitems = nitems * 4
+        int nbitems
+        ctype
         char *source_ptr
         char *dest_ptr
         Buffer source_buffer
         Buffer dest_buffer = None
         size_t nbytes, cbytes, blocksize
+        # size_t typesize,
+        # int shuffle, memcpyed
+
     
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
 
     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    typesize, shuffle, memcpyed = cbuffer_metainfo(source)
+
+    print(typesize)
+
+    nbitems = typesize * nitems
+
+    print(nbitems)
 
     if dest is None:
         dest = PyBytes_FromStringAndSize(NULL, nbitems)
@@ -436,7 +447,7 @@ def decompress_partial(source, start, nitems, dest=None):
         dest_nbytes = dest_buffer.nbytes
     try:
         
-        if dest_nbytes < nitems:
+        if dest_nbytes < nbitems:
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nitems, dest_nbytes))
 
