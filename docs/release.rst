@@ -4,6 +4,9 @@ Release notes
 Upcoming Release
 ----------------
 
+* Add partial decompression of Blosc compressed arrays
+  By :user:`Andrew Fulton <andrewfulton9>`
+
 * Remove LegacyJSON codec.
   By :user:`James Bourbeau  <jrbourbeau>`, :issue:`226`.
 
