@@ -20,8 +20,8 @@ from numcodecs.tests.common import (check_encode_decode,
 
 
 codecs = [
-    Blosc(shuffle=Blosc.SHUFFLE),
-    Blosc(clevel=0, shuffle=Blosc.SHUFFLE),
+    Blosc(shuffle=Blosc.NOSHUFFLE),
+    Blosc(clevel=0, shuffle=Blosc.NOSHUFFLE),
     Blosc(cname='lz4', shuffle=Blosc.SHUFFLE),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE),
     Blosc(cname='lz4', clevel=5, shuffle=Blosc.SHUFFLE),
