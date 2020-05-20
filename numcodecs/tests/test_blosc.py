@@ -20,8 +20,8 @@ from numcodecs.tests.common import (check_encode_decode,
 
 
 codecs = [
-    Blosc(shuffle=Blosc.NOSHUFFLE),
-    Blosc(clevel=0, shuffle=Blosc.NOSHUFFLE),
+    Blosc(shuffle=Blosc.SHUFFLE),
+    Blosc(clevel=0, shuffle=Blosc.SHUFFLE),
     Blosc(cname='lz4', shuffle=Blosc.SHUFFLE),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE),
     Blosc(cname='lz4', clevel=5, shuffle=Blosc.SHUFFLE),
@@ -60,9 +60,13 @@ def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
 
-def test_partial_decode():
-    for arr, codec in itertools.product(arrays, codecs):
-        check_encode_decode_partial(arr, codec)
+
+@pytest.mark.parametrize('codec', codecs)
+@pytest.mark.parametrize('array', [pytest.param(x) if len(x.shape) == 1
+                                   else pytest.param(x, marks=[pytest.mark.xfail])
+                                   for x in arrays])
+def test_partial_decode(codec, array):
+    check_encode_decode_partial(array, codec)
 
 
 def test_config():

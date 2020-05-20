@@ -394,7 +394,7 @@ def decompress(source, dest=None):
     return dest
 
 
-def decompress_partial(source, start, nitems, dest=None):
+def decompress_partial(source, start, nitems, typesize, encoding_size, dest=None):
     """Decompress data.
 
     Parameters
@@ -404,6 +404,15 @@ def decompress_partial(source, start, nitems, dest=None):
         protocol.
     dest : array-like, optional
         Object to decompress into.
+    start: int,
+        Offset in inem where we want to start decoding
+    nitems: int
+        Number of item we want to decode
+    typesize: int
+        Size in number of bytes of the type we want to decode. 
+    encoding_size: int
+        Size in number of bytes at the time of encoding
+        
 
     Returns
     -------
@@ -411,35 +420,33 @@ def decompress_partial(source, start, nitems, dest=None):
         Object containing decompressed data.
 
     """
+    # we do need both the typesize and the encoding size as nitems will be
+    # interpreted by blosc wrt the size of the item. 
+
     cdef:
         int ret
-        int nbitems
-        ctype
+        int nbitems_bytes = nitems * typesize
+        int nbitems_blosc = nbitems_bytes // encoding_size
+        int start_bytes = (start*typesize)
+        int start_blosc = start_bytes // encoding_size
         char *source_ptr
         char *dest_ptr
         Buffer source_buffer
         Buffer dest_buffer = None
         size_t nbytes, cbytes, blocksize
-        # size_t typesize,
-        # int shuffle, memcpyed
 
+    assert nbitems_bytes % encoding_size == 0, "the encoding size is not a divisor of the number of bytes we want"
+    assert start_bytes % encoding_size == 0, "the start size is not a divisor of the start offset bytes we want {} {} {}".format(start_blosc, encoding_size, start_blosc % encoding_size)
     
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
 
     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
-    typesize, shuffle, memcpyed = cbuffer_metainfo(source)
-
-    print(typesize)
-
-    nbitems = typesize * nitems
-
-    print(nbitems)
 
     if dest is None:
-        dest = PyBytes_FromStringAndSize(NULL, nbitems)
+        dest = PyBytes_FromStringAndSize(NULL, nbitems_bytes)
         dest_ptr = PyBytes_AS_STRING(dest)
-        dest_nbytes = nbitems
+        dest_nbytes = nbitems_bytes
     else:
         arr = ensure_contiguous_ndarray(dest)
         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
@@ -447,11 +454,11 @@ def decompress_partial(source, start, nitems, dest=None):
         dest_nbytes = dest_buffer.nbytes
     try:
         
-        if dest_nbytes < nbitems:
+        if dest_nbytes < nbitems_bytes:
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nitems, dest_nbytes))
 
-        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
+        ret = blosc_getitem(source_ptr, start_blosc, nbitems_blosc, dest_ptr)
 
     finally:
         source_buffer.release()
@@ -557,9 +564,10 @@ class Blosc(Codec):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
-    def decode_partial(self, buf, int start, int nitems, out=None):
+    def decode_partial(self, buf, int start, int nitems, int typesize, int encoding_size, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return decompress_partial(buf, start, nitems, dest=out)
+        return decompress_partial(buf, start, nitems,
+                typesize, encoding_size, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
