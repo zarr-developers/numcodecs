@@ -827,7 +827,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "numcodecs/lz4.pyx",
-  ".tox/py38/lib/python3.8/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
   "numcodecs/compat_ext.pxd",
 };
 /* NoFastGil.proto */

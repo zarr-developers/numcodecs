@@ -31,8 +31,6 @@ def compare_arrays(arr, res, precision=None):
         order = 'F'
     else:
         order = 'C'
-    print(arr.shape)
-    print(res.shape)
     res = res.reshape(arr.shape, order=order)
 
     # exact compare
@@ -129,7 +127,7 @@ def check_encode_decode_partial(arr, codec, precision=None):
     compare_arr = arr[start:start+nitems]
     # test encoding of numpy array
     enc = codec.encode(arr)
-    dec = codec.decode_partial(enc, start, nitems, ITEMSIZE, ITEMSIZE)
+    dec = codec.decode_partial(enc, start, nitems)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test encoding of bytes

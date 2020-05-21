@@ -827,9 +827,9 @@ static const char *__pyx_f[] = {
   "numcodecs/vlen.pyx",
   "stringsource",
   "numcodecs/compat_ext.pxd",
-  ".tox/py38/lib/python3.8/site-packages/Cython/Includes/cpython/type.pxd",
-  ".tox/py38/lib/python3.8/site-packages/Cython/Includes/cpython/bool.pxd",
-  ".tox/py38/lib/python3.8/site-packages/Cython/Includes/cpython/complex.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".tox/py37/lib/python3.7/site-packages/Cython/Includes/cpython/complex.pxd",
 };
 /* MemviewSliceStruct.proto */
 struct __pyx_memoryview_obj;
