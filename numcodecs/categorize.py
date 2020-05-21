@@ -43,7 +43,7 @@ class Categorize(Codec):
         if self.dtype.kind not in 'UO':
             raise TypeError("only unicode ('U') and object ('O') dtypes are "
                             "supported")
-        self.labels = [ensure_text(l) for l in labels]
+        self.labels = [ensure_text(label) for label in labels]
         self.astype = np.dtype(astype)
         if self.astype == object:
             raise TypeError('encoding as object array not supported')
