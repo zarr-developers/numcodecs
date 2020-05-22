@@ -1,7 +1,6 @@
 import itertools
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
-import logging
 
 
 import numpy as np
