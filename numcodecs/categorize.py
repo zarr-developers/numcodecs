@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
-
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy, ensure_text
 
@@ -47,7 +43,7 @@ class Categorize(Codec):
         if self.dtype.kind not in 'UO':
             raise TypeError("only unicode ('U') and object ('O') dtypes are "
                             "supported")
-        self.labels = [ensure_text(l) for l in labels]
+        self.labels = [ensure_text(label) for label in labels]
         self.astype = np.dtype(astype)
         if self.astype == object:
             raise TypeError('encoding as object array not supported')
@@ -81,7 +77,7 @@ class Categorize(Codec):
         enc = enc.reshape(-1, order='A')
 
         # setup output
-        dec = np.full_like(enc, fill_value=u'', dtype=self.dtype)
+        dec = np.full_like(enc, fill_value='', dtype=self.dtype)
 
         # apply decoding
         for i, l in enumerate(self.labels):

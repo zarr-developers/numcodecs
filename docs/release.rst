@@ -1,6 +1,18 @@
 Release notes
 =============
 
+Upcoming Release
+----------------
+
+* Remove LegacyJSON codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`226`.
+
+* Remove LegacyMsgPack codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`218`.
+
+* Drop support for Python 2.
+  By :user:`James Bourbeau <jrbourbeau>`, :issue:`220`.
+
 
 .. _release_0.6.4:
 

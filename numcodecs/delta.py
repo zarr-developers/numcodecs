@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
-
 import numpy as np
 
 
@@ -101,7 +97,7 @@ class Delta(Codec):
         )
 
     def __repr__(self):
-        r = '%s(dtype=%r' % (type(self).__name__, self.dtype.str)
+        r = '{}(dtype={!r}'.format(type(self).__name__, self.dtype.str)
         if self.astype != self.dtype:
             r += ', astype=%r' % self.astype.str
         r += ')'
