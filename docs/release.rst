@@ -3,8 +3,8 @@ Release notes
 
 Upcoming Release
 ----------------
-* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.7 if
-  `zfpy==0.5.5rc1 <https://test.pypi.org/simple/>`_ is installed
+* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
+  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
 
 * Remove LegacyJSON codec.
   By :user:`James Bourbeau  <jrbourbeau>`, :issue:`226`.
