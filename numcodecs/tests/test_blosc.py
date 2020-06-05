@@ -65,11 +65,7 @@ def test_encode_decode():
                                    else pytest.param(x, marks=[pytest.mark.xfail])
                                    for x in arrays])
 def test_partial_decode(codec, array):
-
-
-    from numcodecs.utils import allow_unstable
-    with allow_unstable():
-        check_encode_decode_partial(array, codec)
+    check_encode_decode_partial(array, codec)
 
 
 def test_config():

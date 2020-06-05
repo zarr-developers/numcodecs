@@ -17,8 +17,6 @@ from .compat_ext import Buffer
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
-from .utils import unstable
-
 
 cdef extern from "blosc.h":
     cdef enum:
@@ -582,7 +580,6 @@ class Blosc(Codec):
         return decompress(buf, out)
 
     def decode_partial(self, buf, int start, int nitems, int typesize=0, int encoding_size=0, out=None):
-        unstable()
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress_partial(buf, start, nitems,
                 typesize, encoding_size, dest=out)
