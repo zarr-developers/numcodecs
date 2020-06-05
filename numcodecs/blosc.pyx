@@ -395,7 +395,8 @@ def decompress(source, dest=None):
 
 
 def decompress_partial(source, start, nitems, typesize=0, encoding_size=0, dest=None):
-    """Decompress data.
+    """**Experimental**
+    Decompress data of only a part of a buffer.
 
     Parameters
     ----------
@@ -576,6 +577,7 @@ class Blosc(Codec):
         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
+        '''**Experimental**'''
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
