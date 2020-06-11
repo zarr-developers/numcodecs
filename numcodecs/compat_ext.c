@@ -5,8 +5,7 @@
     "distutils": {
         "depends": [],
         "extra_compile_args": [
-            "-msse2",
-            "-mavx2"
+            "-stdlib=libc++"
         ],
         "name": "numcodecs.compat_ext",
         "sources": [
@@ -843,8 +842,8 @@ struct __pyx_obj_9numcodecs_10compat_ext_Buffer {
  * 
  * 
  * cdef class Buffer:             # <<<<<<<<<<<<<<
- *     """Convenience class for buffer interface."""
- * 
+ *     """Compatibility class to work around fact that array.array does not support
+ *     new-style buffer interface in PY2."""
  */
 
 struct __pyx_vtabstruct_9numcodecs_10compat_ext_Buffer {
@@ -1202,8 +1201,8 @@ static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 /* Late includes */
 
-/* "numcodecs/compat_ext.pyx":15
- *     """Convenience class for buffer interface."""
+/* "numcodecs/compat_ext.pyx":16
+ *     new-style buffer interface in PY2."""
  * 
  *     def __cinit__(self, obj, flags):             # <<<<<<<<<<<<<<
  *         PyObject_GetBuffer(obj, &(self.buffer), flags)
@@ -1241,11 +1240,11 @@ static int __pyx_pw_9numcodecs_10compat_ext_6Buffer_1__cinit__(PyObject *__pyx_v
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_flags)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, 1); __PYX_ERR(1, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, 1); __PYX_ERR(1, 16, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(1, 15, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(1, 16, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1258,7 +1257,7 @@ static int __pyx_pw_9numcodecs_10compat_ext_6Buffer_1__cinit__(PyObject *__pyx_v
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 15, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 16, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("numcodecs.compat_ext.Buffer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1279,17 +1278,17 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
   Py_ssize_t __pyx_t_3;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "numcodecs/compat_ext.pyx":16
+  /* "numcodecs/compat_ext.pyx":17
  * 
  *     def __cinit__(self, obj, flags):
  *         PyObject_GetBuffer(obj, &(self.buffer), flags)             # <<<<<<<<<<<<<<
  *         self.acquired = True
  *         self.ptr = <char *> self.buffer.buf
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_flags); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 16, __pyx_L1_error)
-  __pyx_t_2 = PyObject_GetBuffer(__pyx_v_obj, (&__pyx_v_self->buffer), __pyx_t_1); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(1, 16, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_flags); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 17, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetBuffer(__pyx_v_obj, (&__pyx_v_self->buffer), __pyx_t_1); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(1, 17, __pyx_L1_error)
 
-  /* "numcodecs/compat_ext.pyx":17
+  /* "numcodecs/compat_ext.pyx":18
  *     def __cinit__(self, obj, flags):
  *         PyObject_GetBuffer(obj, &(self.buffer), flags)
  *         self.acquired = True             # <<<<<<<<<<<<<<
@@ -1298,7 +1297,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  */
   __pyx_v_self->acquired = 1;
 
-  /* "numcodecs/compat_ext.pyx":18
+  /* "numcodecs/compat_ext.pyx":19
  *         PyObject_GetBuffer(obj, &(self.buffer), flags)
  *         self.acquired = True
  *         self.ptr = <char *> self.buffer.buf             # <<<<<<<<<<<<<<
@@ -1307,7 +1306,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
  */
   __pyx_v_self->ptr = ((char *)__pyx_v_self->buffer.buf);
 
-  /* "numcodecs/compat_ext.pyx":19
+  /* "numcodecs/compat_ext.pyx":20
  *         self.acquired = True
  *         self.ptr = <char *> self.buffer.buf
  *         self.itemsize = self.buffer.itemsize             # <<<<<<<<<<<<<<
@@ -1317,7 +1316,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
   __pyx_t_3 = __pyx_v_self->buffer.itemsize;
   __pyx_v_self->itemsize = __pyx_t_3;
 
-  /* "numcodecs/compat_ext.pyx":20
+  /* "numcodecs/compat_ext.pyx":21
  *         self.ptr = <char *> self.buffer.buf
  *         self.itemsize = self.buffer.itemsize
  *         self.nbytes = self.buffer.len             # <<<<<<<<<<<<<<
@@ -1327,8 +1326,8 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
   __pyx_t_3 = __pyx_v_self->buffer.len;
   __pyx_v_self->nbytes = __pyx_t_3;
 
-  /* "numcodecs/compat_ext.pyx":15
- *     """Convenience class for buffer interface."""
+  /* "numcodecs/compat_ext.pyx":16
+ *     new-style buffer interface in PY2."""
  * 
  *     def __cinit__(self, obj, flags):             # <<<<<<<<<<<<<<
  *         PyObject_GetBuffer(obj, &(self.buffer), flags)
@@ -1346,7 +1345,7 @@ static int __pyx_pf_9numcodecs_10compat_ext_6Buffer___cinit__(struct __pyx_obj_9
   return __pyx_r;
 }
 
-/* "numcodecs/compat_ext.pyx":22
+/* "numcodecs/compat_ext.pyx":23
  *         self.nbytes = self.buffer.len
  * 
  *     cpdef release(self):             # <<<<<<<<<<<<<<
@@ -1373,7 +1372,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 22, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_release); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 23, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_9numcodecs_10compat_ext_6Buffer_3release)) {
         __Pyx_XDECREF(__pyx_r);
@@ -1390,7 +1389,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
         }
         __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 22, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 23, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __pyx_r = __pyx_t_2;
@@ -1411,7 +1410,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
     #endif
   }
 
-  /* "numcodecs/compat_ext.pyx":23
+  /* "numcodecs/compat_ext.pyx":24
  * 
  *     cpdef release(self):
  *         if self.acquired:             # <<<<<<<<<<<<<<
@@ -1421,7 +1420,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
   __pyx_t_5 = (__pyx_v_self->acquired != 0);
   if (__pyx_t_5) {
 
-    /* "numcodecs/compat_ext.pyx":24
+    /* "numcodecs/compat_ext.pyx":25
  *     cpdef release(self):
  *         if self.acquired:
  *             PyBuffer_Release(&(self.buffer))             # <<<<<<<<<<<<<<
@@ -1430,7 +1429,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
  */
     PyBuffer_Release((&__pyx_v_self->buffer));
 
-    /* "numcodecs/compat_ext.pyx":25
+    /* "numcodecs/compat_ext.pyx":26
  *         if self.acquired:
  *             PyBuffer_Release(&(self.buffer))
  *             self.acquired = False             # <<<<<<<<<<<<<<
@@ -1439,7 +1438,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
  */
     __pyx_v_self->acquired = 0;
 
-    /* "numcodecs/compat_ext.pyx":23
+    /* "numcodecs/compat_ext.pyx":24
  * 
  *     cpdef release(self):
  *         if self.acquired:             # <<<<<<<<<<<<<<
@@ -1448,7 +1447,7 @@ static PyObject *__pyx_f_9numcodecs_10compat_ext_6Buffer_release(struct __pyx_ob
  */
   }
 
-  /* "numcodecs/compat_ext.pyx":22
+  /* "numcodecs/compat_ext.pyx":23
  *         self.nbytes = self.buffer.len
  * 
  *     cpdef release(self):             # <<<<<<<<<<<<<<
@@ -1492,7 +1491,7 @@ static PyObject *__pyx_pf_9numcodecs_10compat_ext_6Buffer_2release(struct __pyx_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("release", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_9numcodecs_10compat_ext_6Buffer_release(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 22, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_9numcodecs_10compat_ext_6Buffer_release(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1509,7 +1508,7 @@ static PyObject *__pyx_pf_9numcodecs_10compat_ext_6Buffer_2release(struct __pyx_
   return __pyx_r;
 }
 
-/* "numcodecs/compat_ext.pyx":27
+/* "numcodecs/compat_ext.pyx":28
  *             self.acquired = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -1532,16 +1531,16 @@ static void __pyx_pf_9numcodecs_10compat_ext_6Buffer_4__dealloc__(struct __pyx_o
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "numcodecs/compat_ext.pyx":28
+  /* "numcodecs/compat_ext.pyx":29
  * 
  *     def __dealloc__(self):
  *         self.release()             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_9numcodecs_10compat_ext_Buffer *)__pyx_v_self->__pyx_vtab)->release(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 28, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_9numcodecs_10compat_ext_Buffer *)__pyx_v_self->__pyx_vtab)->release(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "numcodecs/compat_ext.pyx":27
+  /* "numcodecs/compat_ext.pyx":28
  *             self.acquired = False
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -1736,7 +1735,7 @@ static PyTypeObject __pyx_type_9numcodecs_10compat_ext_Buffer = {
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
-  "Convenience class for buffer interface.", /*tp_doc*/
+  "Compatibility class to work around fact that array.array does not support\n    new-style buffer interface in PY2.", /*tp_doc*/
   0, /*tp_traverse*/
   0, /*tp_clear*/
   0, /*tp_richcompare*/
