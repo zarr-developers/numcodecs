@@ -413,7 +413,6 @@ def decompress_partial(source, start, nitems, typesize=0, encoding_size=0, dest=
         Size in number of bytes of the type we want to decode. 
     encoding_size: int
         Size in number of bytes at the time of encoding
-        
 
     Returns
     -------
