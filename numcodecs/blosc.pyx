@@ -394,7 +394,7 @@ def decompress(source, dest=None):
     return dest
 
 
-def decompress_partial(source, start, nitems, typesize=0, encoding_size=0, dest=None):
+def decompress_partial(source, start, nitems, typesize=0, dest=None):
     """**Experimental**
     Decompress data of only a part of a buffer.
 
@@ -425,6 +425,7 @@ def decompress_partial(source, start, nitems, typesize=0, encoding_size=0, dest=
 
     cdef:
         int ret
+        int encoding_size
         int nitems_bytes 
         int nitems_blosc
         int start_bytes
@@ -438,13 +439,14 @@ def decompress_partial(source, start, nitems, typesize=0, encoding_size=0, dest=
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
 
+    # get encoding size from source buffer header
+    encoding_size = source[3]
     # determine typesize if not given
     if typesize == 0:
-        typesize = source[3]
-    # infers encoding size from typesize if not given. Could be wrong if
-    # array is converted before encoding.
-    if encoding_size == 0:
-       encoding_size = typesize
+        typesize = encoding_size
+
+    print(encoding_size)
+    print(typesize)
 
     # convert varibles to handle type and encoding sizes
     nitems_bytes = nitems * typesize
@@ -580,10 +582,10 @@ class Blosc(Codec):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
-    def decode_partial(self, buf, int start, int nitems, int typesize=0, int encoding_size=0, out=None):
+    def decode_partial(self, buf, int start, int nitems, int typesize=0, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress_partial(buf, start, nitems,
-                typesize, encoding_size, dest=out)
+                typesize, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
