@@ -578,11 +578,11 @@ class Blosc(Codec):
         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
-        '''**Experimental**'''
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
 
     def decode_partial(self, buf, int start, int nitems, int typesize=0, out=None):
+        '''**Experimental**'''
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress_partial(buf, start, nitems,
                 typesize, dest=out)
