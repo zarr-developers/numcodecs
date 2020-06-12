@@ -445,9 +445,6 @@ def decompress_partial(source, start, nitems, typesize=0, dest=None):
     if typesize == 0:
         typesize = encoding_size
 
-    print(encoding_size)
-    print(typesize)
-
     # convert varibles to handle type and encoding sizes
     nitems_bytes = nitems * typesize
     nitems_blosc = nitems_bytes // encoding_size
