@@ -120,9 +120,7 @@ def check_encode_decode_partial(arr, codec, precision=None):
     # we just require that the results of the encode/decode round-trip can
     # be compared to the original array.
 
-    # encoding should support any object exporting the buffer protocol
-
-    ITEMSIZE = arr.dtype.itemsize
+    itemsize = arr.itemsize
     start, nitems = 5, 10
     compare_arr = arr[start:start+nitems]
     # test encoding of numpy array
@@ -130,55 +128,54 @@ def check_encode_decode_partial(arr, codec, precision=None):
     dec = codec.decode_partial(enc, start, nitems)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test encoding of bytes
+    # out = np.empty_like(compare_arr)
+    out = np.empty_like(compare_arr)
+    print(len(out))
+
+    # test partial decode of encoded bytes
     buf = arr.tobytes(order='A')
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start, nitems, ITEMSIZE)
+    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test encoding of bytearray
+    # test partial decode of encoded bytearray
     buf = bytearray(arr.tobytes(order='A'))
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start, nitems, ITEMSIZE)
+    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test encoding of array.array
+    # test partial decode of encoded array.array
     buf = array.array('b', arr.tobytes(order='A'))
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start, nitems, ITEMSIZE)
+    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # decoding should support any object exporting the buffer protocol,
+    # # decoding should support any object exporting the buffer protocol,
 
-    # setup
+    # # setup
     enc_bytes = ensure_bytes(enc)
 
-    # test decoding of raw bytes
-    dec = codec.decode_partial(enc_bytes, start, nitems, ITEMSIZE)
+    # test decoding of raw bytes into numpy array
+    dec = codec.decode_partial(enc_bytes, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test decoding of bytearray
-    dec = codec.decode_partial(bytearray(enc_bytes), start, nitems, ITEMSIZE)
+    # test partial decoding of bytearray
+    dec = codec.decode_partial(bytearray(enc_bytes), start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test decoding of array.array
+    # test partial decoding of array.array
     buf = array.array('b', enc_bytes)
-    dec = codec.decode_partial(buf, start, nitems, ITEMSIZE)
+    dec = codec.decode_partial(buf, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
-    # test decoding of numpy array
+    # test decoding of numpy array into numpy array
     buf = np.frombuffer(enc_bytes, dtype='u1')
-    dec = codec.decode_partial(buf, start, nitems, ITEMSIZE)
+    dec = codec.decode_partial(buf, start*itemsize, nitems*itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
-
-    # test decoding directly into numpy array
-    out = np.empty_like(compare_arr)
-    codec.decode_partial(enc_bytes, start, nitems, ITEMSIZE, out=out)
-    compare_arrays(compare_arr, out, precision=precision)
 
     # test decoding directly into bytearray
     out = bytearray(compare_arr.nbytes)
-    codec.decode_partial(enc_bytes, start, nitems, ITEMSIZE, out=out)
+    codec.decode_partial(enc_bytes, start*itemsize, nitems*itemsize, out=out)
     # noinspection PyTypeChecker
     compare_arrays(compare_arr, out, precision=precision)
 
