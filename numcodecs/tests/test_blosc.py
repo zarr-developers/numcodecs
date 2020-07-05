@@ -1,4 +1,3 @@
-import itertools
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 
@@ -55,9 +54,15 @@ arrays = [
 ]
 
 
-def test_encode_decode():
-    for arr, codec in itertools.product(arrays, codecs):
-        check_encode_decode(arr, codec)
+@pytest.fixture(scope='module', params=[True, False, None])
+def use_threads(request):
+    return request.param
+
+
+@pytest.mark.parametrize('array', arrays)
+@pytest.mark.parametrize('codec', codecs)
+def test_encode_decode(array, codec):
+    check_encode_decode(array, codec)
 
 
 @pytest.mark.parametrize('codec', codecs)
@@ -98,30 +103,34 @@ def test_eq():
     assert Blosc(cname='lz4') != 'foo'
 
 
-def test_compress_blocksize():
+def test_compress_blocksize_default(use_threads):
     arr = np.arange(1000, dtype='i4')
 
-    for use_threads in True, False, None:
-        blosc.use_threads = use_threads
+    blosc.use_threads = use_threads
 
-        # default blocksize
-        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
-        _, _, blocksize = blosc.cbuffer_sizes(enc)
-        assert blocksize > 0
+    # default blocksize
+    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
+    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    assert blocksize > 0
 
-        # explicit default blocksize
-        enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
-        _, _, blocksize = blosc.cbuffer_sizes(enc)
-        assert blocksize > 0
-
-        # custom blocksize
-        for bs in 2**7, 2**8:
-            enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
-            _, _, blocksize = blosc.cbuffer_sizes(enc)
-            assert blocksize == bs
+    # explicit default blocksize
+    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
+    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    assert blocksize > 0
 
 
-def test_compress_complib():
+@pytest.mark.parametrize('bs', (2**7, 2**8))
+def test_compress_blocksize(use_threads, bs):
+    arr = np.arange(1000, dtype='i4')
+
+    blosc.use_threads = use_threads
+
+    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
+    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    assert blocksize == bs
+
+
+def test_compress_complib(use_threads):
     arr = np.arange(1000, dtype='i4')
     expected_complibs = {
         'lz4': 'LZ4',
@@ -131,48 +140,45 @@ def test_compress_complib():
         'zlib': 'Zlib',
         'zstd': 'Zstd',
     }
-    for use_threads in True, False, None:
+    blosc.use_threads = use_threads
+    for cname in blosc.list_compressors():
+        enc = blosc.compress(arr, cname.encode(), 1, Blosc.NOSHUFFLE)
+        complib = blosc.cbuffer_complib(enc)
+        expected_complib = expected_complibs[cname]
+        assert complib == expected_complib
+    with pytest.raises(ValueError):
+        # capitalized cname
+        blosc.compress(arr, b'LZ4', 1)
+    with pytest.raises(ValueError):
+        # bad cname
+        blosc.compress(arr, b'foo', 1)
+
+
+@pytest.mark.parametrize('dtype', ['i1', 'i2', 'i4', 'i8'])
+def test_compress_metainfo(dtype, use_threads):
+    arr = np.arange(1000, dtype=dtype)
+    for shuffle in Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE:
         blosc.use_threads = use_threads
         for cname in blosc.list_compressors():
-            enc = blosc.compress(arr, cname.encode(), 1, Blosc.NOSHUFFLE)
-            complib = blosc.cbuffer_complib(enc)
-            expected_complib = expected_complibs[cname]
-            assert complib == expected_complib
-        with pytest.raises(ValueError):
-            # capitalized cname
-            blosc.compress(arr, b'LZ4', 1)
-        with pytest.raises(ValueError):
-            # bad cname
-            blosc.compress(arr, b'foo', 1)
+            enc = blosc.compress(arr, cname.encode(), 1, shuffle)
+            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            assert typesize == arr.dtype.itemsize
+            assert did_shuffle == shuffle
 
 
-def test_compress_metainfo():
-    for dtype in 'i1', 'i2', 'i4', 'i8':
-        arr = np.arange(1000, dtype=dtype)
-        for shuffle in Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE:
-            for use_threads in True, False, None:
-                blosc.use_threads = use_threads
-                for cname in blosc.list_compressors():
-                    enc = blosc.compress(arr, cname.encode(), 1, shuffle)
-                    typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
-                    assert typesize == arr.dtype.itemsize
-                    assert did_shuffle == shuffle
-
-
-def test_compress_autoshuffle():
+def test_compress_autoshuffle(use_threads):
     arr = np.arange(8000)
     for dtype in 'i1', 'i2', 'i4', 'i8', 'f2', 'f4', 'f8', 'bool', 'S10':
         varr = arr.view(dtype)
-        for use_threads in True, False, None:
-            blosc.use_threads = use_threads
-            for cname in blosc.list_compressors():
-                enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
-                typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
-                assert typesize == varr.dtype.itemsize
-                if typesize == 1:
-                    assert did_shuffle == Blosc.BITSHUFFLE
-                else:
-                    assert did_shuffle == Blosc.SHUFFLE
+        blosc.use_threads = use_threads
+        for cname in blosc.list_compressors():
+            enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
+            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            assert typesize == varr.dtype.itemsize
+            if typesize == 1:
+                assert did_shuffle == Blosc.BITSHUFFLE
+            else:
+                assert did_shuffle == Blosc.SHUFFLE
 
 
 def test_config_blocksize():
@@ -206,28 +212,29 @@ def _decode_worker(enc):
     return data
 
 
-def test_multiprocessing():
+@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+def test_multiprocessing(use_threads, pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)
 
+    pool = pool(5)
+
     try:
-        for use_threads in None, True, False:
-            blosc.use_threads = use_threads
+        blosc.use_threads = use_threads
 
-            # test with process pool and thread pool
-            for pool in Pool(5), ThreadPool(5):
+        # test with process pool and thread pool
 
-                # test encoding
-                enc_results = pool.map(_encode_worker, [data] * 5)
-                assert all([len(enc) == len(e) for e in enc_results])
+        # test encoding
+        enc_results = pool.map(_encode_worker, [data] * 5)
+        assert all([len(enc) == len(e) for e in enc_results])
 
-                # test decoding
-                dec_results = pool.map(_decode_worker, [enc] * 5)
-                assert all([data.nbytes == len(d) for d in dec_results])
+        # test decoding
+        dec_results = pool.map(_decode_worker, [enc] * 5)
+        assert all([data.nbytes == len(d) for d in dec_results])
 
-                # tidy up
-                pool.close()
-                pool.join()
+        # tidy up
+        pool.close()
+        pool.join()
 
     finally:
         blosc.use_threads = None  # restore default
