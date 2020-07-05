@@ -403,14 +403,13 @@ def decompress_partial(source, start, nitems, dest=None):
     source : bytes-like
         Compressed data, including blosc header. Can be any object supporting the buffer
         protocol.
-    dest : array-like, optional
-        Object to decompress into.
     start: int,
         Offset in item where we want to start decoding
     nitems: int
         Number of items we want to decode
-    encoding_size: int
-        Size in number of bytes at the time of encoding
+    dest : array-like, optional
+        Object to decompress into.
+
 
     Returns
     -------
@@ -418,16 +417,11 @@ def decompress_partial(source, start, nitems, dest=None):
         Object containing decompressed data.
 
     """
-    # we do need both the typesize and the encoding size as nitems will be
-    # interpreted by blosc wrt the size of the item. 
-
     cdef:
         int ret
         int encoding_size
         int nitems_bytes 
-        #int nitems_blosc
         int start_bytes
-        #int start_blosc
         char *source_ptr
         char *dest_ptr
         Buffer source_buffer
@@ -442,9 +436,7 @@ def decompress_partial(source, start, nitems, dest=None):
 
     # convert varibles to handle type and encoding sizes
     nitems_bytes = nitems * encoding_size
-    # nitems_blosc = nitems_bytes // encoding_size
     start_bytes = (start * encoding_size)
-    #    start_blosc = start_bytes // encoding_size
 
     # setup destination buffer
     if dest is None:
@@ -459,6 +451,9 @@ def decompress_partial(source, start, nitems, dest=None):
 
     # try decompression
     try:
+        if dest_nbytes < nitems_bytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (nitems_bytes, dest_nbytes))
         ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
 
     finally:
