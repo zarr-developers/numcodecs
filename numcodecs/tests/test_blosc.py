@@ -8,7 +8,9 @@ import pytest
 
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
-from numcodecs.tests.common import (check_encode_decode, check_config,
+from numcodecs.tests.common import (check_encode_decode,
+                                    check_encode_decode_partial,
+                                    check_config,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
                                     check_err_encode_object_buffer,
@@ -61,6 +63,14 @@ def use_threads(request):
 @pytest.mark.parametrize('codec', codecs)
 def test_encode_decode(array, codec):
     check_encode_decode(array, codec)
+
+
+@pytest.mark.parametrize('codec', codecs)
+@pytest.mark.parametrize('array', [pytest.param(x) if len(x.shape) == 1
+                                   else pytest.param(x, marks=[pytest.mark.xfail])
+                                   for x in arrays])
+def test_partial_decode(codec, array):
+    check_encode_decode_partial(array, codec)
 
 
 def test_config():
