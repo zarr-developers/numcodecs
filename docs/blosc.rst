@@ -13,6 +13,7 @@ Blosc
     .. automethod:: decode
     .. automethod:: get_config
     .. automethod:: from_config
+    .. automethod:: decode_partial
 
 Helper functions
 ----------------
@@ -28,3 +29,4 @@ Helper functions
 .. autofunction:: cbuffer_metainfo
 .. autofunction:: compress
 .. autofunction:: decompress
+.. autofunction:: decompress_partial
