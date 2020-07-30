@@ -11,7 +11,8 @@ jobs:
       matrix:
         os: [ubuntu-18.04, windows-latest, macos-latest]
     env:
-      CIBW_TEST_COMAND: pytest --pyargs numcodecs
+      CIBW_TEST_COMMAND: pytest --pyargs numcodecs
+      CIBW_TEST_REQUIRES: pytest
       CIBW_SKIP: "*27* pp*"
       CIBW_ENVIRONMENT_MACOS: "MACOSX_DEPLOYMENT_TARGET=10.9"
 
