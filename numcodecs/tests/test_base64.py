@@ -8,12 +8,10 @@ import pytest
 from numcodecs.base64 import Base64
 from numcodecs.tests.common import (
     check_encode_decode,
-    check_config,
     check_repr,
     check_backwards_compatibility,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
-    greetings,
 )
 
 
