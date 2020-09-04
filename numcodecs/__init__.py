@@ -89,6 +89,9 @@ register_codec(Categorize)
 from numcodecs.pickles import Pickle
 register_codec(Pickle)
 
+from numcodecs.base64 import Base64
+register_codec(Base64)
+
 try:
     from numcodecs.msgpacks import MsgPack
     register_codec(MsgPack)
