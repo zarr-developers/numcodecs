@@ -1,5 +1,4 @@
 import base64 as _base64
-import io
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
