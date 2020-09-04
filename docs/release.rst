@@ -4,6 +4,9 @@ Release notes
 Upcoming Release
 ----------------
 
+* Add Base64 codec.
+  By :user: `Trevor Manz <manzt>`, :issue: `176`.
+
 * Add partial decompression of Blosc compressed arrays.
   By :user:`Andrew Fulton <andrewfulton9>`, :issue:`235`.
 
