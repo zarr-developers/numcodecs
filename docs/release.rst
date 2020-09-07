@@ -1,8 +1,10 @@
 Release notes
 =============
 
-Upcoming Release
-----------------
+.. _release_0.7.0:
+
+0.7.0
+-----
 
 * Add Base64 codec.
   By :user: `Trevor Manz <manzt>`, :issue: `176`.
