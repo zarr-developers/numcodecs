@@ -6,6 +6,9 @@ Upcoming Release
 * The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
   `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
 
+* Add Base64 codec.
+  By :user: `Trevor Manz <manzt>`, :issue: `176`.
+
 * Add partial decompression of Blosc compressed arrays.
   By :user:`Andrew Fulton <andrewfulton9>`, :issue:`235`.
 
