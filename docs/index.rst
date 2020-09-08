@@ -91,6 +91,9 @@ documentation, code reviews, comments and/or ideas:
 * :user:`John Kirkham <jakirkham>`
 * :user:`Alistair Miles <alimanfoo>`
 * :user:`Jeff Reback <jreback>`
+* :user:`Trevor Manz <manzt>`
+* :user:`Grzegorz Bokota <Czaki>`
+* :user:`Josh Moore <joshmoore>`
 
 Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_ library.
 
