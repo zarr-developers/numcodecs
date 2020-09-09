@@ -1,11 +1,19 @@
 Release notes
 =============
 
-Upcoming Release
-----------------
+.. _release_0.7.0:
+
+0.7.0
+-----
+
+* Automatically release to PyPI.
+  By :user:`Josh Moore <joshmoore>`, :issue:`241`.
+
+* Build wheels on github actions.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`224`.
 
 * Add Base64 codec.
-  By :user: `Trevor Manz <manzt>`, :issue: `176`.
+  By :user:`Trevor Manz <manzt>`, :issue:`176`.
 
 * Add partial decompression of Blosc compressed arrays.
   By :user:`Andrew Fulton <andrewfulton9>`, :issue:`235`.
