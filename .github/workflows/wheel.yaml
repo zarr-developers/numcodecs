@@ -42,7 +42,9 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
 
       - uses: actions/setup-python@v2
         name: Install Python
@@ -52,18 +54,43 @@ jobs:
       - name: Build sdist
         run: python setup.py sdist
 
+      - name: test install
+        run: pip install dist/numcodecs*.tar.gz
+
       - uses: actions/upload-artifact@v2
         with:
           path: dist/*.tar.gz
+
+  test_dist_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v1
+        with:
+          name: artifact
+          path: dist
+      - uses: actions/download-artifact@v1
+        with:
+          name: wheels
+          path: dist
+
+      - name: test
+        run: |
+          ls
+          ls dist
 
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v1
         with:
           name: artifact
+          path: dist
+      - uses: actions/download-artifact@v1
+        with:
+          name: wheels
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@master
