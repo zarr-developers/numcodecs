@@ -54,6 +54,9 @@ jobs:
       - name: Build sdist
         run: python setup.py sdist
 
+      - name: test install
+        run: pip install dist/numcodecs*.tar.gz
+
       - uses: actions/upload-artifact@v2
         with:
           path: dist/*.tar.gz
