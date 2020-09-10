@@ -1,13 +1,21 @@
 Release notes
 =============
 
-Upcoming Release
-----------------
+.. _release_0.7.0:
+
+0.7.0
+-----
 * The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
   `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
+  
+* Automatically release to PyPI.
+  By :user:`Josh Moore <joshmoore>`, :issue:`241`.
+
+* Build wheels on github actions.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`224`.
 
 * Add Base64 codec.
-  By :user: `Trevor Manz <manzt>`, :issue: `176`.
+  By :user:`Trevor Manz <manzt>`, :issue:`176`.
 
 * Add partial decompression of Blosc compressed arrays.
   By :user:`Andrew Fulton <andrewfulton9>`, :issue:`235`.
