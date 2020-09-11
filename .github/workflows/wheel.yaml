@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build__pypy_wheels:
-    name: Build wheel on ${{ matrix.os }}
+    name: Build pypy wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -48,7 +48,7 @@ jobs:
     env:
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
-      CIBW_SKIP: "*27*"
+      CIBW_SKIP: "*27* pp*"
       CIBW_ENVIRONMENT_MACOS: "MACOSX_DEPLOYMENT_TARGET=10.9"
 
     steps:
