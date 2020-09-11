@@ -9,7 +9,7 @@ import pytest
 try:
     from numcodecs import blosc
     from numcodecs.blosc import Blosc
-except ImportError:
+except ImportError:  # pragma: no cover
     pytest.skip(
         "numcodecs.blosc not available", allow_module_level=True
     )

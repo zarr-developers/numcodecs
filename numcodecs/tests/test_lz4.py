@@ -7,7 +7,7 @@ import pytest
 
 try:
     from numcodecs.lz4 import LZ4
-except ImportError:
+except ImportError:  # pragma: no cover
     pytest.skip(
         "numcodecs.lz4 not available", allow_module_level=True
     )

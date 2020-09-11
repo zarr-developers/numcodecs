@@ -7,7 +7,7 @@ import pytest
 
 try:
     from numcodecs.zstd import Zstd
-except ImportError:
+except ImportError:  # pragma: no cover
     pytest.skip(
         "numcodecs.zstd not available", allow_module_level=True
     )
