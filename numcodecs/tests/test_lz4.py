@@ -2,6 +2,10 @@ import itertools
 
 
 import numpy as np
+import pytest
+
+
+pytest.importorskip("numcodecs.lz4")
 
 
 from numcodecs.lz4 import LZ4

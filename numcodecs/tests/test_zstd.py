@@ -2,6 +2,10 @@ import itertools
 
 
 import numpy as np
+import pytest
+
+
+pytest.importorskip("numcodecs.zstd")
 
 
 from numcodecs.zstd import Zstd

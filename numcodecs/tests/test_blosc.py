@@ -6,6 +6,9 @@ import numpy as np
 import pytest
 
 
+pytest.importorskip("numcodecs.blosc")
+
+
 from numcodecs import blosc
 from numcodecs.blosc import Blosc
 from numcodecs.tests.common import (check_encode_decode,
