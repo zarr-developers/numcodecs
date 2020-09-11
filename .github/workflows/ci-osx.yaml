@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Install numcodecs
         run: |
           python -m pip install -U pip setuptools wheel pytest

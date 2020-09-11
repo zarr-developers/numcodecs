@@ -1,6 +1,14 @@
 Release notes
 =============
 
+.. _release_0.7.1:
+
+0.7.1
+-----
+
+* Fix build of wheels.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`244`.
+
 .. _release_0.7.0:
 
 0.7.0
