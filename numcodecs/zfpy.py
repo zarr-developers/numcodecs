@@ -28,23 +28,23 @@ if _zfpy:
 
         """
 
-        codec_id = 'zfpy'
+        codec_id = "zfpy"
 
-        def __init__(self, mode=_zfpy.mode_fixed_accuracy, tolerance=-1,
-                     rate=-1, precision=-1, compression_kwargs=None):
+        def __init__(
+            self,
+            mode=_zfpy.mode_fixed_accuracy,
+            tolerance=-1,
+            rate=-1,
+            precision=-1,
+            compression_kwargs=None,
+        ):
             self.mode = mode
             if mode == _zfpy.mode_fixed_accuracy:
-                self.compression_kwargs = {
-                    "tolerance": tolerance
-                }
+                self.compression_kwargs = {"tolerance": tolerance}
             elif mode == _zfpy.mode_fixed_rate:
-                self.compression_kwargs = {
-                    "rate": rate
-                }
+                self.compression_kwargs = {"rate": rate}
             elif mode == _zfpy.mode_fixed_precision:
-                self.compression_kwargs = {
-                    "precision": precision
-                }
+                self.compression_kwargs = {"precision": precision}
             else:
                 pass
 
@@ -58,8 +58,9 @@ if _zfpy:
             buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            return _zfpy.compress_numpy(buf, write_header=True,
-                                        **self.compression_kwargs)
+            return _zfpy.compress_numpy(
+                buf, write_header=True, **self.compression_kwargs
+            )
 
         def decode(self, buf, out=None):
 
@@ -78,7 +79,11 @@ if _zfpy:
                 return dec
 
         def __repr__(self):
-            r = '%s(mode=%r, tolerance=%s, rate=%s, precision=%s)' % \
-                (type(self).__name__, self.mode, self.tolerance, self.rate,
-                 self.precision)
+            r = "%s(mode=%r, tolerance=%s, rate=%s, precision=%s)" % (
+                type(self).__name__,
+                self.mode,
+                self.tolerance,
+                self.rate,
+                self.precision,
+            )
             return r
