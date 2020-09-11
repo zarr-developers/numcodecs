@@ -1,6 +1,12 @@
 Release notes
 =============
 
+Upcoming Release
+----------------
+
+* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
+  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
+  
 .. _release_0.7.1:
 
 0.7.1
@@ -13,9 +19,7 @@ Release notes
 
 0.7.0
 -----
-* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
-  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
-  
+
 * Automatically release to PyPI.
   By :user:`Josh Moore <joshmoore>`, :issue:`241`.
 
