@@ -2,9 +2,17 @@ import itertools
 
 
 import numpy as np
+import pytest
 
 
-from numcodecs.lz4 import LZ4
+try:
+    from numcodecs.lz4 import LZ4
+except ImportError:  # pragma: no cover
+    pytest.skip(
+        "numcodecs.lz4 not available", allow_module_level=True
+    )
+
+
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,
