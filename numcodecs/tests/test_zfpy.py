@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 
 import numpy as np
@@ -8,7 +8,7 @@ try:
     # noinspection PyProtectedMember
     from numcodecs.zfpy import ZFPY, _zfpy
 except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("ZFPY not available")
+    pytest.skip("ZFPY not available", allow_module_level=True)
 
 
 from numcodecs.tests.common import (check_encode_decode_array, check_config, check_repr,
