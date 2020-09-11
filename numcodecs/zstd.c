@@ -252,7 +252,7 @@ END: Cython Metadata */
   #undef BASE
   #undef MASK
   #ifdef SIZEOF_VOID_P
-    enum { __pyx_check_sizeof_voidp = 1/(SIZEOF_VOID_P == sizeof(void*)) };
+    enum { __pyx_check_sizeof_voidp = 1 / (int)(SIZEOF_VOID_P == sizeof(void*)) };
   #endif
 #endif
 #ifndef __has_attribute
@@ -881,7 +881,7 @@ struct __pyx_defaults {
 /* "compat_ext.pxd":4
  * 
  * 
- * cdef class Buffer:             
+ * cdef class Buffer:             # <<<<<<<<<<<<<<
  *     cdef:
  *         char *ptr
  */
@@ -1541,7 +1541,7 @@ static PyObject *__pyx_codeobj__17;
 /* "numcodecs/zstd.pyx":58
  * 
  * 
- * def compress(source, int level=DEFAULT_CLEVEL):             
+ * def compress(source, int level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *     """Compress data.
  * 
  */
@@ -1647,7 +1647,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":83
  * 
  *     # check level
- *     if level <= 0:             
+ *     if level <= 0:             # <<<<<<<<<<<<<<
  *         level = DEFAULT_CLEVEL
  *     if level > MAX_CLEVEL:
  */
@@ -1657,7 +1657,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":84
  *     # check level
  *     if level <= 0:
- *         level = DEFAULT_CLEVEL             
+ *         level = DEFAULT_CLEVEL             # <<<<<<<<<<<<<<
  *     if level > MAX_CLEVEL:
  *         level = MAX_CLEVEL
  */
@@ -1670,7 +1670,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":83
  * 
  *     # check level
- *     if level <= 0:             
+ *     if level <= 0:             # <<<<<<<<<<<<<<
  *         level = DEFAULT_CLEVEL
  *     if level > MAX_CLEVEL:
  */
@@ -1679,7 +1679,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":85
  *     if level <= 0:
  *         level = DEFAULT_CLEVEL
- *     if level > MAX_CLEVEL:             
+ *     if level > MAX_CLEVEL:             # <<<<<<<<<<<<<<
  *         level = MAX_CLEVEL
  * 
  */
@@ -1697,7 +1697,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":86
  *         level = DEFAULT_CLEVEL
  *     if level > MAX_CLEVEL:
- *         level = MAX_CLEVEL            
+ *         level = MAX_CLEVEL             # <<<<<<<<<<<<<<
  * 
  *     # setup source buffer
  */
@@ -1710,7 +1710,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":85
  *     if level <= 0:
  *         level = DEFAULT_CLEVEL
- *     if level > MAX_CLEVEL:             
+ *     if level > MAX_CLEVEL:             # <<<<<<<<<<<<<<
  *         level = MAX_CLEVEL
  * 
  */
@@ -1719,7 +1719,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":89
  * 
  *     # setup source buffer
- *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  *     source_size = source_buffer.nbytes
  */
@@ -1742,7 +1742,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":90
  *     # setup source buffer
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
- *     source_ptr = source_buffer.ptr             
+ *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  *     source_size = source_buffer.nbytes
  * 
  */
@@ -1752,7 +1752,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":91
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr
- *     source_size = source_buffer.nbytes             
+ *     source_size = source_buffer.nbytes             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
@@ -1762,7 +1762,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":93
  *     source_size = source_buffer.nbytes
  * 
- *     try:             
+ *     try:             # <<<<<<<<<<<<<<
  * 
  *         # setup destination
  */
@@ -1771,7 +1771,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":96
  * 
  *         # setup destination
- *         dest_size = ZSTD_compressBound(source_size)             
+ *         dest_size = ZSTD_compressBound(source_size)             # <<<<<<<<<<<<<<
  *         dest = PyBytes_FromStringAndSize(NULL, dest_size)
  *         dest_ptr = PyBytes_AS_STRING(dest)
  */
@@ -1780,7 +1780,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":97
  *         # setup destination
  *         dest_size = ZSTD_compressBound(source_size)
- *         dest = PyBytes_FromStringAndSize(NULL, dest_size)             
+ *         dest = PyBytes_FromStringAndSize(NULL, dest_size)             # <<<<<<<<<<<<<<
  *         dest_ptr = PyBytes_AS_STRING(dest)
  * 
  */
@@ -1792,7 +1792,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":98
  *         dest_size = ZSTD_compressBound(source_size)
  *         dest = PyBytes_FromStringAndSize(NULL, dest_size)
- *         dest_ptr = PyBytes_AS_STRING(dest)             
+ *         dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
  * 
  *         # perform compression
  */
@@ -1801,7 +1801,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":101
  * 
  *         # perform compression
- *         with nogil:             
+ *         with nogil:             # <<<<<<<<<<<<<<
  *             compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)
  * 
  */
@@ -1816,7 +1816,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
           /* "numcodecs/zstd.pyx":102
  *         # perform compression
  *         with nogil:
- *             compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)             
+ *             compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)             # <<<<<<<<<<<<<<
  * 
  *     finally:
  */
@@ -1826,7 +1826,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
         /* "numcodecs/zstd.pyx":101
  * 
  *         # perform compression
- *         with nogil:             
+ *         with nogil:             # <<<<<<<<<<<<<<
  *             compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)
  * 
  */
@@ -1846,7 +1846,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":107
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # check compression was successful
  */
@@ -1911,7 +1911,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":110
  * 
  *     # check compression was successful
- *     if ZSTD_isError(compressed_size):             
+ *     if ZSTD_isError(compressed_size):             # <<<<<<<<<<<<<<
  *         error = ZSTD_getErrorName(compressed_size)
  *         raise RuntimeError('Zstd compression error: %s' % error)
  */
@@ -1921,7 +1921,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":111
  *     # check compression was successful
  *     if ZSTD_isError(compressed_size):
- *         error = ZSTD_getErrorName(compressed_size)             
+ *         error = ZSTD_getErrorName(compressed_size)             # <<<<<<<<<<<<<<
  *         raise RuntimeError('Zstd compression error: %s' % error)
  * 
  */
@@ -1930,7 +1930,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":112
  *     if ZSTD_isError(compressed_size):
  *         error = ZSTD_getErrorName(compressed_size)
- *         raise RuntimeError('Zstd compression error: %s' % error)             
+ *         raise RuntimeError('Zstd compression error: %s' % error)             # <<<<<<<<<<<<<<
  * 
  *     # resize after compression
  */
@@ -1949,7 +1949,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
     /* "numcodecs/zstd.pyx":110
  * 
  *     # check compression was successful
- *     if ZSTD_isError(compressed_size):             
+ *     if ZSTD_isError(compressed_size):             # <<<<<<<<<<<<<<
  *         error = ZSTD_getErrorName(compressed_size)
  *         raise RuntimeError('Zstd compression error: %s' % error)
  */
@@ -1958,7 +1958,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":115
  * 
  *     # resize after compression
- *     dest = dest[:compressed_size]             
+ *     dest = dest[:compressed_size]             # <<<<<<<<<<<<<<
  * 
  *     return dest
  */
@@ -1974,7 +1974,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":117
  *     dest = dest[:compressed_size]
  * 
- *     return dest             
+ *     return dest             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -1986,7 +1986,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
   /* "numcodecs/zstd.pyx":58
  * 
  * 
- * def compress(source, int level=DEFAULT_CLEVEL):             
+ * def compress(source, int level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *     """Compress data.
  * 
  */
@@ -2009,7 +2009,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_compress(CYTHON_UNUSED PyObject *__py
 /* "numcodecs/zstd.pyx":120
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -2117,7 +2117,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":140
  *         char *dest_ptr
  *         Buffer source_buffer
- *         Buffer dest_buffer = None             
+ *         Buffer dest_buffer = None             # <<<<<<<<<<<<<<
  *         size_t source_size, dest_size, decompressed_size
  * 
  */
@@ -2127,7 +2127,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":144
  * 
  *     # setup source buffer
- *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  *     source_size = source_buffer.nbytes
  */
@@ -2150,7 +2150,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":145
  *     # setup source buffer
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
- *     source_ptr = source_buffer.ptr             
+ *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  *     source_size = source_buffer.nbytes
  * 
  */
@@ -2160,7 +2160,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":146
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr
- *     source_size = source_buffer.nbytes             
+ *     source_size = source_buffer.nbytes             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
@@ -2170,7 +2170,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":148
  *     source_size = source_buffer.nbytes
  * 
- *     try:             
+ *     try:             # <<<<<<<<<<<<<<
  * 
  *         # determine uncompressed size
  */
@@ -2179,7 +2179,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":151
  * 
  *         # determine uncompressed size
- *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)             
+ *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)             # <<<<<<<<<<<<<<
  *         if dest_size == 0:
  *             raise RuntimeError('Zstd decompression error: invalid input data')
  */
@@ -2188,7 +2188,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":152
  *         # determine uncompressed size
  *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
- *         if dest_size == 0:             
+ *         if dest_size == 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError('Zstd decompression error: invalid input data')
  * 
  */
@@ -2198,7 +2198,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":153
  *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
  *         if dest_size == 0:
- *             raise RuntimeError('Zstd decompression error: invalid input data')             
+ *             raise RuntimeError('Zstd decompression error: invalid input data')             # <<<<<<<<<<<<<<
  * 
  *         # setup destination buffer
  */
@@ -2211,7 +2211,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":152
  *         # determine uncompressed size
  *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
- *         if dest_size == 0:             
+ *         if dest_size == 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError('Zstd decompression error: invalid input data')
  * 
  */
@@ -2220,7 +2220,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":156
  * 
  *         # setup destination buffer
- *         if dest is None:             
+ *         if dest is None:             # <<<<<<<<<<<<<<
  *             # allocate memory
  *             dest = PyBytes_FromStringAndSize(NULL, dest_size)
  */
@@ -2231,7 +2231,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":158
  *         if dest is None:
  *             # allocate memory
- *             dest = PyBytes_FromStringAndSize(NULL, dest_size)             
+ *             dest = PyBytes_FromStringAndSize(NULL, dest_size)             # <<<<<<<<<<<<<<
  *             dest_ptr = PyBytes_AS_STRING(dest)
  *         else:
  */
@@ -2243,7 +2243,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":159
  *             # allocate memory
  *             dest = PyBytes_FromStringAndSize(NULL, dest_size)
- *             dest_ptr = PyBytes_AS_STRING(dest)             
+ *             dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
  *         else:
  *             arr = ensure_contiguous_ndarray(dest)
  */
@@ -2252,7 +2252,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":156
  * 
  *         # setup destination buffer
- *         if dest is None:             
+ *         if dest is None:             # <<<<<<<<<<<<<<
  *             # allocate memory
  *             dest = PyBytes_FromStringAndSize(NULL, dest_size)
  */
@@ -2262,7 +2262,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":161
  *             dest_ptr = PyBytes_AS_STRING(dest)
  *         else:
- *             arr = ensure_contiguous_ndarray(dest)             
+ *             arr = ensure_contiguous_ndarray(dest)             # <<<<<<<<<<<<<<
  *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr
  */
@@ -2290,7 +2290,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":162
  *         else:
  *             arr = ensure_contiguous_ndarray(dest)
- *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             
+ *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
  *             dest_ptr = dest_buffer.ptr
  *             if dest_buffer.nbytes < dest_size:
  */
@@ -2313,7 +2313,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":163
  *             arr = ensure_contiguous_ndarray(dest)
  *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
- *             dest_ptr = dest_buffer.ptr             
+ *             dest_ptr = dest_buffer.ptr             # <<<<<<<<<<<<<<
  *             if dest_buffer.nbytes < dest_size:
  *                 raise ValueError('destination buffer too small; expected at least %s, '
  */
@@ -2323,7 +2323,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":164
  *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes < dest_size:             
+ *             if dest_buffer.nbytes < dest_size:             # <<<<<<<<<<<<<<
  *                 raise ValueError('destination buffer too small; expected at least %s, '
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  */
@@ -2349,7 +2349,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":166
  *             if dest_buffer.nbytes < dest_size:
  *                 raise ValueError('destination buffer too small; expected at least %s, '
- *                                  'got %s' % (dest_size, dest_buffer.nbytes))             
+ *                                  'got %s' % (dest_size, dest_buffer.nbytes))             # <<<<<<<<<<<<<<
  * 
  *         # perform decompression
  */
@@ -2373,7 +2373,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":165
  *             dest_ptr = dest_buffer.ptr
  *             if dest_buffer.nbytes < dest_size:
- *                 raise ValueError('destination buffer too small; expected at least %s, '             
+ *                 raise ValueError('destination buffer too small; expected at least %s, '             # <<<<<<<<<<<<<<
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  * 
  */
@@ -2390,7 +2390,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":164
  *             dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *             dest_ptr = dest_buffer.ptr
- *             if dest_buffer.nbytes < dest_size:             
+ *             if dest_buffer.nbytes < dest_size:             # <<<<<<<<<<<<<<
  *                 raise ValueError('destination buffer too small; expected at least %s, '
  *                                  'got %s' % (dest_size, dest_buffer.nbytes))
  */
@@ -2401,7 +2401,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":169
  * 
  *         # perform decompression
- *         with nogil:             
+ *         with nogil:             # <<<<<<<<<<<<<<
  *             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
  * 
  */
@@ -2416,7 +2416,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
           /* "numcodecs/zstd.pyx":170
  *         # perform decompression
  *         with nogil:
- *             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)             
+ *             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)             # <<<<<<<<<<<<<<
  * 
  *     finally:
  */
@@ -2426,7 +2426,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":169
  * 
  *         # perform decompression
- *         with nogil:             
+ *         with nogil:             # <<<<<<<<<<<<<<
  *             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
  * 
  */
@@ -2446,7 +2446,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":175
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  *         if dest_buffer is not None:
  *             dest_buffer.release()
  */
@@ -2459,7 +2459,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/zstd.pyx":176
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -2470,7 +2470,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":177
  *         source_buffer.release()
  *         if dest_buffer is not None:
- *             dest_buffer.release()             
+ *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # check decompression was successful
  */
@@ -2481,7 +2481,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":176
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -2510,7 +2510,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":175
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  *         if dest_buffer is not None:
  *             dest_buffer.release()
  */
@@ -2521,7 +2521,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
         /* "numcodecs/zstd.pyx":176
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -2532,7 +2532,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
           /* "numcodecs/zstd.pyx":177
  *         source_buffer.release()
  *         if dest_buffer is not None:
- *             dest_buffer.release()             
+ *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # check decompression was successful
  */
@@ -2543,7 +2543,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
           /* "numcodecs/zstd.pyx":176
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -2581,7 +2581,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":180
  * 
  *     # check decompression was successful
- *     if ZSTD_isError(decompressed_size):             
+ *     if ZSTD_isError(decompressed_size):             # <<<<<<<<<<<<<<
  *         error = ZSTD_getErrorName(decompressed_size)
  *         raise RuntimeError('Zstd decompression error: %s' % error)
  */
@@ -2591,7 +2591,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":181
  *     # check decompression was successful
  *     if ZSTD_isError(decompressed_size):
- *         error = ZSTD_getErrorName(decompressed_size)             
+ *         error = ZSTD_getErrorName(decompressed_size)             # <<<<<<<<<<<<<<
  *         raise RuntimeError('Zstd decompression error: %s' % error)
  *     elif decompressed_size != dest_size:
  */
@@ -2600,7 +2600,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":182
  *     if ZSTD_isError(decompressed_size):
  *         error = ZSTD_getErrorName(decompressed_size)
- *         raise RuntimeError('Zstd decompression error: %s' % error)             
+ *         raise RuntimeError('Zstd decompression error: %s' % error)             # <<<<<<<<<<<<<<
  *     elif decompressed_size != dest_size:
  *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %
  */
@@ -2619,7 +2619,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":180
  * 
  *     # check decompression was successful
- *     if ZSTD_isError(decompressed_size):             
+ *     if ZSTD_isError(decompressed_size):             # <<<<<<<<<<<<<<
  *         error = ZSTD_getErrorName(decompressed_size)
  *         raise RuntimeError('Zstd decompression error: %s' % error)
  */
@@ -2628,7 +2628,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":183
  *         error = ZSTD_getErrorName(decompressed_size)
  *         raise RuntimeError('Zstd decompression error: %s' % error)
- *     elif decompressed_size != dest_size:             
+ *     elif decompressed_size != dest_size:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %
  *                            (dest_size, decompressed_size))
  */
@@ -2654,7 +2654,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":185
  *     elif decompressed_size != dest_size:
  *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %
- *                            (dest_size, decompressed_size))             
+ *                            (dest_size, decompressed_size))             # <<<<<<<<<<<<<<
  * 
  *     return dest
  */
@@ -2678,7 +2678,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":184
  *         raise RuntimeError('Zstd decompression error: %s' % error)
  *     elif decompressed_size != dest_size:
- *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %             
+ *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %             # <<<<<<<<<<<<<<
  *                            (dest_size, decompressed_size))
  * 
  */
@@ -2695,7 +2695,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/zstd.pyx":183
  *         error = ZSTD_getErrorName(decompressed_size)
  *         raise RuntimeError('Zstd decompression error: %s' % error)
- *     elif decompressed_size != dest_size:             
+ *     elif decompressed_size != dest_size:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('Zstd decompression error: expected to decompress %s, got %s' %
  *                            (dest_size, decompressed_size))
  */
@@ -2704,7 +2704,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":187
  *                            (dest_size, decompressed_size))
  * 
- *     return dest             
+ *     return dest             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2716,7 +2716,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/zstd.pyx":120
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -2741,7 +2741,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_2decompress(CYTHON_UNUSED PyObject *_
 /* "numcodecs/zstd.pyx":210
  *     # enforce a max_buffer_size option here.
  * 
- *     def __init__(self, level=DEFAULT_CLEVEL):             
+ *     def __init__(self, level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *         self.level = level
  * 
  */
@@ -2858,7 +2858,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd___init__(CYTHON_UNUSED PyObject
   /* "numcodecs/zstd.pyx":211
  * 
  *     def __init__(self, level=DEFAULT_CLEVEL):
- *         self.level = level             
+ *         self.level = level             # <<<<<<<<<<<<<<
  * 
  *     def encode(self, buf):
  */
@@ -2867,7 +2867,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd___init__(CYTHON_UNUSED PyObject
   /* "numcodecs/zstd.pyx":210
  *     # enforce a max_buffer_size option here.
  * 
- *     def __init__(self, level=DEFAULT_CLEVEL):             
+ *     def __init__(self, level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *         self.level = level
  * 
  */
@@ -2887,7 +2887,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd___init__(CYTHON_UNUSED PyObject
 /* "numcodecs/zstd.pyx":213
  *         self.level = level
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return compress(buf, self.level)
  */
@@ -2970,7 +2970,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_2encode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":214
  * 
  *     def encode(self, buf):
- *         buf = ensure_contiguous_ndarray(buf)             
+ *         buf = ensure_contiguous_ndarray(buf)             # <<<<<<<<<<<<<<
  *         return compress(buf, self.level)
  * 
  */
@@ -2997,7 +2997,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_2encode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":215
  *     def encode(self, buf):
  *         buf = ensure_contiguous_ndarray(buf)
- *         return compress(buf, self.level)             
+ *         return compress(buf, self.level)             # <<<<<<<<<<<<<<
  * 
  *     def decode(self, buf, out=None):
  */
@@ -3060,7 +3060,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_2encode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":213
  *         self.level = level
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return compress(buf, self.level)
  */
@@ -3084,7 +3084,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_2encode(CYTHON_UNUSED PyObject 
 /* "numcodecs/zstd.pyx":217
  *         return compress(buf, self.level)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return decompress(buf, out)
  */
@@ -3181,7 +3181,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_4decode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":218
  * 
  *     def decode(self, buf, out=None):
- *         buf = ensure_contiguous_ndarray(buf)             
+ *         buf = ensure_contiguous_ndarray(buf)             # <<<<<<<<<<<<<<
  *         return decompress(buf, out)
  * 
  */
@@ -3208,7 +3208,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_4decode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":219
  *     def decode(self, buf, out=None):
  *         buf = ensure_contiguous_ndarray(buf)
- *         return decompress(buf, out)             
+ *         return decompress(buf, out)             # <<<<<<<<<<<<<<
  * 
  *     def __repr__(self):
  */
@@ -3267,7 +3267,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_4decode(CYTHON_UNUSED PyObject 
   /* "numcodecs/zstd.pyx":217
  *         return compress(buf, self.level)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return decompress(buf, out)
  */
@@ -3290,7 +3290,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_4decode(CYTHON_UNUSED PyObject 
 /* "numcodecs/zstd.pyx":221
  *         return decompress(buf, out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(level=%r)' % \
  *             (type(self).__name__,
  */
@@ -3336,7 +3336,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_6__repr__(CYTHON_UNUSED PyObjec
   /* "numcodecs/zstd.pyx":223
  *     def __repr__(self):
  *         r = '%s(level=%r)' % \
- *             (type(self).__name__,             
+ *             (type(self).__name__,             # <<<<<<<<<<<<<<
  *              self.level)
  *         return r
  */
@@ -3379,7 +3379,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_6__repr__(CYTHON_UNUSED PyObjec
   /* "numcodecs/zstd.pyx":222
  * 
  *     def __repr__(self):
- *         r = '%s(level=%r)' % \             
+ *         r = '%s(level=%r)' % \             # <<<<<<<<<<<<<<
  *             (type(self).__name__,
  *              self.level)
  */
@@ -3392,7 +3392,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_6__repr__(CYTHON_UNUSED PyObjec
   /* "numcodecs/zstd.pyx":225
  *             (type(self).__name__,
  *              self.level)
- *         return r             
+ *         return r             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_r);
@@ -3402,7 +3402,7 @@ static PyObject *__pyx_pf_9numcodecs_4zstd_4Zstd_6__repr__(CYTHON_UNUSED PyObjec
   /* "numcodecs/zstd.pyx":221
  *         return decompress(buf, out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(level=%r)' % \
  *             (type(self).__name__,
  */
@@ -3552,7 +3552,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":153
  *         dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
  *         if dest_size == 0:
- *             raise RuntimeError('Zstd decompression error: invalid input data')             
+ *             raise RuntimeError('Zstd decompression error: invalid input data')             # <<<<<<<<<<<<<<
  * 
  *         # setup destination buffer
  */
@@ -3563,7 +3563,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":58
  * 
  * 
- * def compress(source, int level=DEFAULT_CLEVEL):             
+ * def compress(source, int level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *     """Compress data.
  * 
  */
@@ -3575,7 +3575,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":120
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -3587,7 +3587,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":210
  *     # enforce a max_buffer_size option here.
  * 
- *     def __init__(self, level=DEFAULT_CLEVEL):             
+ *     def __init__(self, level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *         self.level = level
  * 
  */
@@ -3599,7 +3599,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":213
  *         self.level = level
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return compress(buf, self.level)
  */
@@ -3611,7 +3611,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":217
  *         return compress(buf, self.level)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return decompress(buf, out)
  */
@@ -3626,7 +3626,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/zstd.pyx":221
  *         return decompress(buf, out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(level=%r)' % \
  *             (type(self).__name__,
  */
@@ -3945,7 +3945,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":13
  * 
  * from .compat_ext cimport Buffer
- * from .compat_ext import Buffer             
+ * from .compat_ext import Buffer             # <<<<<<<<<<<<<<
  * from .compat import ensure_contiguous_ndarray
  * from .abc import Codec
  */
@@ -3962,7 +3962,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":14
  * from .compat_ext cimport Buffer
  * from .compat_ext import Buffer
- * from .compat import ensure_contiguous_ndarray             
+ * from .compat import ensure_contiguous_ndarray             # <<<<<<<<<<<<<<
  * from .abc import Codec
  * 
  */
@@ -3983,7 +3983,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":15
  * from .compat_ext import Buffer
  * from .compat import ensure_contiguous_ndarray
- * from .abc import Codec             
+ * from .abc import Codec             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -4004,7 +4004,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":45
  * 
  * 
- * VERSION_NUMBER = ZSTD_versionNumber()             
+ * VERSION_NUMBER = ZSTD_versionNumber()             # <<<<<<<<<<<<<<
  * MAJOR_VERSION_NUMBER = VERSION_NUMBER // (100 * 100)
  * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100
  */
@@ -4016,7 +4016,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":46
  * 
  * VERSION_NUMBER = ZSTD_versionNumber()
- * MAJOR_VERSION_NUMBER = VERSION_NUMBER // (100 * 100)             
+ * MAJOR_VERSION_NUMBER = VERSION_NUMBER // (100 * 100)             # <<<<<<<<<<<<<<
  * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100
  * MICRO_VERSION_NUMBER = (
  */
@@ -4031,7 +4031,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":47
  * VERSION_NUMBER = ZSTD_versionNumber()
  * MAJOR_VERSION_NUMBER = VERSION_NUMBER // (100 * 100)
- * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100             
+ * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100             # <<<<<<<<<<<<<<
  * MICRO_VERSION_NUMBER = (
  *     VERSION_NUMBER -
  */
@@ -4058,7 +4058,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":49
  * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100
  * MICRO_VERSION_NUMBER = (
- *     VERSION_NUMBER -             
+ *     VERSION_NUMBER -             # <<<<<<<<<<<<<<
  *     (MAJOR_VERSION_NUMBER * 100 * 100) -
  *     (MINOR_VERSION_NUMBER * 100)
  */
@@ -4068,7 +4068,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":50
  * MICRO_VERSION_NUMBER = (
  *     VERSION_NUMBER -
- *     (MAJOR_VERSION_NUMBER * 100 * 100) -             
+ *     (MAJOR_VERSION_NUMBER * 100 * 100) -             # <<<<<<<<<<<<<<
  *     (MINOR_VERSION_NUMBER * 100)
  * )
  */
@@ -4084,7 +4084,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":49
  * MINOR_VERSION_NUMBER = (VERSION_NUMBER - (MAJOR_VERSION_NUMBER * 100 * 100)) // 100
  * MICRO_VERSION_NUMBER = (
- *     VERSION_NUMBER -             
+ *     VERSION_NUMBER -             # <<<<<<<<<<<<<<
  *     (MAJOR_VERSION_NUMBER * 100 * 100) -
  *     (MINOR_VERSION_NUMBER * 100)
  */
@@ -4096,7 +4096,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":51
  *     VERSION_NUMBER -
  *     (MAJOR_VERSION_NUMBER * 100 * 100) -
- *     (MINOR_VERSION_NUMBER * 100)             
+ *     (MINOR_VERSION_NUMBER * 100)             # <<<<<<<<<<<<<<
  * )
  * __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)
  */
@@ -4109,7 +4109,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":50
  * MICRO_VERSION_NUMBER = (
  *     VERSION_NUMBER -
- *     (MAJOR_VERSION_NUMBER * 100 * 100) -             
+ *     (MAJOR_VERSION_NUMBER * 100 * 100) -             # <<<<<<<<<<<<<<
  *     (MINOR_VERSION_NUMBER * 100)
  * )
  */
@@ -4123,7 +4123,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":53
  *     (MINOR_VERSION_NUMBER * 100)
  * )
- * __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)             
+ * __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)             # <<<<<<<<<<<<<<
  * DEFAULT_CLEVEL = 1
  * MAX_CLEVEL = ZSTD_maxCLevel()
  */
@@ -4178,7 +4178,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":54
  * )
  * __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)
- * DEFAULT_CLEVEL = 1             
+ * DEFAULT_CLEVEL = 1             # <<<<<<<<<<<<<<
  * MAX_CLEVEL = ZSTD_maxCLevel()
  * 
  */
@@ -4187,7 +4187,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":55
  * __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)
  * DEFAULT_CLEVEL = 1
- * MAX_CLEVEL = ZSTD_maxCLevel()             
+ * MAX_CLEVEL = ZSTD_maxCLevel()             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -4199,7 +4199,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":58
  * 
  * 
- * def compress(source, int level=DEFAULT_CLEVEL):             
+ * def compress(source, int level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *     """Compress data.
  * 
  */
@@ -4216,7 +4216,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":120
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -4228,7 +4228,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":190
  * 
  * 
- * class Zstd(Codec):             
+ * class Zstd(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using Zstandard.
  * 
  */
@@ -4247,7 +4247,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":204
  *     """
  * 
- *     codec_id = 'zstd'             
+ *     codec_id = 'zstd'             # <<<<<<<<<<<<<<
  * 
  *     # Note: unlike the LZ4 and Blosc codecs, there does not appear to be a (currently)
  */
@@ -4256,7 +4256,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":210
  *     # enforce a max_buffer_size option here.
  * 
- *     def __init__(self, level=DEFAULT_CLEVEL):             
+ *     def __init__(self, level=DEFAULT_CLEVEL):             # <<<<<<<<<<<<<<
  *         self.level = level
  * 
  */
@@ -4275,7 +4275,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":213
  *         self.level = level
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return compress(buf, self.level)
  */
@@ -4287,7 +4287,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":217
  *         return compress(buf, self.level)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf)
  *         return decompress(buf, out)
  */
@@ -4300,7 +4300,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":221
  *         return decompress(buf, out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(level=%r)' % \
  *             (type(self).__name__,
  */
@@ -4312,7 +4312,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/zstd.pyx":190
  * 
  * 
- * class Zstd(Codec):             
+ * class Zstd(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using Zstandard.
  * 
  */

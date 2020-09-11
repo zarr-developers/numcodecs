@@ -310,7 +310,7 @@ END: Cython Metadata */
   #undef BASE
   #undef MASK
   #ifdef SIZEOF_VOID_P
-    enum { __pyx_check_sizeof_voidp = 1/(SIZEOF_VOID_P == sizeof(void*)) };
+    enum { __pyx_check_sizeof_voidp = 1 / (int)(SIZEOF_VOID_P == sizeof(void*)) };
   #endif
 #endif
 #ifndef __has_attribute
@@ -940,7 +940,7 @@ struct __pyx_defaults {
 /* "compat_ext.pxd":4
  * 
  * 
- * cdef class Buffer:             
+ * cdef class Buffer:             # <<<<<<<<<<<<<<
  *     cdef:
  *         char *ptr
  */
@@ -1888,7 +1888,7 @@ static PyObject *__pyx_codeobj__42;
 /* "numcodecs/blosc.pyx":87
  * 
  * 
- * def init():             
+ * def init():             # <<<<<<<<<<<<<<
  *     """Initialize the Blosc library environment."""
  *     blosc_init()
  */
@@ -1916,7 +1916,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_init(CYTHON_UNUSED PyObject *__pyx_s
   /* "numcodecs/blosc.pyx":89
  * def init():
  *     """Initialize the Blosc library environment."""
- *     blosc_init()             
+ *     blosc_init()             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -1925,7 +1925,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_init(CYTHON_UNUSED PyObject *__pyx_s
   /* "numcodecs/blosc.pyx":87
  * 
  * 
- * def init():             
+ * def init():             # <<<<<<<<<<<<<<
  *     """Initialize the Blosc library environment."""
  *     blosc_init()
  */
@@ -1940,7 +1940,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_init(CYTHON_UNUSED PyObject *__pyx_s
 /* "numcodecs/blosc.pyx":92
  * 
  * 
- * def destroy():             
+ * def destroy():             # <<<<<<<<<<<<<<
  *     """Destroy the Blosc library environment."""
  *     blosc_destroy()
  */
@@ -1968,7 +1968,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_2destroy(CYTHON_UNUSED PyObject *__p
   /* "numcodecs/blosc.pyx":94
  * def destroy():
  *     """Destroy the Blosc library environment."""
- *     blosc_destroy()             
+ *     blosc_destroy()             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -1977,7 +1977,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_2destroy(CYTHON_UNUSED PyObject *__p
   /* "numcodecs/blosc.pyx":92
  * 
  * 
- * def destroy():             
+ * def destroy():             # <<<<<<<<<<<<<<
  *     """Destroy the Blosc library environment."""
  *     blosc_destroy()
  */
@@ -1992,7 +1992,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_2destroy(CYTHON_UNUSED PyObject *__p
 /* "numcodecs/blosc.pyx":97
  * 
  * 
- * def compname_to_compcode(cname):             
+ * def compname_to_compcode(cname):             # <<<<<<<<<<<<<<
  *     """Return the compressor code associated with the compressor name. If the compressor
  *     name is not recognized, or there is not support for it in this build, -1 is returned
  */
@@ -2074,7 +2074,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_4compname_to_compcode(CYTHON_UNUSED 
   /* "numcodecs/blosc.pyx":103
  *     if isinstance(cname, str):
  *         cname = cname.encode('ascii')
- *     return blosc_compname_to_compcode(cname)             
+ *     return blosc_compname_to_compcode(cname)             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2089,7 +2089,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_4compname_to_compcode(CYTHON_UNUSED 
   /* "numcodecs/blosc.pyx":97
  * 
  * 
- * def compname_to_compcode(cname):             
+ * def compname_to_compcode(cname):             # <<<<<<<<<<<<<<
  *     """Return the compressor code associated with the compressor name. If the compressor
  *     name is not recognized, or there is not support for it in this build, -1 is returned
  */
@@ -2111,7 +2111,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_4compname_to_compcode(CYTHON_UNUSED 
 /* "numcodecs/blosc.pyx":106
  * 
  * 
- * def list_compressors():             
+ * def list_compressors():             # <<<<<<<<<<<<<<
  *     """Get a list of compressors supported in the current build."""
  *     s = blosc_list_compressors()
  */
@@ -2211,7 +2211,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_6list_compressors(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":106
  * 
  * 
- * def list_compressors():             
+ * def list_compressors():             # <<<<<<<<<<<<<<
  *     """Get a list of compressors supported in the current build."""
  *     s = blosc_list_compressors()
  */
@@ -2233,7 +2233,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_6list_compressors(CYTHON_UNUSED PyOb
 /* "numcodecs/blosc.pyx":113
  * 
  * 
- * def get_nthreads():             
+ * def get_nthreads():             # <<<<<<<<<<<<<<
  *     """Get the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -2262,7 +2262,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8get_nthreads(CYTHON_UNUSED PyObject
   /* "numcodecs/blosc.pyx":116
  *     """Get the number of threads that Blosc uses internally for compression and
  *     decompression."""
- *     return blosc_get_nthreads()             
+ *     return blosc_get_nthreads()             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2276,7 +2276,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8get_nthreads(CYTHON_UNUSED PyObject
   /* "numcodecs/blosc.pyx":113
  * 
  * 
- * def get_nthreads():             
+ * def get_nthreads():             # <<<<<<<<<<<<<<
  *     """Get the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -2295,7 +2295,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_8get_nthreads(CYTHON_UNUSED PyObject
 /* "numcodecs/blosc.pyx":119
  * 
  * 
- * def set_nthreads(int nthreads):             
+ * def set_nthreads(int nthreads):             # <<<<<<<<<<<<<<
  *     """Set the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -2334,7 +2334,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_10set_nthreads(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":122
  *     """Set the number of threads that Blosc uses internally for compression and
  *     decompression."""
- *     return blosc_set_nthreads(nthreads)             
+ *     return blosc_set_nthreads(nthreads)             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2348,7 +2348,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_10set_nthreads(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":119
  * 
  * 
- * def set_nthreads(int nthreads):             
+ * def set_nthreads(int nthreads):             # <<<<<<<<<<<<<<
  *     """Set the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -2367,7 +2367,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_10set_nthreads(CYTHON_UNUSED PyObjec
 /* "numcodecs/blosc.pyx":125
  * 
  * 
- * def cbuffer_sizes(source):             
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information about a compressed buffer, namely the number of uncompressed
  *     bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
  */
@@ -2403,7 +2403,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":142
  * 
  *     # obtain buffer
- *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
  */
@@ -2426,7 +2426,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":145
  * 
  *     # determine buffer size
- *     blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)             
+ *     blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)             # <<<<<<<<<<<<<<
  * 
  *     # release buffers
  */
@@ -2435,7 +2435,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":148
  * 
  *     # release buffers
- *     buffer.release()             
+ *     buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     return nbytes, cbytes, blocksize
  */
@@ -2446,7 +2446,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":150
  *     buffer.release()
  * 
- *     return nbytes, cbytes, blocksize             
+ *     return nbytes, cbytes, blocksize             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2475,7 +2475,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":125
  * 
  * 
- * def cbuffer_sizes(source):             
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information about a compressed buffer, namely the number of uncompressed
  *     bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
  */
@@ -2498,7 +2498,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_12cbuffer_sizes(CYTHON_UNUSED PyObje
 /* "numcodecs/blosc.pyx":153
  * 
  * 
- * def cbuffer_complib(source):             
+ * def cbuffer_complib(source):             # <<<<<<<<<<<<<<
  *     """Return the name of the compression library used to compress `source`."""
  *     cdef:
  */
@@ -2531,7 +2531,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":159
  * 
  *     # obtain buffer
- *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
  */
@@ -2554,7 +2554,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":162
  * 
  *     # determine buffer size
- *     complib = blosc_cbuffer_complib(buffer.ptr)             
+ *     complib = blosc_cbuffer_complib(buffer.ptr)             # <<<<<<<<<<<<<<
  * 
  *     # release buffers
  */
@@ -2566,7 +2566,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":165
  * 
  *     # release buffers
- *     buffer.release()             
+ *     buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     complib = complib.decode('ascii')
  */
@@ -2604,7 +2604,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":169
  *     complib = complib.decode('ascii')
  * 
- *     return complib             
+ *     return complib             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2616,7 +2616,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
   /* "numcodecs/blosc.pyx":153
  * 
  * 
- * def cbuffer_complib(source):             
+ * def cbuffer_complib(source):             # <<<<<<<<<<<<<<
  *     """Return the name of the compression library used to compress `source`."""
  *     cdef:
  */
@@ -2639,7 +2639,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_14cbuffer_complib(CYTHON_UNUSED PyOb
 /* "numcodecs/blosc.pyx":172
  * 
  * 
- * def cbuffer_metainfo(source):             
+ * def cbuffer_metainfo(source):             # <<<<<<<<<<<<<<
  *     """Return some meta-information about the compressed buffer in `source`, including
  *     the typesize, whether the shuffle or bit-shuffle filters were used, and the
  */
@@ -2676,7 +2676,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":190
  * 
  *     # obtain buffer
- *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
  */
@@ -2699,7 +2699,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":193
  * 
  *     # determine buffer size
- *     blosc_cbuffer_metainfo(buffer.ptr, &typesize, &flags)             
+ *     blosc_cbuffer_metainfo(buffer.ptr, &typesize, &flags)             # <<<<<<<<<<<<<<
  * 
  *     # release buffers
  */
@@ -2708,7 +2708,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":196
  * 
  *     # release buffers
- *     buffer.release()             
+ *     buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # decompose flags
  */
@@ -2719,7 +2719,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":199
  * 
  *     # decompose flags
- *     if flags & BLOSC_DOSHUFFLE:             
+ *     if flags & BLOSC_DOSHUFFLE:             # <<<<<<<<<<<<<<
  *         shuffle = SHUFFLE
  *     elif flags & BLOSC_DOBITSHUFFLE:
  */
@@ -2729,7 +2729,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":200
  *     # decompose flags
  *     if flags & BLOSC_DOSHUFFLE:
- *         shuffle = SHUFFLE             
+ *         shuffle = SHUFFLE             # <<<<<<<<<<<<<<
  *     elif flags & BLOSC_DOBITSHUFFLE:
  *         shuffle = BITSHUFFLE
  */
@@ -2741,7 +2741,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":199
  * 
  *     # decompose flags
- *     if flags & BLOSC_DOSHUFFLE:             
+ *     if flags & BLOSC_DOSHUFFLE:             # <<<<<<<<<<<<<<
  *         shuffle = SHUFFLE
  *     elif flags & BLOSC_DOBITSHUFFLE:
  */
@@ -2751,7 +2751,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":201
  *     if flags & BLOSC_DOSHUFFLE:
  *         shuffle = SHUFFLE
- *     elif flags & BLOSC_DOBITSHUFFLE:             
+ *     elif flags & BLOSC_DOBITSHUFFLE:             # <<<<<<<<<<<<<<
  *         shuffle = BITSHUFFLE
  *     else:
  */
@@ -2761,7 +2761,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":202
  *         shuffle = SHUFFLE
  *     elif flags & BLOSC_DOBITSHUFFLE:
- *         shuffle = BITSHUFFLE             
+ *         shuffle = BITSHUFFLE             # <<<<<<<<<<<<<<
  *     else:
  *         shuffle = NOSHUFFLE
  */
@@ -2773,7 +2773,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":201
  *     if flags & BLOSC_DOSHUFFLE:
  *         shuffle = SHUFFLE
- *     elif flags & BLOSC_DOBITSHUFFLE:             
+ *     elif flags & BLOSC_DOBITSHUFFLE:             # <<<<<<<<<<<<<<
  *         shuffle = BITSHUFFLE
  *     else:
  */
@@ -2783,7 +2783,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":204
  *         shuffle = BITSHUFFLE
  *     else:
- *         shuffle = NOSHUFFLE             
+ *         shuffle = NOSHUFFLE             # <<<<<<<<<<<<<<
  *     memcpyed = flags & BLOSC_MEMCPYED
  * 
  */
@@ -2798,7 +2798,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":205
  *     else:
  *         shuffle = NOSHUFFLE
- *     memcpyed = flags & BLOSC_MEMCPYED             
+ *     memcpyed = flags & BLOSC_MEMCPYED             # <<<<<<<<<<<<<<
  * 
  *     return typesize, shuffle, memcpyed
  */
@@ -2807,7 +2807,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":207
  *     memcpyed = flags & BLOSC_MEMCPYED
  * 
- *     return typesize, shuffle, memcpyed             
+ *     return typesize, shuffle, memcpyed             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -2834,7 +2834,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":172
  * 
  * 
- * def cbuffer_metainfo(source):             
+ * def cbuffer_metainfo(source):             # <<<<<<<<<<<<<<
  *     """Return some meta-information about the compressed buffer in `source`, including
  *     the typesize, whether the shuffle or bit-shuffle filters were used, and the
  */
@@ -2857,7 +2857,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_16cbuffer_metainfo(CYTHON_UNUSED PyO
 /* "numcodecs/blosc.pyx":210
  * 
  * 
- * def err_bad_cname(cname):             
+ * def err_bad_cname(cname):             # <<<<<<<<<<<<<<
  *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
  *                      '%s' % (cname, list_compressors()))
  */
@@ -2951,7 +2951,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18err_bad_cname(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":211
  * 
  * def err_bad_cname(cname):
- *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '             
+ *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '             # <<<<<<<<<<<<<<
  *                      '%s' % (cname, list_compressors()))
  * 
  */
@@ -2968,7 +2968,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18err_bad_cname(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":210
  * 
  * 
- * def err_bad_cname(cname):             
+ * def err_bad_cname(cname):             # <<<<<<<<<<<<<<
  *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
  *                      '%s' % (cname, list_compressors()))
  */
@@ -2989,7 +2989,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_18err_bad_cname(CYTHON_UNUSED PyObje
 /* "numcodecs/blosc.pyx":215
  * 
  * 
- * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             
+ * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             # <<<<<<<<<<<<<<
  *              int blocksize=AUTOBLOCKS):
  *     """Compress data.
  */
@@ -3177,7 +3177,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":254
  *     cname_str = cname.decode('ascii')
  *     if cname_str not in list_compressors():
- *         err_bad_cname(cname_str)             
+ *         err_bad_cname(cname_str)             # <<<<<<<<<<<<<<
  * 
  *     # setup source buffer
  */
@@ -3212,7 +3212,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":257
  * 
  *     # setup source buffer
- *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes
  */
@@ -3235,7 +3235,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":258
  *     # setup source buffer
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
- *     source_ptr = source_buffer.ptr             
+ *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  *     nbytes = source_buffer.nbytes
  *     itemsize = source_buffer.itemsize
  */
@@ -3245,7 +3245,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":259
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
  *     source_ptr = source_buffer.ptr
- *     nbytes = source_buffer.nbytes             
+ *     nbytes = source_buffer.nbytes             # <<<<<<<<<<<<<<
  *     itemsize = source_buffer.itemsize
  * 
  */
@@ -3255,7 +3255,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":260
  *     source_ptr = source_buffer.ptr
  *     nbytes = source_buffer.nbytes
- *     itemsize = source_buffer.itemsize             
+ *     itemsize = source_buffer.itemsize             # <<<<<<<<<<<<<<
  * 
  *     # determine shuffle
  */
@@ -3265,7 +3265,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":263
  * 
  *     # determine shuffle
- *     if shuffle == AUTOSHUFFLE:             
+ *     if shuffle == AUTOSHUFFLE:             # <<<<<<<<<<<<<<
  *         if itemsize == 1:
  *             shuffle = BITSHUFFLE
  */
@@ -3283,7 +3283,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":264
  *     # determine shuffle
  *     if shuffle == AUTOSHUFFLE:
- *         if itemsize == 1:             
+ *         if itemsize == 1:             # <<<<<<<<<<<<<<
  *             shuffle = BITSHUFFLE
  *         else:
  */
@@ -3293,7 +3293,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/blosc.pyx":265
  *     if shuffle == AUTOSHUFFLE:
  *         if itemsize == 1:
- *             shuffle = BITSHUFFLE             
+ *             shuffle = BITSHUFFLE             # <<<<<<<<<<<<<<
  *         else:
  *             shuffle = SHUFFLE
  */
@@ -3306,7 +3306,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/blosc.pyx":264
  *     # determine shuffle
  *     if shuffle == AUTOSHUFFLE:
- *         if itemsize == 1:             
+ *         if itemsize == 1:             # <<<<<<<<<<<<<<
  *             shuffle = BITSHUFFLE
  *         else:
  */
@@ -3316,7 +3316,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":267
  *             shuffle = BITSHUFFLE
  *         else:
- *             shuffle = SHUFFLE             
+ *             shuffle = SHUFFLE             # <<<<<<<<<<<<<<
  *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:
  *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
  */
@@ -3332,7 +3332,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":263
  * 
  *     # determine shuffle
- *     if shuffle == AUTOSHUFFLE:             
+ *     if shuffle == AUTOSHUFFLE:             # <<<<<<<<<<<<<<
  *         if itemsize == 1:
  *             shuffle = BITSHUFFLE
  */
@@ -3342,7 +3342,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":268
  *         else:
  *             shuffle = SHUFFLE
- *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:             
+ *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:             # <<<<<<<<<<<<<<
  *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
  *                          shuffle)
  */
@@ -3392,7 +3392,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":270
  *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:
  *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
- *                          shuffle)             
+ *                          shuffle)             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
@@ -3402,7 +3402,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":269
  *             shuffle = SHUFFLE
  *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:
- *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %             
+ *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %             # <<<<<<<<<<<<<<
  *                          shuffle)
  * 
  */
@@ -3419,7 +3419,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":268
  *         else:
  *             shuffle = SHUFFLE
- *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:             
+ *     elif shuffle not in [NOSHUFFLE, SHUFFLE, BITSHUFFLE]:             # <<<<<<<<<<<<<<
  *         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
  *                          shuffle)
  */
@@ -3429,7 +3429,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":272
  *                          shuffle)
  * 
- *     try:             
+ *     try:             # <<<<<<<<<<<<<<
  * 
  *         # setup destination
  */
@@ -3438,7 +3438,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":275
  * 
  *         # setup destination
- *         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)             
+ *         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)             # <<<<<<<<<<<<<<
  *         dest_ptr = PyBytes_AS_STRING(dest)
  * 
  */
@@ -3450,7 +3450,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":276
  *         # setup destination
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
- *         dest_ptr = PyBytes_AS_STRING(dest)             
+ *         dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
  * 
  *         # perform compression
  */
@@ -3459,7 +3459,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":279
  * 
  *         # perform compression
- *         if _get_use_threads():             
+ *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  * 
  */
@@ -3487,7 +3487,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/blosc.pyx":285
  *             # to ensure no-one else can modify the global context while we're setting it
  *             # up and using it.
- *             with mutex:             
+ *             with mutex:             # <<<<<<<<<<<<<<
  * 
  *                 # set compressor
  */
@@ -3528,7 +3528,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
               /* "numcodecs/blosc.pyx":288
  * 
  *                 # set compressor
- *                 compressor_set = blosc_set_compressor(cname)             
+ *                 compressor_set = blosc_set_compressor(cname)             # <<<<<<<<<<<<<<
  *                 if compressor_set < 0:
  *                     # shouldn't happen if we checked against list of compressors
  */
@@ -3537,7 +3537,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
               /* "numcodecs/blosc.pyx":289
  *                 # set compressor
  *                 compressor_set = blosc_set_compressor(cname)
- *                 if compressor_set < 0:             
+ *                 if compressor_set < 0:             # <<<<<<<<<<<<<<
  *                     # shouldn't happen if we checked against list of compressors
  *                     # already, but just in case
  */
@@ -3547,7 +3547,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
                 /* "numcodecs/blosc.pyx":292
  *                     # shouldn't happen if we checked against list of compressors
  *                     # already, but just in case
- *                     err_bad_cname(cname_str)             
+ *                     err_bad_cname(cname_str)             # <<<<<<<<<<<<<<
  * 
  *                 # set blocksize
  */
@@ -3573,7 +3573,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
                 /* "numcodecs/blosc.pyx":289
  *                 # set compressor
  *                 compressor_set = blosc_set_compressor(cname)
- *                 if compressor_set < 0:             
+ *                 if compressor_set < 0:             # <<<<<<<<<<<<<<
  *                     # shouldn't happen if we checked against list of compressors
  *                     # already, but just in case
  */
@@ -3582,7 +3582,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
               /* "numcodecs/blosc.pyx":295
  * 
  *                 # set blocksize
- *                 blosc_set_blocksize(blocksize)             
+ *                 blosc_set_blocksize(blocksize)             # <<<<<<<<<<<<<<
  * 
  *                 # perform compression
  */
@@ -3591,7 +3591,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
               /* "numcodecs/blosc.pyx":298
  * 
  *                 # perform compression
- *                 with nogil:             
+ *                 with nogil:             # <<<<<<<<<<<<<<
  *                     cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
  */
@@ -3606,7 +3606,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
                     /* "numcodecs/blosc.pyx":299
  *                 # perform compression
  *                 with nogil:
- *                     cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,             
+ *                     cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,             # <<<<<<<<<<<<<<
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
  * 
  */
@@ -3616,7 +3616,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
                   /* "numcodecs/blosc.pyx":298
  * 
  *                 # perform compression
- *                 with nogil:             
+ *                 with nogil:             # <<<<<<<<<<<<<<
  *                     cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
  */
@@ -3635,7 +3635,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
               /* "numcodecs/blosc.pyx":285
  *             # to ensure no-one else can modify the global context while we're setting it
  *             # up and using it.
- *             with mutex:             
+ *             with mutex:             # <<<<<<<<<<<<<<
  * 
  *                 # set compressor
  */
@@ -3716,7 +3716,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
       /* "numcodecs/blosc.pyx":279
  * 
  *         # perform compression
- *         if _get_use_threads():             
+ *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  * 
  */
@@ -3726,7 +3726,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":303
  * 
  *         else:
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
  */
@@ -3742,7 +3742,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
             /* "numcodecs/blosc.pyx":304
  *         else:
  *             with nogil:
- *                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,             
+ *                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,             # <<<<<<<<<<<<<<
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
  *                                             cname, blocksize, 1)
  */
@@ -3752,7 +3752,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
           /* "numcodecs/blosc.pyx":303
  * 
  *         else:
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
  *                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
  */
@@ -3774,7 +3774,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":311
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # check compression was successful
  */
@@ -3840,7 +3840,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":314
  * 
  *     # check compression was successful
- *     if cbytes <= 0:             
+ *     if cbytes <= 0:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('error during blosc compression: %d' % cbytes)
  * 
  */
@@ -3850,7 +3850,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":315
  *     # check compression was successful
  *     if cbytes <= 0:
- *         raise RuntimeError('error during blosc compression: %d' % cbytes)             
+ *         raise RuntimeError('error during blosc compression: %d' % cbytes)             # <<<<<<<<<<<<<<
  * 
  *     # resize after compression
  */
@@ -3869,7 +3869,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
     /* "numcodecs/blosc.pyx":314
  * 
  *     # check compression was successful
- *     if cbytes <= 0:             
+ *     if cbytes <= 0:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('error during blosc compression: %d' % cbytes)
  * 
  */
@@ -3878,7 +3878,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":318
  * 
  *     # resize after compression
- *     dest = dest[:cbytes]             
+ *     dest = dest[:cbytes]             # <<<<<<<<<<<<<<
  * 
  *     return dest
  */
@@ -3894,7 +3894,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":320
  *     dest = dest[:cbytes]
  * 
- *     return dest             
+ *     return dest             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -3906,7 +3906,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
   /* "numcodecs/blosc.pyx":215
  * 
  * 
- * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             
+ * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             # <<<<<<<<<<<<<<
  *              int blocksize=AUTOBLOCKS):
  *     """Compress data.
  */
@@ -3931,7 +3931,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_20compress(CYTHON_UNUSED PyObject *_
 /* "numcodecs/blosc.pyx":323
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -4040,7 +4040,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":345
  *         char *dest_ptr
  *         Buffer source_buffer
- *         Buffer dest_buffer = None             
+ *         Buffer dest_buffer = None             # <<<<<<<<<<<<<<
  *         size_t nbytes, cbytes, blocksize
  * 
  */
@@ -4050,7 +4050,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":349
  * 
  *     # setup source buffer
- *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             
+ *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *     source_ptr = source_buffer.ptr
  * 
  */
@@ -4073,7 +4073,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":350
  *     # setup source buffer
  *     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
- *     source_ptr = source_buffer.ptr             
+ *     source_ptr = source_buffer.ptr             # <<<<<<<<<<<<<<
  * 
  *     # determine buffer size
  */
@@ -4083,7 +4083,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":353
  * 
  *     # determine buffer size
- *     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)             
+ *     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)             # <<<<<<<<<<<<<<
  * 
  *     # setup destination buffer
  */
@@ -4092,7 +4092,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":356
  * 
  *     # setup destination buffer
- *     if dest is None:             
+ *     if dest is None:             # <<<<<<<<<<<<<<
  *         # allocate memory
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
  */
@@ -4103,7 +4103,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":358
  *     if dest is None:
  *         # allocate memory
- *         dest = PyBytes_FromStringAndSize(NULL, nbytes)             
+ *         dest = PyBytes_FromStringAndSize(NULL, nbytes)             # <<<<<<<<<<<<<<
  *         dest_ptr = PyBytes_AS_STRING(dest)
  *         dest_nbytes = nbytes
  */
@@ -4115,7 +4115,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":359
  *         # allocate memory
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
- *         dest_ptr = PyBytes_AS_STRING(dest)             
+ *         dest_ptr = PyBytes_AS_STRING(dest)             # <<<<<<<<<<<<<<
  *         dest_nbytes = nbytes
  *     else:
  */
@@ -4124,7 +4124,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":360
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
  *         dest_ptr = PyBytes_AS_STRING(dest)
- *         dest_nbytes = nbytes             
+ *         dest_nbytes = nbytes             # <<<<<<<<<<<<<<
  *     else:
  *         arr = ensure_contiguous_ndarray(dest)
  */
@@ -4133,7 +4133,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":356
  * 
  *     # setup destination buffer
- *     if dest is None:             
+ *     if dest is None:             # <<<<<<<<<<<<<<
  *         # allocate memory
  *         dest = PyBytes_FromStringAndSize(NULL, nbytes)
  */
@@ -4143,7 +4143,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":362
  *         dest_nbytes = nbytes
  *     else:
- *         arr = ensure_contiguous_ndarray(dest)             
+ *         arr = ensure_contiguous_ndarray(dest)             # <<<<<<<<<<<<<<
  *         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr
  */
@@ -4171,7 +4171,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":363
  *     else:
  *         arr = ensure_contiguous_ndarray(dest)
- *         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             
+ *         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)             # <<<<<<<<<<<<<<
  *         dest_ptr = dest_buffer.ptr
  *         dest_nbytes = dest_buffer.nbytes
  */
@@ -4194,7 +4194,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":364
  *         arr = ensure_contiguous_ndarray(dest)
  *         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
- *         dest_ptr = dest_buffer.ptr             
+ *         dest_ptr = dest_buffer.ptr             # <<<<<<<<<<<<<<
  *         dest_nbytes = dest_buffer.nbytes
  * 
  */
@@ -4204,7 +4204,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":365
  *         dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
  *         dest_ptr = dest_buffer.ptr
- *         dest_nbytes = dest_buffer.nbytes             
+ *         dest_nbytes = dest_buffer.nbytes             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
@@ -4216,7 +4216,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":367
  *         dest_nbytes = dest_buffer.nbytes
  * 
- *     try:             
+ *     try:             # <<<<<<<<<<<<<<
  * 
  *         # guard condition
  */
@@ -4225,7 +4225,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":370
  * 
  *         # guard condition
- *         if dest_nbytes < nbytes:             
+ *         if dest_nbytes < nbytes:             # <<<<<<<<<<<<<<
  *             raise ValueError('destination buffer too small; expected at least %s, '
  *                              'got %s' % (nbytes, dest_nbytes))
  */
@@ -4251,7 +4251,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":372
  *         if dest_nbytes < nbytes:
  *             raise ValueError('destination buffer too small; expected at least %s, '
- *                              'got %s' % (nbytes, dest_nbytes))             
+ *                              'got %s' % (nbytes, dest_nbytes))             # <<<<<<<<<<<<<<
  * 
  *         # perform decompression
  */
@@ -4275,7 +4275,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":371
  *         # guard condition
  *         if dest_nbytes < nbytes:
- *             raise ValueError('destination buffer too small; expected at least %s, '             
+ *             raise ValueError('destination buffer too small; expected at least %s, '             # <<<<<<<<<<<<<<
  *                              'got %s' % (nbytes, dest_nbytes))
  * 
  */
@@ -4292,7 +4292,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":370
  * 
  *         # guard condition
- *         if dest_nbytes < nbytes:             
+ *         if dest_nbytes < nbytes:             # <<<<<<<<<<<<<<
  *             raise ValueError('destination buffer too small; expected at least %s, '
  *                              'got %s' % (nbytes, dest_nbytes))
  */
@@ -4301,7 +4301,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":375
  * 
  *         # perform decompression
- *         if _get_use_threads():             
+ *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  *             with nogil:
  */
@@ -4329,7 +4329,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":377
  *         if _get_use_threads():
  *             # allow blosc to use threads internally
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
  */
@@ -4344,7 +4344,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
             /* "numcodecs/blosc.pyx":378
  *             # allow blosc to use threads internally
  *             with nogil:
- *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)             
+ *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)             # <<<<<<<<<<<<<<
  *         else:
  *             with nogil:
  */
@@ -4354,7 +4354,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
           /* "numcodecs/blosc.pyx":377
  *         if _get_use_threads():
  *             # allow blosc to use threads internally
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
  */
@@ -4373,7 +4373,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":375
  * 
  *         # perform decompression
- *         if _get_use_threads():             
+ *         if _get_use_threads():             # <<<<<<<<<<<<<<
  *             # allow blosc to use threads internally
  *             with nogil:
  */
@@ -4383,7 +4383,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":380
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
  * 
  */
@@ -4399,7 +4399,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
             /* "numcodecs/blosc.pyx":381
  *         else:
  *             with nogil:
- *                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)             
+ *                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)             # <<<<<<<<<<<<<<
  * 
  *     finally:
  */
@@ -4409,7 +4409,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
           /* "numcodecs/blosc.pyx":380
  *                 ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
  *         else:
- *             with nogil:             
+ *             with nogil:             # <<<<<<<<<<<<<<
  *                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
  * 
  */
@@ -4431,7 +4431,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":386
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  *         if dest_buffer is not None:
  *             dest_buffer.release()
  */
@@ -4444,7 +4444,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
       /* "numcodecs/blosc.pyx":387
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -4455,7 +4455,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
         /* "numcodecs/blosc.pyx":388
  *         source_buffer.release()
  *         if dest_buffer is not None:
- *             dest_buffer.release()             
+ *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # handle errors
  */
@@ -4466,7 +4466,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
         /* "numcodecs/blosc.pyx":387
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -4495,7 +4495,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
         /* "numcodecs/blosc.pyx":386
  * 
  *         # release buffers
- *         source_buffer.release()             
+ *         source_buffer.release()             # <<<<<<<<<<<<<<
  *         if dest_buffer is not None:
  *             dest_buffer.release()
  */
@@ -4506,7 +4506,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
         /* "numcodecs/blosc.pyx":387
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -4517,7 +4517,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
           /* "numcodecs/blosc.pyx":388
  *         source_buffer.release()
  *         if dest_buffer is not None:
- *             dest_buffer.release()             
+ *             dest_buffer.release()             # <<<<<<<<<<<<<<
  * 
  *     # handle errors
  */
@@ -4528,7 +4528,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
           /* "numcodecs/blosc.pyx":387
  *         # release buffers
  *         source_buffer.release()
- *         if dest_buffer is not None:             
+ *         if dest_buffer is not None:             # <<<<<<<<<<<<<<
  *             dest_buffer.release()
  * 
  */
@@ -4566,7 +4566,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":391
  * 
  *     # handle errors
- *     if ret <= 0:             
+ *     if ret <= 0:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('error during blosc decompression: %d' % ret)
  * 
  */
@@ -4576,7 +4576,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":392
  *     # handle errors
  *     if ret <= 0:
- *         raise RuntimeError('error during blosc decompression: %d' % ret)             
+ *         raise RuntimeError('error during blosc decompression: %d' % ret)             # <<<<<<<<<<<<<<
  * 
  *     return dest
  */
@@ -4595,7 +4595,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
     /* "numcodecs/blosc.pyx":391
  * 
  *     # handle errors
- *     if ret <= 0:             
+ *     if ret <= 0:             # <<<<<<<<<<<<<<
  *         raise RuntimeError('error during blosc decompression: %d' % ret)
  * 
  */
@@ -4604,7 +4604,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":394
  *         raise RuntimeError('error during blosc decompression: %d' % ret)
  * 
- *     return dest             
+ *     return dest             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -4616,7 +4616,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_22decompress(CYTHON_UNUSED PyObject 
   /* "numcodecs/blosc.pyx":323
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -4768,7 +4768,6 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_24decompress_partial(CYTHON_UNUSED P
   PyObject *__pyx_t_18 = NULL;
   __Pyx_RefNannySetupContext("decompress_partial", 0);
   __Pyx_INCREF(__pyx_v_dest);
-
 
   /* "numcodecs/blosc.pyx":428
  *         char *dest_ptr
@@ -5363,7 +5362,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":481
  * 
  *     # check if locks are available, and if not no threads
- *     if not mutex:             
+ *     if not mutex:             # <<<<<<<<<<<<<<
  *         return False
  * 
  */
@@ -5377,7 +5376,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":482
  *     # check if locks are available, and if not no threads
  *     if not mutex:
- *         return False             
+ *         return False             # <<<<<<<<<<<<<<
  * 
  *     # check for fork
  */
@@ -5389,7 +5388,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":481
  * 
  *     # check if locks are available, and if not no threads
- *     if not mutex:             
+ *     if not mutex:             # <<<<<<<<<<<<<<
  *         return False
  * 
  */
@@ -5398,7 +5397,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":485
  * 
  *     # check for fork
- *     if proc.pid != _importer_pid:             
+ *     if proc.pid != _importer_pid:             # <<<<<<<<<<<<<<
  *         # If this module has been imported in the parent process, and the current process
  *         # is a fork, attempting to use blosc in multi-threaded mode will cause a
  */
@@ -5416,7 +5415,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":489
  *         # is a fork, attempting to use blosc in multi-threaded mode will cause a
  *         # program hang, so we force use of blosc ctx functions, i.e., no threads.
- *         return False             
+ *         return False             # <<<<<<<<<<<<<<
  * 
  *     if use_threads in [True, False]:
  */
@@ -5428,7 +5427,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":485
  * 
  *     # check for fork
- *     if proc.pid != _importer_pid:             
+ *     if proc.pid != _importer_pid:             # <<<<<<<<<<<<<<
  *         # If this module has been imported in the parent process, and the current process
  *         # is a fork, attempting to use blosc in multi-threaded mode will cause a
  */
@@ -5437,7 +5436,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":491
  *         return False
  * 
- *     if use_threads in [True, False]:             
+ *     if use_threads in [True, False]:             # <<<<<<<<<<<<<<
  *         # user has manually overridden the default behaviour
  *         _use_threads = use_threads
  */
@@ -5463,7 +5462,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":493
  *     if use_threads in [True, False]:
  *         # user has manually overridden the default behaviour
- *         _use_threads = use_threads             
+ *         _use_threads = use_threads             # <<<<<<<<<<<<<<
  * 
  *     else:
  */
@@ -5475,7 +5474,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":491
  *         return False
  * 
- *     if use_threads in [True, False]:             
+ *     if use_threads in [True, False]:             # <<<<<<<<<<<<<<
  *         # user has manually overridden the default behaviour
  *         _use_threads = use_threads
  */
@@ -5485,7 +5484,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":502
  *         # program or multi-process program
  * 
- *         if proc.name != 'MainProcess':             
+ *         if proc.name != 'MainProcess':             # <<<<<<<<<<<<<<
  *             _use_threads = False
  *         elif hasattr(threading, 'main_thread'):
  */
@@ -5499,7 +5498,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
       /* "numcodecs/blosc.pyx":503
  * 
  *         if proc.name != 'MainProcess':
- *             _use_threads = False             
+ *             _use_threads = False             # <<<<<<<<<<<<<<
  *         elif hasattr(threading, 'main_thread'):
  *             _use_threads = (threading.main_thread() == threading.current_thread())
  */
@@ -5509,7 +5508,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
       /* "numcodecs/blosc.pyx":502
  *         # program or multi-process program
  * 
- *         if proc.name != 'MainProcess':             
+ *         if proc.name != 'MainProcess':             # <<<<<<<<<<<<<<
  *             _use_threads = False
  *         elif hasattr(threading, 'main_thread'):
  */
@@ -5519,7 +5518,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":504
  *         if proc.name != 'MainProcess':
  *             _use_threads = False
- *         elif hasattr(threading, 'main_thread'):             
+ *         elif hasattr(threading, 'main_thread'):             # <<<<<<<<<<<<<<
  *             _use_threads = (threading.main_thread() == threading.current_thread())
  *         else:
  */
@@ -5533,7 +5532,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
       /* "numcodecs/blosc.pyx":505
  *             _use_threads = False
  *         elif hasattr(threading, 'main_thread'):
- *             _use_threads = (threading.main_thread() == threading.current_thread())             
+ *             _use_threads = (threading.main_thread() == threading.current_thread())             # <<<<<<<<<<<<<<
  *         else:
  *             _use_threads = threading.current_thread().name == 'MainThread'
  */
@@ -5586,7 +5585,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
       /* "numcodecs/blosc.pyx":504
  *         if proc.name != 'MainProcess':
  *             _use_threads = False
- *         elif hasattr(threading, 'main_thread'):             
+ *         elif hasattr(threading, 'main_thread'):             # <<<<<<<<<<<<<<
  *             _use_threads = (threading.main_thread() == threading.current_thread())
  *         else:
  */
@@ -5596,7 +5595,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
     /* "numcodecs/blosc.pyx":507
  *             _use_threads = (threading.main_thread() == threading.current_thread())
  *         else:
- *             _use_threads = threading.current_thread().name == 'MainThread'             
+ *             _use_threads = threading.current_thread().name == 'MainThread'             # <<<<<<<<<<<<<<
  * 
  *     return _use_threads
  */
@@ -5636,7 +5635,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":509
  *             _use_threads = threading.current_thread().name == 'MainThread'
  * 
- *     return _use_threads             
+ *     return _use_threads             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -5648,7 +5647,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
   /* "numcodecs/blosc.pyx":476
  * 
  * 
- * def _get_use_threads():             
+ * def _get_use_threads():             # <<<<<<<<<<<<<<
  *     global use_threads
  *     proc = multiprocessing.current_process()
  */
@@ -5672,7 +5671,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_26_get_use_threads(CYTHON_UNUSED PyO
 /* "numcodecs/blosc.pyx":546
  *     max_buffer_size = 2**31 - 1
  * 
- *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             
+ *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, str):
  */
@@ -5899,7 +5898,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":551
  *             self._cname_bytes = cname.encode('ascii')
  *         else:
- *             self._cname_bytes = cname             
+ *             self._cname_bytes = cname             # <<<<<<<<<<<<<<
  *         self.clevel = clevel
  *         self.shuffle = shuffle
  */
@@ -5911,7 +5910,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":552
  *         else:
  *             self._cname_bytes = cname
- *         self.clevel = clevel             
+ *         self.clevel = clevel             # <<<<<<<<<<<<<<
  *         self.shuffle = shuffle
  *         self.blocksize = blocksize
  */
@@ -5920,7 +5919,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":553
  *             self._cname_bytes = cname
  *         self.clevel = clevel
- *         self.shuffle = shuffle             
+ *         self.shuffle = shuffle             # <<<<<<<<<<<<<<
  *         self.blocksize = blocksize
  * 
  */
@@ -5929,7 +5928,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":554
  *         self.clevel = clevel
  *         self.shuffle = shuffle
- *         self.blocksize = blocksize             
+ *         self.blocksize = blocksize             # <<<<<<<<<<<<<<
  * 
  *     def encode(self, buf):
  */
@@ -5938,7 +5937,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
   /* "numcodecs/blosc.pyx":546
  *     max_buffer_size = 2**31 - 1
  * 
- *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             
+ *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, str):
  */
@@ -5961,7 +5960,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc___init__(CYTHON_UNUSED PyObje
 /* "numcodecs/blosc.pyx":556
  *         self.blocksize = blocksize
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  */
@@ -6047,7 +6046,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":557
  * 
  *     def encode(self, buf):
- *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)             
+ *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)             # <<<<<<<<<<<<<<
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  * 
  */
@@ -6108,7 +6107,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":558
  *     def encode(self, buf):
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
- *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)             
+ *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)             # <<<<<<<<<<<<<<
  * 
  *     def decode(self, buf, out=None):
  */
@@ -6192,7 +6191,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":556
  *         self.blocksize = blocksize
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  */
@@ -6219,7 +6218,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_2encode(CYTHON_UNUSED PyObjec
 /* "numcodecs/blosc.pyx":560
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return decompress(buf, out)
  */
@@ -6317,7 +6316,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":561
  * 
  *     def decode(self, buf, out=None):
- *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)             
+ *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)             # <<<<<<<<<<<<<<
  *         return decompress(buf, out)
  * 
  */
@@ -6378,7 +6377,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_4decode(CYTHON_UNUSED PyObjec
   /* "numcodecs/blosc.pyx":562
  *     def decode(self, buf, out=None):
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
- *         return decompress(buf, out)             
+ *         return decompress(buf, out)             # <<<<<<<<<<<<<<
  * 
  *     def decode_partial(self, buf, int start, int nitems, out=None):
  */
@@ -6703,7 +6702,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_6decode_partial(CYTHON_UNUSED
 /* "numcodecs/blosc.pyx":569
  *         return decompress_partial(buf, start, nitems, dest=out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
  *             (type(self).__name__,
  */
@@ -6750,7 +6749,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":571
  *     def __repr__(self):
  *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
- *             (type(self).__name__,             
+ *             (type(self).__name__,             # <<<<<<<<<<<<<<
  *              self.cname,
  *              self.clevel,
  */
@@ -6772,7 +6771,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":572
  *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
  *             (type(self).__name__,
- *              self.cname,             
+ *              self.cname,             # <<<<<<<<<<<<<<
  *              self.clevel,
  *              _shuffle_repr[self.shuffle + 1],
  */
@@ -6794,7 +6793,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":573
  *             (type(self).__name__,
  *              self.cname,
- *              self.clevel,             
+ *              self.clevel,             # <<<<<<<<<<<<<<
  *              _shuffle_repr[self.shuffle + 1],
  *              self.blocksize)
  */
@@ -6816,7 +6815,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":574
  *              self.cname,
  *              self.clevel,
- *              _shuffle_repr[self.shuffle + 1],             
+ *              _shuffle_repr[self.shuffle + 1],             # <<<<<<<<<<<<<<
  *              self.blocksize)
  *         return r
  */
@@ -6847,7 +6846,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":575
  *              self.clevel,
  *              _shuffle_repr[self.shuffle + 1],
- *              self.blocksize)             
+ *              self.blocksize)             # <<<<<<<<<<<<<<
  *         return r
  */
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_blocksize); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 575, __pyx_L1_error)
@@ -6868,7 +6867,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":570
  * 
  *     def __repr__(self):
- *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \             
+ *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \             # <<<<<<<<<<<<<<
  *             (type(self).__name__,
  *              self.cname,
  */
@@ -6881,7 +6880,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":576
  *              _shuffle_repr[self.shuffle + 1],
  *              self.blocksize)
- *         return r             
+ *         return r             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_r);
@@ -6891,7 +6890,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_5Blosc_8__repr__(CYTHON_UNUSED PyObj
   /* "numcodecs/blosc.pyx":569
  *         return decompress_partial(buf, start, nitems, dest=out)
  * 
- *     def __repr__(self):             
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
  *             (type(self).__name__,
  */
@@ -7115,7 +7114,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":285
  *             # to ensure no-one else can modify the global context while we're setting it
  *             # up and using it.
- *             with mutex:             
+ *             with mutex:             # <<<<<<<<<<<<<<
  * 
  *                 # set compressor
  */
@@ -7126,7 +7125,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":87
  * 
  * 
- * def init():             
+ * def init():             # <<<<<<<<<<<<<<
  *     """Initialize the Blosc library environment."""
  *     blosc_init()
  */
@@ -7135,7 +7134,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":92
  * 
  * 
- * def destroy():             
+ * def destroy():             # <<<<<<<<<<<<<<
  *     """Destroy the Blosc library environment."""
  *     blosc_destroy()
  */
@@ -7144,7 +7143,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":97
  * 
  * 
- * def compname_to_compcode(cname):             
+ * def compname_to_compcode(cname):             # <<<<<<<<<<<<<<
  *     """Return the compressor code associated with the compressor name. If the compressor
  *     name is not recognized, or there is not support for it in this build, -1 is returned
  */
@@ -7156,7 +7155,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":106
  * 
  * 
- * def list_compressors():             
+ * def list_compressors():             # <<<<<<<<<<<<<<
  *     """Get a list of compressors supported in the current build."""
  *     s = blosc_list_compressors()
  */
@@ -7168,7 +7167,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":113
  * 
  * 
- * def get_nthreads():             
+ * def get_nthreads():             # <<<<<<<<<<<<<<
  *     """Get the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -7177,7 +7176,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":119
  * 
  * 
- * def set_nthreads(int nthreads):             
+ * def set_nthreads(int nthreads):             # <<<<<<<<<<<<<<
  *     """Set the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -7189,7 +7188,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":125
  * 
  * 
- * def cbuffer_sizes(source):             
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information about a compressed buffer, namely the number of uncompressed
  *     bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
  */
@@ -7201,7 +7200,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":153
  * 
  * 
- * def cbuffer_complib(source):             
+ * def cbuffer_complib(source):             # <<<<<<<<<<<<<<
  *     """Return the name of the compression library used to compress `source`."""
  *     cdef:
  */
@@ -7213,7 +7212,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":172
  * 
  * 
- * def cbuffer_metainfo(source):             
+ * def cbuffer_metainfo(source):             # <<<<<<<<<<<<<<
  *     """Return some meta-information about the compressed buffer in `source`, including
  *     the typesize, whether the shuffle or bit-shuffle filters were used, and the
  */
@@ -7225,7 +7224,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":210
  * 
  * 
- * def err_bad_cname(cname):             
+ * def err_bad_cname(cname):             # <<<<<<<<<<<<<<
  *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
  *                      '%s' % (cname, list_compressors()))
  */
@@ -7237,7 +7236,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":215
  * 
  * 
- * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             
+ * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             # <<<<<<<<<<<<<<
  *              int blocksize=AUTOBLOCKS):
  *     """Compress data.
  */
@@ -7249,7 +7248,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":323
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -7273,7 +7272,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":476
  * 
  * 
- * def _get_use_threads():             
+ * def _get_use_threads():             # <<<<<<<<<<<<<<
  *     global use_threads
  *     proc = multiprocessing.current_process()
  */
@@ -7285,7 +7284,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":546
  *     max_buffer_size = 2**31 - 1
  * 
- *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             
+ *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, str):
  */
@@ -7297,7 +7296,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":556
  *         self.blocksize = blocksize
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  */
@@ -7309,7 +7308,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "numcodecs/blosc.pyx":560
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return decompress(buf, out)
  */
@@ -7673,7 +7672,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":7
  * # cython: language_level=3
  * import threading
- * import multiprocessing             
+ * import multiprocessing             # <<<<<<<<<<<<<<
  * import os
  * 
  */
@@ -7685,7 +7684,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":8
  * import threading
  * import multiprocessing
- * import os             
+ * import os             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -7756,7 +7755,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":60
  * 
  * 
- * MAX_OVERHEAD = BLOSC_MAX_OVERHEAD             
+ * MAX_OVERHEAD = BLOSC_MAX_OVERHEAD             # <<<<<<<<<<<<<<
  * MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE
  * MAX_THREADS = BLOSC_MAX_THREADS
  */
@@ -7768,7 +7767,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":61
  * 
  * MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
- * MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE             
+ * MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE             # <<<<<<<<<<<<<<
  * MAX_THREADS = BLOSC_MAX_THREADS
  * MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
  */
@@ -7780,7 +7779,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":62
  * MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
  * MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE
- * MAX_THREADS = BLOSC_MAX_THREADS             
+ * MAX_THREADS = BLOSC_MAX_THREADS             # <<<<<<<<<<<<<<
  * MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
  * VERSION_STRING = <char *> BLOSC_VERSION_STRING
  */
@@ -7792,7 +7791,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":63
  * MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE
  * MAX_THREADS = BLOSC_MAX_THREADS
- * MAX_TYPESIZE = BLOSC_MAX_TYPESIZE             
+ * MAX_TYPESIZE = BLOSC_MAX_TYPESIZE             # <<<<<<<<<<<<<<
  * VERSION_STRING = <char *> BLOSC_VERSION_STRING
  * VERSION_DATE = <char *> BLOSC_VERSION_DATE
  */
@@ -7804,7 +7803,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":64
  * MAX_THREADS = BLOSC_MAX_THREADS
  * MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
- * VERSION_STRING = <char *> BLOSC_VERSION_STRING             
+ * VERSION_STRING = <char *> BLOSC_VERSION_STRING             # <<<<<<<<<<<<<<
  * VERSION_DATE = <char *> BLOSC_VERSION_DATE
  * VERSION_STRING = VERSION_STRING.decode()
  */
@@ -7876,7 +7875,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":69
  * VERSION_DATE = VERSION_DATE.decode()
  * __version__ = VERSION_STRING
- * NOSHUFFLE = BLOSC_NOSHUFFLE             
+ * NOSHUFFLE = BLOSC_NOSHUFFLE             # <<<<<<<<<<<<<<
  * SHUFFLE = BLOSC_SHUFFLE
  * BITSHUFFLE = BLOSC_BITSHUFFLE
  */
@@ -7888,7 +7887,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":70
  * __version__ = VERSION_STRING
  * NOSHUFFLE = BLOSC_NOSHUFFLE
- * SHUFFLE = BLOSC_SHUFFLE             
+ * SHUFFLE = BLOSC_SHUFFLE             # <<<<<<<<<<<<<<
  * BITSHUFFLE = BLOSC_BITSHUFFLE
  * # automatic shuffle
  */
@@ -7900,7 +7899,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":71
  * NOSHUFFLE = BLOSC_NOSHUFFLE
  * SHUFFLE = BLOSC_SHUFFLE
- * BITSHUFFLE = BLOSC_BITSHUFFLE             
+ * BITSHUFFLE = BLOSC_BITSHUFFLE             # <<<<<<<<<<<<<<
  * # automatic shuffle
  * AUTOSHUFFLE = -1
  */
@@ -7912,7 +7911,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":73
  * BITSHUFFLE = BLOSC_BITSHUFFLE
  * # automatic shuffle
- * AUTOSHUFFLE = -1             
+ * AUTOSHUFFLE = -1             # <<<<<<<<<<<<<<
  * # automatic block size - let blosc decide
  * AUTOBLOCKS = 0
  */
@@ -7921,7 +7920,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":75
  * AUTOSHUFFLE = -1
  * # automatic block size - let blosc decide
- * AUTOBLOCKS = 0             
+ * AUTOBLOCKS = 0             # <<<<<<<<<<<<<<
  * 
  * # synchronization
  */
@@ -7930,7 +7929,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":78
  * 
  * # synchronization
- * try:             
+ * try:             # <<<<<<<<<<<<<<
  *     mutex = multiprocessing.Lock()
  * except OSError:
  */
@@ -7946,7 +7945,7 @@ if (!__Pyx_RefNanny) {
       /* "numcodecs/blosc.pyx":79
  * # synchronization
  * try:
- *     mutex = multiprocessing.Lock()             
+ *     mutex = multiprocessing.Lock()             # <<<<<<<<<<<<<<
  * except OSError:
  *     mutex = None
  */
@@ -7964,7 +7963,7 @@ if (!__Pyx_RefNanny) {
       /* "numcodecs/blosc.pyx":78
  * 
  * # synchronization
- * try:             
+ * try:             # <<<<<<<<<<<<<<
  *     mutex = multiprocessing.Lock()
  * except OSError:
  */
@@ -7980,7 +7979,7 @@ if (!__Pyx_RefNanny) {
     /* "numcodecs/blosc.pyx":80
  * try:
  *     mutex = multiprocessing.Lock()
- * except OSError:             
+ * except OSError:             # <<<<<<<<<<<<<<
  *     mutex = None
  * 
  */
@@ -7995,7 +7994,7 @@ if (!__Pyx_RefNanny) {
       /* "numcodecs/blosc.pyx":81
  *     mutex = multiprocessing.Lock()
  * except OSError:
- *     mutex = None             
+ *     mutex = None             # <<<<<<<<<<<<<<
  * 
  * # store ID of process that first loads the module, so we can detect a fork later
  */
@@ -8011,7 +8010,7 @@ if (!__Pyx_RefNanny) {
     /* "numcodecs/blosc.pyx":78
  * 
  * # synchronization
- * try:             
+ * try:             # <<<<<<<<<<<<<<
  *     mutex = multiprocessing.Lock()
  * except OSError:
  */
@@ -8031,7 +8030,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":84
  * 
  * # store ID of process that first loads the module, so we can detect a fork later
- * _importer_pid = os.getpid()             
+ * _importer_pid = os.getpid()             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -8049,7 +8048,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":87
  * 
  * 
- * def init():             
+ * def init():             # <<<<<<<<<<<<<<
  *     """Initialize the Blosc library environment."""
  *     blosc_init()
  */
@@ -8061,7 +8060,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":92
  * 
  * 
- * def destroy():             
+ * def destroy():             # <<<<<<<<<<<<<<
  *     """Destroy the Blosc library environment."""
  *     blosc_destroy()
  */
@@ -8073,7 +8072,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":97
  * 
  * 
- * def compname_to_compcode(cname):             
+ * def compname_to_compcode(cname):             # <<<<<<<<<<<<<<
  *     """Return the compressor code associated with the compressor name. If the compressor
  *     name is not recognized, or there is not support for it in this build, -1 is returned
  */
@@ -8085,7 +8084,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":106
  * 
  * 
- * def list_compressors():             
+ * def list_compressors():             # <<<<<<<<<<<<<<
  *     """Get a list of compressors supported in the current build."""
  *     s = blosc_list_compressors()
  */
@@ -8097,7 +8096,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":113
  * 
  * 
- * def get_nthreads():             
+ * def get_nthreads():             # <<<<<<<<<<<<<<
  *     """Get the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -8109,7 +8108,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":119
  * 
  * 
- * def set_nthreads(int nthreads):             
+ * def set_nthreads(int nthreads):             # <<<<<<<<<<<<<<
  *     """Set the number of threads that Blosc uses internally for compression and
  *     decompression."""
  */
@@ -8121,7 +8120,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":125
  * 
  * 
- * def cbuffer_sizes(source):             
+ * def cbuffer_sizes(source):             # <<<<<<<<<<<<<<
  *     """Return information about a compressed buffer, namely the number of uncompressed
  *     bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
  */
@@ -8133,7 +8132,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":153
  * 
  * 
- * def cbuffer_complib(source):             
+ * def cbuffer_complib(source):             # <<<<<<<<<<<<<<
  *     """Return the name of the compression library used to compress `source`."""
  *     cdef:
  */
@@ -8145,7 +8144,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":172
  * 
  * 
- * def cbuffer_metainfo(source):             
+ * def cbuffer_metainfo(source):             # <<<<<<<<<<<<<<
  *     """Return some meta-information about the compressed buffer in `source`, including
  *     the typesize, whether the shuffle or bit-shuffle filters were used, and the
  */
@@ -8157,7 +8156,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":210
  * 
  * 
- * def err_bad_cname(cname):             
+ * def err_bad_cname(cname):             # <<<<<<<<<<<<<<
  *     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
  *                      '%s' % (cname, list_compressors()))
  */
@@ -8169,7 +8168,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":215
  * 
  * 
- * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             
+ * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             # <<<<<<<<<<<<<<
  *              int blocksize=AUTOBLOCKS):
  *     """Compress data.
  */
@@ -8182,7 +8181,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":216
  * 
  * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
- *              int blocksize=AUTOBLOCKS):             
+ *              int blocksize=AUTOBLOCKS):             # <<<<<<<<<<<<<<
  *     """Compress data.
  * 
  */
@@ -8195,7 +8194,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":215
  * 
  * 
- * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             
+ * def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,             # <<<<<<<<<<<<<<
  *              int blocksize=AUTOBLOCKS):
  *     """Compress data.
  */
@@ -8207,7 +8206,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":323
  * 
  * 
- * def decompress(source, dest=None):             
+ * def decompress(source, dest=None):             # <<<<<<<<<<<<<<
  *     """Decompress data.
  * 
  */
@@ -8231,7 +8230,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":473
  * # set the value of this variable to True or False to override the
  * # default adaptive behaviour
- * use_threads = None             
+ * use_threads = None             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -8240,7 +8239,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":476
  * 
  * 
- * def _get_use_threads():             
+ * def _get_use_threads():             # <<<<<<<<<<<<<<
  *     global use_threads
  *     proc = multiprocessing.current_process()
  */
@@ -8252,7 +8251,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":512
  * 
  * 
- * _shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']             
+ * _shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -8276,7 +8275,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":515
  * 
  * 
- * class Blosc(Codec):             
+ * class Blosc(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using the Blosc meta-compressor.
  * 
  */
@@ -8295,7 +8294,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":539
  *     """
  * 
- *     codec_id = 'blosc'             
+ *     codec_id = 'blosc'             # <<<<<<<<<<<<<<
  *     NOSHUFFLE = NOSHUFFLE
  *     SHUFFLE = SHUFFLE
  */
@@ -8304,7 +8303,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":540
  * 
  *     codec_id = 'blosc'
- *     NOSHUFFLE = NOSHUFFLE             
+ *     NOSHUFFLE = NOSHUFFLE             # <<<<<<<<<<<<<<
  *     SHUFFLE = SHUFFLE
  *     BITSHUFFLE = BITSHUFFLE
  */
@@ -8317,7 +8316,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":541
  *     codec_id = 'blosc'
  *     NOSHUFFLE = NOSHUFFLE
- *     SHUFFLE = SHUFFLE             
+ *     SHUFFLE = SHUFFLE             # <<<<<<<<<<<<<<
  *     BITSHUFFLE = BITSHUFFLE
  *     AUTOSHUFFLE = AUTOSHUFFLE
  */
@@ -8330,7 +8329,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":542
  *     NOSHUFFLE = NOSHUFFLE
  *     SHUFFLE = SHUFFLE
- *     BITSHUFFLE = BITSHUFFLE             
+ *     BITSHUFFLE = BITSHUFFLE             # <<<<<<<<<<<<<<
  *     AUTOSHUFFLE = AUTOSHUFFLE
  *     max_buffer_size = 2**31 - 1
  */
@@ -8343,7 +8342,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":543
  *     SHUFFLE = SHUFFLE
  *     BITSHUFFLE = BITSHUFFLE
- *     AUTOSHUFFLE = AUTOSHUFFLE             
+ *     AUTOSHUFFLE = AUTOSHUFFLE             # <<<<<<<<<<<<<<
  *     max_buffer_size = 2**31 - 1
  * 
  */
@@ -8356,7 +8355,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":544
  *     BITSHUFFLE = BITSHUFFLE
  *     AUTOSHUFFLE = AUTOSHUFFLE
- *     max_buffer_size = 2**31 - 1             
+ *     max_buffer_size = 2**31 - 1             # <<<<<<<<<<<<<<
  * 
  *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
  */
@@ -8365,7 +8364,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":546
  *     max_buffer_size = 2**31 - 1
  * 
- *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             
+ *     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):             # <<<<<<<<<<<<<<
  *         self.cname = cname
  *         if isinstance(cname, str):
  */
@@ -8394,7 +8393,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":556
  *         self.blocksize = blocksize
  * 
- *     def encode(self, buf):             
+ *     def encode(self, buf):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  */
@@ -8406,7 +8405,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":560
  *         return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
  * 
- *     def decode(self, buf, out=None):             
+ *     def decode(self, buf, out=None):             # <<<<<<<<<<<<<<
  *         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
  *         return decompress(buf, out)
  */
@@ -8444,7 +8443,7 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/blosc.pyx":515
  * 
  * 
- * class Blosc(Codec):             
+ * class Blosc(Codec):             # <<<<<<<<<<<<<<
  *     """Codec providing compression using the Blosc meta-compressor.
  * 
  */
