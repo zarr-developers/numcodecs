@@ -38,7 +38,7 @@ To disable compilation with AVX2 support regardless of the machine
 architecture::
 
     $ export DISABLE_NUMCODECS_AVX2=
-    $ pip install -v --no-cache-dir --no-binary :all: numcodecs
+    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs
 
 To work with Numcodecs source code in development, install from GitHub::
 
