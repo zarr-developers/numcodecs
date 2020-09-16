@@ -305,10 +305,8 @@ Tag the version (where "X.X.X" stands for the version number, e.g., "2.2.0")::
     $ git tag -a v$version -m v$version
     $ git push --tags
 
-Release source code to PyPI::
-
-    $ python setup.py register sdist
-    $ twine upload dist/numcodecs-${version}.tar.gz
+This will trigger a GitHub Action which will build the source
+distribution as well as wheels for all major platforms.
 
 Obtain checksum for release to conda-forge::
 
