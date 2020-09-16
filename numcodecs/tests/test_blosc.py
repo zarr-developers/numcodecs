@@ -6,8 +6,15 @@ import numpy as np
 import pytest
 
 
-from numcodecs import blosc
-from numcodecs.blosc import Blosc
+try:
+    from numcodecs import blosc
+    from numcodecs.blosc import Blosc
+except ImportError:  # pragma: no cover
+    pytest.skip(
+        "numcodecs.blosc not available", allow_module_level=True
+    )
+
+
 from numcodecs.tests.common import (check_encode_decode,
                                     check_encode_decode_partial,
                                     check_config,

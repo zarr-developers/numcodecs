@@ -1,12 +1,29 @@
 Release notes
 =============
 
+
 Upcoming Release
 ----------------
 
 * The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
   `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
   
+
+.. _release_0.7.2:
+
+0.7.2
+-----
+
+* Disable avx2 for wheel.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`253`.
+
+* Add Base64 fixtures.
+  By :user:`John Kirkham <jakirkham>`, :issue:`251`.
+
+* Update docs regarding wheels.
+  By :user:`Josh Moore <joshmoore>`, :issue:`250`.
+
+
 .. _release_0.7.1:
 
 0.7.1
