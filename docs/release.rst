@@ -1,6 +1,20 @@
 Release notes
 =============
 
+.. _release_0.7.2:
+
+0.7.2
+-----
+
+* Disable avx2 for wheel.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`253`.
+
+* Add Base64 fixtures.
+  By :user:`John Kirkham <jakirkham>`, :issue:`251`.
+
+* Update docs regarding wheels.
+  By :user:`Josh Moore <joshmoore>`, :issue:`250`.
+
 .. _release_0.7.1:
 
 0.7.1
