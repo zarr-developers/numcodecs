@@ -4,6 +4,10 @@
 {
     "distutils": {
         "depends": [],
+        "extra_compile_args": [
+            "-msse2",
+            "-mavx2"
+        ],
         "name": "numcodecs.compat_ext",
         "sources": [
             "numcodecs/compat_ext.pyx"
