@@ -1,7 +1,6 @@
 from glob import glob
 import os
 from setuptools import setup, Extension
-import cpuinfo
 import sys
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
@@ -14,9 +13,15 @@ except ImportError:
 else:
     have_cython = True
 
-# determine CPU support for SSE2 and AVX2
-cpu_info = cpuinfo.get_cpu_info()
-flags = cpu_info.get('flags', [])
+try:
+    # determine CPU support for SSE2 and AVX2
+    import cpuinfo
+    cpu_info = cpuinfo.get_cpu_info()
+    flags = cpu_info.get('flags', [])
+except Exception:
+    # cpuinfo not available or des not support the architecture/os
+    flags = []
+
 have_sse2 = 'sse2' in flags
 have_avx2 = 'avx2' in flags
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
