@@ -77,9 +77,10 @@ def blosc_extension():
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*')
                      if os.path.isdir(d)]
     define_macros += [('HAVE_LZ4', 1),
-                      ('HAVE_SNAPPY', 1),
                       ('HAVE_ZLIB', 1),
-                      ('HAVE_ZSTD', 1)]
+                      ('HAVE_ZSTD', 1),
+                      ('DEACTIVATE_SNAPPY', 1),
+                      ]
     # define_macros += [('CYTHON_TRACE', '1')]
 
     # SSE2
