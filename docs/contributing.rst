@@ -145,9 +145,9 @@ To also run the doctests within docstrings, run::
 Tests can be run under different Python versions using tox. E.g. (assuming you have the
 corresponding Python interpreters installed on your system)::
 
-    $ tox -e py27,py35,py36,py37,py38
+    $ tox -e py35,py36,py37,py38
 
-NumCodecs currently supports Python 2.7 and Python 3.5-3.8, so the above command must
+NumCodecs currently supports Python 3.5-3.8, so the above command must
 succeed before code can be accepted into the main code base. Note that only the py38
 tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.8.
 
@@ -305,10 +305,8 @@ Tag the version (where "X.X.X" stands for the version number, e.g., "2.2.0")::
     $ git tag -a v$version -m v$version
     $ git push --tags
 
-Release source code to PyPI::
-
-    $ python setup.py register sdist
-    $ twine upload dist/numcodecs-${version}.tar.gz
+This will trigger a GitHub Action which will build the source
+distribution as well as wheels for all major platforms.
 
 Obtain checksum for release to conda-forge::
 

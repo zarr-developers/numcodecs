@@ -1,30 +1,10 @@
-# -*- coding: utf-8 -*-
 # flake8: noqa
-from __future__ import absolute_import, print_function, division
 import sys
 import codecs
 import array
-
+from functools import reduce
 
 import numpy as np
-
-
-PY2 = sys.version_info[0] == 2
-
-
-if PY2:  # pragma: py3 no cover
-
-    text_type = unicode
-    binary_type = str
-    integer_types = (int, long)
-    reduce = reduce
-
-else:  # pragma: py2 no cover
-
-    text_type = str
-    binary_type = bytes
-    integer_types = int,
-    from functools import reduce
 
 
 def ensure_ndarray(buf):
@@ -62,24 +42,10 @@ def ensure_ndarray(buf):
 
         # N.B., first take a memoryview to make sure that we subsequently create a
         # numpy array from a memory buffer with no copy
-
-        if PY2:  # pragma: py3 no cover
-            try:
-                mem = memoryview(buf)
-            except TypeError:
-                # on PY2 also check if object exports old-style buffer interface
-                mem = np.getbuffer(buf)
-
-        else:  # pragma: py2 no cover
-            mem = memoryview(buf)
+        mem = memoryview(buf)
 
         # instantiate array from memoryview, ensures no copy
         arr = np.array(mem, copy=False)
-
-        if PY2 and isinstance(buf, array.array):  # pragma: py3 no cover
-            # type information will not have been propagated via the old-style buffer
-            # interface, so we have to manually hack it back in after the fact
-            arr = arr.view(buf.typecode)
 
     return arr
 
@@ -141,7 +107,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
 def ensure_bytes(buf):
     """Obtain a bytes object from memory exposed by `buf`."""
 
-    if not isinstance(buf, binary_type):
+    if not isinstance(buf, bytes):
 
         # go via numpy, for convenience
         arr = ensure_ndarray(buf)
@@ -158,7 +124,7 @@ def ensure_bytes(buf):
 
 
 def ensure_text(s, encoding='utf-8'):
-    if not isinstance(s, text_type):
+    if not isinstance(s, str):
         s = ensure_contiguous_ndarray(s)
 
         try:

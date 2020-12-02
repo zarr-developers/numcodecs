@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
-
 _lzma = None
 try:
     import lzma as _lzma
@@ -20,7 +16,7 @@ if _lzma:
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
         """Codec providing compression using lzma via the Python standard
-        library (available on Python 3 and Python 2 with ``backports.lzma``).
+        library.
 
         Parameters
         ----------

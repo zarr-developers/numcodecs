@@ -24,7 +24,9 @@ Alternatively, install via conda::
     $ conda install -c conda-forge numcodecs
 
 Numcodecs includes a C extension providing integration with the Blosc_
-library. Installing via conda will install a pre-compiled binary distribution.
+library. Wheels are available for most platforms.
+
+Installing a wheel or via conda will install a pre-compiled binary distribution.
 However, if you have a newer CPU that supports the AVX2 instruction set (e.g.,
 Intel Haswell, Broadwell or Skylake) then installing via pip is preferable,
 because this will compile the Blosc library from source with optimisations
@@ -36,7 +38,7 @@ To disable compilation with AVX2 support regardless of the machine
 architecture::
 
     $ export DISABLE_NUMCODECS_AVX2=
-    $ pip install -v --no-cache-dir numcodecs
+    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs
 
 To work with Numcodecs source code in development, install from GitHub::
 
@@ -91,6 +93,9 @@ documentation, code reviews, comments and/or ideas:
 * :user:`John Kirkham <jakirkham>`
 * :user:`Alistair Miles <alimanfoo>`
 * :user:`Jeff Reback <jreback>`
+* :user:`Trevor Manz <manzt>`
+* :user:`Grzegorz Bokota <Czaki>`
+* :user:`Josh Moore <joshmoore>`
 
 Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_ library.
 

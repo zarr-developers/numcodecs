@@ -1,6 +1,54 @@
 Release notes
 =============
 
+.. _release_0.7.2:
+
+0.7.2
+-----
+
+* Disable avx2 for wheel.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`253`.
+
+* Add Base64 fixtures.
+  By :user:`John Kirkham <jakirkham>`, :issue:`251`.
+
+* Update docs regarding wheels.
+  By :user:`Josh Moore <joshmoore>`, :issue:`250`.
+
+.. _release_0.7.1:
+
+0.7.1
+-----
+
+* Fix build of wheels.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`244`.
+
+.. _release_0.7.0:
+
+0.7.0
+-----
+
+* Automatically release to PyPI.
+  By :user:`Josh Moore <joshmoore>`, :issue:`241`.
+
+* Build wheels on github actions.
+  By :user:`Grzegorz Bokota <Czaki>`, :issue:`224`.
+
+* Add Base64 codec.
+  By :user:`Trevor Manz <manzt>`, :issue:`176`.
+
+* Add partial decompression of Blosc compressed arrays.
+  By :user:`Andrew Fulton <andrewfulton9>`, :issue:`235`.
+
+* Remove LegacyJSON codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`226`.
+
+* Remove LegacyMsgPack codec.
+  By :user:`James Bourbeau  <jrbourbeau>`, :issue:`218`.
+
+* Drop support for Python 2.
+  By :user:`James Bourbeau <jrbourbeau>`, :issue:`220`.
+
 
 .. _release_0.6.4:
 

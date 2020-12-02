@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import unittest
 
 
@@ -7,7 +5,6 @@ import numpy as np
 import pytest
 
 
-from numcodecs.compat import PY2
 try:
     from numcodecs.vlen import VLenUTF8
 except ImportError:  # pragma: no cover
@@ -18,9 +15,9 @@ from numcodecs.tests.common import (check_config, check_repr, check_encode_decod
 
 
 arrays = [
-    np.array([u'foo', u'bar', u'baz'] * 300, dtype=object),
+    np.array(['foo', 'bar', 'baz'] * 300, dtype=object),
     np.array(greetings * 100, dtype=object),
-    np.array([u'foo', u'bar', u'baz'] * 300, dtype=object).reshape(90, 10),
+    np.array(['foo', 'bar', 'baz'] * 300, dtype=object).reshape(90, 10),
     np.array(greetings * 1000, dtype=object).reshape(len(greetings), 100, 10, order='F'),
 ]
 
@@ -65,16 +62,15 @@ def test_decode_errors():
         codec.decode(np.arange(2, 3, dtype='i4'))
     with pytest.raises(ValueError):
         codec.decode(np.arange(10, 20, dtype='i4'))
-    with pytest.raises(ValueError if PY2 else TypeError):
-        # exports old-style buffer interface on PY2, hence ValueError
-        codec.decode(u'foo')
+    with pytest.raises(TypeError):
+        codec.decode('foo')
 
     # test out parameter
     enc = codec.encode(arrays[0])
     with pytest.raises(TypeError):
         codec.decode(enc, out=b'foo')
     with pytest.raises(TypeError):
-        codec.decode(enc, out=u'foo')
+        codec.decode(enc, out='foo')
     with pytest.raises(TypeError):
         codec.decode(enc, out=123)
     with pytest.raises(ValueError):
@@ -82,9 +78,9 @@ def test_decode_errors():
 
 
 def test_encode_utf8():
-    a = np.array([u'foo', None, u'bar'], dtype=object)
+    a = np.array(['foo', None, 'bar'], dtype=object)
     codec = VLenUTF8()
     enc = codec.encode(a)
     dec = codec.decode(enc)
-    expect = np.array([u'foo', u'', u'bar'], dtype=object)
+    expect = np.array(['foo', '', 'bar'], dtype=object)
     assert_array_items_equal(expect, dec)

@@ -1,12 +1,18 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import itertools
 
 
 import numpy as np
+import pytest
 
 
-from numcodecs.zstd import Zstd
+try:
+    from numcodecs.zstd import Zstd
+except ImportError:  # pragma: no cover
+    pytest.skip(
+        "numcodecs.zstd not available", allow_module_level=True
+    )
+
+
 from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
                                     check_backwards_compatibility,
                                     check_err_decode_object_buffer,

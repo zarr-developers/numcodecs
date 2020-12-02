@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
-
-from __future__ import absolute_import, print_function, division
 
 
 codec_registry = dict()

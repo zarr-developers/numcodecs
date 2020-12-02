@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
-
 import numpy as np
 
 from .abc import Codec
@@ -79,7 +76,7 @@ class AsType(Codec):
 
     def __repr__(self):
         return (
-            '%s(encode_dtype=%r, decode_dtype=%r)' % (
+            '{}(encode_dtype={!r}, decode_dtype={!r})'.format(
                 type(self).__name__,
                 self.encode_dtype.str,
                 self.decode_dtype.str

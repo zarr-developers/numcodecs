@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # cython: embedsignature=True
 # cython: profile=False
 # cython: linetrace=False
 # cython: binding=False
-# cython: language_level=2
-from __future__ import absolute_import, print_function, division
+# cython: language_level=3
 import threading
 import multiprocessing
 import os
@@ -16,7 +14,7 @@ from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
-from .compat import PY2, text_type, ensure_contiguous_ndarray
+from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 
@@ -45,6 +43,7 @@ cdef extern from "blosc.h":
     int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                        void* src, void* dest, size_t destsize) nogil
     int blosc_decompress(void *src, void *dest, size_t destsize) nogil
+    int blosc_getitem(void* src, int start, int nitems, void* dest)
     int blosc_compname_to_compcode(const char* compname)
     int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                            const void* src, void* dest, size_t destsize,
@@ -64,9 +63,8 @@ MAX_THREADS = BLOSC_MAX_THREADS
 MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
 VERSION_STRING = <char *> BLOSC_VERSION_STRING
 VERSION_DATE = <char *> BLOSC_VERSION_DATE
-if not PY2:
-    VERSION_STRING = VERSION_STRING.decode()
-    VERSION_DATE = VERSION_DATE.decode()
+VERSION_STRING = VERSION_STRING.decode()
+VERSION_DATE = VERSION_DATE.decode()
 __version__ = VERSION_STRING
 NOSHUFFLE = BLOSC_NOSHUFFLE
 SHUFFLE = BLOSC_SHUFFLE
@@ -100,7 +98,7 @@ def compname_to_compcode(cname):
     """Return the compressor code associated with the compressor name. If the compressor
     name is not recognized, or there is not support for it in this build, -1 is returned
     instead."""
-    if isinstance(cname, text_type):
+    if isinstance(cname, str):
         cname = cname.encode('ascii')
     return blosc_compname_to_compcode(cname)
 
@@ -108,8 +106,7 @@ def compname_to_compcode(cname):
 def list_compressors():
     """Get a list of compressors supported in the current build."""
     s = blosc_list_compressors()
-    if not PY2:
-        s = s.decode('ascii')
+    s = s.decode('ascii')
     return s.split(',')
 
 
@@ -167,8 +164,7 @@ def cbuffer_complib(source):
     # release buffers
     buffer.release()
 
-    if not PY2:
-        complib = complib.decode('ascii')
+    complib = complib.decode('ascii')
 
     return complib
 
@@ -253,10 +249,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         bytes dest
 
     # check valid cname early
-    if PY2:
-        cname_str = cname
-    else:
-        cname_str = cname.decode('ascii')
+    cname_str = cname.decode('ascii')
     if cname_str not in list_compressors():
         err_bad_cname(cname_str)
 
@@ -401,6 +394,80 @@ def decompress(source, dest=None):
     return dest
 
 
+def decompress_partial(source, start, nitems, dest=None):
+    """**Experimental**
+    Decompress data of only a part of a buffer.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Compressed data, including blosc header. Can be any object supporting the buffer
+        protocol.
+    start: int,
+        Offset in item where we want to start decoding
+    nitems: int
+        Number of items we want to decode
+    dest : array-like, optional
+        Object to decompress into.
+
+
+    Returns
+    -------
+    dest : bytes
+        Object containing decompressed data.
+
+    """
+    cdef:
+        int ret
+        int encoding_size
+        int nitems_bytes 
+        int start_bytes
+        char *source_ptr
+        char *dest_ptr
+        Buffer source_buffer
+        Buffer dest_buffer = None
+
+    # setup source buffer
+    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
+    source_ptr = source_buffer.ptr
+
+    # get encoding size from source buffer header
+    encoding_size = source[3]
+
+    # convert varibles to handle type and encoding sizes
+    nitems_bytes = nitems * encoding_size
+    start_bytes = (start * encoding_size)
+
+    # setup destination buffer
+    if dest is None:
+        dest = PyBytes_FromStringAndSize(NULL, nitems_bytes)
+        dest_ptr = PyBytes_AS_STRING(dest)
+        dest_nbytes = nitems_bytes
+    else:
+        arr = ensure_contiguous_ndarray(dest)
+        dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
+        dest_ptr = dest_buffer.ptr
+        dest_nbytes = dest_buffer.nbytes
+
+    # try decompression
+    try:
+        if dest_nbytes < nitems_bytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (nitems_bytes, dest_nbytes))
+        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
+
+    finally:
+        source_buffer.release()
+        if dest_buffer is not None:
+            dest_buffer.release()
+
+    # ret refers to the number of bytes returned from blosc_getitem. 
+    if ret <= 0:
+        raise RuntimeError('error during blosc partial decompression: %d', ret)
+
+    return dest
+        
+
 # set the value of this variable to True or False to override the
 # default adaptive behaviour
 use_threads = None
@@ -478,7 +545,7 @@ class Blosc(Codec):
 
     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
         self.cname = cname
-        if isinstance(cname, text_type):
+        if isinstance(cname, str):
             self._cname_bytes = cname.encode('ascii')
         else:
             self._cname_bytes = cname
@@ -493,6 +560,11 @@ class Blosc(Codec):
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
+
+    def decode_partial(self, buf, int start, int nitems, out=None):
+        '''**Experimental**'''
+        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
+        return decompress_partial(buf, start, nitems, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
