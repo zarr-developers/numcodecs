@@ -1,6 +1,11 @@
 Release notes
 =============
 
+* Remove support for Python 3.5 which is end of life. While the code base might
+  still be compatible; the source dist and wheel are marked as Python 3.6+ and
+  pip will not install them. Continuous integration on Python 3.5 has been
+  disabled.
+
 .. _release_0.7.2:
 
 0.7.2
