@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, windows-latest, macos-latest]
+        os: [ubuntu-18.04, ubuntu-20.04, windows-latest, macos-latest]
     env:
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
