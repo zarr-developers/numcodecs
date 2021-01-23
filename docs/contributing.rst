@@ -145,9 +145,9 @@ To also run the doctests within docstrings, run::
 Tests can be run under different Python versions using tox. E.g. (assuming you have the
 corresponding Python interpreters installed on your system)::
 
-    $ tox -e py35,py36,py37,py38,py39
+    $ tox -e py36,py37,py38,py39
 
-NumCodecs currently supports Python 3.5-3.9, so the above command must
+NumCodecs currently supports Python 6-3.9, so the above command must
 succeed before code can be accepted into the main code base. Note that only the py39
 tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.9.
 
