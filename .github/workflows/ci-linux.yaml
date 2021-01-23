@@ -39,4 +39,4 @@ jobs:
         run: |
           pip install -r requirements_rtfd.txt
           cd docs
-          sphinx-build -W -b html
+          sphinx-build -W -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
