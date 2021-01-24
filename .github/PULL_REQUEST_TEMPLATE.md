@@ -7,5 +7,5 @@ TODO:
 - [ ] Docstrings and API docs for any new/modified user-facing classes and functions
 - [ ] Changes documented in docs/release.rst
 - [ ] `tox -e docs` passes locally
-- [ ] AppVeyor and Travis CI passes
+- [ ] GitHub Actions CI passes
 - [ ] Test coverage to 100% (Coveralls passes)
