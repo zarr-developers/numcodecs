@@ -23,13 +23,16 @@ jobs:
             python-version: ${{ matrix.python-version }}
         env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-      - name: Install numcodecs
+
+      - name: Set up env
         shell: "bash -l {0}"
         run: |
-          conda create -n env python==${{matrix.python-version}} wheel cython numpy msgpack-python pytest wheel pip compilers
+          conda create -n env python==${{matrix.python-version}} wheel pip compilers
           conda activate env
           which pip
+          pip install -r requirements_test.txt -r requirements.txt
           conda env export
+
       - name: Install numcodecs
         shell: "bash -l {0}"
         run: |
