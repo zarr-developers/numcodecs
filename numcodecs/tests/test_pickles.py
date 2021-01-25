@@ -49,7 +49,10 @@ def test_repr():
     sys.byteorder != "little", reason="Pickle does not restore byte orders"
 )
 @pytest.mark.xfail(
-    sys.platform == "win32", reason="Pickle fails to read w/ Windows carriage return"
+    sys.platform == "win32", reason=(
+        "Pickle fails to read w/ Windows carriage return "
+        "( https://github.com/zarr-developers/numcodecs/issues/271 )"
+    )
 )
 def test_backwards_compatibility():
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)
