@@ -1,10 +1,19 @@
 Release notes
 =============
 
+.. _release_0.7.3:
+
+0.7.3
+-----
+
+* Add support for Python 3.9 and Update GitHub Actions.
+  By :user:`Jackson Maxfield <JacksonMaxfield>`, :issue:`270`.
+
 * Remove support for Python 3.5 which is end of life. While the code base might
   still be compatible; the source dist and wheel are marked as Python 3.6+ and
   pip will not install them. Continuous integration on Python 3.5 has been
   disabled.
+  By :user:`Matthias Bussonnier <Carreau>`, :issue:`266` and :issue:`267`.
 
 .. _release_0.7.2:
 
