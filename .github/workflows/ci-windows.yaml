@@ -1,10 +1,10 @@
-name: OSX CI
+name: Windows CI
 
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
@@ -45,4 +45,3 @@ jobs:
         run: |
           conda activate env
           pytest -v --pyargs numcodecs
-

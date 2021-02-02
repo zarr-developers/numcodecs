@@ -1,4 +1,5 @@
-Cython==0.29.6
-msgpack==0.6.1
-numpy==1.16.2
+Cython==0.29.21
+msgpack==1.0.2
+numpy==1.19.0
 zfpy==0.5.5
+
