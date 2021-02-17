@@ -1,5 +1,5 @@
 
-# The _doShuffle and _doUnshuffle functions have been lifted from HSDS which 
+# The _doShuffle and _doUnshuffle functions have been lifted from HSDS which
 # includes the following notice:
 ##############################################################################
 # Copyright by The HDF Group.                                                #
@@ -18,6 +18,7 @@ import numpy as np
 from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
 from .abc import Codec
 
+
 @jit(nopython=True)
 def _doShuffle(src, des, element_size):
     count = len(src) // element_size
@@ -28,6 +29,7 @@ def _doShuffle(src, des, element_size):
             j = byte_index*count + i
             des[j] = e[byte_index]
     return des
+
 
 @jit(nopython=True)
 def _doUnshuffle(src, des, element_size):
@@ -40,9 +42,10 @@ def _doUnshuffle(src, des, element_size):
             des[j] = e[byte_index]
     return des
 
+
 def _shuffle(element_size, buf):
     if element_size <= 1:
-        return  buf # no shuffling needed
+        return buf  # no shuffling needed
 
     buf_size = buf.nbytes
     if buf_size % element_size != 0:
@@ -53,9 +56,10 @@ def _shuffle(element_size, buf):
 
     return ensure_ndarray(arr)
 
+
 def _unshuffle(element_size, buf):
     if element_size <= 1:
-        return  buf # no shuffling needed
+        return buf  # no shuffling needed
 
     buf_size = buf.nbytes
     if buf_size % element_size != 0:

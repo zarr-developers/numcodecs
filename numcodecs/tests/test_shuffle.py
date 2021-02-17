@@ -16,10 +16,6 @@ except ImportError:  # pragma: no cover
 
 from numcodecs.tests.common import (check_encode_decode,
                                     check_config)
-                                    # check_backwards_compatibility,
-                                    # check_err_decode_object_buffer,
-                                    # check_err_encode_object_buffer,
-                                    # check_max_buffer_size)
 
 
 codecs = [
@@ -48,6 +44,7 @@ arrays = [
     np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[m]'),
     np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
+
 
 @pytest.mark.parametrize('array', arrays)
 @pytest.mark.parametrize('codec', codecs)
@@ -101,7 +98,6 @@ def test_multiprocessing(pool):
 
     pool = pool(5)
 
-
     # test with process pool and thread pool
 
     # test encoding
@@ -133,7 +129,7 @@ def test_multiprocessing(pool):
 
 
 def test_incompatible_elementsize():
-    with pytest.raises(ValueError) as e_info:
-       arr=np.arange(1001, dtype='u1') 
-       codec=Shuffle(elementsize=4)
-       enc=codec.encode(arr)
+    with pytest.raises(ValueError):
+        arr = np.arange(1001, dtype='u1')
+        codec = Shuffle(elementsize=4)
+        codec.encode(arr)
