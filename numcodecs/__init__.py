@@ -113,3 +113,6 @@ try:
     register_codec(VLenArray)
 except ImportError:  # pragma: no cover
     pass
+
+from numcodecs.shuffle import Shuffle
+register_codec(Shuffle)
