@@ -167,7 +167,7 @@ class Blosc(Codec):
         finally:
             blosc.set_blocksize(old)
 
-    def decode(self, buf): # FIXME , out=None):
+    def decode(self, buf):  # FIXME , out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return blosc.decompress(buf)
 
@@ -176,7 +176,6 @@ class Blosc(Codec):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         # return blosc.decompress_partial(buf, start, nitems, dest=out)
         raise Exception("FIXME")
-
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
@@ -187,8 +186,9 @@ class Blosc(Codec):
              self.blocksize)
         return r
 
-def compress(source, cname, clevel: int, shuffle:int = Blosc.SHUFFLE,
-             blocksize:int = AUTOBLOCKS):
+
+def compress(source, cname, clevel: int, shuffle: int = Blosc.SHUFFLE,
+             blocksize: int = AUTOBLOCKS):
     """Compress data.
 
     Parameters
@@ -233,16 +233,17 @@ def compress(source, cname, clevel: int, shuffle:int = Blosc.SHUFFLE,
         blosc.set_blocksize(old)
 
 
-
 # FIXME: Mirroring methods. To be better defined and possibly deprecated
 
 def cbuffer_sizes(*args, **kwargs):
     return blosc.get_cbuffer_sizes(*args, **kwargs)
 
+
 def cbuffer_complib(enc):
     return blosc.get_clib(enc)
 
+
 # FIXME
-#def cbuffer_metainfo(enc):
+# def cbuffer_metainfo(enc):
 #    from blosc import blosc_extension as _ext
 #    return _ext.cbuffer_metainfo(enc)
