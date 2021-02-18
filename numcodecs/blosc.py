@@ -243,7 +243,19 @@ def cbuffer_complib(enc):
     return blosc.get_clib(enc)
 
 
-# FIXME
-# def cbuffer_metainfo(enc):
-#    from blosc import blosc_extension as _ext
-#    return _ext.cbuffer_metainfo(enc)
+def set_nthreads(*args, **kwargs):
+    blosc.set_nthreads(*args, **kwargs)
+
+
+def cbuffer_metainfo(enc):
+    # from blosc import blosc_extension as _ext
+    # return _ext.cbuffer_metainfo(enc)
+    raise Exception("FIXME")
+
+
+def decompress(*args, **kwargs):
+    return blosc.decompress(*args, **kwargs)
+
+
+def decompress_partial(*args, **kwargs):
+    raise Exception("FIXME")
