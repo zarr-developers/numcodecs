@@ -50,9 +50,7 @@ def compname_to_compcode(cname):
 
 def list_compressors():
     """Get a list of compressors supported in the current build."""
-    s = blosc_list_compressors()
-    s = s.decode('ascii')
-    return s.split(',')
+    return blosc.compressor_list()
 
 
 def get_nthreads():
@@ -156,13 +154,18 @@ class Blosc(Codec):
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return blosc.compress(
-            buf,
-            # typesize=self.blocksize, FIXME
-            clevel=self.clevel,
-            shuffle=self.shuffle,
-            cname=self.cname,
-        )
+        old = blosc.get_blocksize()
+        try:
+            blosc.set_blocksize(self.blocksize)
+            return blosc.compress(
+                buf,
+                # typesize=self.blocksize, FIXME
+                clevel=self.clevel,
+                shuffle=self.shuffle,
+                cname=self.cname,
+            )
+        finally:
+            blosc.set_blocksize(old)
 
     def decode(self, buf): # FIXME , out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
@@ -184,7 +187,7 @@ class Blosc(Codec):
              self.blocksize)
         return r
 
-def compress(source, cname, clevel: int, shuffle:int = SHUFFLE,
+def compress(source, cname, clevel: int, shuffle:int = Blosc.SHUFFLE,
              blocksize:int = AUTOBLOCKS):
     """Compress data.
 
@@ -211,3 +214,35 @@ def compress(source, cname, clevel: int, shuffle:int = SHUFFLE,
         Compressed data.
 
     """
+    max_buffer_size = 2**31 - 1  # FIXME refactor
+    source = ensure_contiguous_ndarray(source, max_buffer_size)
+    if isinstance(cname, bytes):
+        cname = cname.decode('ascii')
+
+    old = blosc.get_blocksize()
+    try:
+        blosc.set_blocksize(blocksize)
+        return blosc.compress(
+            source,
+            # typesize=self.blocksize, FIXME
+            clevel=clevel,
+            shuffle=shuffle,
+            cname=cname,
+        )
+    finally:
+        blosc.set_blocksize(old)
+
+
+
+# FIXME: Mirroring methods. To be better defined and possibly deprecated
+
+def cbuffer_sizes(*args, **kwargs):
+    return blosc.get_cbuffer_sizes(*args, **kwargs)
+
+def cbuffer_complib(enc):
+    return blosc.get_clib(enc)
+
+# FIXME
+#def cbuffer_metainfo(enc):
+#    from blosc import blosc_extension as _ext
+#    return _ext.cbuffer_metainfo(enc)
