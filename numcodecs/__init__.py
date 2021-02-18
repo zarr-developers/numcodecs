@@ -45,6 +45,7 @@ try:
     from numcodecs.blosc import Blosc
     register_codec(Blosc)
 except ImportError:  # pragma: no cover
+    raise
     pass
 
 try:
@@ -59,6 +60,7 @@ try:
     from numcodecs.lz4 import LZ4
     register_codec(LZ4)
 except ImportError:  # pragma: no cover
+    raise
     pass
 
 from numcodecs.astype import AsType
