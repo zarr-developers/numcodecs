@@ -31,12 +31,12 @@ _importer_pid = os.getpid()
 
 def init():
     """Initialize the Blosc library environment."""
-    blosc_init()
+    blosc.init()
 
 
 def destroy():
     """Destroy the Blosc library environment."""
-    blosc_destroy()
+    blosc.destroy()
 
 
 def compname_to_compcode(cname):
@@ -45,7 +45,7 @@ def compname_to_compcode(cname):
     instead."""
     if isinstance(cname, str):
         cname = cname.encode('ascii')
-    return blosc_compname_to_compcode(cname)
+    return blosc.compname_to_compcode(cname)
 
 
 def list_compressors():
@@ -56,7 +56,7 @@ def list_compressors():
 def get_nthreads():
     """Get the number of threads that Blosc uses internally for compression and
     decompression."""
-    return blosc_get_nthreads()
+    return blosc.get_nthreads()
 
 
 def err_bad_cname(cname):
