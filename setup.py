@@ -308,12 +308,10 @@ def run_setup(with_extensions):
         },
         setup_requires=[
             'setuptools>18.0',
-            'setuptools-scm>1.5.4',
-            'numpy>=1.7',
-            'llvmlite'
+            'setuptools-scm>1.5.4'
         ],
         install_requires=[
-            'numpy>=1.7', 'numba'
+            'numpy>=1.7', 'numba==0.53.0rc2'
         ],
         extras_require={
             'msgpack':  ["msgpack"],
