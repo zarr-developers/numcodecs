@@ -334,7 +334,7 @@ def run_setup(with_extensions):
             'setuptools-scm>1.5.4'
         ],
         install_requires=[
-            'numpy>=1.7', 'numba==0.53.0rc2'
+            'numpy>=1.7',
         ],
         extras_require={
             'msgpack':  ["msgpack"],
