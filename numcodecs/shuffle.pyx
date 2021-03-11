@@ -1,3 +1,9 @@
+# cython: embedsignature=True
+# cython: profile=False
+# cython: linetrace=False
+# cython: binding=False
+# cython: language_level=3
+
 import numpy as np
 from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
 from .abc import Codec
