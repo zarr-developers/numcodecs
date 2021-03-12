@@ -1,6 +1,14 @@
 Release notes
 =============
 
+.. _release_0.7.4:
+
+0.7.4
+-----
+
+* Add support for Python 3.9 and Update GitHub Actions.
+  By :user:`Paul Branson <pbranson>` and :user:`Martin Durant <mdurant>` :issue:`273`.
+
 .. _release_0.7.3:
 
 0.7.3
