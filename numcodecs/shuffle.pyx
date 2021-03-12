@@ -34,34 +34,6 @@ cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int
             des[j] = src[offset+byte_index]
 
 
-def _shuffle(element_size, buf, out):
-    if element_size <= 1:
-        out.view(buf.dtype)[:len(buf)] = buf[:]
-        return out  # no shuffling needed
-
-    buf_size = buf.nbytes
-    if buf_size % element_size != 0:
-        raise ValueError("Shuffle buffer is not an integer multiple of elementsize")
-
-    _doShuffle(buf.view("uint8"), out.view("uint8"), element_size)
-
-    return out
-
-
-def _unshuffle(element_size, buf, out):
-    if element_size <= 1:
-        out.view(buf.dtype)[:len(buf)] = buf[:]
-        return out  # no shuffling needed
-
-    buf_size = buf.nbytes
-    if buf_size % element_size != 0:
-        raise ValueError("Shuffle buffer is not an integer multiple of elementsize")
-
-    _doUnshuffle(buf.view("uint8"), out.view("uint8"), element_size)
-
-    return out
-
-
 class Shuffle(Codec):
     """Codec providing shuffle
 
@@ -79,19 +51,41 @@ class Shuffle(Codec):
 
     def encode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
+
         if out is None:
             out = np.zeros(buf.nbytes, dtype='uint8')
         else:
             out = ensure_contiguous_ndarray(out)
-        return _shuffle(self.elementsize, buf, out)
+
+        if self.elementsize <= 1:
+            out.view(buf.dtype)[:len(buf)] = buf[:]
+            return out  # no shuffling needed
+
+        if buf.nbytes % self.elementsize != 0:
+            raise ValueError("Shuffle buffer is not an integer multiple of elementsize")
+
+        _doShuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
+
+        return out
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
+
         if out is None:
             out = np.zeros(buf.nbytes, dtype='uint8')
         else:
             out = ensure_contiguous_ndarray(out)
-        return _unshuffle(self.elementsize, buf, out)
+
+        if self.elementsize <= 1:
+            out.view(buf.dtype)[:len(buf)] = buf[:]
+            return out  # no shuffling needed
+
+        if buf.nbytes % self.elementsize != 0:
+            raise ValueError("Shuffle buffer is not an integer multiple of elementsize")
+
+        _doUnshuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
+
+        return out
 
     def __repr__(self):
         r = '%s(elementsize=%s)' % \
