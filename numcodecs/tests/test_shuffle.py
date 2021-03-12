@@ -15,7 +15,7 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (check_encode_decode,
-                                    check_config, 
+                                    check_config,
                                     check_backwards_compatibility)
 
 
