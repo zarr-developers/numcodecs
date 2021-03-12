@@ -15,7 +15,8 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (check_encode_decode,
-                                    check_config)
+                                    check_config, 
+                                    check_backwards_compatibility)
 
 
 codecs = [
@@ -113,6 +114,10 @@ def test_multiprocessing(pool):
     pool.join()
 
 
+def test_backwards_compatibility():
+    check_backwards_compatibility(Shuffle.codec_id, arrays, codecs)
+
+
 # def test_err_decode_object_buffer():
 #     check_err_decode_object_buffer(Shuffle())
 
@@ -126,6 +131,17 @@ def test_multiprocessing(pool):
 #             codec.decode(bytearray())
 #         with pytest.raises(RuntimeError):
 #             codec.decode(bytearray(0))
+
+def test_expected_result():
+    # Each byte of the 4 byte uint64 is shuffled in such a way
+    # that for an array of length 4, the last byte of the last
+    # element becomes the first byte of the first element
+    # therefore [0, 0, 0, 1] becomes [2**((len-1)*8), 0, 0, 0]
+    # (where 8 = bits in a byte)
+    arr = np.array([0, 0, 0, 1], dtype='uint64')
+    codec = Shuffle(elementsize=arr.data.itemsize)
+    enc = codec.encode(arr)
+    assert np.frombuffer(enc.data, arr.dtype)[0] == 2**((len(arr)-1)*8)
 
 
 def test_incompatible_elementsize():

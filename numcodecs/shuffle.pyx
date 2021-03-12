@@ -8,29 +8,30 @@ import numpy as np
 from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
 from .abc import Codec
 
+cimport cython
 
-cdef _doShuffle(const unsigned char[:] src, unsigned char[:] des, int element_size):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
     cdef int count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(count):
         offset = i*element_size
-        e = src[offset:(offset+element_size)]
         for byte_index in range(element_size):
             j = byte_index*count + i
-            des[j] = e[byte_index]
-    return des
+            des[j] = src[offset + byte_index]
 
 
-cdef _doUnshuffle(const unsigned char[:] src, unsigned char[:] des, int element_size):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
     cdef int count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(element_size):
         offset = i*count
-        e = src[offset:(offset+count)]
         for byte_index in range(count):
             j = byte_index*element_size + i
-            des[j] = e[byte_index]
-    return des
+            des[j] = src[offset+byte_index]
 
 
 def _shuffle(element_size, buf, out):
