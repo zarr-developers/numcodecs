@@ -1970,8 +1970,6 @@ static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_elementsize[] = "elementsize";
 static const char __pyx_k_element_size[] = "element_size";
-static const char __pyx_k_ensure_bytes[] = "ensure_bytes";
-static const char __pyx_k_ndarray_copy[] = "ndarray_copy";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
 static const char __pyx_k_elementsize_2[] = "(elementsize=";
@@ -1981,7 +1979,6 @@ static const char __pyx_k_Shuffle___init[] = "Shuffle.__init__";
 static const char __pyx_k_Shuffle___repr[] = "Shuffle.__repr__";
 static const char __pyx_k_Shuffle_decode[] = "Shuffle.decode";
 static const char __pyx_k_Shuffle_encode[] = "Shuffle.encode";
-static const char __pyx_k_ensure_ndarray[] = "ensure_ndarray";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
@@ -2072,9 +2069,7 @@ static PyObject *__pyx_n_s_element_size;
 static PyObject *__pyx_n_s_elementsize;
 static PyObject *__pyx_kp_u_elementsize_2;
 static PyObject *__pyx_n_s_encode;
-static PyObject *__pyx_n_s_ensure_bytes;
 static PyObject *__pyx_n_s_ensure_contiguous_ndarray;
-static PyObject *__pyx_n_s_ensure_ndarray;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_error;
 static PyObject *__pyx_n_s_flags;
@@ -2096,7 +2091,6 @@ static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_nbytes;
-static PyObject *__pyx_n_s_ndarray_copy;
 static PyObject *__pyx_n_s_ndim;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
@@ -2252,23 +2246,23 @@ static PyObject *__pyx_codeobj__42;
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:             # <<<<<<<<<<<<<<
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  */
 
 static void __pyx_f_9numcodecs_7shuffle__doShuffle(__Pyx_memviewslice __pyx_v_src, __Pyx_memviewslice __pyx_v_des, int __pyx_v_element_size) {
-  int __pyx_v_count;
-  int __pyx_v_i;
-  int __pyx_v_j;
-  int __pyx_v_offset;
-  int __pyx_v_byte_index;
+  Py_ssize_t __pyx_v_count;
+  Py_ssize_t __pyx_v_i;
+  Py_ssize_t __pyx_v_j;
+  Py_ssize_t __pyx_v_offset;
+  Py_ssize_t __pyx_v_byte_index;
   size_t __pyx_t_1;
-  int __pyx_t_2;
-  int __pyx_t_3;
-  int __pyx_t_4;
+  Py_ssize_t __pyx_t_2;
+  Py_ssize_t __pyx_t_3;
+  Py_ssize_t __pyx_t_4;
   int __pyx_t_5;
   int __pyx_t_6;
-  int __pyx_t_7;
+  Py_ssize_t __pyx_t_7;
   Py_ssize_t __pyx_t_8;
   Py_ssize_t __pyx_t_9;
   int __pyx_lineno = 0;
@@ -2277,7 +2271,7 @@ static void __pyx_f_9numcodecs_7shuffle__doShuffle(__Pyx_memviewslice __pyx_v_sr
 
   /* "numcodecs/shuffle.pyx":17
  * cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size             # <<<<<<<<<<<<<<
  *     for i in range(count):
  *         offset = i*element_size
@@ -2306,7 +2300,7 @@ static void __pyx_f_9numcodecs_7shuffle__doShuffle(__Pyx_memviewslice __pyx_v_sr
   __pyx_v_count = __Pyx_div_Py_ssize_t(__pyx_t_1, __pyx_v_element_size);
 
   /* "numcodecs/shuffle.pyx":18
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  *     for i in range(count):             # <<<<<<<<<<<<<<
  *         offset = i*element_size
@@ -2364,7 +2358,7 @@ static void __pyx_f_9numcodecs_7shuffle__doShuffle(__Pyx_memviewslice __pyx_v_sr
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:             # <<<<<<<<<<<<<<
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  */
 
@@ -2379,23 +2373,23 @@ static void __pyx_f_9numcodecs_7shuffle__doShuffle(__Pyx_memviewslice __pyx_v_sr
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:             # <<<<<<<<<<<<<<
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  */
 
 static void __pyx_f_9numcodecs_7shuffle__doUnshuffle(__Pyx_memviewslice __pyx_v_src, __Pyx_memviewslice __pyx_v_des, int __pyx_v_element_size) {
-  int __pyx_v_count;
-  int __pyx_v_i;
-  int __pyx_v_j;
-  int __pyx_v_offset;
-  int __pyx_v_byte_index;
+  Py_ssize_t __pyx_v_count;
+  Py_ssize_t __pyx_v_i;
+  Py_ssize_t __pyx_v_j;
+  Py_ssize_t __pyx_v_offset;
+  Py_ssize_t __pyx_v_byte_index;
   size_t __pyx_t_1;
   int __pyx_t_2;
   int __pyx_t_3;
-  int __pyx_t_4;
-  int __pyx_t_5;
-  int __pyx_t_6;
-  int __pyx_t_7;
+  Py_ssize_t __pyx_t_4;
+  Py_ssize_t __pyx_t_5;
+  Py_ssize_t __pyx_t_6;
+  Py_ssize_t __pyx_t_7;
   Py_ssize_t __pyx_t_8;
   Py_ssize_t __pyx_t_9;
   int __pyx_lineno = 0;
@@ -2404,7 +2398,7 @@ static void __pyx_f_9numcodecs_7shuffle__doUnshuffle(__Pyx_memviewslice __pyx_v_
 
   /* "numcodecs/shuffle.pyx":29
  * cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size             # <<<<<<<<<<<<<<
  *     for i in range(element_size):
  *         offset = i*count
@@ -2433,7 +2427,7 @@ static void __pyx_f_9numcodecs_7shuffle__doUnshuffle(__Pyx_memviewslice __pyx_v_
   __pyx_v_count = __Pyx_div_Py_ssize_t(__pyx_t_1, __pyx_v_element_size);
 
   /* "numcodecs/shuffle.pyx":30
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  *     for i in range(element_size):             # <<<<<<<<<<<<<<
  *         offset = i*count
@@ -2491,7 +2485,7 @@ static void __pyx_f_9numcodecs_7shuffle__doUnshuffle(__Pyx_memviewslice __pyx_v_
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:             # <<<<<<<<<<<<<<
- *     cdef int count, i, j, offset, byte_index
+ *     cdef Py_ssize_t count, i, j, offset, byte_index
  *     count = len(src) // element_size
  */
 
@@ -17825,9 +17819,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_elementsize, __pyx_k_elementsize, sizeof(__pyx_k_elementsize), 0, 0, 1, 1},
   {&__pyx_kp_u_elementsize_2, __pyx_k_elementsize_2, sizeof(__pyx_k_elementsize_2), 0, 1, 0, 0},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
-  {&__pyx_n_s_ensure_bytes, __pyx_k_ensure_bytes, sizeof(__pyx_k_ensure_bytes), 0, 0, 1, 1},
   {&__pyx_n_s_ensure_contiguous_ndarray, __pyx_k_ensure_contiguous_ndarray, sizeof(__pyx_k_ensure_contiguous_ndarray), 0, 0, 1, 1},
-  {&__pyx_n_s_ensure_ndarray, __pyx_k_ensure_ndarray, sizeof(__pyx_k_ensure_ndarray), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
@@ -17849,7 +17841,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_nbytes, __pyx_k_nbytes, sizeof(__pyx_k_nbytes), 0, 0, 1, 1},
-  {&__pyx_n_s_ndarray_copy, __pyx_k_ndarray_copy, sizeof(__pyx_k_ndarray_copy), 0, 0, 1, 1},
   {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
@@ -18624,7 +18615,7 @@ if (!__Pyx_RefNanny) {
  * # cython: language_level=3
  * 
  * import numpy as np             # <<<<<<<<<<<<<<
- * from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
+ * from .compat import ensure_contiguous_ndarray
  * from .abc import Codec
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
@@ -18635,48 +18626,27 @@ if (!__Pyx_RefNanny) {
   /* "numcodecs/shuffle.pyx":8
  * 
  * import numpy as np
- * from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray             # <<<<<<<<<<<<<<
+ * from .compat import ensure_contiguous_ndarray             # <<<<<<<<<<<<<<
  * from .abc import Codec
  * 
  */
-  __pyx_t_1 = PyList_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_ensure_bytes);
-  __Pyx_GIVEREF(__pyx_n_s_ensure_bytes);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_ensure_bytes);
   __Pyx_INCREF(__pyx_n_s_ensure_contiguous_ndarray);
   __Pyx_GIVEREF(__pyx_n_s_ensure_contiguous_ndarray);
-  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_ensure_contiguous_ndarray);
-  __Pyx_INCREF(__pyx_n_s_ndarray_copy);
-  __Pyx_GIVEREF(__pyx_n_s_ndarray_copy);
-  PyList_SET_ITEM(__pyx_t_1, 2, __pyx_n_s_ndarray_copy);
-  __Pyx_INCREF(__pyx_n_s_ensure_ndarray);
-  __Pyx_GIVEREF(__pyx_n_s_ensure_ndarray);
-  PyList_SET_ITEM(__pyx_t_1, 3, __pyx_n_s_ensure_ndarray);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_ensure_contiguous_ndarray);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_compat, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ensure_bytes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ensure_bytes, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ensure_contiguous_ndarray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_ensure_contiguous_ndarray, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ndarray_copy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ndarray_copy, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ensure_ndarray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ensure_ndarray, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "numcodecs/shuffle.pyx":9
  * import numpy as np
- * from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
+ * from .compat import ensure_contiguous_ndarray
  * from .abc import Codec             # <<<<<<<<<<<<<<
  * 
  * cimport cython

@@ -5,7 +5,7 @@
 # cython: language_level=3
 
 import numpy as np
-from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy, ensure_ndarray
+from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 cimport cython
@@ -13,7 +13,7 @@ cimport cython
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
-    cdef int count, i, j, offset, byte_index
+    cdef Py_ssize_t count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(count):
         offset = i*element_size
@@ -25,7 +25,7 @@ cdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, int e
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, int element_size) nogil:
-    cdef int count, i, j, offset, byte_index
+    cdef Py_ssize_t count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(element_size):
         offset = i*count
