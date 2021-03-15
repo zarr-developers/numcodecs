@@ -256,13 +256,13 @@ def shuffle_extension():
     extra_compile_args = list(base_compile_args)
 
     if have_cython:
-        sources = ['numcodecs/shuffle.pyx']
+        sources = ['numcodecs/_shuffle.pyx']
     else:
-        sources = ['numcodecs/shuffle.c']
+        sources = ['numcodecs/_shuffle.c']
 
     # define extension module
     extensions = [
-        Extension('numcodecs.shuffle',
+        Extension('numcodecs._shuffle',
                   sources=sources,
                   extra_compile_args=extra_compile_args),
     ]
