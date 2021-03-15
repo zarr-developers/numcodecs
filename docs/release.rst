@@ -7,6 +7,8 @@ Release notes
 -----
 
 * Add support for Python 3.9 and Update GitHub Actions.
+
+* Add support for byte Shuffle filter
   By :user:`Paul Branson <pbranson>` and :user:`Martin Durant <mdurant>` :issue:`273`.
 
 .. _release_0.7.3:
