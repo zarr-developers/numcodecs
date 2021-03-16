@@ -307,10 +307,3 @@ Tag the version (where "X.X.X" stands for the version number, e.g., "2.2.0")::
 
 This will trigger a GitHub Action which will build the source
 distribution as well as wheels for all major platforms.
-
-Obtain checksum for release to conda-forge::
-
-    $ openssl sha256 dist/numcodecs-${version}.tar.gz
-
-Release to conda-forge by making a pull request against the numcodecs-feedstock conda-forge
-repository, incrementing the version number.
