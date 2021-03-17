@@ -1,13 +1,22 @@
 Release notes
 =============
 
+.. _unreleased:
+
+Unreleased
+----------
+
+* Update Windows + Mac CI to run all tests.
+  By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`275`.
+  Help from :user:`Oleg Höfling <hoefling>`, :issue:`273`.
+
 .. _release_0.7.3:
 
 0.7.3
 -----
 
 * Add support for Python 3.9 and Update GitHub Actions.
-  By :user:`Jackson Maxfield <JacksonMaxfield>`, :issue:`270`.
+  By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`270`.
 
 * Remove support for Python 3.5 which is end of life. While the code base might
   still be compatible; the source dist and wheel are marked as Python 3.6+ and
