@@ -6,5 +6,4 @@ numpydoc
 mock
 numpy
 cython
-python<=3.8
-zfpy==0.5.5
+zfpy==0.5.5;python_version<'3.9'
