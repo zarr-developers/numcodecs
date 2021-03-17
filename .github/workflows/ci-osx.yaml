@@ -38,7 +38,8 @@ jobs:
         run: |
           conda activate env
           export CC=clang
-          python setup.py build
+          python -m pip install -U pip -r requirements_test.txt -r requirements.txt
+          python -m pip install -v -e .
 
       - name: Run tests
         shell: "bash -l {0}"
