@@ -1,5 +1,5 @@
 Cython==0.29.21
 msgpack==1.0.2
 numpy==1.19.0
-zfpy==0.5.5;python_version<'3.9'
+zfpy==0.5.5; python_version < '3.9'
 
