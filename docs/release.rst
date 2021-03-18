@@ -9,7 +9,7 @@ Unreleased
 * Add support for Python 3.9 and Update GitHub Actions.
 
 * Add support for byte Shuffle filter
-  By :user:`Paul Branson <pbranson>` and :user:`Martin Durant <mdurant>` :issue:`273`.
+  By :user:`Paul Branson <pbranson>` and :user:`Martin Durant <martindurant>` :issue:`273`.
 
 * Update Windows + Mac CI to run all tests.
   By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`276`.

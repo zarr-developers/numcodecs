@@ -97,7 +97,7 @@ documentation, code reviews, comments and/or ideas:
 * :user:`Trevor Manz <manzt>`
 * :user:`Grzegorz Bokota <Czaki>`
 * :user:`Josh Moore <joshmoore>`
-* :user:`Martin Durant <mdurant>`
+* :user:`Martin Durant <martindurant>`
 * :user:`Paul Branson <pbranson>`
 
 Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_ library.
