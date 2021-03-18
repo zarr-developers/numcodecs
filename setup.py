@@ -76,6 +76,8 @@ def blosc_extension():
                      if os.path.isdir(d)]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*')
                      if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*')
+                     if os.path.isdir(d)]
     define_macros += [('HAVE_LZ4', 1),
                       ('HAVE_SNAPPY', 1),
                       ('HAVE_ZLIB', 1),
@@ -315,6 +317,7 @@ def run_setup(with_extensions):
     if with_extensions:
         ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
                        compat_extension() + shuffle_extension() + vlen_extension())
+
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []

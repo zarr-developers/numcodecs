@@ -62,6 +62,7 @@ Contents
     registry
     blosc
     lz4
+    zfpy
     zstd
     zlib
     gzip

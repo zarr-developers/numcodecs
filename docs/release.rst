@@ -1,6 +1,14 @@
 Release notes
 =============
 
+
+Upcoming Release
+----------------
+
+* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
+  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
+
+
 .. _unreleased:
 
 Unreleased
@@ -14,6 +22,7 @@ Unreleased
 * Update Windows + Mac CI to run all tests.
   By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`276`.
   Help from :user:`Oleg Höfling <hoefling>`, :issue:`273`.
+
 
 .. _release_0.7.3:
 
@@ -42,6 +51,7 @@ Unreleased
 
 * Update docs regarding wheels.
   By :user:`Josh Moore <joshmoore>`, :issue:`250`.
+
 
 .. _release_0.7.1:
 

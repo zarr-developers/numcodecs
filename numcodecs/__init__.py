@@ -3,7 +3,7 @@
 transformation codecs for use in data storage and communication
 applications. These include:
 
-* Compression codecs, e.g., Zlib, BZ2, LZMA and Blosc.
+* Compression codecs, e.g., Zlib, BZ2, LZMA, ZFPY and Blosc.
 * Pre-compression filters, e.g., Delta, Quantize, FixedScaleOffset,
   PackBits, Categorize.
 * Integrity checks, e.g., CRC32, Adler32.
@@ -16,7 +16,6 @@ contribute code, please `raise an issue on GitHub
 <https://github.com/alimanfoo/numcodecs/issues>`_.
 
 """
-
 import multiprocessing
 import atexit
 
@@ -65,6 +64,12 @@ try:
     from numcodecs import lz4
     from numcodecs.lz4 import LZ4
     register_codec(LZ4)
+except ImportError:  # pragma: no cover
+    pass
+
+try:
+    from numcodecs.zfpy import ZFPY
+    register_codec(ZFPY)
 except ImportError:  # pragma: no cover
     pass
 
