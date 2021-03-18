@@ -14,7 +14,6 @@ Unreleased
 * Update Windows + Mac CI to run all tests.
   By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`276`.
   Help from :user:`Oleg Höfling <hoefling>`, :issue:`273`.
->>>>>>> upstream/master
 
 .. _release_0.7.3:
 
