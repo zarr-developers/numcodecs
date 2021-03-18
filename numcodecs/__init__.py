@@ -92,6 +92,9 @@ register_codec(Pickle)
 from numcodecs.base64 import Base64
 register_codec(Base64)
 
+from numcodecs.shuffle import Shuffle
+register_codec(Shuffle)
+
 try:
     from numcodecs.msgpacks import MsgPack
     register_codec(MsgPack)
