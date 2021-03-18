@@ -26,7 +26,7 @@ class Mock(MagicMock):
 
 MOCK_MODULES = ['msgpack']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-autodoc_mock_imports = ['zfpy','ZFPY']
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -99,7 +99,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'zfpy.rst']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
