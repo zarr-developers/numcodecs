@@ -24,9 +24,9 @@ class Mock(MagicMock):
         return Mock()
 
 
-MOCK_MODULES = ['msgpack','zfpy']
+MOCK_MODULES = ['msgpack']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
+autodoc_mock_imports = ['zfpy']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
