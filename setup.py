@@ -252,6 +252,29 @@ def compat_extension():
     return extensions
 
 
+def shuffle_extension():
+    info('setting up shuffle extension')
+
+    extra_compile_args = list(base_compile_args)
+
+    if have_cython:
+        sources = ['numcodecs/_shuffle.pyx']
+    else:
+        sources = ['numcodecs/_shuffle.c']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs._shuffle',
+                  sources=sources,
+                  extra_compile_args=extra_compile_args),
+    ]
+
+    if have_cython:
+        extensions = cythonize(extensions)
+
+    return extensions
+
+
 if sys.platform == 'win32':
     ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
                   IOError, ValueError)
@@ -292,8 +315,9 @@ with open('README.rst') as f:
 def run_setup(with_extensions):
 
     if with_extensions:
-        ext_modules = (blosc_extension() + lz4_extension() + zstd_extension() +
-                       compat_extension() + vlen_extension())
+        ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
+                       compat_extension() + shuffle_extension() + vlen_extension())
+
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
