@@ -1,20 +1,19 @@
 Release notes
 =============
 
-
-Upcoming Release
-----------------
-
-* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
-  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed
-
-
 .. _unreleased:
 
 Unreleased
 ----------
 
-* Add support for Python 3.9 and Update GitHub Actions.
+.. _release_0.8.0:
+
+0.8.0
+-----
+
+* The :class:`numcodecs.zfpy.ZFPY` codec is now supported on Python 3.8 if
+  `zfpy==0.5.5 <https://pypi.org/project/zfpy/>`_ is installed.
+  By :user:`haiying xu <halehawk>`, :issue:`229`.
 
 * Add support for byte Shuffle filter
   By :user:`Paul Branson <pbranson>` and :user:`Martin Durant <martindurant>` :issue:`273`.
@@ -23,6 +22,13 @@ Unreleased
   By :user:`Jackson Maxfield Brown <JacksonMaxfield>`, :issue:`276`.
   Help from :user:`Oleg Höfling <hoefling>`, :issue:`273`.
 
+* Update cpuinfo to 8.0.0.
+  By :user:`Florian Jetter <fjetter>`, :issue:`280`.
+
+* Drop out-of-date manual release docs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`272`.
+
+* Add support for Python 3.9 and Update GitHub Actions.
 
 .. _release_0.7.3:
 
