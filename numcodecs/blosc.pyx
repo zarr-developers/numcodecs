@@ -79,6 +79,8 @@ try:
     mutex = multiprocessing.Lock()
 except OSError:
     mutex = None
+except ImportError:
+    mutex = None
 
 # store ID of process that first loads the module, so we can detect a fork later
 _importer_pid = os.getpid()
