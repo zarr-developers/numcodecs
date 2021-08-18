@@ -261,6 +261,9 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
         for j, codec in enumerate(codecs):
 
+            if codec is None:
+                pytest.skip("codec has been removed")
+
             # setup a directory to hold encoded data
             codec_dir = os.path.join(fixture_dir, 'codec.{:02d}'.format(j))
             if not os.path.exists(codec_dir):  # pragma: no cover
