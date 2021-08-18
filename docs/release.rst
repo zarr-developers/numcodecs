@@ -6,6 +6,18 @@ Release notes
 Unreleased
 ----------
 
+.. _release_0.9.0:
+
+0.9.0
+-----
+
+* c-blosc upgrade 1.18.1 -> 1.21.0.
+  Warning: this temporarily removes support for snappy compression!
+  By :user:`kindjacket <kindjacket>`, :issue:`283`.
+
+* Fix an ImportError with Blosc on Android.
+  By :user:`Daniel Jewell <danieldjewell>`, :issue:`284`.
+
 .. _release_0.8.1:
 
 0.8.1
