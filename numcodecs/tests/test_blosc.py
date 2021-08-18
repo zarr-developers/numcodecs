@@ -34,6 +34,7 @@ codecs = [
     Blosc(cname='zlib', clevel=1, shuffle=0),
     Blosc(cname='zstd', clevel=1, shuffle=1),
     Blosc(cname='blosclz', clevel=1, shuffle=2),
+    None,  # was snappy
     Blosc(shuffle=Blosc.SHUFFLE, blocksize=0),
     Blosc(shuffle=Blosc.SHUFFLE, blocksize=2**8),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=2**8),
@@ -60,6 +61,11 @@ arrays = [
 ]
 
 
+def _skip_null(codec):
+    if codec is None:
+        pytest.skip("codec has been removed")
+
+
 @pytest.fixture(scope='module', params=[True, False, None])
 def use_threads(request):
     return request.param
@@ -68,6 +74,7 @@ def use_threads(request):
 @pytest.mark.parametrize('array', arrays)
 @pytest.mark.parametrize('codec', codecs)
 def test_encode_decode(array, codec):
+    _skip_null(codec)
     check_encode_decode(array, codec)
 
 
@@ -76,6 +83,7 @@ def test_encode_decode(array, codec):
                                    else pytest.param(x, marks=[pytest.mark.xfail])
                                    for x in arrays])
 def test_partial_decode(codec, array):
+    _skip_null(codec)
     check_encode_decode_partial(array, codec)
 
 
@@ -255,6 +263,7 @@ def test_err_encode_object_buffer():
 
 def test_decompression_error_handling():
     for codec in codecs:
+        _skip_null(codec)
         with pytest.raises(RuntimeError):
             codec.decode(bytearray())
         with pytest.raises(RuntimeError):
@@ -263,5 +272,6 @@ def test_decompression_error_handling():
 
 def test_max_buffer_size():
     for codec in codecs:
+        _skip_null(codec)
         assert codec.max_buffer_size == 2**31 - 1
         check_max_buffer_size(codec)
