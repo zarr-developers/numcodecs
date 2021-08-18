@@ -6,6 +6,14 @@ Release notes
 Unreleased
 ----------
 
+.. _release_0.8.1:
+
+0.8.1
+-----
+
+* Fix an ImportError with Blosc on Android.
+  By :user:`Daniel Jewell <danieldjewell>`, :issue:`284`.
+
 .. _release_0.8.0:
 
 0.8.0
