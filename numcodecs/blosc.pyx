@@ -230,7 +230,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     shuffle : int
         Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If -1,
         bit-shuffle will be used for buffers with itemsize 1, and byte-shuffle will
-        be used otherwise.
+        be used otherwise. The default is `SHUFFLE`.
     blocksize : int
         The requested size of the compressed blocks.  If 0, an automatic blocksize will
         be used.
