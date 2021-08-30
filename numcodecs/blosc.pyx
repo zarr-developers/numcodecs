@@ -228,7 +228,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     clevel : int
         Compression level.
     shuffle : int
-        Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If -1,
+        Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If AUTOSHUFFLE,
         bit-shuffle will be used for buffers with itemsize 1, and byte-shuffle will
         be used otherwise. The default is `SHUFFLE`.
     blocksize : int
