@@ -6,6 +6,14 @@ Release notes
 Unreleased
 ----------
 
+.. _release_0.9.1:
+
+0.9.1
+-----
+
+* Fix inaccurate docstrings for Blosc.
+  By :user:`James Webber <jamestwebber>`, :issue:`287`.
+
 .. _release_0.9.0:
 
 0.9.0
