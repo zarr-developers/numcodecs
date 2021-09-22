@@ -133,15 +133,24 @@ def test_backwards_compatibility():
 #             codec.decode(bytearray(0))
 
 def test_expected_result():
-    # Each byte of the 4 byte uint64 is shuffled in such a way
-    # that for an array of length 4, the last byte of the last
-    # element becomes the first byte of the first element
-    # therefore [0, 0, 0, 1] becomes [2**((len-1)*8), 0, 0, 0]
-    # (where 8 = bits in a byte)
-    arr = np.array([0, 0, 0, 1], dtype='uint64')
+    # If the input is treated as a 2D byte array, with shape (size of element, number of elements),
+    # the shuffle is essentially a transpose. This can be made more apparent by using an array of
+    # big-endian integers, as below.
+    arr = np.array([0x0001020304050607, 0x08090a0b0c0d0e0f, 0x1011121314151617, 0x18191a1b1c1d1e1f],
+                   dtype='>u8')
+    expected = np.array([
+        0x00081018,
+        0x01091119,
+        0x020a121a,
+        0x030b131b,
+        0x040c141c,
+        0x050d151d,
+        0x060e161e,
+        0x070f171f,
+    ], dtype='u4')
     codec = Shuffle(elementsize=arr.data.itemsize)
     enc = codec.encode(arr)
-    assert np.frombuffer(enc.data, arr.dtype)[0] == 2**((len(arr)-1)*8)
+    np.testing.assert_array_equal(np.frombuffer(enc.data, '>u4'), expected)
 
 
 def test_incompatible_elementsize():
