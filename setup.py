@@ -2,6 +2,7 @@ from glob import glob
 import os
 from setuptools import setup, Extension
 import cpuinfo
+import platform
 import sys
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
@@ -27,6 +28,8 @@ have_cflags = 'CFLAGS' in os.environ
 base_compile_args = list()
 if have_cflags:
     # respect compiler options set by user
+    pass
+elif platform.machine() == 'aarch64':
     pass
 elif os.name == 'posix':
     if disable_sse2:
