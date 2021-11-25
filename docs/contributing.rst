@@ -108,7 +108,7 @@ report the bug or propose the feature you'd like to add.
 It's best to create a new, separate branch for each piece of work you want to do. E.g.::
 
     git fetch upstream
-    git checkout -b shiny-new-feature upsteam/master
+    git checkout -b shiny-new-feature upstream/master
 
 This changes your working directory to the 'shiny-new-feature' branch. Keep any changes in
 this branch specific to one bug or feature so it is clear what the branch brings to
