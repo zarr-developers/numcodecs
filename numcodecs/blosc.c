@@ -4885,7 +4885,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_24decompress_partial(CYTHON_UNUSED P
  *     # get encoding size from source buffer header
  *     encoding_size = source[3]             # <<<<<<<<<<<<<<
  * 
- *     # convert varibles to handle type and encoding sizes
+ *     # convert variables to handle type and encoding sizes
  */
   __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_source, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 435, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4895,7 +4895,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_24decompress_partial(CYTHON_UNUSED P
 
   /* "numcodecs/blosc.pyx":438
  * 
- *     # convert varibles to handle type and encoding sizes
+ *     # convert variables to handle type and encoding sizes
  *     nitems_bytes = nitems * encoding_size             # <<<<<<<<<<<<<<
  *     start_bytes = (start * encoding_size)
  * 
@@ -4910,7 +4910,7 @@ static PyObject *__pyx_pf_9numcodecs_5blosc_24decompress_partial(CYTHON_UNUSED P
   __pyx_v_nitems_bytes = __pyx_t_4;
 
   /* "numcodecs/blosc.pyx":439
- *     # convert varibles to handle type and encoding sizes
+ *     # convert variables to handle type and encoding sizes
  *     nitems_bytes = nitems * encoding_size
  *     start_bytes = (start * encoding_size)             # <<<<<<<<<<<<<<
  * 

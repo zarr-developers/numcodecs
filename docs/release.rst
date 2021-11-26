@@ -389,7 +389,7 @@ Unreleased
 0.2.1
 -----
 
-The bundled c-blosc libary has been upgraded to version 1.11.3 (:issue:`34`, :issue:`35`).
+The bundled c-blosc library has been upgraded to version 1.11.3 (:issue:`34`, :issue:`35`).
 
 
 .. _release_0.2.0:

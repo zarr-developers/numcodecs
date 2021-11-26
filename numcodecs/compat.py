@@ -63,7 +63,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
         A numpy array or any object exporting a buffer interface.
     max_buffer_size : int
         If specified, the largest allowable value of arr.nbytes, where arr
-        is the retured array.
+        is the returned array.
 
     Returns
     -------

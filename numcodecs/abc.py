@@ -16,7 +16,7 @@ configuration object must also contain an 'id' field storing the codec
 identifier (see below).
 
 Codec classes must implement a :func:`Codec.from_config` class method,
-which will return an instance of the class initiliazed from a configuration
+which will return an instance of the class initialized from a configuration
 object.
 
 Finally, codec classes must set a `codec_id` class-level attribute. This
