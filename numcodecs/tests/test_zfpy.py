@@ -68,7 +68,7 @@ def test_repr():
 
 
 def test_backwards_compatibility():
-    for i, code in enumerate(codecs):
+    for code in codecs:
         if code.mode == _zfpy.mode_fixed_rate:
             codec = [code]
             check_backwards_compatibility(ZFPY.codec_id, arrays, codec)
