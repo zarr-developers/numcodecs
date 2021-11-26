@@ -68,7 +68,7 @@ class AsType(Codec):
         return out
 
     def get_config(self):
-        config = dict()
+        config = {}
         config['id'] = self.codec_id
         config['encode_dtype'] = self.encode_dtype.str
         config['decode_dtype'] = self.decode_dtype.str

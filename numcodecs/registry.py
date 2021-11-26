@@ -3,7 +3,7 @@ applications to dynamically register and look-up codec classes."""
 import logging
 
 logger = logging.getLogger("numcodecs")
-codec_registry = dict()
+codec_registry = {}
 entries = {}
 
 
