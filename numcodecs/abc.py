@@ -40,7 +40,7 @@ class Codec:
     """Codec identifier."""
 
     @abstractmethod
-    def encode(self, buf):  # pragma: no cover
+    def encode(self, buf, out=None):  # pragma: no cover
         """Encode data in `buf`.
 
         Parameters
@@ -48,6 +48,9 @@ class Codec:
         buf : buffer-like
             Data to be encoded. May be any object supporting the new-style
             buffer protocol.
+        out : buffer-like, optional
+            Writeable buffer to store encoded data. N.B. if provided, this buffer must
+            be exactly the right size to store the encoded data.
 
         Returns
         -------
