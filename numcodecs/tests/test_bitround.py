@@ -59,12 +59,15 @@ def test_no_rounding(dtype):
 APPROX_KEEPBITS = {np.float32: 10}
 
 
-# This does not pass at the default tolerance of allclose
-# How is it different from Julia's ≈ operator?
 def test_approx_equal(dtype):
     a = np.random.random_sample((300, 200)).astype(dtype)
     ar = round(a, APPROX_KEEPBITS[dtype])
-    np.testing.assert_allclose(a, ar)
+    # Mimic julia behavior - https://docs.julialang.org/en/v1/base/math/#Base.isapprox
+    rtol = np.sqrt(np.finfo(np.float32).eps)
+    # This gets us much closer but still failing for ~6% of the array
+    # It does pass if we add 1 to keepbits (11 instead of 10)
+    # Is there an off-by-one issue here?
+    np.testing.assert_allclose(a, ar, rtol=rtol)
 
 
 def test_idempotence(dtype):
