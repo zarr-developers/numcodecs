@@ -4,7 +4,6 @@ applications to dynamically register and look-up codec classes."""
 
 codec_registry = dict()
 try:
-    raise ImportError
     import entrypoints
     entries = entrypoints.get_group_named("numcodecs.codecs")
 except ImportError:
