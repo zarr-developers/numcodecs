@@ -3,6 +3,12 @@ applications to dynamically register and look-up codec classes."""
 
 
 codec_registry = dict()
+try:
+    raise ImportError
+    import entrypoints
+    entries = entrypoints.get_group_named("numcodecs.codecs")
+except ImportError:
+    entries = {}
 
 
 def get_codec(config):
@@ -30,8 +36,11 @@ def get_codec(config):
     codec_id = config.pop('id', None)
     cls = codec_registry.get(codec_id)
     if cls is None:
-        raise ValueError('codec not available: %r' % codec_id)
-    return cls.from_config(config)
+        if codec_id in entries:
+            cls = entries[codec_id].load()
+    if cls:
+        return cls.from_config(config)
+    raise ValueError('codec not available: %r' % codec_id)
 
 
 def register_codec(cls, codec_id=None):
