@@ -8,6 +8,9 @@ Unreleased
 
 .. _release_0.9.1:
 
+* Add ability to find codecs via entrypoints
+  By :user:`Martin Durant <martindurant>`, :issue:`290`.
+
 0.9.1
 -----
 
