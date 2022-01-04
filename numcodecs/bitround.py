@@ -9,9 +9,13 @@ class BitRound(Codec):
     codec_id = 'bitround'
 
     def __init__(self, keepbits: int):
+        if (keepbits < 0) or (keepbits > 23):
+            raise ValueError("keepbits must be between 0 and 23")
         self.keepbits = keepbits
 
     def encode(self, buf):
+        if self.keepbits==23:
+            return buf
         # TODO: figure out if we need to make a copy
         # Currently this appears to be overwriting the input buffer
         # Is that the right behavior?

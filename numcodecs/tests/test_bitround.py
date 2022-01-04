@@ -48,7 +48,6 @@ def test_round_minus_one_to_minus_one(dtype):
         np.testing.assert_equal(a, ar)
 
 
-# This triggers a 'negative shift count' error in the codec
 def test_no_rounding(dtype):
     a = np.random.random_sample((300, 200)).astype(dtype)
     keepbits = MBITS[dtype]
@@ -56,7 +55,7 @@ def test_no_rounding(dtype):
     np.testing.assert_equal(a, ar)
 
 
-APPROX_KEEPBITS = {np.float32: 10}
+APPROX_KEEPBITS = {np.float32: 11}
 
 
 def test_approx_equal(dtype):
