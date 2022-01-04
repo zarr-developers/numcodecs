@@ -14,7 +14,7 @@ class BitRound(Codec):
         self.keepbits = keepbits
 
     def encode(self, buf):
-        if self.keepbits==23:
+        if self.keepbits == 23:
             return buf
         # TODO: figure out if we need to make a copy
         # Currently this appears to be overwriting the input buffer
