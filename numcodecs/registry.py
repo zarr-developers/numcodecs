@@ -1,7 +1,8 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
+import logging
 
-
+logger = logging.getLogger("numcodecs")
 codec_registry = dict()
 entries = {}
 
@@ -45,6 +46,7 @@ def get_codec(config):
     cls = codec_registry.get(codec_id)
     if cls is None:
         if codec_id in entries:
+            logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
             cls = entries[codec_id].load()
             register_codec(cls, codec_id=codec_id)
     if cls:
@@ -68,4 +70,5 @@ def register_codec(cls, codec_id=None):
     """
     if codec_id is None:
         codec_id = cls.codec_id
+    logger.debug("Registering codec '%s'", codec_id)
     codec_registry[codec_id] = cls
