@@ -1,5 +1,6 @@
 coverage
 coveralls
+entrypoints
 flake8
 pytest
 pytest-cov
