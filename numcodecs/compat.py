@@ -6,8 +6,10 @@ from functools import reduce
 
 import numpy as np
 
+from .ndarray_like import NDArrayLike, ensure_memtype
 
-def ensure_ndarray(buf):
+
+def ensure_ndarray(buf, memtype="cpu") -> NDArrayLike:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
 
@@ -27,30 +29,28 @@ def ensure_ndarray(buf):
     return a view on memory exported by `buf`.
 
     """
+    if not isinstance(buf, NDArrayLike):
+        if isinstance(buf, array.array) and buf.typecode in "cu":
+            # Guard condition, do not support array.array with unicode type, this is
+            # problematic because numpy does not support it on all platforms. Also do not
+            # support char as it was removed in Python 3.
+            raise TypeError("array.array with char or unicode type is not supported")
+        else:
+            # N.B., first take a memoryview to make sure that we subsequently create a
+            # numpy array from a memory buffer with no copy
+            mem = memoryview(buf)
 
-    if isinstance(buf, np.ndarray):
-        # already a numpy array
-        arr = buf
+            # instantiate array from memoryview, ensures no copy
+            buf = np.array(mem, copy=False)
 
-    elif isinstance(buf, array.array) and buf.typecode in 'cu':
-        # Guard condition, do not support array.array with unicode type, this is
-        # problematic because numpy does not support it on all platforms. Also do not
-        # support char as it was removed in Python 3.
-        raise TypeError('array.array with char or unicode type is not supported')
-
-    else:
-
-        # N.B., first take a memoryview to make sure that we subsequently create a
-        # numpy array from a memory buffer with no copy
-        mem = memoryview(buf)
-
-        # instantiate array from memoryview, ensures no copy
-        arr = np.array(mem, copy=False)
-
-    return arr
+    return ensure_memtype(buf, memtype=memtype)
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None):
+def ensure_ndarray_like(buf, memtype=None) -> NDArrayLike:
+    return ensure_ndarray(buf, memtype=memtype)
+
+
+def ensure_contiguous_ndarray(buf, max_buffer_size=None, memtype="cpu") -> NDArrayLike:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -78,24 +78,23 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     """
 
     # ensure input is a numpy array
-    arr = ensure_ndarray(buf)
+    arr = ensure_ndarray(buf, memtype=memtype)
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
     if arr.dtype == object:
-        raise TypeError('object arrays are not supported')
+        raise TypeError("object arrays are not supported")
 
     # check for datetime or timedelta ndarray, the buffer interface doesn't support those
-    if arr.dtype.kind in 'Mm':
+    if arr.dtype.kind in "Mm":
         arr = arr.view(np.int64)
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
         # can flatten without copy
-        arr = arr.reshape(-1, order='A')
-
+        arr = arr.reshape(-1, order="A")
     else:
-        raise ValueError('an array with contiguous memory is required')
+        raise ValueError("an array with contiguous memory is required")
 
     if max_buffer_size is not None and arr.nbytes > max_buffer_size:
         msg = "Codec does not support buffers of > {} bytes".format(max_buffer_size)
@@ -104,45 +103,51 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
     return arr
 
 
-def ensure_bytes(buf):
+def ensure_contiguous_ndarray_like(
+    buf, max_buffer_size=None, memtype=None
+) -> NDArrayLike:
+    return ensure_contiguous_ndarray(
+        buf, max_buffer_size=max_buffer_size, memtype=memtype
+    )
+
+
+def ensure_bytes(buf) -> bytes:
     """Obtain a bytes object from memory exposed by `buf`."""
 
     if not isinstance(buf, bytes):
-
-        # go via numpy, for convenience
-        arr = ensure_ndarray(buf)
+        arr = ensure_ndarray_like(buf)
 
         # check for object arrays, these are just memory pointers,
         # actual memory holding item data is scattered elsewhere
         if arr.dtype == object:
-            raise TypeError('object arrays are not supported')
+            raise TypeError("object arrays are not supported")
 
         # create bytes
-        buf = arr.tobytes(order='A')
+        buf = arr.tobytes(order="A")
 
     return buf
 
 
-def ensure_text(s, encoding='utf-8'):
+def ensure_text(s, encoding="utf-8"):
     if not isinstance(s, str):
         s = ensure_contiguous_ndarray(s)
         s = codecs.decode(s, encoding)
     return s
 
 
-def ndarray_copy(src, dst):
+def ndarray_copy(src, dst) -> NDArrayLike:
     """Copy the contents of the array from `src` to `dst`."""
 
     if dst is None:
         # no-op
         return src
 
-    # ensure ndarrays
-    src = ensure_ndarray(src)
-    dst = ensure_ndarray(dst)
+    # ensure ndarray like
+    src = ensure_ndarray_like(src)
+    dst = ensure_ndarray_like(dst)
 
     # flatten source array
-    src = src.reshape(-1, order='A')
+    src = src.reshape(-1, order="A")
 
     # ensure same data type
     if dst.dtype != object:
@@ -151,9 +156,9 @@ def ndarray_copy(src, dst):
     # reshape source to match destination
     if src.shape != dst.shape:
         if dst.flags.f_contiguous:
-            order = 'F'
+            order = "F"
         else:
-            order = 'C'
+            order = "C"
         src = src.reshape(dst.shape, order=order)
 
     # copy via numpy
