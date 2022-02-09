@@ -10,7 +10,42 @@ import numpy as np
 from .ndarray_like import NDArrayLike, is_ndarray_like
 
 
-def ensure_ndarray(buf) -> NDArrayLike:
+def ensure_ndarray_like(buf) -> NDArrayLike:
+    """Convenience function to coerce `buf` to ndarray-like array.
+
+    Parameters
+    ----------
+    buf : ndarray-like, array-like, or bytes-like
+        A numpy array like object such as numpy.ndarray, cupy.ndarray, or
+        any object exporting a buffer interface.
+
+    Returns
+    -------
+    arr : NDArrayLike
+        A ndarray-like, sharing memory with `buf`.
+
+    Notes
+    -----
+    This function will not create a copy under any circumstances, it is guaranteed to
+    return a view on memory exported by `buf`.
+    """
+
+    if not is_ndarray_like(buf):
+        if isinstance(buf, array.array) and buf.typecode in "cu":
+            # Guard condition, do not support array.array with unicode type, this is
+            # problematic because numpy does not support it on all platforms. Also do not
+            # support char as it was removed in Python 3.
+            raise TypeError("array.array with char or unicode type is not supported")
+        else:
+            # N.B., first take a memoryview to make sure that we subsequently create a
+            # numpy array from a memory buffer with no copy
+            mem = memoryview(buf)
+            # instantiate array from memoryview, ensures no copy
+            buf = np.array(mem, copy=False)
+    return buf
+
+
+def ensure_ndarray(buf) -> np.ndarray:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
 
@@ -28,58 +63,38 @@ def ensure_ndarray(buf) -> NDArrayLike:
     -----
     This function will not create a copy under any circumstances, it is guaranteed to
     return a view on memory exported by `buf`.
-
     """
-    if not is_ndarray_like(buf):
-        if isinstance(buf, array.array) and buf.typecode in "cu":
-            # Guard condition, do not support array.array with unicode type, this is
-            # problematic because numpy does not support it on all platforms. Also do not
-            # support char as it was removed in Python 3.
-            raise TypeError("array.array with char or unicode type is not supported")
-        else:
-            # N.B., first take a memoryview to make sure that we subsequently create a
-            # numpy array from a memory buffer with no copy
-            mem = memoryview(buf)
-
-            # instantiate array from memoryview, ensures no copy
-            buf = np.array(mem, copy=False)
-
-    return buf
+    return np.array(ensure_ndarray_like(buf), copy=False)
 
 
-def ensure_ndarray_like(buf) -> NDArrayLike:
-    return ensure_ndarray(buf)
+def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
+    """Convenience function to coerce `buf` to ndarray-like array.
 
-
-def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> NDArrayLike:
-    """Convenience function to coerce `buf` to a numpy array, if it is not already a
-    numpy array. Also ensures that the returned value exports fully contiguous memory,
+    Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
     provided, raise a ValueError if the number of bytes consumed by the returned
     array exceeds this value.
 
     Parameters
     ----------
-    buf : array-like or bytes-like
-        A numpy array or any object exporting a buffer interface.
+    buf : ndarray-like, array-like, or bytes-like
+        A numpy array like object such as numpy.ndarray, cupy.ndarray, or
+        any object exporting a buffer interface.
     max_buffer_size : int
         If specified, the largest allowable value of arr.nbytes, where arr
         is the returned array.
 
     Returns
     -------
-    arr : ndarray
-        A numpy array, sharing memory with `buf`.
+    arr : NDArrayLike
+        A ndarray-like, sharing memory with `buf`.
 
     Notes
     -----
     This function will not create a copy under any circumstances, it is guaranteed to
     return a view on memory exported by `buf`.
-
     """
-
-    # ensure input is a numpy array
-    arr = ensure_ndarray(buf)
+    arr = ensure_ndarray_like(buf)
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
@@ -104,8 +119,34 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> NDArrayLike:
     return arr
 
 
-def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
-    return ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)
+def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> np.array:
+    """Convenience function to coerce `buf` to a numpy array, if it is not already a
+    numpy array. Also ensures that the returned value exports fully contiguous memory,
+    and supports the new-style buffer interface. If the optional max_buffer_size is
+    provided, raise a ValueError if the number of bytes consumed by the returned
+    array exceeds this value.
+
+    Parameters
+    ----------
+    buf : array-like or bytes-like
+        A numpy array or any object exporting a buffer interface.
+    max_buffer_size : int
+        If specified, the largest allowable value of arr.nbytes, where arr
+        is the returned array.
+
+    Returns
+    -------
+    arr : ndarray
+        A numpy array, sharing memory with `buf`.
+
+    Notes
+    -----
+    This function will not create a copy under any circumstances, it is guaranteed to
+    return a view on memory exported by `buf`.
+    """
+    return ensure_ndarray(
+        ensure_contiguous_ndarray_like(buf, max_buffer_size=max_buffer_size)
+    )
 
 
 def ensure_bytes(buf) -> bytes:
