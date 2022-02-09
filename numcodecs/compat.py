@@ -1,4 +1,5 @@
 # flake8: noqa
+import functools
 import sys
 import codecs
 import array
@@ -6,10 +7,10 @@ from functools import reduce
 
 import numpy as np
 
-from .ndarray_like import NDArrayLike, ensure_memtype
+from .ndarray_like import NDArrayLike, is_ndarray_like
 
 
-def ensure_ndarray(buf, memtype="cpu") -> NDArrayLike:
+def ensure_ndarray(buf) -> NDArrayLike:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array.
 
@@ -29,7 +30,7 @@ def ensure_ndarray(buf, memtype="cpu") -> NDArrayLike:
     return a view on memory exported by `buf`.
 
     """
-    if not isinstance(buf, NDArrayLike):
+    if not is_ndarray_like(buf):
         if isinstance(buf, array.array) and buf.typecode in "cu":
             # Guard condition, do not support array.array with unicode type, this is
             # problematic because numpy does not support it on all platforms. Also do not
@@ -43,14 +44,14 @@ def ensure_ndarray(buf, memtype="cpu") -> NDArrayLike:
             # instantiate array from memoryview, ensures no copy
             buf = np.array(mem, copy=False)
 
-    return ensure_memtype(buf, memtype=memtype)
+    return buf
 
 
-def ensure_ndarray_like(buf, memtype=None) -> NDArrayLike:
-    return ensure_ndarray(buf, memtype=memtype)
+def ensure_ndarray_like(buf) -> NDArrayLike:
+    return ensure_ndarray(buf)
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None, memtype="cpu") -> NDArrayLike:
+def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> NDArrayLike:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -78,7 +79,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None, memtype="cpu") -> NDArr
     """
 
     # ensure input is a numpy array
-    arr = ensure_ndarray(buf, memtype=memtype)
+    arr = ensure_ndarray(buf)
 
     # check for object arrays, these are just memory pointers, actual memory holding
     # item data is scattered elsewhere
@@ -103,12 +104,8 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None, memtype="cpu") -> NDArr
     return arr
 
 
-def ensure_contiguous_ndarray_like(
-    buf, max_buffer_size=None, memtype=None
-) -> NDArrayLike:
-    return ensure_contiguous_ndarray(
-        buf, max_buffer_size=max_buffer_size, memtype=memtype
-    )
+def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
+    return ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)
 
 
 def ensure_bytes(buf) -> bytes:

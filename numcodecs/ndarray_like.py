@@ -1,8 +1,5 @@
 import sys
-from collections import defaultdict
-from typing import Any, Callable, DefaultDict, Dict, Mapping, Optional, Tuple
-
-import numpy as np
+from typing import Any, Optional, Tuple
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
@@ -54,26 +51,6 @@ class NDArrayLike(Protocol):
         ...
 
 
-ConvertFunc = Callable[[NDArrayLike], NDArrayLike]
-
-_ndarray_like_registry: DefaultDict[type, Dict[str, ConvertFunc]] = defaultdict(dict)
-
-
-def register_ndarray_like(cls, convert_dict: Mapping[str, ConvertFunc]) -> None:
-    _ndarray_like_registry[cls].update(convert_dict)
-
-
-def ensure_memtype(ary: NDArrayLike, memtype=Optional[str]) -> NDArrayLike:
-    if memtype is None:
-        return ary
-    return _ndarray_like_registry[ary.__class__][memtype](ary)
-
-
-register_ndarray_like(np.ndarray, {"cpu": lambda x: x})
-
-try:
-    import cupy
-except ImportError:
-    pass
-else:
-    register_ndarray_like(cupy.ndarray, {"cpu": cupy.asnumpy})
+def is_ndarray_like(obj: object) -> bool:
+    """Return True when `obj` is ndarray-like"""
+    return isinstance(obj, NDArrayLike)
