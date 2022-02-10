@@ -5,6 +5,9 @@ Release notes
 
 Unreleased
 ----------
+* Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
+  and 3.10, the docs about ZFPY is available.
+  By :user:`Haiying Xu <halehawk>`, 
 
 .. _release_0.9.1:
 
