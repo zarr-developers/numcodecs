@@ -38,7 +38,6 @@ arrays = [
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
     np.random.normal(loc=1000, scale=1, size=(10, 10, 10)),
     np.random.normal(loc=1000, scale=1, size=(2, 5, 10, 10)),
-    np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(5, 10, 20))),
     np.random.randint(-(2 ** 31), -(2 ** 31) + 20, size=1000, dtype="i4").reshape(
         100, 10
     ),

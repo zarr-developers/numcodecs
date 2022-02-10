@@ -50,7 +50,7 @@ def ensure_ndarray(buf):
     return arr
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None):
+def ensure_contiguous_ndarray(buf, max_buffer_size=None, flat=True):
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -91,8 +91,10 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None):
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
-        # can flatten without copy
-        arr = arr.reshape(-1, order='A')
+        # check if flat flag is on or not
+        if  flat: 
+            # can flatten without copy
+            arr = arr.reshape(-1, order='A')
 
     else:
         raise ValueError('an array with contiguous memory is required')

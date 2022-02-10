@@ -54,8 +54,14 @@ if _zfpy:
 
         def encode(self, buf):
 
-            # normalise inputs
-            buf = ensure_contiguous_ndarray(buf)
+            # normalise fortran inputs only
+            if buf.flags.c_contiguous:
+                flat = False
+            else:
+                print(buf.flags)
+                print('Do not support Fortran array')
+                exit()
+            buf = ensure_contiguous_ndarray(buf, flat=flat)
 
             # do compression
             return _zfpy.compress_numpy(
