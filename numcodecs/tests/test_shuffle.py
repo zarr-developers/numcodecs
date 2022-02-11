@@ -103,11 +103,11 @@ def test_multiprocessing(pool):
 
     # test encoding
     enc_results = pool.map(_encode_worker, [data] * 5)
-    assert all([len(enc) == len(e) for e in enc_results])
+    assert all(len(enc) == len(e) for e in enc_results)
 
     # test decoding
     dec_results = pool.map(_decode_worker, [enc] * 5)
-    assert all([data.nbytes == len(d) for d in dec_results])
+    assert all(data.nbytes == len(d) for d in dec_results)
 
     # tidy up
     pool.close()

@@ -436,7 +436,7 @@ def decompress_partial(source, start, nitems, dest=None):
     # get encoding size from source buffer header
     encoding_size = source[3]
 
-    # convert varibles to handle type and encoding sizes
+    # convert variables to handle type and encoding sizes
     nitems_bytes = nitems * encoding_size
     start_bytes = (start * encoding_size)
 
