@@ -92,7 +92,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None, flat=True):
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
         # check if flat flag is on or not
-        if  flat: 
+        if flat:
             # can flatten without copy
             arr = arr.reshape(-1, order='A')
 
