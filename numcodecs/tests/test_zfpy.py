@@ -83,3 +83,26 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(ZFPY())
+
+
+def test_err_encode_list():
+    data = ['foo', 'bar', 'baz']
+    for codec in codecs:
+        with pytest.raises(TypeError):
+            codec.encode(data)
+
+
+def test_err_encode_non_contiguous():
+    # non-contiguous memory
+    arr = np.arange(1000, dtype='i4')[::2]
+    for codec in codecs:
+        with pytest.raises(ValueError):
+            codec.encode(arr)
+
+
+def test_err_encode_fortran_array():
+    # fortran array
+    arr = np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(5, 10, 20)))
+    for codec in codecs:
+        with pytest.raises(ValueError):
+            codec.encode(arr)

@@ -9,6 +9,7 @@ if _zfpy:
 
     from .abc import Codec
     from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
+    import numpy as np
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):
@@ -54,13 +55,13 @@ if _zfpy:
 
         def encode(self, buf):
 
-            # normalise fortran inputs only
+            # not flatten c-order array and raise exception for f-order array
+            if not isinstance(buf, np.ndarray):
+                raise TypeError(f"The zfp codec does not support none numpy arrays. Your buffers were {type(buf)}.")
             if buf.flags.c_contiguous:
                 flat = False
             else:
-                print(buf.flags)
-                print('Do not support Fortran array')
-                exit()
+                raise ValueError(f"The zfp codec does not support F order arrays. Your arrays flags were {buf.flags}.")
             buf = ensure_contiguous_ndarray(buf, flat=flat)
 
             # do compression
