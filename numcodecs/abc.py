@@ -29,6 +29,9 @@ other and vice versa.
 """
 
 
+from abc import abstractmethod
+
+
 class Codec:
     """Codec abstract base class."""
 
@@ -36,6 +39,7 @@ class Codec:
     codec_id = None
     """Codec identifier."""
 
+    @abstractmethod
     def encode(self, buf):  # pragma: no cover
         """Encode data in `buf`.
 
@@ -50,11 +54,9 @@ class Codec:
         enc : buffer-like
             Encoded data. May be any object supporting the new-style buffer
             protocol.
-
         """
-        # override in sub-class
-        raise NotImplementedError
 
+    @abstractmethod
     def decode(self, buf, out=None):  # pragma: no cover
         """Decode data in `buf`.
 
@@ -72,10 +74,7 @@ class Codec:
         dec : buffer-like
             Decoded data. May be any object supporting the new-style
             buffer protocol.
-
         """
-        # override in sub-class
-        raise NotImplementedError
 
     def get_config(self):
         """Return a dictionary holding configuration parameters for this
