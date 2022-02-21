@@ -13,7 +13,7 @@ jobs:
     env:
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
-      CIBW_SKIP: "*27* pp* *35*"
+      CIBW_SKIP: "pp*"
       CIBW_ENVIRONMENT: "DISABLE_NUMCODECS_AVX2=1"
       CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.9 DISABLE_NUMCODECS_AVX2=1 CFLAGS="$CFLAGS -Wno-implicit-function-declaration"'
 
@@ -22,18 +22,8 @@ jobs:
         with:
           submodules: true
 
-      - uses: actions/setup-python@v1
-        name: Install Python
-        with:
-          python-version: '3.9'
+      - uses: pypa/cibuildwheel@v2.3.1
 
-      - name: Install cibuildwheel
-        run: |
-          python -m pip install cibuildwheel==1.8.0 wheel
-
-      - name: Build wheel
-        run: |
-          python -m cibuildwheel --output-dir wheelhouse
       - uses: actions/upload-artifact@v1
         with:
           name: wheels
@@ -53,7 +43,7 @@ jobs:
           python-version: '3.9'
 
       - name: Build sdist
-        run: python setup.py sdist
+        run: pipx run build --sdist
 
       - name: test install
         run: pip install dist/numcodecs*.tar.gz
