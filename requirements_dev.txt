@@ -2,4 +2,4 @@ Cython==0.29.21
 msgpack==1.0.2
 numpy==1.21.0
 zfpy==0.5.5; python_version < '3.9'
-
+typing-extensions>=3.7.4
