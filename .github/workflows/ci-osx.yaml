@@ -27,7 +27,7 @@ jobs:
       - name: Set up env
         shell: "bash -l {0}"
         run: |
-          conda create -n env python=${{matrix.python-version}} wheel pip compilers 'clang>=12.0.1'
+          conda create -n env python==${{matrix.python-version}} wheel pip compilers
           conda activate env
           which pip
           pip install -r requirements_test.txt -r requirements.txt
