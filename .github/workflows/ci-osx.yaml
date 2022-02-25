@@ -24,6 +24,13 @@ jobs:
         env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
+      - name: Show info about `base` environment
+        shell: "bash -l {0}"
+        run: |
+          conda info
+          conda config --show-sources
+          conda list --show-channel-urls
+
       - name: Set up env
         shell: "bash -l {0}"
         run: |
@@ -32,6 +39,11 @@ jobs:
           which pip
           pip install -r requirements_test.txt -r requirements.txt
           conda env export
+
+      - name: Show info about `env` environment
+        shell: "bash -l {0}"
+        run: |
+          conda list --show-channel-urls -n env
 
       - name: Install numcodecs
         shell: "bash -l {0}"
