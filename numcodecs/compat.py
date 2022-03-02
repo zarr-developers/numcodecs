@@ -67,9 +67,10 @@ def ensure_ndarray(buf) -> np.ndarray:
     return np.array(ensure_ndarray_like(buf), copy=False)
 
 
-def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
+def ensure_contiguous_ndarray_like(
+    buf, max_buffer_size=None, flatten=True
+) -> NDArrayLike:
     """Convenience function to coerce `buf` to ndarray-like array.
-
     Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
     provided, raise a ValueError if the number of bytes consumed by the returned
@@ -83,6 +84,8 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
     max_buffer_size : int
         If specified, the largest allowable value of arr.nbytes, where arr
         is the returned array.
+    flatten : bool
+        If True, the array are flatten.
 
     Returns
     -------
@@ -107,8 +110,9 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
-        # can flatten without copy
-        arr = arr.reshape(-1, order="A")
+        if flatten:
+            # can flatten without copy
+            arr = arr.reshape(-1, order="A")
     else:
         raise ValueError("an array with contiguous memory is required")
 
@@ -119,7 +123,7 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None) -> NDArrayLike:
     return arr
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> np.array:
+def ensure_contiguous_ndarray(buf, max_buffer_size=None, flatten=True) -> np.array:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -133,6 +137,8 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> np.array:
     max_buffer_size : int
         If specified, the largest allowable value of arr.nbytes, where arr
         is the returned array.
+    flatten : bool
+        If True, the array are flatten.
 
     Returns
     -------
@@ -144,8 +150,11 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None) -> np.array:
     This function will not create a copy under any circumstances, it is guaranteed to
     return a view on memory exported by `buf`.
     """
+
     return ensure_ndarray(
-        ensure_contiguous_ndarray_like(buf, max_buffer_size=max_buffer_size)
+        ensure_contiguous_ndarray_like(
+            buf, max_buffer_size=max_buffer_size, flatten=flatten
+        )
     )
 
 
