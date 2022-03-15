@@ -10,10 +10,13 @@ Unreleased
   By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
   issue:`303`.
 
-.. _release_0.9.1:
+* Add support of alternative array classes (other than NumPy arrays)
+  By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`305`.
 
 * Add ability to find codecs via entrypoints
   By :user:`Martin Durant <martindurant>`, :issue:`290`.
+
+.. _release_0.9.1:
 
 0.9.1
 -----
