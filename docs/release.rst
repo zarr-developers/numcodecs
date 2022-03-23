@@ -5,6 +5,7 @@ Release notes
 
 Unreleased
 ----------
+
 * Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
   and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
   By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
@@ -13,8 +14,27 @@ Unreleased
 * Add support of alternative array classes (other than NumPy arrays)
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`305`.
 
-* Add ability to find codecs via entrypoints
+* Add ability to find codecs via entrypoint `numcodecs.codecs`.
   By :user:`Martin Durant <martindurant>`, :issue:`290`.
+
+* Introduce a flat option to ensure_contiguous_ndarray to switch off flatten for ZFPY codec
+  By :user:`Haiying Xu <halehawk>`, :issue:`307`.
+
+* Fix macOS Python 3.10
+  By :user:`John Kirkham <jakirkham>`, :issue:`311`.
+
+* chore: bump cibuildwheel version, use action
+  By :user:`Henry Schreiner <henryiii>`, :issue:`309`.
+
+* Codex: make encode and decode @abstractmethods
+  By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`306`.
+
+* Fix expected result test for Shuffle.
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`282`.
+
+* Multiple code linting fixes.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
+  :issue:`295`, :issue:`294`, :issue:`293`, and :issue:`292`.
 
 .. _release_0.9.1:
 
