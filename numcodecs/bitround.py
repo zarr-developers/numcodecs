@@ -66,6 +66,7 @@ class BitRound(Codec):
 
         As with ``encode``, preserves itemsize.
         """
-        data = ensure_ndarray(buf).view(inverse[str(buf.dtype)])
+        dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
+        data = ensure_ndarray(buf).view(dt)
         out = ndarray_copy(data, out)
         return out
