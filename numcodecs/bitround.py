@@ -40,7 +40,7 @@ class BitRound(Codec):
         self.keepbits = keepbits
 
     def encode(self, buf):
-        """Create int array by rounding floating data
+        """Create int array by rounding floating-point data
 
         The itemsize will be preserved, but the output should be much more
         compressible.
