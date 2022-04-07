@@ -22,7 +22,7 @@ inverse = {
 
 
 class BitRound(Codec):
-    """Real information content algorithm
+    """Floating-point bit rounding codec
 
     Drops a specified number of bits from the floating point mantissa,
     leaving an array more amenable to compression. The number of bits to keep should
