@@ -24,7 +24,7 @@ inverse = {
 class BitRound(Codec):
     """Real information content algorithm
 
-    Drops data in the least significant part of the floating point mantissa,
+    Drops a specified number of bits from the floating point mantissa,
     leaving an array more amenable to compression. The number of bits to keep should
     be determined by a information analysis of the data to be compressed. See 
     https://github.com/zarr-developers/numcodecs/issues/298 for discussion
