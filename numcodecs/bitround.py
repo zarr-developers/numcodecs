@@ -25,7 +25,8 @@ class BitRound(Codec):
     """Real information content algorithm
 
     Drops data in the least significant part of the floating point mantissa,
-    leaving an array uch more amenable to compression. See
+    leaving an array more amenable to compression. The number of bits to keep should
+    be determined by a information analysis of the data to be compressed. See 
     https://github.com/zarr-developers/numcodecs/issues/298 for discussion
     and the original implementation in Julia referred to at
     https://www.nature.com/articles/s43588-021-00156-2
