@@ -4,32 +4,68 @@ import numpy as np
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
 
+max_bits = {
+    "float16": 10,
+    "float32": 23,
+    "float64": 52,
+}
+types = {
+    "float16": np.int16,
+    "float32": np.int32,
+    "float64": np.int64,
+}
+inverse = {
+    "int16": np.float16,
+    "int32": np.float32,
+    "int64": np.float64
+}
+
 
 class BitRound(Codec):
+    """Real information content algorithm
+
+    Drops data in the least significant part of the floating point mantissa,
+    leaving an array uch more amenable to compression. See
+    https://github.com/zarr-developers/numcodecs/issues/298 for discussion
+    and the original implementation in Julia referred to at
+    https://www.nature.com/articles/s43588-021-00156-2
+    """
+
     codec_id = 'bitround'
 
     def __init__(self, keepbits: int):
-        if (keepbits < 0) or (keepbits > 23):
-            raise ValueError("keepbits must be between 0 and 23")
+        if keepbits < 0:
+            raise ValueError("keepbits must be zero or positive")
         self.keepbits = keepbits
 
     def encode(self, buf):
-        if self.keepbits == 23:
-            return buf
-        # TODO: figure out if we need to make a copy
-        # Currently this appears to be overwriting the input buffer
-        # Is that the right behavior?
-        a = ensure_ndarray(buf).view()
-        assert a.dtype == np.float32
-        b = a.view(dtype=np.int32)
+        """Create int array by rounding floating data
+
+        The itemsize will be preserved, but the output should be much more
+        compressible.
+        """
+        a = ensure_ndarray(buf)
+        bits = max_bits[str(a.dtype)]
+        all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
+        if self.keepbits == bits:
+            return a
+        if self.keepbits > bits:
+            raise ValueError("Keepbits too large for given dtype")
+        if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
+            raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
+        b = a.view(types[str(a.dtype)])
         maskbits = 23 - self.keepbits
-        mask = (0xFFFFFFFF >> maskbits) << maskbits
+        mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
         b += ((b >> maskbits) & 1) + half_quantum1
         b &= mask
         return b
 
     def decode(self, buf, out=None):
-        data = ensure_ndarray(buf).view(np.float32)
+        """Remake floats from ints
+
+        As with ``encode``, preserves itemsize.
+        """
+        data = ensure_ndarray(buf).view(inverse[str(buf.dtype)])
         out = ndarray_copy(data, out)
         return out
