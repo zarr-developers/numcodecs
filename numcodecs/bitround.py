@@ -30,6 +30,15 @@ class BitRound(Codec):
     https://github.com/zarr-developers/numcodecs/issues/298 for discussion
     and the original implementation in Julia referred to at
     https://www.nature.com/articles/s43588-021-00156-2
+
+    Parameters
+    ----------
+
+    keepbits: int
+        The number of bits of the mantissa to keep. The range allowed
+        depends on the dtype input data. If keepbits is
+        equal to the maximum allowed for the data type, this is equivalent
+        to no transform.
     """
 
     codec_id = 'bitround'
