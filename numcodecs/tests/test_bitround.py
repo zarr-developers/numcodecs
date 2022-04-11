@@ -2,19 +2,16 @@ import numpy as np
 
 import pytest
 
-from numcodecs.bitround import BitRound
+from numcodecs.bitround import BitRound, max_bits
 
 # adapted from https://github.com/milankl/BitInformation.jl/blob/main/test/round_nearest.jl
 
 
 # TODO: add other dtypes
-@pytest.fixture(params=[np.float32])
+@pytest.fixture(params=["float32", "float64"])
 def dtype(request):
     return request.param
 
-
-# number of mantissa bits for each dtype
-MBITS = {np.float32: 23}
 
 
 def round(data, keepbits):
@@ -29,33 +26,33 @@ def test_round_zero_to_zero(dtype):
     # Don't understand Milan's original test:
     # How is it possible to have negative keepbits?
     # for k in range(-5, 50):
-    for k in range(0, MBITS[dtype]):
+    for k in range(0, max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
 def test_round_one_to_one(dtype):
     a = np.ones((3, 2), dtype=dtype)
-    for k in range(0, MBITS[dtype]):
+    for k in range(0, max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
 def test_round_minus_one_to_minus_one(dtype):
     a = -np.ones((3, 2), dtype=dtype)
-    for k in range(0, MBITS[dtype]):
+    for k in range(0, max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
 def test_no_rounding(dtype):
     a = np.random.random_sample((300, 200)).astype(dtype)
-    keepbits = MBITS[dtype]
+    keepbits = max_bits[dtype]
     ar = round(a, keepbits)
     np.testing.assert_equal(a, ar)
 
 
-APPROX_KEEPBITS = {np.float32: 11}
+APPROX_KEEPBITS = {"float32": 11, "float64": 18}
 
 
 def test_approx_equal(dtype):
@@ -75,6 +72,3 @@ def test_idempotence(dtype):
         ar = round(a, k)
         ar2 = round(a, k)
         np.testing.assert_equal(ar, ar2)
-
-
-# TODO: implement tie_to_even and round_to_nearest

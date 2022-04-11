@@ -64,7 +64,7 @@ class BitRound(Codec):
         if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
         b = a.view(types[str(a.dtype)])
-        maskbits = 23 - self.keepbits
+        maskbits = bits - self.keepbits
         mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
         b += ((b >> maskbits) & 1) + half_quantum1
