@@ -13,7 +13,6 @@ def dtype(request):
     return request.param
 
 
-
 def round(data, keepbits):
     codec = BitRound(keepbits=keepbits)
     data = data.copy()  # otherwise overwrites the input
