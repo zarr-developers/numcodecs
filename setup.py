@@ -341,6 +341,7 @@ def run_setup(with_extensions):
         ],
         install_requires=[
             'numpy>=1.7',
+            'typing-extensions>=3.7.4',
         ],
         extras_require={
             'msgpack':  ["msgpack"],

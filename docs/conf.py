@@ -24,7 +24,7 @@ class Mock(MagicMock):
         return Mock()
 
 
-MOCK_MODULES = ['msgpack', 'zfpy']
+MOCK_MODULES = ['msgpack']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
