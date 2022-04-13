@@ -36,10 +36,10 @@ Unreleased
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
   :issue:`295`, :issue:`294`, :issue:`293`, and :issue:`292`.
 
-.. _release_0.9.1:
-
 * Add bitround codec
   By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
+
+.. _release_0.9.1:
 
 0.9.1
 -----
