@@ -55,28 +55,36 @@ class BitRound(Codec):
         compressible.
         """
         a = ensure_ndarray(buf)
-        bits = max_bits[str(a.dtype)]
-        all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
-        if self.keepbits == bits:
-            return a
-        if self.keepbits > bits:
-            raise ValueError("Keepbits too large for given dtype")
-        if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
-            raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
-        b = a.view(types[str(a.dtype)])
-        maskbits = bits - self.keepbits
-        mask = (all_set >> maskbits) << maskbits
-        half_quantum1 = (1 << (maskbits - 1)) - 1
-        b += ((b >> maskbits) & 1) + half_quantum1
-        b &= mask
-        return b
+        return _bitround(a, self.keepbits)
 
     def decode(self, buf, out=None):
         """Remake floats from ints
 
         As with ``encode``, preserves itemsize.
         """
-        dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
-        data = ensure_ndarray(buf).view(dt)
-        out = ndarray_copy(data, out)
-        return out
+        buf = ensure_ndarray(buf)
+        return _unround(buf, out)
+
+def _bitround(a, keepbits):
+    bits = max_bits[str(a.dtype)]
+    all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
+    if keepbits == bits:
+        return a
+    if keepbits > bits:
+        raise ValueError("Keepbits too large for given dtype")
+    if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
+        raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
+    b = a.view(types[str(a.dtype)])
+    maskbits = bits - keepbits
+    mask = (all_set >> maskbits) << maskbits
+    half_quantum1 = (1 << (maskbits - 1)) - 1
+    b += ((b >> maskbits) & 1) + half_quantum1
+    b &= mask
+    return b
+
+
+def _unround(buf, out):
+    dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
+    data = buf.view(dt)
+    out = ndarray_copy(data, out)
+    return out
