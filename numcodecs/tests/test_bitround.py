@@ -71,3 +71,10 @@ def test_idempotence(dtype):
         ar = round(a, k)
         ar2 = round(a, k)
         np.testing.assert_equal(ar, ar2)
+
+
+def test_errors():
+    with pytest.raises(ValueError):
+        BitRound(keepbits=99).encode(np.array([0], dtype="float32"))
+    with pytest.raises(TypeError):
+        BitRound(keepbits=10).encode(np.array([0]))

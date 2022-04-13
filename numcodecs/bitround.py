@@ -65,15 +65,16 @@ class BitRound(Codec):
         buf = ensure_ndarray(buf)
         return _unround(buf, out)
 
+
 def _bitround(a, keepbits):
+    if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
+        raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
     bits = max_bits[str(a.dtype)]
     all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
     if keepbits == bits:
         return a
     if keepbits > bits:
         raise ValueError("Keepbits too large for given dtype")
-    if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
-        raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
     b = a.view(types[str(a.dtype)])
     maskbits = bits - keepbits
     mask = (all_set >> maskbits) << maskbits

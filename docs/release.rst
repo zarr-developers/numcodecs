@@ -8,6 +8,9 @@ Unreleased
 
 .. _release_0.9.1:
 
+* Add bitround codec
+  By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
+
 0.9.1
 -----
 
