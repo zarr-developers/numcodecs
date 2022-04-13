@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - name: Checkout source
@@ -24,14 +24,26 @@ jobs:
         env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
+      - name: Show info about `base` environment
+        shell: "bash -l {0}"
+        run: |
+          conda info
+          conda config --show-sources
+          conda list --show-channel-urls
+
       - name: Set up env
         shell: "bash -l {0}"
         run: |
-          conda create -n env python==${{matrix.python-version}} wheel pip compilers
+          conda create -n env python=${{matrix.python-version}} wheel pip compilers 'clang>=12.0.1'
           conda activate env
           which pip
           pip install -r requirements_test.txt -r requirements.txt
           conda env export
+
+      - name: Show info about `env` environment
+        shell: "bash -l {0}"
+        run: |
+          conda list --show-channel-urls -n env
 
       - name: Install numcodecs
         shell: "bash -l {0}"
