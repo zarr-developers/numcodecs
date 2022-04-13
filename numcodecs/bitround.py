@@ -2,7 +2,7 @@ import numpy as np
 
 
 from .abc import Codec
-from .compat import ensure_ndarray, ndarray_copy
+from .compat import ensure_ndarray_like, ndarray_copy
 
 max_bits = {
     "float16": 10,
@@ -54,38 +54,29 @@ class BitRound(Codec):
         The itemsize will be preserved, but the output should be much more
         compressible.
         """
-        a = ensure_ndarray(buf)
-        return _bitround(a, self.keepbits)
+        a = ensure_ndarray_like(buf)
+        if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
+            raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
+        bits = max_bits[str(a.dtype)]
+        all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
+        if keepbits == bits:
+            return a
+        if keepbits > bits:
+            raise ValueError("Keepbits too large for given dtype")
+        b = a.view(types[str(a.dtype)])
+        maskbits = bits - keepbits
+        mask = (all_set >> maskbits) << maskbits
+        half_quantum1 = (1 << (maskbits - 1)) - 1
+        b += ((b >> maskbits) & 1) + half_quantum1
+        b &= mask
+        return b
 
     def decode(self, buf, out=None):
         """Remake floats from ints
 
         As with ``encode``, preserves itemsize.
         """
-        buf = ensure_ndarray(buf)
-        return _unround(buf, out)
-
-
-def _bitround(a, keepbits):
-    if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
-        raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
-    bits = max_bits[str(a.dtype)]
-    all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
-    if keepbits == bits:
-        return a
-    if keepbits > bits:
-        raise ValueError("Keepbits too large for given dtype")
-    b = a.view(types[str(a.dtype)])
-    maskbits = bits - keepbits
-    mask = (all_set >> maskbits) << maskbits
-    half_quantum1 = (1 << (maskbits - 1)) - 1
-    b += ((b >> maskbits) & 1) + half_quantum1
-    b &= mask
-    return b
-
-
-def _unround(buf, out):
-    dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
-    data = buf.view(dt)
-    out = ndarray_copy(data, out)
-    return out
+        buf = ensure_ndarray_like(buf)
+        dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
+        data = buf.view(dt)
+        return ndarray_copy(data, out)
