@@ -4,6 +4,9 @@ import numpy as np
 from .abc import Codec
 from .compat import ensure_ndarray_like, ndarray_copy
 
+# The size in bits of the mantissa/significand for the various floating types
+# You cannot keep more bits of data than you have available
+# https://en.wikipedia.org/wiki/IEEE_754
 max_bits = {
     "float16": 10,
     "float32": 23,
@@ -13,11 +16,6 @@ types = {
     "float16": np.int16,
     "float32": np.int32,
     "float64": np.int64,
-}
-inverse = {
-    "int16": np.float16,
-    "int32": np.float32,
-    "int64": np.float64
 }
 
 
@@ -58,12 +56,14 @@ class BitRound(Codec):
         if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
         bits = max_bits[str(a.dtype)]
-        all_set = np.frombuffer(b"\xff" * a.dtype.itemsize, dtype=types[str(a.dtype)])
+        # cast float to int type of same width (preserve endianness)
+        a_int_dtype = np.dtype(a.dtype.str.replace("f", "i"))
+        all_set = np.array(-1, dtype=a_int_dtype)
         if self.keepbits == bits:
             return a
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
-        b = a.view(types[str(a.dtype)])
+        b = a.view(a_int_dtype)
         maskbits = bits - self.keepbits
         mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
@@ -77,6 +77,7 @@ class BitRound(Codec):
         As with ``encode``, preserves itemsize.
         """
         buf = ensure_ndarray_like(buf)
-        dt = buf.dtype if buf.dtype.kind == "f" else inverse[str(buf.dtype)]
+        # Cast back from `int` to `float` type (noop if a `float`ing type buffer is provided)
+        dt = np.dtype(buf.dtype.str.replace("i", "f"))
         data = buf.view(dt)
         return ndarray_copy(data, out)
