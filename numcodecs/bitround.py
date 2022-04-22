@@ -12,11 +12,6 @@ max_bits = {
     "float32": 23,
     "float64": 52,
 }
-types = {
-    "float16": np.int16,
-    "float32": np.int32,
-    "float64": np.int64,
-}
 
 
 class BitRound(Codec):
