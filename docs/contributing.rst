@@ -43,8 +43,8 @@ a bug report:
    interpreter can be obtained by running a Python interactive session, e.g.::
 
     $ python
-    Python 3.6.1 (default, Mar 22 2017, 06:17:05)
-    [GCC 6.3.0 20170321] on linux
+    Python 3.7.6 (default, Jan  8 2020, 13:42:34)
+    [Clang 4.0.1 (tags/RELEASE_401/final)] :: Anaconda, Inc. on darwin
 
 3. An explanation of why the current behaviour is wrong/not desired, and what you
    expect instead.
