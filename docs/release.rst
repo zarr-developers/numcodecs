@@ -36,6 +36,9 @@ Unreleased
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
   :issue:`295`, :issue:`294`, :issue:`293`, and :issue:`292`.
 
+* Drop Python 3.6
+  By :user:`Josh Moore <joshmoore>`, :issue:`318`.
+
 .. _release_0.9.1:
 
 0.9.1
