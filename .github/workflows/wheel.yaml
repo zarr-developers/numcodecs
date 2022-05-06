@@ -13,7 +13,7 @@ jobs:
     env:
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
-      CIBW_SKIP: "pp* cp36-*"
+      CIBW_SKIP: "pp* cp36-* *win32 *_i686"
       CIBW_ENVIRONMENT: "DISABLE_NUMCODECS_AVX2=1"
       CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.9 DISABLE_NUMCODECS_AVX2=1 CFLAGS="$CFLAGS -Wno-implicit-function-declaration"'
 
