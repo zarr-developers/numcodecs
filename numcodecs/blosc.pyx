@@ -90,6 +90,12 @@ def init():
     except OSError:
         mutex = None
     blosc_init()
+    # set num threads
+    try:
+        ncores = multiprocessing.cpu_count()
+    except OSError:
+        ncores = 1
+    set_nthreads(min(8, ncores))
 
 
 def destroy():

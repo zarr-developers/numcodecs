@@ -16,7 +16,6 @@ contribute code, please `raise an issue on GitHub
 <https://github.com/alimanfoo/numcodecs/issues>`_.
 
 """
-import multiprocessing
 import atexit
 
 
@@ -42,13 +41,7 @@ try:
     from numcodecs import blosc
     from numcodecs.blosc import Blosc
     register_codec(Blosc)
-    # initialize blosc
-    try:
-        ncores = multiprocessing.cpu_count()
-    except OSError:  # pragma: no cover
-        ncores = 1
     blosc.init()
-    blosc.set_nthreads(min(8, ncores))
     atexit.register(blosc.destroy)
 except ImportError:  # pragma: no cover
     pass
