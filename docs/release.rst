@@ -154,6 +154,9 @@ Unreleased
 * Drop support for Python 2.
   By :user:`James Bourbeau <jrbourbeau>`, :issue:`220`.
 
+* Fix leaked semaphore in ``numcodecs.blosc``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`234`.
+
 
 .. _release_0.6.4:
 

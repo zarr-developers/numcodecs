@@ -75,12 +75,7 @@ AUTOSHUFFLE = -1
 AUTOBLOCKS = 0
 
 # synchronization
-try:
-    mutex = multiprocessing.Lock()
-except OSError:
-    mutex = None
-except ImportError:
-    mutex = None
+mutex = None
 
 # store ID of process that first loads the module, so we can detect a fork later
 _importer_pid = os.getpid()
@@ -88,12 +83,20 @@ _importer_pid = os.getpid()
 
 def init():
     """Initialize the Blosc library environment."""
+    global mutex
+    # synchronization
+    try:
+        mutex = multiprocessing.Lock()
+    except OSError:
+        mutex = None
     blosc_init()
 
 
 def destroy():
     """Destroy the Blosc library environment."""
+    global mutex
     blosc_destroy()
+    mutex = None
 
 
 def compname_to_compcode(cname):
