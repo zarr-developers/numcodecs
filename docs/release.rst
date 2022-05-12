@@ -39,6 +39,9 @@ Unreleased
 * Add bitround codec
   By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
 
+* Drop Python 3.6
+  By :user:`Josh Moore <joshmoore>`, :issue:`318`.
+
 .. _release_0.9.1:
 
 0.9.1
