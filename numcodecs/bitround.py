@@ -19,7 +19,9 @@ class BitRound(Codec):
 
     Drops a specified number of bits from the floating point mantissa,
     leaving an array more amenable to compression. The number of bits to keep should
-    be determined by an information analysis of the data to be compressed. See
+    be determined by an information analysis of the data to be compressed.
+    The approach is based on the paper by Klöwer et al. 2021
+    (https://www.nature.com/articles/s43588-021-00156-2). See
     https://github.com/zarr-developers/numcodecs/issues/298 for discussion
     and the original implementation in Julia referred to at
     https://github.com/milankl/BitInformation.jl
