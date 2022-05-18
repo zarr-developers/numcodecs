@@ -22,7 +22,7 @@ class BitRound(Codec):
     be determined by an information analysis of the data to be compressed. See
     https://github.com/zarr-developers/numcodecs/issues/298 for discussion
     and the original implementation in Julia referred to at
-    https://www.nature.com/articles/s43588-021-00156-2
+    https://github.com/milankl/BitInformation.jl
 
     Parameters
     ----------
