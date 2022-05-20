@@ -183,7 +183,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 Docstrings for user-facing classes and functions should follow the `numpydoc
-<https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_ standard,
+<https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
 under Python 3.9.
 
