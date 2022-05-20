@@ -71,6 +71,7 @@ Contents
     delta
     fixedscaleoffset
     quantize
+    bitround
     packbits
     categorize
     checksum32
