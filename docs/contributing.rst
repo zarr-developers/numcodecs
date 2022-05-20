@@ -108,25 +108,25 @@ report the bug or propose the feature you'd like to add.
 It's best to create a new, separate branch for each piece of work you want to do. E.g.::
 
     git fetch upstream
-    git checkout -b shiny-new-feature upstream/master
+    git checkout -b shiny-new-feature upstream/main
 
 This changes your working directory to the 'shiny-new-feature' branch. Keep any changes in
 this branch specific to one bug or feature so it is clear what the branch brings to
 NumCodecs.
 
 To update this branch with latest code from NumCodecs, you can retrieve the changes from
-the master branch and perform a rebase::
+the main branch and perform a rebase::
 
     git fetch upstream
-    git rebase upstream/master
+    git rebase upstream/main
 
-This will replay your commits on top of the latest NumCodecs git master. If this leads to
+This will replay your commits on top of the latest NumCodecs git main. If this leads to
 merge conflicts, these need to be resolved before submitting a pull request.
-Alternatively, you can merge the changes in from upstream/master instead of rebasing,
+Alternatively, you can merge the changes in from upstream/main instead of rebasing,
 which can be simpler::
 
     git fetch upstream
-    git merge upstream/master
+    git merge upstream/main
 
 Again, any conflicts need to be resolved before submitting a pull request.
 
@@ -183,7 +183,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 Docstrings for user-facing classes and functions should follow the `numpydoc
-<https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_ standard,
+<https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
 under Python 3.9.
 
@@ -213,7 +213,7 @@ one core developers before being merged. Ideally, pull requests submitted by a c
 should be reviewed and approved by at least one other core developers before being merged.
 
 Pull requests should not be merged until all CI checks have passed (Travis, AppVeyor,
-Coveralls) against code that has had the latest master merged in.
+Coveralls) against code that has had the latest main merged in.
 
 Compatibility and versioning policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -290,9 +290,9 @@ compatibility in some way.
 Release procedure
 ~~~~~~~~~~~~~~~~~
 
-Checkout and update the master branch::
+Checkout and update the main branch::
 
-    $ git checkout master
+    $ git checkout main
     $ git pull
 
 Verify all tests pass on all supported Python versions, and docs build::

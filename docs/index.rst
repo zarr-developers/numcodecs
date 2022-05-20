@@ -1,4 +1,4 @@
-.. numcodecs documentation master file, created by
+.. numcodecs documentation main file, created by
    sphinx-quickstart on Mon May  2 21:40:09 2016.
 
 
