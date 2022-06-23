@@ -36,8 +36,8 @@ Bug fixes
 
 * Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
   and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
-  By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
-  issue:`303`.
+  By :user:`Haiying Xu <halehawk>`, :user:`John Kirkham <jakirkham>`,
+  :user:`Ryan Abernathey <rabernat>` :issue:`303`.
 
 * Codex: make encode and decode @abstractmethods
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`306`.
