@@ -1,15 +1,23 @@
 Release notes
 =============
 
-.. _unreleased:
+..
+    # Unindent the section between releases in order
+    # to document your changes. On releases it will be
+    # re-indented so that it does not show up in the notes.
 
-Unreleased
-----------
+    .. _unreleased:
 
-* Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
-  and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
-  By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
-  issue:`303`.
+    Unreleased
+    ----------
+
+.. _release_0.10.0:
+
+0.10.0
+------
+
+Enhancements
+~~~~~~~~~~~~
 
 * Add support of alternative array classes (other than NumPy arrays)
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`305`.
@@ -17,14 +25,19 @@ Unreleased
 * Add ability to find codecs via entrypoint `numcodecs.codecs`.
   By :user:`Martin Durant <martindurant>`, :issue:`290`.
 
+* Add bitround codec
+  By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
+
 * Introduce a flat option to ensure_contiguous_ndarray to switch off flatten for ZFPY codec
   By :user:`Haiying Xu <halehawk>`, :issue:`307`.
 
-* Fix macOS Python 3.10
-  By :user:`John Kirkham <jakirkham>`, :issue:`311`.
+Bug fixes
+~~~~~~~~~
 
-* chore: bump cibuildwheel version, use action
-  By :user:`Henry Schreiner <henryiii>`, :issue:`309`.
+* Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
+  and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
+  By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
+  issue:`303`.
 
 * Codex: make encode and decode @abstractmethods
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`306`.
@@ -32,15 +45,33 @@ Unreleased
 * Fix expected result test for Shuffle.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`282`.
 
+Maintenance
+~~~~~~~~~~~
+
 * Multiple code linting fixes.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
   :issue:`295`, :issue:`294`, :issue:`293`, and :issue:`292`.
 
-* Add bitround codec
-  By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
-
 * Drop Python 3.6
   By :user:`Josh Moore <joshmoore>`, :issue:`318`.
+
+* Fix macOS Python 3.10
+  By :user:`John Kirkham <jakirkham>`, :issue:`311`.
+
+* chore: bump cibuildwheel version, use action
+  By :user:`Henry Schreiner <henryiii>`, :issue:`309`.
+
+* Specify `language` as `'en'` instead of `None`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`329`.
+
+* Move `master` to `main`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`322`.
+
+* Drop `fastparquet` benchmark.
+  By :user:`John Kirkham <jakirkham>`, :issue:`321`.
+
+* Trim wheel builds.
+  By :user:`John Kirkham <jakirkham>`, :issue:`320`.
 
 .. _release_0.9.1:
 
