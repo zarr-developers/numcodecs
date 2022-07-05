@@ -337,6 +337,7 @@ def run_setup(with_extensions):
             'setuptools-scm>1.5.4'
         ],
         install_requires=[
+            'entrypoints',
             'numpy>=1.7',
             'typing-extensions>=3.7.4',
         ],
