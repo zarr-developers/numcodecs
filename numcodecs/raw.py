@@ -3,6 +3,10 @@ from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
 
 
 class Raw(Codec):
+    """Codec providing no compression.
+
+    """
+
     codec_id: str = "raw"
 
     def encode(self, buf):
