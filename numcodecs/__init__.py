@@ -23,6 +23,9 @@ import atexit
 from numcodecs.version import version as __version__
 from numcodecs.registry import get_codec, register_codec
 
+from numcodecs.raw import Raw
+register_codec(Raw)
+
 from numcodecs.zlib import Zlib
 register_codec(Zlib)
 
