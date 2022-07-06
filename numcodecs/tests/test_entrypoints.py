@@ -12,12 +12,13 @@ pytest.importorskip("entrypoints")
 
 @pytest.fixture()
 def set_path():
+    print(f"Adding {here} to sys.path")
     sys.path.append(here)
     numcodecs.registry.run_entrypoints()
     yield
     sys.path.remove(here)
     numcodecs.registry.run_entrypoints()
-    numcodecs.registry.codec_registry.pop("test")
+    numcodecs.registry.codec_registry.pop("test", None)  # FIXME
 
 
 def test_entrypoint_codec(set_path):
