@@ -370,6 +370,7 @@ def run_setup(with_extensions):
         maintainer_email='alimanfoo@googlemail.com',
         url='https://github.com/zarr-developers/numcodecs',
         license='MIT',
+        zip_safe=False,
     )
 
 
