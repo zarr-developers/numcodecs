@@ -6,10 +6,16 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
-    .. _unreleased:
+.. _unreleased:
 
-    Unreleased
-    ----------
+Unreleased
+----------
+
+Maintenance
+~~~~~~~~~~~
+
+* Fix spelling.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`336`.
 
 .. _release_0.10.0:
 
@@ -402,7 +408,7 @@ Maintenance
 -----
 
 * Resolved an issue where providing an array with dtype ``object`` as the destination
-  when decoding could cause segaults with some codecs (:issue:`55`).
+  when decoding could cause segfaults with some codecs (:issue:`55`).
 
 
 .. _release_0.4.0:
