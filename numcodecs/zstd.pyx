@@ -204,7 +204,7 @@ class Zstd(Codec):
     codec_id = 'zstd'
     
     # Note: unlike the LZ4 and Blosc codecs, there does not appear to be a (currently)
-    # practical limit on the size of buffers that Zstd can process and so we don't 
+    # practical limit on the size of buffers that Zstd can process and so we don't
     # enforce a max_buffer_size option here.
 
     def __init__(self, level=DEFAULT_CLEVEL):
