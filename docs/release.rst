@@ -17,6 +17,9 @@ Maintenance
 * Fix spelling.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`336`.
 
+* Remove trailing spaces and empty lines.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`341`.
+
 .. _release_0.10.0:
 
 0.10.0
