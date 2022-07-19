@@ -17,6 +17,10 @@ Maintenance
 * Fix spelling.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`336`.
 
+* Drop Python 3.6 from tests
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
+  :issue:`338`, :issue:`339`.
+
 * Remove trailing spaces and empty lines.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`341`.
 
