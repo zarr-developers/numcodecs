@@ -28,4 +28,3 @@ cpdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, Py
         for byte_index in range(count):
             j = byte_index*element_size + i
             des[j] = src[offset+byte_index]
-
