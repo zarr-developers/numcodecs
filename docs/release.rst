@@ -6,13 +6,21 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
-.. _unreleased:
+    .. _unreleased:
 
-Unreleased
-----------
+    Unreleased
+    ----------
+
+.. _release_0.10.1:
+
+0.10.1
+------
 
 Maintenance
 ~~~~~~~~~~~
+
+* Add entrypoints to setup.py.
+  By :user:`Josh Moore <joshmoore>`, :issue:`332`.
 
 * Fix spelling.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`336`.
