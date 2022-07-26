@@ -337,6 +337,7 @@ def run_setup(with_extensions):
             'setuptools-scm>1.5.4'
         ],
         install_requires=[
+            'entrypoints',
             'numpy>=1.7',
             'typing-extensions>=3.7.4',
         ],
@@ -369,6 +370,7 @@ def run_setup(with_extensions):
         maintainer_email='alimanfoo@googlemail.com',
         url='https://github.com/zarr-developers/numcodecs',
         license='MIT',
+        zip_safe=False,
     )
 
 
