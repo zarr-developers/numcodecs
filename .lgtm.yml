@@ -1,0 +1,17 @@
+---
+# This file contains configuration for the LGTM tool: https://lgtm.com/
+# The numcodecs repository is continuously scanned by the LGTM tool for
+# any security and/or code vulnerabilities. You can find the alerts here:
+# https://lgtm.com/projects/g/zarr-developers/numcodecs
+
+extraction:
+  python:
+    index:
+      exclude: cpuinfo.py
+
+path_classifiers:
+  test:
+    - numcodecs/tests
+
+queries:
+  - exclude: py/clear-text-logging-sensitive-data

@@ -24,6 +24,9 @@ Maintenance
 * Remove trailing spaces and empty lines.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`341`.
 
+* Add LGTM.com configuration file
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`337`.
+
 .. _release_0.10.0:
 
 0.10.0
