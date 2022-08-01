@@ -1,6 +1,5 @@
 import pytest
 
-import importlib
 import inspect
 
 import numcodecs
