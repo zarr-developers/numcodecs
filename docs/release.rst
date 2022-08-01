@@ -11,6 +11,17 @@ Release notes
     Unreleased
     ----------
 
+.. _release_0.10.2:
+
+0.10.2
+------
+
+Fix
+~~~
+
+* Add BitRound (0.10.0) to registry.
+  By :user:`Josh Moore <joshmoore>`, :issue:`342`.
+
 .. _release_0.10.1:
 
 0.10.1
