@@ -6,10 +6,16 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
-    .. _unreleased:
+.. _unreleased:
 
-    Unreleased
-    ----------
+Unreleased
+----------
+
+Maintenance
+~~~~~~~~~~~
+
+* Add tests for all registry classes.
+  By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
 .. _release_0.10.2:
 
