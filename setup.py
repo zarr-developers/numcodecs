@@ -24,7 +24,7 @@ disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
-base_compile_args = list()
+base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
     pass
@@ -321,7 +321,7 @@ def run_setup(with_extensions):
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
-        cmdclass = dict()
+        cmdclass = {}
 
     setup(
         name='numcodecs',
