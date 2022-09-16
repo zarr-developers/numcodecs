@@ -15,7 +15,7 @@ def run_entrypoints():
 
 try:
     run_entrypoints()
-except (ImportError, ModuleNotFoundError):  # pragma: no cover
+except ImportError:  # pragma: no cover
     # marked "no cover" since we will include entrypoints in test env
     pass
 
