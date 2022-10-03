@@ -15,7 +15,7 @@ class FixedScaleOffset(Codec):
     ----------
     offset : float
         Value to subtract from data.
-    scale : int
+    scale : float
         Value to multiply by data.
     dtype : dtype
         Data type to use for decoded data.
