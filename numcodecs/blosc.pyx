@@ -431,7 +431,7 @@ def decompress_partial(source, start, nitems, dest=None):
     cdef:
         int ret
         int encoding_size
-        int nitems_bytes 
+        int nitems_bytes
         int start_bytes
         char *source_ptr
         char *dest_ptr
@@ -472,7 +472,7 @@ def decompress_partial(source, start, nitems, dest=None):
         if dest_buffer is not None:
             dest_buffer.release()
 
-    # ret refers to the number of bytes returned from blosc_getitem. 
+    # ret refers to the number of bytes returned from blosc_getitem.
     if ret <= 0:
         raise RuntimeError('error during blosc partial decompression: %d', ret)
 

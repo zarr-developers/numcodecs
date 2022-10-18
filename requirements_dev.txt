@@ -1,5 +1,6 @@
 Cython==0.29.21
+entrypoints==0.4
 msgpack==1.0.2
-numpy==1.21.0
+numpy==1.22.0
 zfpy==0.5.5
 typing-extensions>=3.7.4

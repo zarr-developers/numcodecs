@@ -24,7 +24,7 @@ disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
-base_compile_args = list()
+base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
     pass
@@ -321,7 +321,7 @@ def run_setup(with_extensions):
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
-        cmdclass = dict()
+        cmdclass = {}
 
     setup(
         name='numcodecs',
@@ -337,6 +337,7 @@ def run_setup(with_extensions):
             'setuptools-scm>1.5.4'
         ],
         install_requires=[
+            'entrypoints',
             'numpy>=1.7',
             'typing-extensions>=3.7.4',
         ],
@@ -369,6 +370,7 @@ def run_setup(with_extensions):
         maintainer_email='alimanfoo@googlemail.com',
         url='https://github.com/zarr-developers/numcodecs',
         license='MIT',
+        zip_safe=False,
     )
 
 

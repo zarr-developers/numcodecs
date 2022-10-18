@@ -3,7 +3,7 @@ applications to dynamically register and look-up codec classes."""
 import logging
 
 logger = logging.getLogger("numcodecs")
-codec_registry = dict()
+codec_registry = {}
 entries = {}
 
 
@@ -15,7 +15,7 @@ def run_entrypoints():
 
 try:
     run_entrypoints()
-except (ImportError, ModuleNotFoundError):  # pragma: no cover
+except ImportError:  # pragma: no cover
     # marked "no cover" since we will include entrypoints in test env
     pass
 
