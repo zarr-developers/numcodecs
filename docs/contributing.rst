@@ -75,9 +75,9 @@ The NumCodecs source code is hosted on GitHub at the following location:
 You will need your own fork to work on the code. Go to the link above and hit
 the "Fork" button. Then clone your fork to your local machine::
 
-    $ git clone git@github.com:your-user-name/numcodecs.git
+    $ git clone --recursive https://github.com/zarr-developers/numcodecs.git
     $ cd numcodecs
-    $ git remote add upstream git@github.com:zarr-developers/numcodecs.git
+    $ git remote add upstream https://github.com/zarr-developers/numcodecs.git
 
 Creating a development environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,6 +98,10 @@ the repository, you can do something like the following::
 To verify that your development environment is working, you can run the unit tests::
 
     $ pytest -v numcodecs
+
+To install numcodecs globally in editable mode run::
+
+    $ python -m pip install -e . 
 
 Creating a branch
 ~~~~~~~~~~~~~~~~~
