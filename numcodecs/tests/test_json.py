@@ -74,7 +74,7 @@ def test_non_numpy_inputs():
             assert np.array_equal(np.array(input_data), output_data)
 
 
-@pytest.mark.paametrize(
+@pytest.mark.parametrize(
     "data",
     [
         np.array(0),
