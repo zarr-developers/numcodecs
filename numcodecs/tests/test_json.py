@@ -71,3 +71,16 @@ def test_non_numpy_inputs():
         for codec in codecs:
             output_data = codec.decode(codec.encode(input_data))
             assert np.array_equal(np.array(input_data), output_data)
+
+
+@pytest.mark.paametrize(
+    "data",
+    [
+        np.array(0),
+        np.array({'hi': 0}, dtype=object),
+        np.array("hi", dtype=object)
+    ]
+)
+def test_singles(data):
+    j = JSON()
+    assert j.decode(j.encode(data)) == data
