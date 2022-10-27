@@ -14,6 +14,10 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
+* Remove vendored C files and re-generate them on the fly using Cython.
+  Add a pyproject.toml file to define Cython as a build dependency.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
