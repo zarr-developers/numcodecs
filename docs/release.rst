@@ -14,6 +14,9 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
+* Remove Python 2 code
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
+
 * Support Python 3.11.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
 
