@@ -1,4 +1,4 @@
-Cython==0.29.21
+Cython==0.29.30
 entrypoints==0.4
 msgpack==1.0.2
 numpy==1.22.0
