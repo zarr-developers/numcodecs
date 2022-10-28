@@ -50,7 +50,7 @@ def error(*msg):
 def blosc_extension():
     info('setting up Blosc extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup blosc sources
@@ -119,7 +119,7 @@ def zstd_extension():
     info('setting up Zstandard extension')
 
     zstd_sources = []
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     include_dirs = []
     define_macros = []
 
@@ -154,7 +154,7 @@ def zstd_extension():
 def lz4_extension():
     info('setting up LZ4 extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup sources - use LZ4 bundled in blosc
@@ -183,7 +183,7 @@ def lz4_extension():
 def vlen_extension():
     info('setting up vlen extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup sources
@@ -210,7 +210,7 @@ def vlen_extension():
 def compat_extension():
     info('setting up compat extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
 
     sources = ['numcodecs/compat_ext.pyx']
 
@@ -229,7 +229,7 @@ def compat_extension():
 def shuffle_extension():
     info('setting up shuffle extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
 
     sources = ['numcodecs/_shuffle.pyx']
 

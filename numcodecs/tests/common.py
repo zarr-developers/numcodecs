@@ -321,7 +321,7 @@ def check_err_encode_object_buffer(compressor):
 
 
 def check_max_buffer_size(codec):
-    for max_buffer_size in [4, 64, 1024]:
+    for max_buffer_size in (4, 64, 1024):
         old_max_buffer_size = codec.max_buffer_size
         try:
             codec.max_buffer_size = max_buffer_size

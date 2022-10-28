@@ -1,8 +1,8 @@
+from contextlib import suppress
+
 _zfpy = None
-try:
+with suppress(ImportError):
     import zfpy as _zfpy
-except ImportError:  # pragma: no cover
-    pass
 
 
 if _zfpy:
