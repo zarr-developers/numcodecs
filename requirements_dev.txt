@@ -2,5 +2,5 @@ Cython==0.29.30
 entrypoints==0.4
 msgpack==1.0.2
 numpy==1.22.0
-zfpy==0.5.5
+zfpy==0.5.5 ; python_version < "3.11"
 typing-extensions>=3.7.4
