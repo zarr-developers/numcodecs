@@ -14,6 +14,13 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
+* Support Python 3.11.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Remove vendored C files and re-generate them on the fly using Cython.
+  Add a pyproject.toml file to define Cython as a build dependency.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
 * Update cpuinfo to 9.0.0.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`370`.
 
