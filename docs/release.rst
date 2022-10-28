@@ -14,6 +14,9 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
+* Update cpuinfo to 9.0.0.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`370`.
+
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
