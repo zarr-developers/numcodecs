@@ -14,7 +14,10 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
-* Remove Python 2 code
+* Migrate codespell configuration to pyproject.toml and get rid of setup.cfg.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`374`.
+
+* Remove Python 2 code.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
 
 * Support Python 3.11.
