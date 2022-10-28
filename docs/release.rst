@@ -14,7 +14,10 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
-* Remove Python 2 code
+* Unvendor cpuinfo.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`373`.
+
+* Remove Python 2 code.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
 
 * Support Python 3.11.
