@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 numcodecs/**/*.c
+numcodecs/**/*.h
 *.so
 
 # editor
