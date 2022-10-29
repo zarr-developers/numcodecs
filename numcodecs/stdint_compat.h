@@ -42,6 +42,3 @@ static inline uint32_t load_le32(const uint8_t c[4])
 #ifdef inline
 #undef inline
 #endif
-
-
-static const int UINT32_SIZE = sizeof (uint32_t);
