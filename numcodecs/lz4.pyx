@@ -12,6 +12,7 @@ from libc.stdint cimport uint8_t, uint32_t
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
+from ._utils cimport store_le32, load_le32
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
@@ -32,12 +33,6 @@ cdef extern from "lz4.h":
                             int maxDecompressedSize) nogil
 
     int LZ4_compressBound(int inputSize) nogil
-
-
-cdef extern from "stdint_compat.h":
-    void store_le32(uint8_t c[4], uint32_t i)
-    uint32_t load_le32(const uint8_t c[4])
-
 
 
 VERSION_STRING = LZ4_versionString()

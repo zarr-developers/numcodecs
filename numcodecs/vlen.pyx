@@ -15,13 +15,9 @@ from .compat import ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
-from libc.stdint cimport uint8_t, uint32_t
+from libc.stdint cimport uint8_t
 from libc.string cimport memcpy
-
-
-cdef extern from "stdint_compat.h":
-    void store_le32(uint8_t c[4], uint32_t i)
-    uint32_t load_le32(const uint8_t c[4])
+from ._utils cimport store_le32, load_le32
 
 
 cdef extern from "Python.h":
