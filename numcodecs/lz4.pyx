@@ -7,6 +7,7 @@
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from libc.stdint cimport uint8_t, uint32_t
 
 
 from .compat_ext cimport Buffer
@@ -36,8 +37,8 @@ cdef extern from "lz4.h":
 cdef extern from "stdint_compat.h":
     cdef enum:
         UINT32_SIZE,
-    void store_le32(char *c, int j)
-    int load_le32(const char *c)
+    void store_le32(uint8_t c[4], uint32_t i)
+    uint32_t load_le32(const uint8_t c[4])
 
 
 
@@ -94,7 +95,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         dest_size = LZ4_compressBound(source_size)
         dest = PyBytes_FromStringAndSize(NULL, dest_size + UINT32_SIZE)
         dest_ptr = PyBytes_AS_STRING(dest)
-        store_le32(dest_ptr, source_size)
+        store_le32(<uint8_t*>dest_ptr, source_size)
         dest_start = dest_ptr + UINT32_SIZE
 
         # perform compression
@@ -152,7 +153,7 @@ def decompress(source, dest=None):
         # determine uncompressed size
         if source_size < UINT32_SIZE:
             raise ValueError('bad input data')
-        dest_size = load_le32(source_ptr)
+        dest_size = load_le32(<uint8_t*>source_ptr)
         if dest_size <= 0:
             raise RuntimeError('LZ4 decompression error: invalid input data')
         source_start = source_ptr + UINT32_SIZE
