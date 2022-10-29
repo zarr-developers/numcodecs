@@ -7,10 +7,12 @@
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from libc.stdint cimport uint8_t, uint32_t
 
 
 from .compat_ext cimport Buffer
 from .compat_ext import Buffer
+from ._utils cimport store_le32, load_le32
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
@@ -31,14 +33,6 @@ cdef extern from "lz4.h":
                             int maxDecompressedSize) nogil
 
     int LZ4_compressBound(int inputSize) nogil
-
-
-cdef extern from "stdint_compat.h":
-    cdef enum:
-        UINT32_SIZE,
-    void store_le32(char *c, int y)
-    int load_le32(const char *c)
-
 
 
 VERSION_STRING = LZ4_versionString()
@@ -92,10 +86,10 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
 
         # setup destination
         dest_size = LZ4_compressBound(source_size)
-        dest = PyBytes_FromStringAndSize(NULL, dest_size + UINT32_SIZE)
+        dest = PyBytes_FromStringAndSize(NULL, dest_size + sizeof(uint32_t))
         dest_ptr = PyBytes_AS_STRING(dest)
-        store_le32(dest_ptr, source_size)
-        dest_start = dest_ptr + UINT32_SIZE
+        store_le32(<uint8_t*>dest_ptr, source_size)
+        dest_start = dest_ptr + sizeof(uint32_t)
 
         # perform compression
         with nogil:
@@ -112,7 +106,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         raise RuntimeError('LZ4 compression error: %s' % compressed_size)
 
     # resize after compression
-    compressed_size += UINT32_SIZE
+    compressed_size += sizeof(uint32_t)
     dest = dest[:compressed_size]
 
     return dest
@@ -150,13 +144,13 @@ def decompress(source, dest=None):
     try:
 
         # determine uncompressed size
-        if source_size < UINT32_SIZE:
+        if source_size < sizeof(uint32_t):
             raise ValueError('bad input data')
-        dest_size = load_le32(source_ptr)
+        dest_size = load_le32(<uint8_t*>source_ptr)
         if dest_size <= 0:
             raise RuntimeError('LZ4 decompression error: invalid input data')
-        source_start = source_ptr + UINT32_SIZE
-        source_size -= UINT32_SIZE
+        source_start = source_ptr + sizeof(uint32_t)
+        source_size -= sizeof(uint32_t)
 
         # setup destination buffer
         if dest is None:

@@ -15,12 +15,9 @@ from .compat import ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
+from libc.stdint cimport uint8_t
 from libc.string cimport memcpy
-
-
-cdef extern from "stdint_compat.h":
-    void store_le32(char *c, int y)
-    int load_le32(const char *c)
+from ._utils cimport store_le32, load_le32
 
 
 cdef extern from "Python.h":
@@ -116,13 +113,13 @@ class VLenUTF8(Codec):
 
         # write header
         data = PyByteArray_AS_STRING(out)
-        store_le32(data, n_items)
+        store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
             l = encoded_lengths[i]
-            store_le32(data, l)
+            store_le32(<uint8_t*>data, l)
             data += 4
             encv = PyBytes_AS_STRING(encoded_values[i])
             memcpy(data, encv, l)
@@ -153,7 +150,7 @@ class VLenUTF8(Codec):
         data_end = data + input_length
 
         # load number of items
-        n_items = load_le32(data)
+        n_items = load_le32(<uint8_t*>data)
 
         # setup output
         if out is not None:
@@ -168,7 +165,7 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             if data + 4 > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(data)
+            l = load_le32(<uint8_t*>data)
             data += 4
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
@@ -244,13 +241,13 @@ class VLenBytes(Codec):
 
         # write header
         data = PyByteArray_AS_STRING(out)
-        store_le32(data, n_items)
+        store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
             l = lengths[i]
-            store_le32(data, l)
+            store_le32(<uint8_t*>data, l)
             data += 4
             encv = PyBytes_AS_STRING(values[i])
             memcpy(data, encv, l)
@@ -281,7 +278,7 @@ class VLenBytes(Codec):
         data_end = data + input_length
 
         # load number of items
-        n_items = load_le32(data)
+        n_items = load_le32(<uint8_t*>data)
 
         # setup output
         if out is not None:
@@ -296,7 +293,7 @@ class VLenBytes(Codec):
         for i in range(n_items):
             if data + 4 > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(data)
+            l = load_le32(<uint8_t*>data)
             data += 4
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
@@ -389,13 +386,13 @@ class VLenArray(Codec):
 
         # write header
         data = PyByteArray_AS_STRING(out)
-        store_le32(data, n_items)
+        store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
             l = lengths[i]
-            store_le32(data, l)
+            store_le32(<uint8_t*>data, l)
             data += 4
             value_buffer = Buffer(normed_values[i], PyBUF_ANY_CONTIGUOUS)
             encv = value_buffer.ptr
@@ -428,7 +425,7 @@ class VLenArray(Codec):
         data_end = data + input_length
 
         # load number of items
-        n_items = load_le32(data)
+        n_items = load_le32(<uint8_t*>data)
 
         # setup output
         if out is not None:
@@ -443,7 +440,7 @@ class VLenArray(Codec):
         for i in range(n_items):
             if data + 4 > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(data)
+            l = load_le32(<uint8_t*>data)
             data += 4
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
