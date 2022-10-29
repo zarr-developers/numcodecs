@@ -22,10 +22,10 @@ typedef unsigned int uint32_t;
 static inline void store_le32(char *c, int y)
 {
     uint32_t x = (uint32_t) y;
-    c[0] = x & 0xff;
-    c[1] = (x >> 8) & 0xff;
-    c[2] = (x >> 16) & 0xff;
-    c[3] = (x >> 24) & 0xff;
+    c[0] = x & 0xFF;
+    c[1] = (x >> 8) & 0xFF;
+    c[2] = (x >> 16) & 0xFF;
+    c[3] = (x >> 24) & 0xFF;
 }
 
 
