@@ -100,3 +100,6 @@ ENV/
 
 # setuptools-scm
 numcodecs/version.py
+
+# Cython generated
+numcodecs/*.c
