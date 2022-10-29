@@ -3,5 +3,5 @@ requires = ["setuptools>=40.8.0", "wheel", "Cython"]
 build-backend = "setuptools.build_meta:__legacy__"
 
 [tool.codespell]
-skip = "./.git"
+skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
