@@ -19,7 +19,7 @@ from libc.string cimport memcpy
 
 
 cdef extern from "stdint_compat.h":
-    void store_le32(char *c, int y)
+    void store_le32(char *c, int j)
     int load_le32(const char *c)
 
 

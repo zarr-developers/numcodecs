@@ -36,7 +36,7 @@ cdef extern from "lz4.h":
 cdef extern from "stdint_compat.h":
     cdef enum:
         UINT32_SIZE,
-    void store_le32(char *c, int y)
+    void store_le32(char *c, int j)
     int load_le32(const char *c)
 
 

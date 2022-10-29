@@ -19,26 +19,26 @@ typedef unsigned int uint32_t;
 #endif
 
 
-static inline void store_le32(char *c, int y)
+static inline void store_le32(char *c, int j)
 {
-    uint32_t x = (uint32_t) y;
-    c[0] = x & 0xFF;
-    c[1] = (x >> 8) & 0xFF;
-    c[2] = (x >> 16) & 0xFF;
-    c[3] = (x >> 24) & 0xFF;
+    uint32_t i = (uint32_t) j;
+    c[0] = i & 0xFF;
+    c[1] = (i >> 8) & 0xFF;
+    c[2] = (i >> 16) & 0xFF;
+    c[3] = (i >> 24) & 0xFF;
 }
 
 
 static inline int load_le32(const char *c)
 {
     const uint8_t *d = (const uint8_t *) c;
-    uint32_t x = (
+    uint32_t i = (
         d[0] |
         (d[1] << 8) |
         (d[2] << 16) |
         (d[3] << 24)
     );
-    return (int) x;
+    return (int) i;
 }
 
 
