@@ -17,6 +17,10 @@ Maintenance
 * Migrate codespell configuration to pyproject.toml and get rid of setup.cfg.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`374`.
 
+* Unvendor cpuinfo.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`373`.
+
+
 * Remove Python 2 code.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
 

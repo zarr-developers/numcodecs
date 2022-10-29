@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 
 # C extensions
+numcodecs/**/*.c
+numcodecs/**/*.h
 *.so
 
 # editor

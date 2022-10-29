@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel", "Cython"]
+requires = ["setuptools>=40.8.0", "wheel", "Cython", "py-cpuinfo"]
 build-backend = "setuptools.build_meta:__legacy__"
 
 [tool.codespell]
