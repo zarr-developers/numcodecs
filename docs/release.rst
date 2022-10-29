@@ -20,6 +20,8 @@ Maintenance
 * Unvendor cpuinfo.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`373`.
 
+* Drop headers.
+  By :user:`John Kirkham <jakirkham>`, :issue:`375`.
 
 * Remove Python 2 code.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
