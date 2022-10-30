@@ -56,8 +56,7 @@ class JSON(Codec):
     def encode(self, buf):
         buf = np.asarray(buf)
         items = buf.tolist()
-        items.append(buf.dtype.str)
-        items.append(buf.shape)
+        items.extend((buf.dtype.str, buf.shape))
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):

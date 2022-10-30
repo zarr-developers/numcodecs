@@ -14,6 +14,9 @@ Unreleased
 Maintenance
 ~~~~~~~~~~~
 
+* Apply refurb suggestions.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
+
 * Migrate codespell configuration to pyproject.toml and get rid of setup.cfg.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`374`.
 
