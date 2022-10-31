@@ -77,14 +77,14 @@ the "Fork" button. Then clone your fork to your local machine::
 
     $ git clone --recursive git@github.com:your-user-name/numcodecs.git  # with ``ssh``
     
-    or
+or::
 
     $ git clone --recursive https://github.com/your-user-name/numcodecs.git  # with ``https``
 
-    Then `cd` into the clone:
+Then ``cd`` into the clone and add the ``upstream`` remote::
 
     $ cd numcodecs
-    $ git remote add upstream git@github.com:zarr-developers/numcodecs.git
+    $ git remote add upstream git@github.com:zarr-developers/numcodecs.git  # or use ``https``
 
 Creating a development environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
