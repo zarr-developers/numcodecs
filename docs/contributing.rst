@@ -84,7 +84,7 @@ or::
 Then ``cd`` into the clone and add the ``upstream`` remote::
 
     $ cd numcodecs
-    $ git remote add upstream git@github.com:zarr-developers/numcodecs.git  # or use ``https``
+    $ git remote add upstream https://github.com/zarr-developers/numcodecs.git
 
 Creating a development environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
