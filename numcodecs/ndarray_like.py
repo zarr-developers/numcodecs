@@ -51,6 +51,26 @@ class NDArrayLike(Protocol):
         ...
 
 
+# keep in sync with NDArrayLike
+_NDArrayLike_protocol_attrs = [
+    "dtype",
+    "shape",
+    "strides",
+    "ndim",
+    "size",
+    "itemsize",
+    "nbytes",
+    "flags",
+    "__len__",
+    "__getitem__",
+    "__setitem__",
+    "tobytes",
+    "reshape",
+    "view",
+]
+
+
 def is_ndarray_like(obj: object) -> bool:
     """Return True when `obj` is ndarray-like"""
-    return isinstance(obj, NDArrayLike)
+    # same as `isinstance(obj, NDArrayLike)` but faster
+    return all(hasattr(obj, attr) for attr in _NDArrayLike_protocol_attrs)
