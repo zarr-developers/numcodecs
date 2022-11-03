@@ -3,7 +3,6 @@ import sys
 from glob import glob
 
 import cpuinfo
-import setuptools
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 
