@@ -59,7 +59,7 @@ skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
 [tool.setuptools]
-license-files = ["LICENSE"]
+license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
