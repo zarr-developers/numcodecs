@@ -5,8 +5,12 @@ from glob import glob
 import cpuinfo
 import setuptools
 from setuptools import Extension, setup
-from setuptools.command.build_ext import build_ext
 from setuptools.errors import CCompilerError, ExecError, PlatformError
+
+try:
+    from Cython.Distutils.build_ext import new_build_ext as build_ext
+except ImportError:
+    from setuptools.command.build_ext import build_ext
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
