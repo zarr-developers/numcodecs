@@ -1,14 +1,13 @@
 import os
 import sys
-from distutils.command.build_ext import build_ext
-from distutils.errors import (CCompilerError, DistutilsExecError,
-                              DistutilsPlatformError)
 from glob import glob
 
 import cpuinfo
 import setuptools
 from Cython.Build import cythonize
 from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
+from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -248,10 +247,10 @@ def shuffle_extension():
 
 
 if sys.platform == 'win32':
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
+    ext_errors = (CCompilerError, ExecError, PlatformError,
                   IOError, ValueError)
 else:
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
+    ext_errors = (CCompilerError, ExecError, PlatformError)
 
 
 class BuildFailed(Exception):
@@ -264,7 +263,7 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except DistutilsPlatformError as e:
+        except PlatformError as e:
             error(e)
             raise BuildFailed()
 
