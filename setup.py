@@ -266,14 +266,6 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
-DESCRIPTION = ("A Python package providing buffer compression and "
-               "transformation codecs for use in data storage and "
-               "communication applications.")
-
-with open('README.rst') as f:
-    LONG_DESCRIPTION = f.read()
-
-
 def run_setup(with_extensions):
 
     if with_extensions:
@@ -286,45 +278,8 @@ def run_setup(with_extensions):
         cmdclass = {}
 
     setup(
-        name='numcodecs',
-        description=DESCRIPTION,
-        long_description=LONG_DESCRIPTION,
-        install_requires=[
-            'entrypoints',
-            'numpy>=1.7',
-            'typing-extensions>=3.7.4',
-        ],
-        extras_require={
-            'msgpack':  ["msgpack"],
-        },
         ext_modules=ext_modules,
         cmdclass=cmdclass,
-        package_dir={"": "."},
-        python_requires=">=3.7, <4",
-        packages=["numcodecs", "numcodecs.tests"],
-        classifiers=[
-            "Development Status :: 4 - Beta",
-            "Intended Audience :: Developers",
-            "Intended Audience :: Information Technology",
-            "Intended Audience :: Science/Research",
-            "License :: OSI Approved :: MIT License",
-            "Programming Language :: Python",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-            "Operating System :: Unix",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.7",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-            "Programming Language :: Python :: 3.10",
-            "Programming Language :: Python :: 3.11",
-        ],
-        author='Alistair Miles',
-        author_email='alimanfoo@googlemail.com',
-        maintainer='Alistair Miles',
-        maintainer_email='alimanfoo@googlemail.com',
-        url='https://github.com/zarr-developers/numcodecs',
-        license='MIT',
-        zip_safe=False,
     )
 
 

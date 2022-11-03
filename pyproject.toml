@@ -1,10 +1,65 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "Cython", "py-cpuinfo"]
+requires = [
+    "setuptools>=64",
+    "setuptools_scm[toml]>=6.2",
+    "wheel",
+    "Cython",
+    "py-cpuinfo"
+]
 build-backend = "setuptools.build_meta:__legacy__"
+
+[project]
+name = "numcodecs"
+description = """
+A Python package providing buffer compression and transformation codecs for use
+in data storage and communication applications.
+"""
+readme =  "README.rst"
+dependencies = [
+    "entrypoints",
+    "numpy>=1.7",
+    "typing-extensions>=3.7.4"
+]
+requires-python = ">=3.7, <4"
+dynamic = [
+  "version",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+maintainers = [
+    { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
+]
+license = { text = "MIT" }
+
+[project.urls]
+Homepage = "https://github.com/zarr-developers/numcodecs"
+
+[project.optional-dependencies]
+msgpack = ["msgpack"]
 
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
+
+[tool.setuptools]
+license-files = ["LICENSE"]
+package-dir = {"" = "."}
+packages = ["numcodecs", "numcodecs.tests"]
+zip-safe = false
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
