@@ -6,6 +6,7 @@ from distutils.errors import (CCompilerError, DistutilsExecError,
 from glob import glob
 
 import cpuinfo
+import setuptools
 from Cython.Build import cythonize
 from setuptools import Extension, setup
 
