@@ -58,6 +58,13 @@ msgpack = ["msgpack"]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
+[tool.pytest.ini_options]
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "ELLIPSIS",
+    "IGNORE_EXCEPTION_DETAIL",
+]
+
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
