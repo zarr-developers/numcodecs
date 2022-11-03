@@ -16,25 +16,26 @@ class _CachedProtocolMeta(Protocol.__class__):
     This metaclass keeps an unbounded cache of the result of
     isinstance checks using the object's class as the cache key.
     """
-    _instancecheck_cache: Dict[Type, bool] = {}
+    _instancecheck_cache: Dict[Tuple[Type, Type], bool] = {}
 
     def __instancecheck__(cls, instance):
-        ret = cls._instancecheck_cache.get(instance.__class__, None)
+        key = (cls, instance.__class__)
+        ret = cls._instancecheck_cache.get(key, None)
         if ret is None:
             ret = super().__instancecheck__(instance)
-            cls._instancecheck_cache[instance.__class__] = ret
+            cls._instancecheck_cache[key] = ret
         return ret
 
 
 @runtime_checkable
-class DType(Protocol):
+class DType(Protocol, metaclass=_CachedProtocolMeta):
     itemsize: int
     name: str
     kind: str
 
 
 @runtime_checkable
-class FlagsObj(Protocol):
+class FlagsObj(Protocol, metaclass=_CachedProtocolMeta):
     c_contiguous: bool
     f_contiguous: bool
     owndata: bool
