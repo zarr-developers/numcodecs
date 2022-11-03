@@ -6,7 +6,7 @@ requires = [
     "Cython",
     "py-cpuinfo"
 ]
-build-backend = "setuptools.build_meta:__legacy__"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "numcodecs"
