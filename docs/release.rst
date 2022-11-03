@@ -11,6 +11,13 @@ Release notes
 Unreleased
 ----------
 
+Fix
+~~~
+
+* Speed up isinstance checks of :class:`numcodecs.ndarray_like.NDArrayLike`,
+  :class:`numcodecs.ndarray_like.DType` and :class:`numcodecs.ndarray_like.FlagsObj`.
+  By :user:`Andreas Poehlmann <ap-->`, :issue:`379`.
+
 Maintenance
 ~~~~~~~~~~~
 
