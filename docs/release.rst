@@ -42,6 +42,9 @@ Maintenance
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
+* Finish ``pyproject.toml`` migration.
+  By :user:`John Kirkham <jakirkham>` :issue:`382`.
+
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
