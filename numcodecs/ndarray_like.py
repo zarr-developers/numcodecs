@@ -27,14 +27,14 @@ class _CachedProtocolMeta(Protocol.__class__):
 
 
 @runtime_checkable
-class DType(Protocol, metaclass=_CachedProtocolMeta):
+class DType(Protocol):
     itemsize: int
     name: str
     kind: str
 
 
 @runtime_checkable
-class FlagsObj(Protocol, metaclass=_CachedProtocolMeta):
+class FlagsObj(Protocol):
     c_contiguous: bool
     f_contiguous: bool
     owndata: bool
