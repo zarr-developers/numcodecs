@@ -18,12 +18,12 @@ class _CachedProtocolMeta(Protocol.__class__):
     """
     _instancecheck_cache: Dict[Tuple[Type, Type], bool] = {}
 
-    def __instancecheck__(cls, instance):
-        key = (cls, instance.__class__)
-        ret = cls._instancecheck_cache.get(key, None)
+    def __instancecheck__(self, instance):
+        key = (self, instance.__class__)
+        ret = self._instancecheck_cache.get(key, None)
         if ret is None:
             ret = super().__instancecheck__(instance)
-            cls._instancecheck_cache[key] = ret
+            self._instancecheck_cache[key] = ret
         return ret
 
 
