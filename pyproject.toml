@@ -1,7 +1,12 @@
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel", "Cython", "py-cpuinfo"]
+requires = ["setuptools>=42", "wheel", "Cython", "py-cpuinfo"]
 build-backend = "setuptools.build_meta:__legacy__"
 
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "dirty-tag"
+write_to = "numcodecs/version.py"

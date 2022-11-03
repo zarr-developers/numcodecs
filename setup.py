@@ -289,11 +289,6 @@ def run_setup(with_extensions):
         name='numcodecs',
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        use_scm_version={
-            'version_scheme': 'guess-next-dev',
-            'local_scheme': 'dirty-tag',
-            'write_to': 'numcodecs/version.py'
-        },
         install_requires=[
             'entrypoints',
             'numpy>=1.7',
