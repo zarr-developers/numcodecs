@@ -4,7 +4,6 @@ from glob import glob
 
 import cpuinfo
 import setuptools
-from Cython.Build import cythonize
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.errors import CCompilerError, ExecError, PlatformError
@@ -111,8 +110,6 @@ def blosc_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -147,8 +144,6 @@ def zstd_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -176,8 +171,6 @@ def lz4_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -203,8 +196,6 @@ def vlen_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -222,8 +213,6 @@ def compat_extension():
                   extra_compile_args=extra_compile_args),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -240,8 +229,6 @@ def shuffle_extension():
                   sources=sources,
                   extra_compile_args=extra_compile_args),
     ]
-
-    extensions = cythonize(extensions)
 
     return extensions
 
