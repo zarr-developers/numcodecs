@@ -46,6 +46,9 @@ maintainers = [
 license = { text = "MIT" }
 
 [project.urls]
+"Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
+Changelog = "https://numcodecs.readthedocs.io/en/stable/release.html"
+Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
