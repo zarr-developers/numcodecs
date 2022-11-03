@@ -5,9 +5,9 @@ from distutils.errors import (CCompilerError, DistutilsExecError,
                               DistutilsPlatformError)
 from glob import glob
 
-from setuptools import setup, Extension
 import cpuinfo
 from Cython.Build import cythonize
+from setuptools import Extension, setup
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
