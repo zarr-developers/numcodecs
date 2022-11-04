@@ -2,7 +2,6 @@
 requires = [
     "setuptools>=64",
     "setuptools_scm[toml]>=6.2",
-    "wheel",
     "Cython",
     "py-cpuinfo"
 ]
