@@ -11,6 +11,13 @@ Release notes
 Unreleased
 ----------
 
+Fix
+~~~
+
+* Speed up isinstance checks of :class:`numcodecs.ndarray_like.NDArrayLike`,
+  :class:`numcodecs.ndarray_like.DType` and :class:`numcodecs.ndarray_like.FlagsObj`.
+  By :user:`Andreas Poehlmann <ap-->`, :issue:`379`.
+
 Maintenance
 ~~~~~~~~~~~
 
@@ -44,7 +51,10 @@ Maintenance
 
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
-  
+
+* Drop tox.
+  By :user:`John Kirkham <jakirkham>`, :issue:`384`.
+
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
