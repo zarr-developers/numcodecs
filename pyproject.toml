@@ -47,7 +47,6 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
-msgpack = ["msgpack"]
 docs = [
     "sphinx",
     "sphinx-issues",
@@ -60,6 +59,9 @@ test = [
     "flake8",
     "pytest",
     "pytest-cov",
+]
+msgpack = [
+    "msgpack",
 ]
 zfpy = [
     "zfpy>=1.0.0",
