@@ -1,5 +1,5 @@
 setuptools
-setuptools_scm
+setuptools-scm
 sphinx
 sphinx-issues
 numpydoc

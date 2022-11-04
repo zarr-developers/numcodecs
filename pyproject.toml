@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "setuptools>=64",
-    "setuptools_scm[toml]>=6.2",
+    "setuptools-scm[toml]>=6.2",
     "Cython",
     "py-cpuinfo"
 ]
