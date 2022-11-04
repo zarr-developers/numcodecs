@@ -276,7 +276,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 with open(codec_fn, mode='w') as cf:
                     _json.dump(codec.get_config(), cf, sort_keys=True, indent=4)
             # load config and compare with expectation
-            with open(codec_fn, mode='r') as cf:
+            with open(codec_fn) as cf:
                 config = _json.load(cf)
                 assert codec == get_codec(config)
 
