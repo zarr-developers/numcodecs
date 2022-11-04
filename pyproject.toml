@@ -69,6 +69,17 @@ zfpy = [
     "zfpy>=1.0.0",
 ]
 
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+package-dir = {"" = "."}
+packages = ["numcodecs", "numcodecs.tests"]
+zip-safe = false
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "dirty-tag"
+write_to = "numcodecs/version.py"
+
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
@@ -85,14 +96,3 @@ doctest_optionflags = [
     "ELLIPSIS",
     "IGNORE_EXCEPTION_DETAIL",
 ]
-
-[tool.setuptools]
-license-files = ["LICENSE.txt"]
-package-dir = {"" = "."}
-packages = ["numcodecs", "numcodecs.tests"]
-zip-safe = false
-
-[tool.setuptools_scm]
-version_scheme = "guess-next-dev"
-local_scheme = "dirty-tag"
-write_to = "numcodecs/version.py"
