@@ -175,8 +175,8 @@ and produce a coverage report. This should be 100% before code can be accepted i
 main code base.
 
 When submitting a pull request, coverage will also be collected across all supported
-Python versions via the Coveralls service, and will be reported back within the pull
-request. Coveralls coverage must also be 100% before code can be accepted.
+Python versions via the Codecov service, and will be reported back within the pull
+request. Codecov coverage must also be 100% before code can be accepted.
 
 Documentation
 ~~~~~~~~~~~~~
@@ -213,7 +213,7 @@ one core developers before being merged. Ideally, pull requests submitted by a c
 should be reviewed and approved by at least one other core developers before being merged.
 
 Pull requests should not be merged until all CI checks have passed (Travis, AppVeyor,
-Coveralls) against code that has had the latest main merged in.
+Codecov) against code that has had the latest main merged in.
 
 Compatibility and versioning policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

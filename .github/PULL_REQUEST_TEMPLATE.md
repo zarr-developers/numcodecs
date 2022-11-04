@@ -8,4 +8,4 @@ TODO:
 - [ ] Changes documented in docs/release.rst
 - [ ] Docs build locally
 - [ ] GitHub Actions CI passes
-- [ ] Test coverage to 100% (Coveralls passes)
+- [ ] Test coverage to 100% (Codecov passes)
