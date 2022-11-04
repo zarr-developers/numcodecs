@@ -52,6 +52,22 @@ Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
 msgpack = ["msgpack"]
+docs = [
+    "sphinx",
+    "sphinx-issues",
+    "numpydoc",
+    "mock",
+]
+test = [
+    "coverage",
+    "coveralls",
+    "flake8",
+    "pytest",
+    "pytest-cov",
+]
+zfpy = [
+    "zfpy>=1.0.0",
+]
 
 [tool.codespell]
 skip = "./.git,fixture"

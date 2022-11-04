@@ -30,7 +30,6 @@ jobs:
           conda create -n env python=${{matrix.python-version}} wheel pip compilers
           conda activate env
           which pip
-          pip install -r requirements_test.txt -r requirements.txt
           conda env export
 
       - name: Install numcodecs
@@ -38,8 +37,7 @@ jobs:
         run: |
           conda activate env
           export CC=clang
-          python -m pip install -U pip -r requirements_test.txt -r requirements.txt
-          python -m pip install -v -e .
+          python -m pip install -v -e .[test,msgpack,zfpy]
 
       - name: Run tests
         shell: "bash -l {0}"
