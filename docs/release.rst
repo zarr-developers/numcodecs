@@ -58,7 +58,7 @@ Maintenance
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
-* Enable Codecov on Linux jobs.
+* Collect coverage on all OSes & enable Codecov.
   By :user:`John Kirkham <jakirkham>`, :issue:`386`.
 
 .. _release_0.10.2:
