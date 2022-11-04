@@ -11,6 +11,13 @@ Release notes
 Unreleased
 ----------
 
+Fix
+~~~
+
+* Speed up isinstance checks of :class:`numcodecs.ndarray_like.NDArrayLike`,
+  :class:`numcodecs.ndarray_like.DType` and :class:`numcodecs.ndarray_like.FlagsObj`.
+  By :user:`Andreas Poehlmann <ap-->`, :issue:`379`.
+
 Maintenance
 ~~~~~~~~~~~
 
@@ -44,6 +51,9 @@ Maintenance
 
 * Finish ``pyproject.toml`` migration.
   By :user:`John Kirkham <jakirkham>` :issue:`382`.
+
+* Drop tox.
+  By :user:`John Kirkham <jakirkham>`, :issue:`384`.
 
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.

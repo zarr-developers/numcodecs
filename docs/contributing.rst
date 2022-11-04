@@ -153,14 +153,8 @@ To also run the doctests within docstrings, run::
 
     $ pytest -v --doctest-modules numcodecs
 
-Tests can be run under different Python versions using tox. E.g. (assuming you have the
-corresponding Python interpreters installed on your system)::
-
-    $ tox -e py36,py37,py38,py39
-
 NumCodecs currently supports Python 6-3.9, so the above command must
-succeed before code can be accepted into the main code base. Note that only the py39
-tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.9.
+succeed before code can be accepted into the main code base.
 
 All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
 integration services for every pull request. Tests must pass under both services before
@@ -175,14 +169,12 @@ Conformance can be checked by running::
 
     $ flake8 --max-line-length=100 numcodecs
 
-This is automatically run when invoking ``tox -e py39``.
-
 Test coverage
 ~~~~~~~~~~~~~
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
 Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``tox -e py39`` will automatically run the test suite with coverage
+coverage. Running ``pytest -v --cov=numcodecs`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 
@@ -206,9 +198,10 @@ included in the release notes (``docs/release.rst``).
 
 The documentation can be built by running::
 
-    $ tox -e docs
+     $ cd docs
+     $ make clean; make html
 
-The resulting built documentation will be available in the ``.tox/docs/tmp/html`` folder.
+The resulting built documentation will be available in the ``docs/_build/html`` folder.
 
 Development best practices, policies and procedures
 ---------------------------------------------------
@@ -305,10 +298,6 @@ Checkout and update the main branch::
 
     $ git checkout main
     $ git pull
-
-Verify all tests pass on all supported Python versions, and docs build::
-
-    $ tox
 
 Tag the version (where "X.X.X" stands for the version number, e.g., "2.2.0")::
 
