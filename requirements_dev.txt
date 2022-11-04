@@ -2,6 +2,8 @@ Cython==0.29.30
 entrypoints==0.4
 msgpack==1.0.2
 numpy==1.22.0
+setuptools>=64
+setuptools-scm[toml]>=6.2
 zfpy==0.5.5 ; python_version < "3.11"
 typing-extensions>=3.7.4
 py-cpuinfo==9.0.0
