@@ -4,6 +4,6 @@ msgpack==1.0.2
 numpy==1.22.0
 setuptools>=64
 setuptools-scm[toml]>=6.2
-zfpy==0.5.5 ; python_version < "3.11"
+zfpy==1.0.0
 typing-extensions>=3.7.4
 py-cpuinfo==9.0.0
