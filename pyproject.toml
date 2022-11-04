@@ -58,6 +58,12 @@ msgpack = ["msgpack"]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "pragma: ${PY_MAJOR_VERSION} no cover",
+]
+
 [tool.pytest.ini_options]
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
