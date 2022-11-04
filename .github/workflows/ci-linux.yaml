@@ -29,11 +29,11 @@ jobs:
       - name: List installed packages
         run: python -m pip list
 
-      - name: Run tests
-        run: pytest -v --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx numcodecs
-
       - name: Flake8
         run: flake8 numcodecs
+
+      - name: Run tests
+        run: pytest -v --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx numcodecs
 
       - uses: codecov/codecov-action@v3
         with:
