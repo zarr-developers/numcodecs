@@ -30,7 +30,7 @@ jobs:
         run: python -m pip list
 
       - name: Run tests
-        run: pytest -v --cov=numcodecs --doctest-modules --doctest-glob=*.pyx numcodecs
+        run: pytest -v --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx numcodecs
 
       - name: Flake8
         run: flake8 numcodecs
@@ -39,3 +39,12 @@ jobs:
         run: |
           cd docs
           sphinx-build -W -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
+
+      - uses: codecov/codecov-action@v3
+        with:
+          #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+            #files: ./coverage1.xml,./coverage2.xml # optional
+            #flags: unittests # optional
+            #name: codecov-umbrella # optional
+            #fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
