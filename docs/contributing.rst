@@ -149,10 +149,6 @@ docstrings. The simplest way to run the unit tests is to invoke::
 
     $ pytest -v numcodecs
 
-To also run the doctests within docstrings, run::
-
-    $ pytest -v --doctest-modules numcodecs
-
 NumCodecs currently supports Python 6-3.9, so the above command must
 succeed before code can be accepted into the main code base.
 
@@ -167,14 +163,14 @@ All code must conform to the PEP8 standard. Regarding line length, lines up to 1
 characters are allowed, although please try to keep under 90 wherever possible.
 Conformance can be checked by running::
 
-    $ flake8 --max-line-length=100 numcodecs
+    $ flake8 numcodecs
 
 Test coverage
 ~~~~~~~~~~~~~
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
 Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``pytest -v --cov=numcodecs`` will automatically run the test suite with coverage
+coverage. Running ``pytest -v numcodecs`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 

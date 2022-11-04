@@ -43,7 +43,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          pytest -v --cov=numcodecs --cov-report xml numcodecs
+          pytest -v --cov-report xml numcodecs
 
       - uses: codecov/codecov-action@v3
         with:
