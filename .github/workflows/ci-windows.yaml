@@ -45,4 +45,4 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          pytest -v --pyargs numcodecs
+          pytest -v --cov=numcodecs --cov-report xml numcodecs
