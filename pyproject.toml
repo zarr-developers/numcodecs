@@ -55,7 +55,6 @@ docs = [
 ]
 test = [
     "coverage",
-    "coveralls",
     "flake8",
     "pytest",
     "pytest-cov",
