@@ -16,5 +16,5 @@ codecs for use in data storage and communication applications.
 .. image:: https://github.com/zarr-developers/numcodecs/workflows/Wheels/badge.svg?branch=main
     :target: https://github.com/zarr-developers/numcodecs/actions?query=workflow%3AWheels
 
-.. image:: https://coveralls.io/repos/github/zarr-developers/numcodecs/badge.svg?branch=main
-    :target: https://coveralls.io/github/zarr-developers/numcodecs?branch=main
+.. image:: https://codecov.io/gh/zarr-developers/numcodecs/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/zarr-developers/numcodecs
