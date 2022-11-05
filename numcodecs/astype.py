@@ -28,10 +28,10 @@ class AsType(Codec):
     >>> x = np.arange(100, 120, 2, dtype=np.int8)
     >>> x
     array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int8)
-    >>> f = numcodecs.AsType(encode_dtype=x.dtype, decode_dtype=np.int64)
+    >>> f = numcodecs.AsType(encode_dtype=x.dtype, decode_dtype=np.int16)
     >>> y = f.decode(x)
     >>> y
-    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118])
+    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int16)
     >>> z = f.encode(y)
     >>> z
     array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int8)
