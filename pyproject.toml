@@ -97,3 +97,15 @@ doctest_optionflags = [
 testpaths = [
     "numcodecs",
 ]
+norecursedirs = [
+    ".git",
+    ".github",
+    ".pytest_cache",
+    "adhoc",
+    "build",
+    "c-blosc",
+    "docs",
+    "fixture",
+    "notebooks",
+    "numcodecs.egg-info",
+]
