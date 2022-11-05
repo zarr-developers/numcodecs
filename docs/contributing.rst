@@ -163,7 +163,7 @@ All code must conform to the PEP8 standard. Regarding line length, lines up to 1
 characters are allowed, although please try to keep under 90 wherever possible.
 Conformance can be checked by running::
 
-    $ flake8 numcodecs
+    $ flake8
 
 Test coverage
 ~~~~~~~~~~~~~
