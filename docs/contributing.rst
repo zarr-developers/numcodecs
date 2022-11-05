@@ -99,16 +99,11 @@ the repository, you can do something like the following::
     $ mkdir -p ~/pyenv/numcodecs-dev
     $ virtualenv --no-site-packages --python=/usr/bin/python3.9 ~/pyenv/numcodecs-dev
     $ source ~/pyenv/numcodecs-dev/bin/activate
-    $ pip install -r requirements_dev.txt
-    $ python setup.py build_ext --inplace
+    $ pip install -e .[docs,test,msgpack,zfpy]
 
 To verify that your development environment is working, you can run the unit tests::
 
     $ pytest -v
-
-To install numcodecs globally in editable mode run::
-
-    $ python -m pip install -e . 
 
 Creating a branch
 ~~~~~~~~~~~~~~~~~
