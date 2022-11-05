@@ -88,7 +88,7 @@ exclude_lines = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov=numcodecs --doctest-modules --doctest-glob=*.pyx"
+addopts = "--cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
