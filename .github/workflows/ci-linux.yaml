@@ -33,7 +33,7 @@ jobs:
         run: flake8 numcodecs
 
       - name: Run tests
-        run: pytest -v numcodecs
+        run: pytest -v
 
       - uses: codecov/codecov-action@v3
         with:

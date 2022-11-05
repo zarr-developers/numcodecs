@@ -104,7 +104,7 @@ the repository, you can do something like the following::
 
 To verify that your development environment is working, you can run the unit tests::
 
-    $ pytest -v numcodecs
+    $ pytest -v
 
 To install numcodecs globally in editable mode run::
 
@@ -147,7 +147,7 @@ Running the test suite
 NumCodecs includes a suite of unit tests, as well as doctests included in function and class
 docstrings. The simplest way to run the unit tests is to invoke::
 
-    $ pytest -v numcodecs
+    $ pytest -v
 
 NumCodecs currently supports Python 6-3.9, so the above command must
 succeed before code can be accepted into the main code base.
@@ -170,7 +170,7 @@ Test coverage
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
 Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``pytest -v numcodecs`` will automatically run the test suite with coverage
+coverage. Running ``pytest -v`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 

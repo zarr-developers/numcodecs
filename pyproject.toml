@@ -94,3 +94,6 @@ doctest_optionflags = [
     "ELLIPSIS",
     "IGNORE_EXCEPTION_DETAIL",
 ]
+testpaths = [
+    "numcodecs",
+]
