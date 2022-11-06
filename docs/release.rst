@@ -59,7 +59,8 @@ Maintenance
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
 * Collect coverage on all OSes & enable Codecov.
-  By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
+  :issue:`390`, :issue:`391`.
 
 .. _release_0.10.2:
 
