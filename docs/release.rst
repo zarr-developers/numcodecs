@@ -39,6 +39,9 @@ Maintenance
 * Support Python 3.11.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
 
+* Test with zfpy 1.0.0.
+  By :user:`John Kirkham <jakirkham>`, :issue:`385`.
+
 * Remove vendored C files and re-generate them on the fly using Cython.
   Add a pyproject.toml file to define Cython as a build dependency.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
@@ -54,6 +57,10 @@ Maintenance
 
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
+
+* Collect coverage on all OSes & enable Codecov.
+  By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
+  :issue:`390`, :issue:`391`.
 
 .. _release_0.10.2:
 
