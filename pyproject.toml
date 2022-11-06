@@ -1,0 +1,7 @@
+[build-system]
+requires = ["setuptools>=40.8.0", "setuptools_scm[toml]>=6.2", "Cython", "py-cpuinfo"]
+build-backend = "setuptools.build_meta:__legacy__"
+
+[tool.codespell]
+skip = "./.git,fixture"
+ignore-words-list = "ba, compiletime, hist, nd, unparseable"

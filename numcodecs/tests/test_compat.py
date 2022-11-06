@@ -62,7 +62,7 @@ def test_ensure_bytes_invalid_inputs():
 
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
-    for e in [a, memoryview(a)]:
+    for e in (a, memoryview(a)):
         with pytest.raises(TypeError):
             ensure_bytes(e)
 
@@ -71,7 +71,7 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
 
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
-    for e in [a, memoryview(a)]:
+    for e in (a, memoryview(a)):
         with pytest.raises(TypeError):
             ensure_contiguous_ndarray(e)
 
@@ -87,7 +87,7 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
 
 def test_ensure_contiguous_ndarray_writeable():
     # check that the writeability of the underlying buffer is preserved
-    for writeable in [False, True]:
+    for writeable in (False, True):
         a = np.arange(100)
         a.setflags(write=writeable)
         m = ensure_contiguous_ndarray(a)
@@ -97,7 +97,7 @@ def test_ensure_contiguous_ndarray_writeable():
 
 
 def test_ensure_contiguous_ndarray_max_buffer_size():
-    for max_buffer_size in [4, 64, 1024]:
+    for max_buffer_size in (4, 64, 1024):
         ensure_contiguous_ndarray(
             np.zeros(max_buffer_size - 1, dtype=np.int8), max_buffer_size)
         ensure_contiguous_ndarray(

@@ -1,6 +1,7 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
 import logging
+from contextlib import suppress
 
 logger = logging.getLogger("numcodecs")
 codec_registry = {}
@@ -13,11 +14,8 @@ def run_entrypoints():
     entries.update(entrypoints.get_group_named("numcodecs.codecs"))
 
 
-try:
+with suppress(ImportError):
     run_entrypoints()
-except ImportError:  # pragma: no cover
-    # marked "no cover" since we will include entrypoints in test env
-    pass
 
 
 def get_codec(config):
