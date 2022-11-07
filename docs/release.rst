@@ -34,7 +34,8 @@ Maintenance
   By :user:`John Kirkham <jakirkham>`, :issue:`375`.
 
 * Remove Python 2 code.
-  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`,
+  :issue:`387`.
 
 * Support Python 3.11.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.

@@ -98,7 +98,7 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             u = input_values[i]
             if u is None or u == 0:  # treat these as missing value, normalize
-                u = u''
+                u = ''
             elif not PyUnicode_Check(u):
                 raise TypeError('expected unicode string, found %r' % u)
             b = PyUnicode_AsUTF8String(u)
