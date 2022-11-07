@@ -78,3 +78,5 @@ def test_errors():
         BitRound(keepbits=99).encode(np.array([0], dtype="float32"))
     with pytest.raises(TypeError):
         BitRound(keepbits=10).encode(np.array([0]))
+    with pytest.raises(ValueError):
+        BitRound(-1)
