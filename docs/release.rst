@@ -58,6 +58,9 @@ Maintenance
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
+* Bring coverage back up to 100%.
+  By :user:`John Kirkham <jakirkham>`, :issue:`392`.
+
 * Collect coverage on all OSes & enable Codecov.
   By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
   :issue:`390`, :issue:`391`.
