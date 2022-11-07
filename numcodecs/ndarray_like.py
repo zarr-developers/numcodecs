@@ -53,22 +53,22 @@ class NDArrayLike(Protocol, metaclass=_CachedProtocolMeta):
     flags: FlagsObj
 
     def __len__(self) -> int:
-        ...
+        ...    # pragma: no cover
 
     def __getitem__(self, key) -> Any:
-        ...
+        ...    # pragma: no cover
 
     def __setitem__(self, key, value):
-        ...
+        ...    # pragma: no cover
 
     def tobytes(self, order: Optional[str] = ...) -> bytes:
-        ...
+        ...    # pragma: no cover
 
     def reshape(self, *shape: int, order: str = ...) -> "NDArrayLike":
-        ...
+        ...    # pragma: no cover
 
     def view(self, dtype: DType = ...) -> "NDArrayLike":
-        ...
+        ...    # pragma: no cover
 
 
 def is_ndarray_like(obj: object) -> bool:
