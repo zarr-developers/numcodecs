@@ -39,8 +39,7 @@ class BitRound(Codec):
     codec_id = 'bitround'
 
     def __init__(self, keepbits: int):
-        if keepbits < 0:
-            raise ValueError("keepbits must be zero or positive")
+        assert keepbits < 0, "keepbits must be zero or positive"
         self.keepbits = keepbits
 
     def encode(self, buf):
