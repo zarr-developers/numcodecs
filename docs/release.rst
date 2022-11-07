@@ -59,7 +59,8 @@ Maintenance
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
 * Bring coverage back up to 100%.
-  By :user:`John Kirkham <jakirkham>`, :issue:`392`.
+  By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
+  :issue:`392` and :issue:`393`.
 
 * Collect coverage on all OSes & enable Codecov.
   By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
