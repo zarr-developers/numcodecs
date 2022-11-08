@@ -1,7 +1,4 @@
 recursive-include c-blosc *
 recursive-include numcodecs *.pyx
 recursive-include numcodecs *.pxd
-recursive-include numcodecs *.c
-recursive-include numcodecs *.h
-include cpuinfo.py
 include numcodecs/tests/package_with_entrypoint-0.1.dist-info/entry_points.txt

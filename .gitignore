@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 
 # C extensions
+numcodecs/**/*.c
+numcodecs/**/*.h
 *.so
 
 # editor
@@ -39,7 +41,6 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
-.tox/
 .coverage
 .coverage.*
 .cache

@@ -11,11 +11,61 @@ Release notes
 Unreleased
 ----------
 
+Fix
+~~~
+
+* Speed up isinstance checks of :class:`numcodecs.ndarray_like.NDArrayLike`,
+  :class:`numcodecs.ndarray_like.DType` and :class:`numcodecs.ndarray_like.FlagsObj`.
+  By :user:`Andreas Poehlmann <ap-->`, :issue:`379`.
+
 Maintenance
 ~~~~~~~~~~~
 
+* Apply refurb suggestions.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
+
+* Migrate codespell configuration to pyproject.toml and get rid of setup.cfg.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`374`.
+
+* Unvendor cpuinfo.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`373`.
+
+* Drop headers.
+  By :user:`John Kirkham <jakirkham>`, :issue:`375`.
+
+* Remove Python 2 code.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`,
+  :issue:`387`.
+
+* Support Python 3.11.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Test with zfpy 1.0.0.
+  By :user:`John Kirkham <jakirkham>`, :issue:`385`.
+
+* Remove vendored C files and re-generate them on the fly using Cython.
+  Add a pyproject.toml file to define Cython as a build dependency.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Update cpuinfo to 9.0.0.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`370`.
+
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
+
+* Drop tox.
+  By :user:`John Kirkham <jakirkham>`, :issue:`384`.
+
+* Update ReadTheDocs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`383`.
+
+* Bring coverage back up to 100%.
+  By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
+  :issue:`392` and :issue:`393`.
+
+* Collect coverage on all OSes & enable Codecov.
+  By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
+  :issue:`390`, :issue:`391`.
 
 .. _release_0.10.2:
 
