@@ -28,14 +28,14 @@ class Delta(Codec):
     --------
     >>> import numcodecs
     >>> import numpy as np
-    >>> x = np.arange(100, 120, 2, dtype='i8')
-    >>> codec = numcodecs.Delta(dtype='i8', astype='i1')
+    >>> x = np.arange(100, 120, 2, dtype='i2')
+    >>> codec = numcodecs.Delta(dtype='i2', astype='i1')
     >>> y = codec.encode(x)
     >>> y
     array([100,   2,   2,   2,   2,   2,   2,   2,   2,   2], dtype=int8)
     >>> z = codec.decode(y)
     >>> z
-    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118])
+    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int16)
 
     """
 
