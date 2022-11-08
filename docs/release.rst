@@ -53,6 +53,9 @@ Maintenance
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
+* Finish ``pyproject.toml`` migration.
+  By :user:`John Kirkham <jakirkham>` :issue:`382`.
+
 * Drop tox.
   By :user:`John Kirkham <jakirkham>`, :issue:`384`.
 

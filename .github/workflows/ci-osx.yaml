@@ -37,7 +37,6 @@ jobs:
           conda create -n env python=${{matrix.python-version}} wheel pip compilers 'clang>=12.0.1'
           conda activate env
           which pip
-          pip install -r requirements_test.txt -r requirements.txt
           conda env export
 
       - name: Show info about `env` environment
@@ -50,14 +49,13 @@ jobs:
         run: |
           conda activate env
           export CC=clang
-          python -m pip install -U pip -r requirements_test.txt -r requirements.txt
-          python -m pip install -v -e .
+          python -m pip install -v -e .[test,msgpack,zfpy]
 
       - name: Run tests
         shell: "bash -l {0}"
         run: |
           conda activate env
-          pytest -v --cov=numcodecs --cov-report xml numcodecs
+          pytest -v
 
       - uses: codecov/codecov-action@v3
         with:

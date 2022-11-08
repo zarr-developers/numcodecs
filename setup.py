@@ -1,12 +1,11 @@
-from glob import glob
 import os
-from setuptools import setup, Extension
-import cpuinfo
 import sys
-from distutils.command.build_ext import build_ext
-from distutils.errors import CCompilerError, DistutilsExecError, \
-    DistutilsPlatformError
-from Cython.Build import cythonize
+from glob import glob
+
+import cpuinfo
+from Cython.Distutils.build_ext import new_build_ext as build_ext
+from setuptools import Extension, setup
+from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -110,8 +109,6 @@ def blosc_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -146,8 +143,6 @@ def zstd_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -175,8 +170,6 @@ def lz4_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -202,8 +195,6 @@ def vlen_extension():
                   ),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -220,8 +211,6 @@ def compat_extension():
                   sources=sources,
                   extra_compile_args=extra_compile_args),
     ]
-
-    extensions = cythonize(extensions)
 
     return extensions
 
@@ -240,16 +229,14 @@ def shuffle_extension():
                   extra_compile_args=extra_compile_args),
     ]
 
-    extensions = cythonize(extensions)
-
     return extensions
 
 
 if sys.platform == 'win32':
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
+    ext_errors = (CCompilerError, ExecError, PlatformError,
                   IOError, ValueError)
 else:
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
+    ext_errors = (CCompilerError, ExecError, PlatformError)
 
 
 class BuildFailed(Exception):
@@ -262,7 +249,7 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except DistutilsPlatformError as e:
+        except PlatformError as e:
             error(e)
             raise BuildFailed()
 
@@ -272,14 +259,6 @@ class ve_build_ext(build_ext):
         except ext_errors as e:
             error(e)
             raise BuildFailed()
-
-
-DESCRIPTION = ("A Python package providing buffer compression and "
-               "transformation codecs for use in data storage and "
-               "communication applications.")
-
-with open('README.rst') as f:
-    LONG_DESCRIPTION = f.read()
 
 
 def run_setup(with_extensions):
@@ -294,55 +273,8 @@ def run_setup(with_extensions):
         cmdclass = {}
 
     setup(
-        name='numcodecs',
-        description=DESCRIPTION,
-        long_description=LONG_DESCRIPTION,
-        use_scm_version={
-            'version_scheme': 'guess-next-dev',
-            'local_scheme': 'dirty-tag',
-            'write_to': 'numcodecs/version.py'
-        },
-        setup_requires=[
-            'setuptools>18.0',
-            'setuptools-scm>1.5.4',
-            'Cython',
-        ],
-        install_requires=[
-            'entrypoints',
-            'numpy>=1.7',
-            'typing-extensions>=3.7.4',
-        ],
-        extras_require={
-            'msgpack':  ["msgpack"],
-        },
         ext_modules=ext_modules,
         cmdclass=cmdclass,
-        package_dir={"": "."},
-        python_requires=">=3.7, <4",
-        packages=["numcodecs", "numcodecs.tests"],
-        classifiers=[
-            "Development Status :: 4 - Beta",
-            "Intended Audience :: Developers",
-            "Intended Audience :: Information Technology",
-            "Intended Audience :: Science/Research",
-            "License :: OSI Approved :: MIT License",
-            "Programming Language :: Python",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-            "Operating System :: Unix",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.7",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-            "Programming Language :: Python :: 3.10",
-            "Programming Language :: Python :: 3.11",
-        ],
-        author='Alistair Miles',
-        author_email='alimanfoo@googlemail.com',
-        maintainer='Alistair Miles',
-        maintainer_email='alimanfoo@googlemail.com',
-        url='https://github.com/zarr-developers/numcodecs',
-        license='MIT',
-        zip_safe=False,
     )
 
 

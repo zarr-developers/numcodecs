@@ -1,7 +1,0 @@
-coverage
-coveralls
-flake8
-pytest
-pytest-cov
-setuptools
-setuptools-scm

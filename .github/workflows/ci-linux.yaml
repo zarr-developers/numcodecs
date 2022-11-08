@@ -24,23 +24,16 @@ jobs:
 
       - name: Install numcodecs
         run: |
-          python -m pip install -U pip -r requirements_test.txt -r requirements.txt
-          python -m pip install -v -e .
+          python -m pip install -v -e .[test,msgpack,zfpy]
 
       - name: List installed packages
         run: python -m pip list
 
-      - name: Run tests
-        run: pytest -v --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx numcodecs
-
       - name: Flake8
-        run: flake8 numcodecs
+        run: flake8
 
-      - name: Build Docs
-        run: |
-          pip install -r requirements_rtfd.txt
-          cd docs
-          sphinx-build -W -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
+      - name: Run tests
+        run: pytest -v
 
       - uses: codecov/codecov-action@v3
         with:
