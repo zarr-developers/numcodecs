@@ -21,6 +21,9 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
+* Remove unnecessary None argument to .get(), it is the default value.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`395`.
+
 * Apply refurb suggestions.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
 

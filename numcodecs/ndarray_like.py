@@ -20,7 +20,7 @@ class _CachedProtocolMeta(Protocol.__class__):
 
     def __instancecheck__(self, instance):
         key = (self, instance.__class__)
-        ret = self._instancecheck_cache.get(key, None)
+        ret = self._instancecheck_cache.get(key)
         if ret is None:
             ret = super().__instancecheck__(instance)
             self._instancecheck_cache[key] = ret
