@@ -36,7 +36,6 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          export CC=clang
           python -m pip install -v -e .[test,msgpack,zfpy]
 
       - name: Run tests
