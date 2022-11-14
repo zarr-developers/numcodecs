@@ -65,6 +65,9 @@ Maintenance
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
 
+* Use `conda-incubator/setup-miniconda@v2.2.0` (and use Conda on Linux).
+  By :user:`John Kirkham <jakirkham>` :issue:`398`.
+
 * Bring coverage back up to 100%.
   By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
   :issue:`392` and :issue:`393`.
