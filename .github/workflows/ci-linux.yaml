@@ -33,11 +33,9 @@ jobs:
 
       - name: Set up env
         shell: "bash -l {0}"
-        run: |
-          conda create -n env python=${{matrix.python-version}} wheel pip compilers
-          conda activate env
-          which pip
-          conda env export
+        run: >
+          conda create -n env python=${{matrix.python-version}} wheel pip
+                              c-compiler cxx-compiler
 
       - name: Show info about `env` environment
         shell: "bash -l {0}"
