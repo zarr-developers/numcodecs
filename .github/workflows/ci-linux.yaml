@@ -17,22 +17,50 @@ jobs:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: conda-incubator/setup-miniconda@v2.2.0
         with:
-          python-version: ${{ matrix.python-version }}
+            channels: conda-forge
+            python-version: ${{ matrix.python-version }}
+        env:
+            ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+      - name: Show info about `base` environment
+        shell: "bash -l {0}"
+        run: |
+          conda info
+          conda config --show-sources
+          conda list --show-channel-urls
+
+      - name: Set up env
+        shell: "bash -l {0}"
+        run: |
+          conda create -n env python=${{matrix.python-version}} wheel pip compilers
+          conda activate env
+          which pip
+          conda env export
+
+      - name: Show info about `env` environment
+        shell: "bash -l {0}"
+        run: |
+          conda list --show-channel-urls -n env
 
       - name: Install numcodecs
+        shell: "bash -l {0}"
         run: |
+          conda activate env
           python -m pip install -v -e .[test,msgpack,zfpy]
 
-      - name: List installed packages
-        run: python -m pip list
-
       - name: Flake8
-        run: flake8
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          flake8
 
       - name: Run tests
-        run: pytest -v
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          pytest -v
 
       - uses: codecov/codecov-action@v3
         with:
