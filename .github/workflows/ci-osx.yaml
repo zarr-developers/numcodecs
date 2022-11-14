@@ -50,6 +50,12 @@ jobs:
           export CC=clang
           python -m pip install -v -e .[test,msgpack,zfpy]
 
+      - name: List installed packages
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          python -m pip list
+
       - name: Run tests
         shell: "bash -l {0}"
         run: |
