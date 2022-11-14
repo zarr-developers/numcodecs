@@ -32,6 +32,11 @@ jobs:
           which pip
           conda env export
 
+      - name: Show info about `env` environment
+        shell: "bash -l {0}"
+        run: |
+          conda list --show-channel-urls -n env
+
       - name: Install numcodecs
         shell: "bash -l {0}"
         run: |
