@@ -47,6 +47,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
+          export DISABLE_NUMCODECS_AVX2=""
           python -m pip install -v -e .[test,msgpack,zfpy]
 
       - name: Flake8
