@@ -16,7 +16,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set up Python
+      - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v2.2.0
         with:
             channels: conda-forge
