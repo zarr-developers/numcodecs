@@ -21,8 +21,6 @@ jobs:
         with:
             channels: conda-forge
             python-version: ${{ matrix.python-version }}
-        env:
-            ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
       - name: Show info about `base` environment
         shell: "bash -l {0}"
