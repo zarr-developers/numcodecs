@@ -17,7 +17,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Python
-        uses: conda-incubator/setup-miniconda@master
+        uses: conda-incubator/setup-miniconda@v2.2.0
         with:
             channels: conda-forge
             python-version: ${{ matrix.python-version }}
