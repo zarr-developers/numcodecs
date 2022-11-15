@@ -56,6 +56,9 @@ Maintenance
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
+* Add workflow to label PRs with "needs release notes".
+  By :user:`Saransh Chopra <Saransh-cpp>` :issue:`396`.
+
 * Finish ``pyproject.toml`` migration.
   By :user:`John Kirkham <jakirkham>` :issue:`382`.
 
