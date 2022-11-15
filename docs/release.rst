@@ -21,6 +21,9 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
+* Remove unnecessary None argument to .get(), it is the default value.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`395`.
+
 * Apply refurb suggestions.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
 
@@ -53,6 +56,9 @@ Maintenance
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
+* Add workflow to label PRs with "needs release notes".
+  By :user:`Saransh Chopra <Saransh-cpp>` :issue:`396`.
+
 * Finish ``pyproject.toml`` migration.
   By :user:`John Kirkham <jakirkham>` :issue:`382`.
 
@@ -61,6 +67,9 @@ Maintenance
 
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
+
+* Use `conda-incubator/setup-miniconda@v2.2.0` (and use Conda on Linux).
+  By :user:`John Kirkham <jakirkham>` :issue:`398`.
 
 * Bring coverage back up to 100%.
   By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
