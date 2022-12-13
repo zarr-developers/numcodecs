@@ -43,6 +43,9 @@ Maintenance
 * Support Python 3.11.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
 
+* Drop Python 3.7.
+  By :user:`John Kirkham <jakirkham>`, :issue:`405`.
+
 * Test with zfpy 1.0.0.
   By :user:`John Kirkham <jakirkham>`, :issue:`385`.
 
