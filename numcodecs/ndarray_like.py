@@ -1,10 +1,4 @@
-import sys
-from typing import Any, Dict, Optional, Tuple, Type
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol, runtime_checkable
-else:
-    from typing_extensions import Protocol, runtime_checkable
+from typing import Any, Dict, Optional, Protocol, Tuple, Type, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):
