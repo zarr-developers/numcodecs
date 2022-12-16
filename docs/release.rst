@@ -7,6 +7,27 @@ Release notes
     # re-indented so that it does not show up in the notes.
 
 
+.. _unreleased:
+
+Unreleased
+----------
+
+Enhancements
+~~~~~~~~~~~~
+
+*
+
+Fix
+~~~
+
+*
+
+Maintenance
+~~~~~~~~~~~
+
+* Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
+  By :user:`John Kirkham <jakirkham>`, :issue:`408`.
+
 .. _release_0.11.0:
 
 0.11.0
