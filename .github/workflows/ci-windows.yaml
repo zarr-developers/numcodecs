@@ -9,6 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-type: ["cpython"]
+        include:
+          - python-version: "3.9"
+            python-type: "pypy"
 
     steps:
       - name: Checkout source
@@ -27,7 +31,8 @@ jobs:
         run: >
           conda create -n env
           c-compiler cxx-compiler
-          python=${{matrix.python-version}} wheel pip
+          'python=${{matrix.python-version}}=*_${{matrix.python-type}}'
+          wheel pip
 
       - name: Show info about `env` environment
         shell: "bash -l {0}"
