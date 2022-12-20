@@ -26,6 +26,14 @@ cpdef uint32_t fletcher32(const uint16_t[::1] data):
 
 
 class Fletcher32(Codec):
+    """The fletcher checksum with 16-bit words and 32-bit output
+
+    With this codec, the checksum is concatenated on the end of the data
+    bytes when encoded. At decode time, the checksum is performed on
+    the data portion and compared with the four-byte checksum, raising
+    ValueError if inconsistent.
+    """
+
     codec_id = "fletcher32"
 
     def encode(self, buf):
@@ -49,7 +57,8 @@ class Fletcher32(Codec):
         found = b[-4:].view('uint32')[0]
         if val != found:
             raise ValueError(
-                f"The flecher32 checksum of the data ({found}) did not match the expected checksum ({val}). "
+                f"The fletcher32 checksum of the data ({found}) did not"
+                f" match the expected checksum ({val}).\n"
                 "This could be a sign that the data has been corrupted."
             )
         if out:

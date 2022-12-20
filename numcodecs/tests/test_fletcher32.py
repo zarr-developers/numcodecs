@@ -22,3 +22,15 @@ def test_with_data(dtype):
     f = Fletcher32()
     arr = np.frombuffer(f.decode(f.encode(data)), dtype=dtype)
     assert (arr == data).all()
+
+
+def test_error():
+    data = np.arange(100)
+    f = Fletcher32()
+    enc = f.encode(data)
+    enc2 = bytearray(enc)
+    enc2[0] += 1
+    with pytest.raises(ValueError) as e:
+        f.decode(enc2)
+    assert "fletcher32 checksum" in str(e.value)
+
