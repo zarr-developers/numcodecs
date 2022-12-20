@@ -111,3 +111,6 @@ with suppress(ImportError):
     register_codec(VLenUTF8)
     register_codec(VLenBytes)
     register_codec(VLenArray)
+
+from numcodecs.fletcher32 import Fletcher32
+register_codec(Fletcher32)

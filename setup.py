@@ -198,6 +198,31 @@ def vlen_extension():
     return extensions
 
 
+def fletcher_extension():
+    info('setting up fletcher32 extension')
+
+    extra_compile_args = base_compile_args.copy()
+    define_macros = []
+
+    # setup sources
+    include_dirs = ['numcodecs']
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    sources = ['numcodecs/fletcher32.pyx']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.fletcher32',
+                  sources=sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
+
+    return extensions
+
+
 def compat_extension():
     info('setting up compat extension')
 
@@ -265,7 +290,8 @@ def run_setup(with_extensions):
 
     if with_extensions:
         ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
-                       compat_extension() + shuffle_extension() + vlen_extension())
+                       compat_extension() + shuffle_extension() + vlen_extension() +
+                       fletcher_extension())
 
         cmdclass = dict(build_ext=ve_build_ext)
     else:
