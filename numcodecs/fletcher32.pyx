@@ -47,7 +47,11 @@ class Fletcher32(Codec):
         else:
             val = fletcher32(b[:-4].view('uint16'))
         found = b[-4:].view('uint32')[0]
-        assert val == found
+        if val != found:
+            raise ValueError(
+                f"The flecher32 checksum of the data ({found}) did not match the expected checksum ({val}). "
+                "This could be a sign that the data has been corrupted."
+            )
         if out:
             out.view("uint8")[:] = b[:-4]
             return out
