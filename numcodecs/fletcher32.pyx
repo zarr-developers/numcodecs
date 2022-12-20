@@ -34,7 +34,7 @@ class Fletcher32(Codec):
         val = H5_checksum_fletcher32(&b_ptr[0], b.nbytes - 4)
         found = b[-4:].view("<u4")[0]
         if val != found:
-            raise ValueError(
+            raise RuntimeError(
                 f"The fletcher32 checksum of the data ({val}) did not"
                 f" match the expected checksum ({found}).\n"
                 "This could be a sign that the data has been corrupted."

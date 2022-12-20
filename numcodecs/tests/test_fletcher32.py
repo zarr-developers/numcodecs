@@ -21,22 +21,22 @@ def test_error():
     enc = f.encode(data)
     enc2 = bytearray(enc)
     enc2[0] += 1
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(RuntimeError) as e:
         f.decode(enc2)
     assert "fletcher32 checksum" in str(e.value)
 
 
 def test_known():
     data = (
-        b'\xf04\xfe\x1a\x03\xb2\xb1?^\x99j\xf3\xd6f\xef?\xbbm\x04n'
-        b'\x9a\xdf\xeb?x\x9eIL\xdeW\xc8?A\xef\x88\xa8&\xad\xef?'
-        b'\xf2\xc6a\x01a\xb8\xe8?#&\x96\xabY\xf2\xe7?\xe2Pw\xba\xd0w\xea?'
-        b'\x80\xc5\xf8M@0\x9a?\x98H+\xb4\x03\xfa\xc6?\xb9P\x1e1'
-    )
+        b'w\x07\x00\x00\x00\x00\x00\x00\x85\xf6\xff\xff\xff\xff\xff\xff'
+        b'i\x07\x00\x00\x00\x00\x00\x00\x94\xf6\xff\xff\xff\xff\xff\xff'
+        b'\x88\t\x00\x00\x00\x00\x00\x00i\x03\x00\x00\x00\x00\x00\x00'
+        b'\x93\xfd\xff\xff\xff\xff\xff\xff\xc3\xfc\xff\xff\xff\xff\xff\xff'
+        b"'\x02\x00\x00\x00\x00\x00\x00\xba\xf7\xff\xff\xff\xff\xff\xff"
+        b'\xfd%\x86d')
     data3 = Fletcher32().decode(data)
-    outarr = np.frombuffer(data3, dtype="<f8")
+    outarr = np.frombuffer(data3, dtype="<i8")
     expected = [
-        0.0691225, 0.98130367, 0.87104532, 0.19018153, 0.9898866,
-        0.77250719, 0.74833377, 0.8271259, 0.02557469, 0.17950484
+        1911, -2427, 1897, -2412, 2440, 873, -621, -829, 551, -2118,
     ]
-    assert np.allclose(outarr, expected)
+    assert outarr.tolist() == expected
