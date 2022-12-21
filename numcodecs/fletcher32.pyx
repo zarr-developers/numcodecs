@@ -1,3 +1,6 @@
+# cython: language_level=3
+# cython: overflowcheck=False
+# cython: cdivision=True
 import struct
 
 from numcodecs.abc import Codec
@@ -5,8 +8,39 @@ from numcodecs.compat import ensure_contiguous_ndarray
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t
 
-cdef extern from "_fletcher.c":
-    uint32_t H5_checksum_fletcher32(const void *_data, size_t _len)
+
+cdef uint32_t _fletcher32(const uint8_t[::1] _data):
+    cdef:
+        const uint8_t *data = &_data[0]
+        size_t _len = _data.shape[0]
+        size_t len = _len / 2
+        size_t tlen
+        uint32_t sum1 = 0, sum2 = 0;
+
+
+    while len:
+        tlen = 360 if len > 360 else len
+        len -= tlen
+        while True:
+            sum1 += <uint32_t>((<uint16_t>data[0]) << 8) | (<uint16_t>data[1])
+            data += 2
+            sum2 += sum1
+            tlen -= 1
+            if tlen < 1:
+                break
+        sum1 = (sum1 & 0xffff) + (sum1 >> 16)
+        sum2 = (sum2 & 0xffff) + (sum2 >> 16)
+
+    if _len % 2:
+        sum1 += <uint32_t>((<uint16_t>(data[0])) << 8)
+        sum2 += sum1
+        sum1 = (sum1 & 0xffff) + (sum1 >> 16)
+        sum2 = (sum2 & 0xffff) + (sum2 >> 16)
+
+    sum1 = (sum1 & 0xffff) + (sum1 >> 16)
+    sum2 = (sum2 & 0xffff) + (sum2 >> 16)
+
+    return (sum2 << 16) | sum1
 
 
 class Fletcher32(Codec):
@@ -24,14 +58,14 @@ class Fletcher32(Codec):
         """Return buffer plus 4-byte fletcher checksum"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         cdef const uint8_t[::1] b_ptr = buf
-        val = H5_checksum_fletcher32(&b_ptr[0], buf.nbytes)
+        val = _fletcher32(b_ptr)
         return buf.tobytes() + struct.pack("<I", val)
 
     def decode(self, buf, out=None):
         """Check fletcher checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
-        cdef const uint8_t[::1] b_ptr = b
-        val = H5_checksum_fletcher32(&b_ptr[0], b.nbytes - 4)
+        cdef const uint8_t[::1] b_ptr = b[:-4]
+        val = _fletcher32(b_ptr)
         found = b[-4:].view("<u4")[0]
         if val != found:
             raise RuntimeError(
