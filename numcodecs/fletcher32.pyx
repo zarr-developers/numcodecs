@@ -49,7 +49,7 @@ class Fletcher32(Codec):
     With this codec, the checksum is concatenated on the end of the data
     bytes when encoded. At decode time, the checksum is performed on
     the data portion and compared with the four-byte checksum, raising
-    ValueError if inconsistent.
+    RuntimeError if inconsistent.
     """
 
     codec_id = "fletcher32"
