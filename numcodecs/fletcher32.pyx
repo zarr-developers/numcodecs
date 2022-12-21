@@ -10,6 +10,8 @@ from libc.stdint cimport uint8_t, uint16_t, uint32_t
 
 
 cdef uint32_t _fletcher32(const uint8_t[::1] _data):
+    # converted from
+    # https://github.com/Unidata/netcdf-c/blob/main/plugins/H5checksum.c#L109
     cdef:
         const uint8_t *data = &_data[0]
         size_t _len = _data.shape[0]
@@ -45,6 +47,10 @@ cdef uint32_t _fletcher32(const uint8_t[::1] _data):
 
 class Fletcher32(Codec):
     """The fletcher checksum with 16-bit words and 32-bit output
+
+    This is the netCDF4/HED5 implementation, which is not equivalent
+    to the one in wikipedia
+    https://github.com/Unidata/netcdf-c/blob/main/plugins/H5checksum.c#L95
 
     With this codec, the checksum is concatenated on the end of the data
     bytes when encoded. At decode time, the checksum is performed on
