@@ -691,7 +691,7 @@ Fixed project description in setup.py.
 -----
 
 First release. This version is a port of the ``codecs`` module from `Zarr
-<http://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
+<https://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
 the original Zarr module:
 
 * Codec classes have been re-organized into separate modules, mostly one per
