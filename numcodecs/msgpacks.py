@@ -52,7 +52,10 @@ class MsgPack(Codec):
         self.raw = raw
 
     def encode(self, buf):
-        buf = np.asarray(buf)
+        try:
+            buf = np.asarray(buf)
+        except ValueError:
+            buf = np.asarray(buf, dtype=object)
         items = buf.tolist()
         items.extend((buf.dtype.str, buf.shape))
         return msgpack.packb(items, use_bin_type=self.use_bin_type,
