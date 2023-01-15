@@ -15,7 +15,8 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
-*
+* Add ``fletcher32`` checksum codec
+  By :user:`Martin Durant <martindurant>`, :issue:`410`.
 
 Fix
 ~~~
