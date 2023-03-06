@@ -56,7 +56,7 @@ class HdfSzipCodec(Codec):
         buf = memoryview(buf)
         param = Params(self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline)
         lout = int.from_bytes(buf[:4], "little")
-        dest_len = ctypes.c_int()
+        dest_len = ctypes.c_int(lout)
         p_dest_len = ctypes.pointer(dest_len)
         if out is None:
             out = ctypes.create_string_buffer(lout)
