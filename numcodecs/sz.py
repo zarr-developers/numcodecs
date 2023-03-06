@@ -28,9 +28,8 @@ if libsz:
     ]
 
     BufftoBuffDecompress = libsz.SZ_BufftoBuffDecompress
-    BufftoBuffCompress = libsz.SZ_BufftoBuffCompress
-    BufftoBuffCompress.restype = ctypes.c_int
-    BufftoBuffCompress.argtypes = [
+    BufftoBuffDecompress.restype = ctypes.c_int
+    BufftoBuffDecompress.argtypes = [
         ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t), ctypes.c_void_p, ctypes.c_size_t,
         ctypes.POINTER(Params)
     ]
