@@ -80,7 +80,7 @@ class HdfSzipCodec(Codec):
         assert ok == 0
         return out
 
-    def encode(self, buf, out=None):
+    def encode(self, buf):
         check_sz()
         buf = ensure_ndarray_like(buf)
         param = Params(
@@ -88,8 +88,7 @@ class HdfSzipCodec(Codec):
         )
         buf_nbytes = buf.nbytes
         buf2 = buf.ctypes.data
-        if out is None:
-            out = ctypes.create_string_buffer(buf_nbytes+4)
+        out = ctypes.create_string_buffer(buf_nbytes+4)
         # Store input nbytes as first four bytes little endian
         in_len = ctypes.c_int32(buf_nbytes)
         out[:4] = bytes(in_len)
