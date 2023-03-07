@@ -63,7 +63,7 @@ class HdfSzipCodec(Codec):
         ok = BufftoBuffDecompress(
             out, p_dest_len, buf2, buf.nbytes - 4, param
         )
-        assert dest_len == lout  # that we got the expected number of bytes
+        assert dest_len.value == lout  # that we got the expected number of bytes
         assert ok == 0
         return out
 
