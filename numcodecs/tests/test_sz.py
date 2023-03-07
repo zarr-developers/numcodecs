@@ -5,6 +5,9 @@ import numpy as np
 from numcodecs.sz import HdfSzipCodec
 
 
+pytest.importorskip("libaec")
+
+
 def test_canonical():
     sample_buffer = b'\x00\x02\x00\x00\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU'
     # pl = h5obj.id.get_create_plist().get_filter(0)
