@@ -38,7 +38,7 @@ if libsz:
 
 
 def check_sz():
-    if not libsz:
+    if not libsz:  # pragma: no cover
         raise ImportError("libsz could not be loaded, please install libaec")
 
 
