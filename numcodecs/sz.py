@@ -59,7 +59,7 @@ class HdfSzipCodec(Codec):
         p_dest_len = ctypes.pointer(dest_len)
         if out is None:
             out = ctypes.create_string_buffer(lout)
-        buf2 = ctypes.c_void_p.from_buffer_copy(buf, 4)  # shouldn't need copy, but wants writable
+        buf2 = ctypes.c_char_p(buf.obj[4:])
         ok = BufftoBuffDecompress(
             out, p_dest_len, buf2, buf.nbytes - 4, param
         )
