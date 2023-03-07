@@ -65,6 +65,7 @@ Contents
     zfpy
     zstd
     zlib
+    szip
     gzip
     bz2
     lzma

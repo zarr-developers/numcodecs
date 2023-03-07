@@ -18,6 +18,9 @@ Enhancements
 * Add ``fletcher32`` checksum codec
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
 
+* Add ``hdf_szip`` codec
+  By :user:`Martin Durant <martindurant>`, :issue:`422`.
+
 Fix
 ~~~
 

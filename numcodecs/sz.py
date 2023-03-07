@@ -1,5 +1,7 @@
 import ctypes
+
 from numcodecs.abc import Codec
+from numcodecs.compat import ensure_ndarray_like
 
 
 class Params(ctypes.Structure):
@@ -37,10 +39,19 @@ if libsz:
 
 def check_sz():
     if not libsz:
-        raise ImportError("libsz could not be loaded")
+        raise ImportError("libsz could not be loaded, please install libaec")
 
 
 class HdfSzipCodec(Codec):
+    """The SZIP codec, as implemented in NASA HDF5
+
+    See description:
+
+    The shared library used could in principle be the original SZIP, but it is
+    also includes in libaec, which is available on conda-forge and recommended.
+
+    All parameters must be defined.
+    """
 
     codec_id = "hdf_szip"
 
@@ -53,7 +64,9 @@ class HdfSzipCodec(Codec):
     def decode(self, buf, out=None):
         check_sz()
         buf = memoryview(buf)
-        param = Params(self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline)
+        param = Params(
+            self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline
+        )
         lout = int.from_bytes(buf[:4], "little")
         dest_len = ctypes.c_size_t(lout)
         p_dest_len = ctypes.pointer(dest_len)
@@ -69,11 +82,12 @@ class HdfSzipCodec(Codec):
 
     def encode(self, buf, out=None):
         check_sz()
-        param = Params(self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline)
-        if isinstance(buf, bytes):
-            buf_nbytes = len(buf)
-        else:
-            buf_nbytes = ctypes.sizeof(buf)
+        buf = ensure_ndarray_like(buf)
+        param = Params(
+            self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline
+        )
+        buf_nbytes = buf.nbytes
+        buf2 = buf.ctypes.data
         if out is None:
             out = ctypes.create_string_buffer(buf_nbytes+4)
         # Store input nbytes as first four bytes little endian
@@ -82,18 +96,8 @@ class HdfSzipCodec(Codec):
         dest_len = ctypes.c_size_t(buf_nbytes)
         p_dest_len = ctypes.pointer(dest_len)
         ok = BufftoBuffCompress(
-            ctypes.addressof(out)+4, p_dest_len, buf, buf_nbytes, param
+            ctypes.addressof(out)+4, p_dest_len, buf2, buf_nbytes, param
         )
         assert ok == 0
         return out[:dest_len.value+4]
 
-
-def testme():
-    sample_buffer = b'\x00\x02\x00\x00\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU'
-    # pl = h5obj.id.get_create_plist().get_filter(0)
-    # mask, pix_per_block, bits_per_pixel, pix_per_scanline = pl[2]
-    # (141, 32, 16, 256)
-    # lout = 512
-
-    codec = HdfSzipCodec(mask=141, pix_per_block=32, bits_per_pixel=16, pix_per_scanline=256)
-    codec.decode(sample_buffer)  # Bus Error
