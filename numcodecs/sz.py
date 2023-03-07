@@ -100,4 +100,3 @@ class HdfSzipCodec(Codec):
         )
         assert ok == 0
         return out[:dest_len.value+4]
-

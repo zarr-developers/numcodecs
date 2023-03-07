@@ -36,6 +36,11 @@ jobs:
           c-compiler cxx-compiler
           python=${{matrix.python-version}} wheel pip
 
+      - name: Set up `env`
+        shell: "bash -l {0}"
+        run: >
+          conda install -n env libaec -c conda-forge --no-deps
+
       - name: Show info about `env` environment
         shell: "bash -l {0}"
         run: |

@@ -9,7 +9,8 @@ pytest.importorskip("libaec")
 
 
 def test_canonical():
-    sample_buffer = b'\x00\x02\x00\x00\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU'
+    sample_buffer = b'\x00\x02\x00\x00\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU' \
+                    b'\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU'
     # pl = h5obj.id.get_create_plist().get_filter(0)
     # mask, pix_per_block, bits_per_pixel, pix_per_scanline = pl[2]
     # (141, 32, 16, 256)
@@ -37,4 +38,3 @@ def test_random(shape, dtype):
     buff2 = codec.decode(buff)
     arr2 = np.frombuffer(buff2, dtype=dtype).reshape(shape)
     assert (arr == arr2).all()
-
