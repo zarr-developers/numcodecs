@@ -25,7 +25,7 @@ def test_canonical():
 
 @pytest.mark.skipif(not libsz)
 @pytest.mark.parametrize(
-    "shape", [(10, 100)], [(10000,)]
+    "shape", [(10, 100), (10000,)]
 )
 @pytest.mark.parametrize(
     "dtype", ["uint16", "int32", "int64"]
