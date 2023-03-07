@@ -67,9 +67,25 @@ class HdfSzipCodec(Codec):
         assert ok == 0
         return out
 
-    def encode(self, buf):
+    def encode(self, buf, out=None):
         check_sz()
-        raise NotImplementedError
+        param = Params(self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline)
+        if isinstance(buf, bytes):
+            buf_nbytes = len(buf)
+        else:
+            buf_nbytes = ctypes.sizeof(buf)
+        if out is None:
+            out = ctypes.create_string_buffer(buf_nbytes+4)
+        # Store input nbytes as first four bytes little endian
+        in_len = ctypes.c_int32(buf_nbytes)
+        out[:4] = bytes(in_len)
+        dest_len = ctypes.c_size_t(buf_nbytes)
+        p_dest_len = ctypes.pointer(dest_len)
+        ok = BufftoBuffCompress(
+            ctypes.addressof(out)+4, p_dest_len, buf, buf_nbytes, param
+        )
+        assert ok == 0
+        return out[:dest_len.value+4]
 
 
 def testme():
