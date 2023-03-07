@@ -5,7 +5,7 @@ import numpy as np
 from numcodecs.sz import HdfSzipCodec, libsz
 
 
-@pytest.mark.skipif(not libsz)
+@pytest.mark.skipif(not libsz, reason="no libaec")
 def test_canonical():
     sample_buffer = b'\x00\x02\x00\x00\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU' \
                     b'\x15UUUUUUUQUUUUUUUU\x15UUUUUUUQUUUUUUUU'
@@ -23,7 +23,7 @@ def test_canonical():
     assert comp_buff == sample_buffer
 
 
-@pytest.mark.skipif(not libsz)
+@pytest.mark.skipif(not libsz, reason="no libaec")
 @pytest.mark.parametrize(
     "shape", [(10, 100), (10000,)]
 )
