@@ -3,6 +3,33 @@ import ctypes
 from numcodecs.abc import Codec
 from numcodecs.compat import ensure_ndarray_like
 
+# constants from libaec.h
+AEC_OK = 0
+AEC_CONF_ERROR = -1
+AEC_STREAM_ERROR = -2
+AEC_DATA_ERROR = -3
+AEC_MEM_ERROR = -4
+
+# constants from szlib.h
+# Only SZ_MSB_OPTION_MASK and SZ_NN_OPTION_MASK are relevant to the libaec implementation
+SZ_ALLOW_K13_OPTION_MASK = 1
+SZ_CHIP_OPTION_MASK = 2
+SZ_EC_OPTION_MASK = 4
+SZ_LSB_OPTION_MASK = 8
+SZ_MSB_OPTION_MASK = 16
+SZ_NN_OPTION_MASK = 32
+SZ_RAW_OPTION_MASK = 128
+
+SZ_OK = AEC_OK
+SZ_OUTBUFF_FULL = 2
+
+SZ_NO_ENCODER_ERROR = -1
+SZ_PARAM_ERROR = AEC_CONF_ERROR
+SZ_MEM_ERROR = AEC_MEM_ERROR
+
+SZ_MAX_PIXELS_PER_BLOCK = 32
+SZ_MAX_BLOCKS_PER_SCANLINE = 128
+SZ_MAX_PIXELS_PER_SCANLINE = SZ_MAX_PIXELS_PER_BLOCK * SZ_MAX_BLOCKS_PER_SCANLINE 
 
 class Params(ctypes.Structure):
 
@@ -42,7 +69,7 @@ def check_sz():
         raise ImportError("libsz could not be loaded, please install libaec")
 
 
-class HdfSzipCodec(Codec):
+class HDF5SzipCodec(Codec):
     """The SZIP codec, as implemented in NASA HDF5
 
     See description:
@@ -53,19 +80,21 @@ class HdfSzipCodec(Codec):
     All parameters must be defined.
     """
 
-    codec_id = "hdf_szip"
+    codec_id = "hdf5_szip"
 
-    def __init__(self, mask, bits_per_pixel, pix_per_block, pix_per_scanline):
+    def __init__(self, mask, bits_per_pixel, pixels_per_block, pixels_per_scanline):
+        assert pixels_per_block <= SZ_MAX_PIXELS_PER_BLOCK
+        assert pixels_per_scanline <= SZ_MAX_PIXELS_PER_SCANLINE
         self.mask = mask
-        self.pix_per_block = pix_per_block
+        self.pixels_per_block = pixels_per_block
         self.bits_per_pixel = bits_per_pixel
-        self.pix_per_scanline = pix_per_scanline
+        self.pixels_per_scanline = pixels_per_scanline
 
     def decode(self, buf, out=None):
         check_sz()
         buf = memoryview(buf)
         param = Params(
-            self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline
+            self.mask, self.bits_per_pixel, self.pixels_per_block, self.pixels_per_scanline
         )
         lout = int.from_bytes(buf[:4], "little")
         dest_len = ctypes.c_size_t(lout)
@@ -84,7 +113,7 @@ class HdfSzipCodec(Codec):
         check_sz()
         buf = ensure_ndarray_like(buf)
         param = Params(
-            self.mask, self.bits_per_pixel, self.pix_per_block, self.pix_per_scanline
+            self.mask, self.bits_per_pixel, self.pixels_per_block, self.pixels_per_scanline
         )
         buf_nbytes = buf.nbytes
         buf2 = buf.ctypes.data

@@ -115,5 +115,5 @@ with suppress(ImportError):
 from numcodecs.fletcher32 import Fletcher32
 register_codec(Fletcher32)
 
-from numcodecs.sz import HdfSzipCodec
-register_codec(HdfSzipCodec)
+from numcodecs.sz import HDF5SzipCodec
+register_codec(HDF5SzipCodec)
