@@ -28,28 +28,35 @@ library. Wheels are available for most platforms.
 Installing a wheel or via conda will install a pre-compiled binary distribution.
 However, if you have a newer CPU that supports the AVX2 instruction set (e.g.,
 Intel Haswell, Broadwell or Skylake) then installing via pip is preferable,
-because this will compile the Blosc library from source with optimisations
-for AVX2.
+because you can compile the Blosc library from source with optimisations
+for AVX2.::
+
+    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs
 
 Note that if you compile the C extensions on a machine with AVX2 support
 you probably then cannot use the same binaries on a machine without AVX2.
-To disable compilation with AVX2 support regardless of the machine
-architecture::
 
-    $ export DISABLE_NUMCODECS_AVX2=
-    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs
+If you specifically want to disable AVX2 or SSE2 when compiling, you can use
+the following environment variables::
 
-To work with Numcodecs source code in development, install from GitHub::
+    $ export DISABLE_NUMCODECS_AVX2=1
+    $ export DISABLE_NUMCODECS_SSE2=1
+
+
+To work with Numcodecs source code in development, clone the repository from GitHub
+and then install in editable mode using `pip`.::
 
     $ git clone --recursive https://github.com/zarr-developers/numcodecs.git
     $ cd numcodecs
-    $ python setup.py install
+    $ pip install -e .[test,msgpack,zfpy]
+
+Note: if you prefer to use the GitHub CLI ``gh`` you will need to append ``-- --recurse-submodules``
+to the clone command to everything works properly.
 
 To verify that Numcodecs has been fully installed (including the Blosc
 extension) run the test suite::
 
-    $ pip install nose
-    $ python -m nose -v numcodecs
+    $ pytest -v
 
 Contents
 --------
