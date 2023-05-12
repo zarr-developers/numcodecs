@@ -11,9 +11,8 @@ Installation
 ------------
 
 Numcodecs depends on NumPy. It is generally best to `install NumPy
-<http://docs.scipy.org/doc/numpy/user/install.html>`_ first using
-whatever method is most appropriate for you operating system and
-Python distribution.
+<https://numpy.org/install/>`_ first using whatever method is most
+appropriate for you operating system and Python distribution.
 
 Install from PyPI::
 
@@ -105,7 +104,7 @@ documentation, code reviews, comments and/or ideas:
 Numcodecs bundles the `c-blosc <https://github.com/Blosc/c-blosc>`_ library.
 
 Development of this package is supported by the
-`MRC Centre for Genomics and Global Health <http://www.cggh.org>`_.
+`MRC Centre for Genomics and Global Health <https://www.sanger.ac.uk/collaboration/mrc-centre-genomics-and-global-health-cggh/>`_.
 
 Indices and tables
 ------------------
@@ -114,4 +113,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. _Blosc: http://www.blosc.org/
+.. _Blosc: https://www.blosc.org/

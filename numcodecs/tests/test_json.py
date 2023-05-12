@@ -3,7 +3,7 @@ import itertools
 import pytest
 
 import numpy as np
-
+import pytest
 
 from numcodecs.json import JSON
 from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
@@ -54,34 +54,27 @@ def test_backwards_compatibility():
     check_backwards_compatibility(JSON.codec_id, arrays, codecs)
 
 
-def test_non_numpy_inputs():
-    # numpy will infer a range of different shapes and dtypes for these inputs.
-    # Make sure that round-tripping through encode preserves this.
-    data = [
-        [0, 1],
-        [[0, 1], [2, 3]],
-        [[0], [1], [2, 3]],
-        [[[0, 0]], [[1, 1]], [[2, 3]]],
-        ["1"],
-        ["11", "11"],
-        ["11", "1", "1"],
-        [{}],
-        [{"key": "value"}, ["list", "of", "strings"]],
-    ]
-    for input_data in data:
-        for codec in codecs:
-            output_data = codec.decode(codec.encode(input_data))
-            assert np.array_equal(np.array(input_data), output_data)
-
-
 @pytest.mark.parametrize(
-    "data",
+    "input_data, dtype",
     [
-        np.array(0),
-        np.array({'hi': 0}, dtype=object),
-        np.array("hi", dtype=object)
+        ([0, 1], None),
+        ([[0, 1], [2, 3]], None),
+        ([[0], [1], [2, 3]], object),
+        ([[[0, 0]], [[1, 1]], [[2, 3]]], None),
+        (["1"], None),
+        (["11", "11"], None),
+        (["11", "1", "1"],  None),
+        ([{}], None),
+        ([{"key": "value"}, ["list", "of", "strings"]], object),
+        ([0], None),
+        ([{'hi': 0}], "object"),
+        (["hi"], "object")
     ]
 )
-def test_singles(data):
-    j = JSON()
-    assert j.decode(j.encode(data)) == data
+def test_non_numpy_inputs(input_data, dtype):
+    # numpy will infer a range of different shapes and dtypes for these inputs.
+    # Make sure that round-tripping through encode preserves this.
+    data = np.array(input_data, dtype=dtype)
+    for codec in codecs:
+        output_data = codec.decode(codec.encode(data))
+        assert input_data == output_data.tolist()

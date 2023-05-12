@@ -1,10 +1,4 @@
-import sys
-from typing import Any, Dict, Optional, Tuple, Type
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol, runtime_checkable
-else:
-    from typing_extensions import Protocol, runtime_checkable
+from typing import Any, Dict, Optional, Protocol, Tuple, Type, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):
@@ -20,7 +14,7 @@ class _CachedProtocolMeta(Protocol.__class__):
 
     def __instancecheck__(self, instance):
         key = (self, instance.__class__)
-        ret = self._instancecheck_cache.get(key, None)
+        ret = self._instancecheck_cache.get(key)
         if ret is None:
             ret = super().__instancecheck__(instance)
             self._instancecheck_cache[key] = ret

@@ -54,7 +54,10 @@ class JSON(Codec):
         self._decoder = _json.JSONDecoder(**self._decoder_config)
 
     def encode(self, buf):
-        buf = np.asarray(buf)
+        try:
+            buf = np.asarray(buf)
+        except ValueError:
+            buf = np.asarray(buf, dtype=object)
         items = np.atleast_1d(buf).tolist()
         items.append(buf.dtype.str)
         items.append(buf.shape)

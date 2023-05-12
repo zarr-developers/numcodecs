@@ -43,8 +43,8 @@ a bug report:
    interpreter can be obtained by running a Python interactive session, e.g.::
 
     $ python
-    Python 3.7.6 (default, Jan  8 2020, 13:42:34)
-    [Clang 4.0.1 (tags/RELEASE_401/final)] :: Anaconda, Inc. on darwin
+    Python 3.8.15 | packaged by conda-forge | (default, Nov 22 2022, 08:49:06)
+    [Clang 14.0.6 ] on darwin
 
 3. An explanation of why the current behaviour is wrong/not desired, and what you
    expect instead.
@@ -99,16 +99,11 @@ the repository, you can do something like the following::
     $ mkdir -p ~/pyenv/numcodecs-dev
     $ virtualenv --no-site-packages --python=/usr/bin/python3.9 ~/pyenv/numcodecs-dev
     $ source ~/pyenv/numcodecs-dev/bin/activate
-    $ pip install -r requirements_dev.txt
-    $ python setup.py build_ext --inplace
+    $ pip install -e .[docs,test,msgpack,zfpy]
 
 To verify that your development environment is working, you can run the unit tests::
 
-    $ pytest -v numcodecs
-
-To install numcodecs globally in editable mode run::
-
-    $ python -m pip install -e . 
+    $ pytest -v
 
 Creating a branch
 ~~~~~~~~~~~~~~~~~
@@ -147,11 +142,7 @@ Running the test suite
 NumCodecs includes a suite of unit tests, as well as doctests included in function and class
 docstrings. The simplest way to run the unit tests is to invoke::
 
-    $ pytest -v numcodecs
-
-To also run the doctests within docstrings, run::
-
-    $ pytest -v --doctest-modules numcodecs
+    $ pytest -v
 
 NumCodecs currently supports Python 6-3.9, so the above command must
 succeed before code can be accepted into the main code base.
@@ -167,14 +158,14 @@ All code must conform to the PEP8 standard. Regarding line length, lines up to 1
 characters are allowed, although please try to keep under 90 wherever possible.
 Conformance can be checked by running::
 
-    $ flake8 --max-line-length=100 numcodecs
+    $ flake8
 
 Test coverage
 ~~~~~~~~~~~~~
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
 Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``pytest -v --cov=numcodecs`` will automatically run the test suite with coverage
+coverage. Running ``pytest -v`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 
