@@ -66,7 +66,8 @@ def test_backwards_compatibility():
         ([{"key": "value"}, ["list", "of", "strings"]], object),
         ([0], None),
         ([{'hi': 0}], "object"),
-        (["hi"], "object")
+        (["hi"], "object"),
+        (0, None)
     ]
 )
 def test_non_numpy_inputs(input_data, dtype):
