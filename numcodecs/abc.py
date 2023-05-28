@@ -121,7 +121,7 @@ class Codec:
         # parameters and valid keyword arguments to constructor function
 
         r = '%s(' % type(self).__name__
-        params = ['{}={!r}'.format(k, getattr(self, k))
+        params = [f'{k}={getattr(self, k)!r}'
                   for k in sorted(self.__dict__)
                   if not k.startswith('_')]
         r += ', '.join(params) + ')'
