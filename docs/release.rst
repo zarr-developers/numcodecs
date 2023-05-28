@@ -31,6 +31,9 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
+* Change format() and old string formatting to f-strings and format().
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
+
 * Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
 
