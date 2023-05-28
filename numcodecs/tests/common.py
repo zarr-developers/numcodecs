@@ -258,7 +258,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
     # save fixture data
     for i, arr in enumerate(arrays):
-        arr_fn = os.path.join(fixture_dir, 'array.{:02d}.npy'.format(i))
+        arr_fn = os.path.join(fixture_dir, f'array.{i:02d}.npy')
         if not os.path.exists(arr_fn):  # pragma: no cover
             np.save(arr_fn, arr)
 
@@ -278,7 +278,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 pytest.skip("codec has been removed")
 
             # setup a directory to hold encoded data
-            codec_dir = os.path.join(fixture_dir, 'codec.{:02d}'.format(j))
+            codec_dir = os.path.join(fixture_dir, f'codec.{j:02d}')
             if not os.path.exists(codec_dir):  # pragma: no cover
                 os.makedirs(codec_dir)
 
@@ -293,7 +293,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 config = _json.load(cf)
                 assert codec == get_codec(config)
 
-            enc_fn = os.path.join(codec_dir, 'encoded.{:02d}.dat'.format(i))
+            enc_fn = os.path.join(codec_dir, f'encoded.{i:02d}.dat')
 
             # one time encode and save array
             if not os.path.exists(enc_fn):  # pragma: no cover

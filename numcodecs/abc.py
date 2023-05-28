@@ -120,9 +120,7 @@ class Codec(ABC):
 
         r = '%s(' % type(self).__name__
         params = [
-            '{}={!r}'.format(k, getattr(self, k))
-            for k in sorted(self.__dict__)
-            if not k.startswith('_')
+            f'{k}={getattr(self, k)!r}' for k in sorted(self.__dict__) if not k.startswith('_')
         ]
         r += ', '.join(params) + ')'
         return r
