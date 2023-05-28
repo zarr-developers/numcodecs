@@ -49,7 +49,7 @@ def get_codec(config):
             register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
-    raise ValueError('codec not available: %r' % codec_id)
+    raise ValueError(f'codec not available: {codec_id!r}')
 
 
 def register_codec(cls, codec_id=None):

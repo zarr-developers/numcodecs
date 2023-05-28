@@ -93,6 +93,6 @@ class Delta(Codec):
     def __repr__(self):
         r = f'{type(self).__name__}(dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

@@ -97,7 +97,7 @@ class JSON(Codec):
         return config
 
     def __repr__(self):
-        params = ['encoding=%r' % self._text_encoding]
+        params = [f'encoding={self._text_encoding!r}']
         for k, v in sorted(self._encoder_config.items()):
             params.append(f'{k}={v!r}')
         for k, v in sorted(self._decoder_config.items()):
