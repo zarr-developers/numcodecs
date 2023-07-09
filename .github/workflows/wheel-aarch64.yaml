@@ -18,7 +18,7 @@ jobs:
       CIBW_ARCHS_LINUX: ${{matrix.arch}}
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
-      CIBW_SKIP: "pp* cp36-* cp37-* cp38-* cp39-* cp311-* *-musllinux_* *win32 *_i686 *_s390x"
+      CIBW_SKIP: "pp* cp36-* *-musllinux_* *win32 *_i686 *_s390x"
       CIBW_ENVIRONMENT: "DISABLE_NUMCODECS_AVX2=1 DISABLE_NUMCODECS_SSE2=1"
 
     steps:
