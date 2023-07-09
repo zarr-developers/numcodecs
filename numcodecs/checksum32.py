@@ -10,6 +10,7 @@ from .compat import ensure_contiguous_ndarray, ndarray_copy
 
 class Checksum32(Codec):
 
+    # override in sub-class
     checksum = None
 
     def encode(self, buf):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # numcodecs documentation build configuration file, created by
 # sphinx-quickstart on Mon May  2 21:40:09 2016.
@@ -65,8 +64,8 @@ source_suffix = '.rst'
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
 
-# The master toctree document.
-master_doc = 'index'
+# The main toctree document.
+main_doc = 'index'
 
 # General information about the project.
 project = 'numcodecs'
@@ -88,7 +87,7 @@ release = numcodecs.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -249,7 +248,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'numcodecs.tex', 'numcodecs Documentation',
+    (main_doc, 'numcodecs.tex', 'numcodecs Documentation',
      'Alistair Miles', 'manual'),
 ]
 
@@ -279,7 +278,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'numcodecs', 'numcodecs Documentation',
+    (main_doc, 'numcodecs', 'numcodecs Documentation',
      [author], 1)
 ]
 
@@ -293,7 +292,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'numcodecs', 'numcodecs Documentation',
+    (main_doc, 'numcodecs', 'numcodecs Documentation',
      author, 'numcodecs', 'One line description of project.',
      'Miscellaneous'),
 ]

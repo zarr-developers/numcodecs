@@ -1,0 +1,110 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "setuptools-scm[toml]>=6.2",
+    "Cython",
+    "py-cpuinfo"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "numcodecs"
+description = """
+A Python package providing buffer compression and transformation codecs for use
+in data storage and communication applications.
+"""
+readme =  "README.rst"
+dependencies = [
+    "entrypoints",
+    "numpy>=1.7",
+]
+requires-python = ">=3.8"
+dynamic = [
+  "version",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+maintainers = [
+    { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
+]
+license = { text = "MIT" }
+
+[project.urls]
+"Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
+Changelog = "https://numcodecs.readthedocs.io/en/stable/release.html"
+Documentation = "https://numcodecs.readthedocs.io/"
+Homepage = "https://github.com/zarr-developers/numcodecs"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx<7.0.0",
+    "sphinx-issues",
+    "numpydoc",
+    "mock",
+]
+test = [
+    "coverage",
+    "flake8",
+    "pytest",
+    "pytest-cov",
+]
+msgpack = [
+    "msgpack",
+]
+zfpy = [
+    "zfpy>=1.0.0",
+]
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+package-dir = {"" = "."}
+packages = ["numcodecs", "numcodecs.tests"]
+zip-safe = false
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "dirty-tag"
+write_to = "numcodecs/version.py"
+
+[tool.codespell]
+skip = "./.git,fixture"
+ignore-words-list = "ba, compiletime, hist, nd, unparseable"
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "pragma: ${PY_MAJOR_VERSION} no cover",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "ELLIPSIS",
+    "IGNORE_EXCEPTION_DETAIL",
+]
+testpaths = [
+    "numcodecs",
+]
+norecursedirs = [
+    ".git",
+    ".github",
+    ".pytest_cache",
+    "adhoc",
+    "build",
+    "c-blosc",
+    "docs",
+    "fixture",
+    "notebooks",
+    "numcodecs.egg-info",
+]

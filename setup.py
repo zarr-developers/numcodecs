@@ -1,19 +1,11 @@
-from glob import glob
 import os
-from setuptools import setup, Extension
-import cpuinfo
-import platform
 import sys
-from distutils.command.build_ext import build_ext
-from distutils.errors import CCompilerError, DistutilsExecError, \
-    DistutilsPlatformError
+from glob import glob
 
-try:
-    from Cython.Build import cythonize
-except ImportError:
-    have_cython = False
-else:
-    have_cython = True
+import cpuinfo
+from Cython.Distutils.build_ext import new_build_ext as build_ext
+from setuptools import Extension, setup
+from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -25,11 +17,9 @@ disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
 # setup common compile arguments
 have_cflags = 'CFLAGS' in os.environ
-base_compile_args = list()
+base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
-    pass
-elif platform.machine() == 'aarch64':
     pass
 elif os.name == 'posix':
     if disable_sse2:
@@ -59,7 +49,7 @@ def error(*msg):
 def blosc_extension():
     info('setting up Blosc extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup blosc sources
@@ -107,10 +97,7 @@ def blosc_extension():
     else:
         info('compiling Blosc extension without AVX2 support')
 
-    if have_cython:
-        sources = ['numcodecs/blosc.pyx']
-    else:
-        sources = ['numcodecs/blosc.c']
+    sources = ['numcodecs/blosc.pyx']
 
     # define extension module
     extensions = [
@@ -122,9 +109,6 @@ def blosc_extension():
                   ),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
-
     return extensions
 
 
@@ -132,7 +116,7 @@ def zstd_extension():
     info('setting up Zstandard extension')
 
     zstd_sources = []
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     include_dirs = []
     define_macros = []
 
@@ -147,10 +131,7 @@ def zstd_extension():
                      if os.path.isdir(d)]
     # define_macros += [('CYTHON_TRACE', '1')]
 
-    if have_cython:
-        sources = ['numcodecs/zstd.pyx']
-    else:
-        sources = ['numcodecs/zstd.c']
+    sources = ['numcodecs/zstd.pyx']
 
     # define extension module
     extensions = [
@@ -162,16 +143,13 @@ def zstd_extension():
                   ),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
-
     return extensions
 
 
 def lz4_extension():
     info('setting up LZ4 extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup sources - use LZ4 bundled in blosc
@@ -180,10 +158,7 @@ def lz4_extension():
     include_dirs += ['numcodecs']
     # define_macros += [('CYTHON_TRACE', '1')]
 
-    if have_cython:
-        sources = ['numcodecs/lz4.pyx']
-    else:
-        sources = ['numcodecs/lz4.c']
+    sources = ['numcodecs/lz4.pyx']
 
     # define extension module
     extensions = [
@@ -195,26 +170,20 @@ def lz4_extension():
                   ),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
-
     return extensions
 
 
 def vlen_extension():
     info('setting up vlen extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup sources
     include_dirs = ['numcodecs']
     # define_macros += [('CYTHON_TRACE', '1')]
 
-    if have_cython:
-        sources = ['numcodecs/vlen.pyx']
-    else:
-        sources = ['numcodecs/vlen.c']
+    sources = ['numcodecs/vlen.pyx']
 
     # define extension module
     extensions = [
@@ -226,8 +195,30 @@ def vlen_extension():
                   ),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
+    return extensions
+
+
+def fletcher_extension():
+    info('setting up fletcher32 extension')
+
+    extra_compile_args = base_compile_args.copy()
+    define_macros = []
+
+    # setup sources
+    include_dirs = ['numcodecs']
+    # define_macros += [('CYTHON_TRACE', '1')]
+
+    sources = ['numcodecs/fletcher32.pyx']
+
+    # define extension module
+    extensions = [
+        Extension('numcodecs.fletcher32',
+                  sources=sources,
+                  include_dirs=include_dirs,
+                  define_macros=define_macros,
+                  extra_compile_args=extra_compile_args,
+                  ),
+    ]
 
     return extensions
 
@@ -235,12 +226,9 @@ def vlen_extension():
 def compat_extension():
     info('setting up compat extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
 
-    if have_cython:
-        sources = ['numcodecs/compat_ext.pyx']
-    else:
-        sources = ['numcodecs/compat_ext.c']
+    sources = ['numcodecs/compat_ext.pyx']
 
     # define extension module
     extensions = [
@@ -249,21 +237,15 @@ def compat_extension():
                   extra_compile_args=extra_compile_args),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
-
     return extensions
 
 
 def shuffle_extension():
     info('setting up shuffle extension')
 
-    extra_compile_args = list(base_compile_args)
+    extra_compile_args = base_compile_args.copy()
 
-    if have_cython:
-        sources = ['numcodecs/_shuffle.pyx']
-    else:
-        sources = ['numcodecs/_shuffle.c']
+    sources = ['numcodecs/_shuffle.pyx']
 
     # define extension module
     extensions = [
@@ -272,17 +254,14 @@ def shuffle_extension():
                   extra_compile_args=extra_compile_args),
     ]
 
-    if have_cython:
-        extensions = cythonize(extensions)
-
     return extensions
 
 
 if sys.platform == 'win32':
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError,
+    ext_errors = (CCompilerError, ExecError, PlatformError,
                   IOError, ValueError)
 else:
-    ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError)
+    ext_errors = (CCompilerError, ExecError, PlatformError)
 
 
 class BuildFailed(Exception):
@@ -295,7 +274,7 @@ class ve_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        except DistutilsPlatformError as e:
+        except PlatformError as e:
             error(e)
             raise BuildFailed()
 
@@ -307,71 +286,21 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
-DESCRIPTION = ("A Python package providing buffer compression and "
-               "transformation codecs for use in data storage and "
-               "communication applications.")
-
-with open('README.rst') as f:
-    LONG_DESCRIPTION = f.read()
-
-
 def run_setup(with_extensions):
 
     if with_extensions:
         ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
-                       compat_extension() + shuffle_extension() + vlen_extension())
+                       compat_extension() + shuffle_extension() + vlen_extension() +
+                       fletcher_extension())
 
         cmdclass = dict(build_ext=ve_build_ext)
     else:
         ext_modules = []
-        cmdclass = dict()
+        cmdclass = {}
 
     setup(
-        name='numcodecs',
-        description=DESCRIPTION,
-        long_description=LONG_DESCRIPTION,
-        use_scm_version={
-            'version_scheme': 'guess-next-dev',
-            'local_scheme': 'dirty-tag',
-            'write_to': 'numcodecs/version.py'
-        },
-        setup_requires=[
-            'setuptools>18.0',
-            'setuptools-scm>1.5.4'
-        ],
-        install_requires=[
-            'numpy>=1.7',
-            'typing-extensions>=3.7.4',
-        ],
-        extras_require={
-            'msgpack':  ["msgpack"],
-        },
         ext_modules=ext_modules,
         cmdclass=cmdclass,
-        package_dir={"": "."},
-        python_requires=">=3.6, <4",
-        packages=["numcodecs", "numcodecs.tests"],
-        classifiers=[
-            "Development Status :: 4 - Beta",
-            "Intended Audience :: Developers",
-            "Intended Audience :: Information Technology",
-            "Intended Audience :: Science/Research",
-            "License :: OSI Approved :: MIT License",
-            "Programming Language :: Python",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-            "Operating System :: Unix",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-        ],
-        author='Alistair Miles',
-        author_email='alimanfoo@googlemail.com',
-        maintainer='Alistair Miles',
-        maintainer_email='alimanfoo@googlemail.com',
-        url='https://github.com/zarr-developers/numcodecs',
-        license='MIT',
     )
 
 

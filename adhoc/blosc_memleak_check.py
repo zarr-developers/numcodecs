@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, division
 import sys
 
-
-import numcodecs as codecs
-from numcodecs import blosc
+import numcodecs
 import numpy as np
 from numpy.testing import assert_array_equal
 
 
-codec = codecs.Blosc()
+codec = numcodecs.Blosc()
 data = np.arange(int(sys.argv[1]))
 for i in range(int(sys.argv[2])):
     enc = codec.encode(data)

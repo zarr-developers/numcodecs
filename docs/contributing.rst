@@ -43,8 +43,8 @@ a bug report:
    interpreter can be obtained by running a Python interactive session, e.g.::
 
     $ python
-    Python 3.6.1 (default, Mar 22 2017, 06:17:05)
-    [GCC 6.3.0 20170321] on linux
+    Python 3.8.15 | packaged by conda-forge | (default, Nov 22 2022, 08:49:06)
+    [Clang 14.0.6 ] on darwin
 
 3. An explanation of why the current behaviour is wrong/not desired, and what you
    expect instead.
@@ -75,9 +75,16 @@ The NumCodecs source code is hosted on GitHub at the following location:
 You will need your own fork to work on the code. Go to the link above and hit
 the "Fork" button. Then clone your fork to your local machine::
 
-    $ git clone git@github.com:your-user-name/numcodecs.git
+    $ git clone --recursive git@github.com:your-user-name/numcodecs.git  # with ``ssh``
+    
+or::
+
+    $ git clone --recursive https://github.com/your-user-name/numcodecs.git  # with ``https``
+
+Then ``cd`` into the clone and add the ``upstream`` remote::
+
     $ cd numcodecs
-    $ git remote add upstream git@github.com:zarr-developers/numcodecs.git
+    $ git remote add upstream https://github.com/zarr-developers/numcodecs.git
 
 Creating a development environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,12 +99,11 @@ the repository, you can do something like the following::
     $ mkdir -p ~/pyenv/numcodecs-dev
     $ virtualenv --no-site-packages --python=/usr/bin/python3.9 ~/pyenv/numcodecs-dev
     $ source ~/pyenv/numcodecs-dev/bin/activate
-    $ pip install -r requirements_dev.txt
-    $ python setup.py build_ext --inplace
+    $ pip install -e .[docs,test,msgpack,zfpy]
 
 To verify that your development environment is working, you can run the unit tests::
 
-    $ pytest -v numcodecs
+    $ pytest -v
 
 Creating a branch
 ~~~~~~~~~~~~~~~~~
@@ -108,25 +114,25 @@ report the bug or propose the feature you'd like to add.
 It's best to create a new, separate branch for each piece of work you want to do. E.g.::
 
     git fetch upstream
-    git checkout -b shiny-new-feature upstream/master
+    git checkout -b shiny-new-feature upstream/main
 
 This changes your working directory to the 'shiny-new-feature' branch. Keep any changes in
 this branch specific to one bug or feature so it is clear what the branch brings to
 NumCodecs.
 
 To update this branch with latest code from NumCodecs, you can retrieve the changes from
-the master branch and perform a rebase::
+the main branch and perform a rebase::
 
     git fetch upstream
-    git rebase upstream/master
+    git rebase upstream/main
 
-This will replay your commits on top of the latest NumCodecs git master. If this leads to
+This will replay your commits on top of the latest NumCodecs git main. If this leads to
 merge conflicts, these need to be resolved before submitting a pull request.
-Alternatively, you can merge the changes in from upstream/master instead of rebasing,
+Alternatively, you can merge the changes in from upstream/main instead of rebasing,
 which can be simpler::
 
     git fetch upstream
-    git merge upstream/master
+    git merge upstream/main
 
 Again, any conflicts need to be resolved before submitting a pull request.
 
@@ -136,20 +142,10 @@ Running the test suite
 NumCodecs includes a suite of unit tests, as well as doctests included in function and class
 docstrings. The simplest way to run the unit tests is to invoke::
 
-    $ pytest -v numcodecs
-
-To also run the doctests within docstrings, run::
-
-    $ pytest -v --doctest-modules numcodecs
-
-Tests can be run under different Python versions using tox. E.g. (assuming you have the
-corresponding Python interpreters installed on your system)::
-
-    $ tox -e py36,py37,py38,py39
+    $ pytest -v
 
 NumCodecs currently supports Python 6-3.9, so the above command must
-succeed before code can be accepted into the main code base. Note that only the py39
-tox environment runs the doctests, i.e., doctests only need to succeed under Python 3.9.
+succeed before code can be accepted into the main code base.
 
 All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
 integration services for every pull request. Tests must pass under both services before
@@ -162,28 +158,26 @@ All code must conform to the PEP8 standard. Regarding line length, lines up to 1
 characters are allowed, although please try to keep under 90 wherever possible.
 Conformance can be checked by running::
 
-    $ flake8 --max-line-length=100 numcodecs
-
-This is automatically run when invoking ``tox -e py39``.
+    $ flake8
 
 Test coverage
 ~~~~~~~~~~~~~
 
 NumCodecs maintains 100% test coverage under the latest Python stable release (currently
 Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``tox -e py39`` will automatically run the test suite with coverage
+coverage. Running ``pytest -v`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
 
 When submitting a pull request, coverage will also be collected across all supported
-Python versions via the Coveralls service, and will be reported back within the pull
-request. Coveralls coverage must also be 100% before code can be accepted.
+Python versions via the Codecov service, and will be reported back within the pull
+request. Codecov coverage must also be 100% before code can be accepted.
 
 Documentation
 ~~~~~~~~~~~~~
 
 Docstrings for user-facing classes and functions should follow the `numpydoc
-<https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt>`_ standard,
+<https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
 under Python 3.9.
 
@@ -195,9 +189,10 @@ included in the release notes (``docs/release.rst``).
 
 The documentation can be built by running::
 
-    $ tox -e docs
+     $ cd docs
+     $ make clean; make html
 
-The resulting built documentation will be available in the ``.tox/docs/tmp/html`` folder.
+The resulting built documentation will be available in the ``docs/_build/html`` folder.
 
 Development best practices, policies and procedures
 ---------------------------------------------------
@@ -213,7 +208,7 @@ one core developers before being merged. Ideally, pull requests submitted by a c
 should be reviewed and approved by at least one other core developers before being merged.
 
 Pull requests should not be merged until all CI checks have passed (Travis, AppVeyor,
-Coveralls) against code that has had the latest master merged in.
+Codecov) against code that has had the latest main merged in.
 
 Compatibility and versioning policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -290,14 +285,10 @@ compatibility in some way.
 Release procedure
 ~~~~~~~~~~~~~~~~~
 
-Checkout and update the master branch::
+Checkout and update the main branch::
 
-    $ git checkout master
+    $ git checkout main
     $ git pull
-
-Verify all tests pass on all supported Python versions, and docs build::
-
-    $ tox
 
 Tag the version (where "X.X.X" stands for the version number, e.g., "2.2.0")::
 

@@ -1,15 +1,152 @@
 Release notes
 =============
 
+..
+    # Unindent the section between releases in order
+    # to document your changes. On releases it will be
+    # re-indented so that it does not show up in the notes.
+
+
 .. _unreleased:
 
 Unreleased
 ----------
 
-* Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
-  and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
-  By :user:`Haiying Xu <halehawk>`, `John Kirkham <jakirkham>`, `Ryan Abernathey <rabernat>` :
-  issue:`303`.
+Enhancements
+~~~~~~~~~~~~
+
+* Add ``fletcher32`` checksum codec
+  By :user:`Martin Durant <martindurant>`, :issue:`410`.
+
+Fix
+~~~
+
+*
+
+Maintenance
+~~~~~~~~~~~
+
+* Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
+  By :user:`John Kirkham <jakirkham>`, :issue:`408`.
+
+.. _release_0.11.0:
+
+0.11.0
+------
+
+Fix
+~~~
+
+* Speed up isinstance checks of :class:`numcodecs.ndarray_like.NDArrayLike`,
+  :class:`numcodecs.ndarray_like.DType` and :class:`numcodecs.ndarray_like.FlagsObj`.
+  By :user:`Andreas Poehlmann <ap-->`, :issue:`379`.
+
+Maintenance
+~~~~~~~~~~~
+
+* Remove unnecessary None argument to .get(), it is the default value.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`395`.
+
+* Apply refurb suggestions.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
+
+* Migrate codespell configuration to pyproject.toml and get rid of setup.cfg.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`374`.
+
+* Unvendor cpuinfo.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`373`.
+
+* Drop headers.
+  By :user:`John Kirkham <jakirkham>`, :issue:`375`.
+
+* Remove Python 2 code.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`,
+  :issue:`387`.
+
+* Support Python 3.11.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Drop Python 3.7.
+  By :user:`John Kirkham <jakirkham>`,, :issue:`405` :issue:`406`.
+
+* Test with zfpy 1.0.0.
+  By :user:`John Kirkham <jakirkham>`, :issue:`385`.
+
+* Remove vendored C files and re-generate them on the fly using Cython.
+  Add a pyproject.toml file to define Cython as a build dependency.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Update cpuinfo to 9.0.0.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`370`.
+
+* Add tests for all registry classes.
+  By :user:`Josh Moore <joshmoore>`, :issue:`349`.
+
+* Add workflow to label PRs with "needs release notes".
+  By :user:`Saransh Chopra <Saransh-cpp>` :issue:`396`.
+
+* Finish ``pyproject.toml`` migration.
+  By :user:`John Kirkham <jakirkham>` :issue:`382`.
+
+* Drop tox.
+  By :user:`John Kirkham <jakirkham>`, :issue:`384`.
+
+* Update ReadTheDocs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`383`.
+
+* Use `conda-incubator/setup-miniconda@v2.2.0` (and use Conda on Linux).
+  By :user:`John Kirkham <jakirkham>` :issue:`398`.
+
+* Bring coverage back up to 100%.
+  By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
+  :issue:`392` and :issue:`393`.
+
+* Collect coverage on all OSes & enable Codecov.
+  By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
+  :issue:`390`, :issue:`391`.
+
+.. _release_0.10.2:
+
+0.10.2
+------
+
+Fix
+~~~
+
+* Add BitRound (0.10.0) to registry.
+  By :user:`Josh Moore <joshmoore>`, :issue:`342`.
+
+.. _release_0.10.1:
+
+0.10.1
+------
+
+Maintenance
+~~~~~~~~~~~
+
+* Add entrypoints to setup.py.
+  By :user:`Josh Moore <joshmoore>`, :issue:`332`.
+
+* Fix spelling.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`336`.
+
+* Drop Python 3.6 from tests
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
+  :issue:`338`, :issue:`339`.
+
+* Remove trailing spaces and empty lines.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`341`.
+
+* Add LGTM.com configuration file
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`337`.
+
+.. _release_0.10.0:
+
+0.10.0
+------
+
+Enhancements
+~~~~~~~~~~~~
 
 * Add support of alternative array classes (other than NumPy arrays)
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`305`.
@@ -17,14 +154,19 @@ Unreleased
 * Add ability to find codecs via entrypoint `numcodecs.codecs`.
   By :user:`Martin Durant <martindurant>`, :issue:`290`.
 
+* Add bitround codec
+  By :user:`Ryan Abernathy <rabernat>` and :user:`Martin Durant <martindurant>`, :issue:`298`.
+
 * Introduce a flat option to ensure_contiguous_ndarray to switch off flatten for ZFPY codec
   By :user:`Haiying Xu <halehawk>`, :issue:`307`.
 
-* Fix macOS Python 3.10
-  By :user:`John Kirkham <jakirkham>`, :issue:`311`.
+Bug fixes
+~~~~~~~~~
 
-* chore: bump cibuildwheel version, use action
-  By :user:`Henry Schreiner <henryiii>`, :issue:`309`.
+* Fix a flatten array error for ZFPY, ZFPY codec is supported on Python 3.9
+  and 3.10 on Linux and MacOS, the docs about ZFPY is also available.
+  By :user:`Haiying Xu <halehawk>`, :user:`John Kirkham <jakirkham>`,
+  :user:`Ryan Abernathey <rabernat>` :issue:`303`.
 
 * Codex: make encode and decode @abstractmethods
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`306`.
@@ -32,9 +174,33 @@ Unreleased
 * Fix expected result test for Shuffle.
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`282`.
 
+Maintenance
+~~~~~~~~~~~
+
 * Multiple code linting fixes.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`,
   :issue:`295`, :issue:`294`, :issue:`293`, and :issue:`292`.
+
+* Drop Python 3.6
+  By :user:`Josh Moore <joshmoore>`, :issue:`318`.
+
+* Fix macOS Python 3.10
+  By :user:`John Kirkham <jakirkham>`, :issue:`311`.
+
+* chore: bump cibuildwheel version, use action
+  By :user:`Henry Schreiner <henryiii>`, :issue:`309`.
+
+* Specify `language` as `'en'` instead of `None`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`329`.
+
+* Move `master` to `main`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`322`.
+
+* Drop `fastparquet` benchmark.
+  By :user:`John Kirkham <jakirkham>`, :issue:`321`.
+
+* Trim wheel builds.
+  By :user:`John Kirkham <jakirkham>`, :issue:`320`.
 
 .. _release_0.9.1:
 
@@ -365,7 +531,7 @@ Unreleased
 -----
 
 * Resolved an issue where providing an array with dtype ``object`` as the destination
-  when decoding could cause segaults with some codecs (:issue:`55`).
+  when decoding could cause segfaults with some codecs (:issue:`55`).
 
 
 .. _release_0.4.0:
@@ -525,7 +691,7 @@ Fixed project description in setup.py.
 -----
 
 First release. This version is a port of the ``codecs`` module from `Zarr
-<http://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
+<https://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
 the original Zarr module:
 
 * Codec classes have been re-organized into separate modules, mostly one per

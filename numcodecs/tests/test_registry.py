@@ -1,6 +1,8 @@
 import pytest
 
+import inspect
 
+import numcodecs
 from numcodecs.registry import get_codec
 
 
@@ -15,3 +17,24 @@ def test_get_codec_argument():
     before = dict(arg)
     get_codec(arg)
     assert before == arg
+
+
+def test_all_classes_registered():
+    """
+    find all Codec subclasses in this repository and check that they
+    have been registered.
+
+    see #346 for more info
+    """
+    missing = set()
+    for name, submod in inspect.getmembers(numcodecs, inspect.ismodule):
+        for name, obj in inspect.getmembers(submod):
+            if inspect.isclass(obj):
+                if issubclass(obj, numcodecs.abc.Codec):
+                    if obj.codec_id not in numcodecs.registry.codec_registry:
+                        missing.add(obj.codec_id)
+
+    # remove `None``
+    missing.remove(None)
+    if missing:
+        raise Exception(f"these codecs are missing: {missing}")  # pragma: no cover
