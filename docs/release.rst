@@ -29,6 +29,9 @@ Maintenance
 * Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
 
+* Build wheels for Linux AArch64 on verison release.
+  By :user:`Jeremy Hetzel <jthetzel>`, :issue:`315`.
+
 .. _release_0.11.0:
 
 0.11.0
