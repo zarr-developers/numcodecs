@@ -33,3 +33,11 @@ Fletcher32
     .. automethod:: encode
     .. automethod:: decode
 
+JenkinsLookup3
+--------------
+
+.. autoclass:: numcodecs.jenkins.JenkinsLookup3
+    
+    .. autoattribute:: codec_id
+    .. automethod:: encode
+    .. automethod:: decode
