@@ -2,10 +2,12 @@ import zlib
 
 
 import numpy as np
+import struct
 
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
+from .jenkins import jenkins_lookup3
 
 
 class Checksum32(Codec):
@@ -40,3 +42,54 @@ class Adler32(Checksum32):
 
     codec_id = 'adler32'
     checksum = zlib.adler32
+
+
+class JenkinsLookup3(Checksum32):
+    """Bob Jenkin's lookup3 checksum with 32-bit output
+
+    This is the HDF5 implementation.
+    https://github.com/HDFGroup/hdf5/blob/577c192518598c7e2945683655feffcdbdf5a91b/src/H5checksum.c#L378-L472
+
+    With this codec, the checksum is concatenated on the end of the data
+    bytes when encoded. At decode time, the checksum is performed on
+    the data portion and compared with the four-byte checksum, raising
+    RuntimeError if inconsistent.
+    """
+
+    checksum = jenkins_lookup3
+    codec_id = "jenkins_lookup3"
+
+    def __init__(self, initval=0, prefix=None):
+        self.initval = initval
+        if prefix is None:
+            self.prefix = None
+        else:
+            self.prefix = np.frombuffer(prefix, dtype='uint8')
+
+    def encode(self, buf):
+        """Return buffer plus 4-byte Bob Jenkin's lookup3 checksum"""
+        buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
+        if self.prefix is None:
+            val = jenkins_lookup3(buf, self.initval)
+        else:
+            val = jenkins_lookup3(np.hstack((self.prefix, buf)), self.initval)
+        return buf.tobytes() + struct.pack("<I", val)
+
+    def decode(self, buf, out=None):
+        """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
+        b = ensure_contiguous_ndarray(buf).view('uint8')
+        if self.prefix is None:
+            val = jenkins_lookup3(b[:-4], self.initval)
+        else:
+            val = jenkins_lookup3(np.hstack((self.prefix, b[:-4])), self.initval)
+        found = b[-4:].view("<u4")[0]
+        if val != found:
+            raise RuntimeError(
+                f"The Bob Jenkin's lookup3 checksum of the data ({val}) did not"
+                f" match the expected checksum ({found}).\n"
+                "This could be a sign that the data has been corrupted."
+            )
+        if out:
+            out.view("uint8")[:] = b[:-4]
+            return out
+        return memoryview(b[:-4])

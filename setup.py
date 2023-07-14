@@ -222,6 +222,7 @@ def fletcher_extension():
 
     return extensions
 
+
 def jenkins_extension():
     info('setting up jenkins extension')
 
@@ -245,6 +246,7 @@ def jenkins_extension():
     ]
 
     return extensions
+
 
 def compat_extension():
     info('setting up compat extension')

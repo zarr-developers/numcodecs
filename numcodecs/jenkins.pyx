@@ -84,15 +84,13 @@ computer software, distribute, and sublicense such enhancements or derivative
 works thereof, in binary and source code form.
 """
 
-import struct
 import cython
 
-from numcodecs.checksum32 import Checksum32
 from numcodecs.compat import ensure_contiguous_ndarray
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t
 
-def jenkins_lookup3(data: bytes, initval: uint32_t=0):
+cpdef uint32_t jenkins_lookup3(const uint8_t[::1] _data, uint32_t initval=0):
     """
     jenkins_lookup3(data: bytes, initval: uint32_t=0)
     hash a variable-length key into a 32-bit value
@@ -114,7 +112,7 @@ def jenkins_lookup3(data: bytes, initval: uint32_t=0):
     ```
     h = 0
     for k in strings:
-      h = _jenkins_lookup3(k, h)
+      h = jenkins_lookup3(k, h)
     ```
 
     By Bob Jenkins, 2006.  bob_jenkins@burtleburtle.net.  You may use this
@@ -122,12 +120,6 @@ def jenkins_lookup3(data: bytes, initval: uint32_t=0):
 
     Use for hash table lookup, or anything where one collision in 2^^32 is
     acceptable.  Do NOT use for cryptographic purposes.
-    """
-    return _jenkins_lookup3(data, initval)
-
-cdef uint32_t _jenkins_lookup3(const uint8_t[::1] _data, uint32_t initval=0):
-    """
-    Implementation of jenkins_lookup3
 
     Converted from H5_checksum_lookup3
     https://github.com/HDFGroup/hdf5/blob/577c192518598c7e2945683655feffcdbdf5a91b/src/H5checksum.c#L378-L472
@@ -332,43 +324,4 @@ cdef inline (uint32_t, uint32_t, uint32_t) _jenkins_lookup3_mix(uint32_t a, uint
     b += a
     return a, b, c
 
-class JenkinsLookup3(Checksum32):
-    """Bob Jenkin's lookup3 checksum with 32-bit output
 
-    This is the HDF5 implementation.
-    https://github.com/HDFGroup/hdf5/blob/577c192518598c7e2945683655feffcdbdf5a91b/src/H5checksum.c#L378-L472
-
-    With this codec, the checksum is concatenated on the end of the data
-    bytes when encoded. At decode time, the checksum is performed on
-    the data portion and compared with the four-byte checksum, raising
-    RuntimeError if inconsistent.
-    """
-
-    checksum = jenkins_lookup3
-    codec_id = "bob_jenkins_lookup3"
-
-    def encode(self, buf, initval=0):
-        """Return buffer plus 4-byte Bob Jenkin's lookup3 checksum"""
-        buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
-        cdef const uint8_t[::1] b_ptr = buf
-        cdef uint32_t _initval = initval
-        val = _jenkins_lookup3(b_ptr, _initval)
-        return buf.tobytes() + struct.pack("<I", val)
-
-    def decode(self, buf, out=None, initval=0):
-        """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
-        b = ensure_contiguous_ndarray(buf).view('uint8')
-        cdef const uint8_t[::1] b_ptr = b[:-4]
-        cdef uint32_t _initval = initval
-        val = _jenkins_lookup3(b_ptr, _initval)
-        found = b[-4:].view("<u4")[0]
-        if val != found:
-            raise RuntimeError(
-                f"The Bob Jenkin's lookup3 checksum of the data ({val}) did not"
-                f" match the expected checksum ({found}).\n"
-                "This could be a sign that the data has been corrupted."
-            )
-        if out:
-            out.view("uint8")[:] = b[:-4]
-            return out
-        return memoryview(b[:-4])
