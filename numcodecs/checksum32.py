@@ -54,12 +54,16 @@ class JenkinsLookup3(Checksum32):
     bytes when encoded. At decode time, the checksum is performed on
     the data portion and compared with the four-byte checksum, raising
     RuntimeError if inconsistent.
+
+    Attributes:
+       initval: initial seed passed to the hash algorithm, default: 0
+       prefix: bytes prepended to the buffer before evaluating the hash, default: None
     """
 
     checksum = jenkins_lookup3
     codec_id = "jenkins_lookup3"
 
-    def __init__(self, initval=0, prefix=None):
+    def __init__(self, initval: int = 0, prefix=None):
         self.initval = initval
         if prefix is None:
             self.prefix = None

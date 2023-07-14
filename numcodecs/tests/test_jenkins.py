@@ -18,33 +18,43 @@ def test_jenkins_lookup3():
     h = jenkins_lookup3(b"jenkins", 0)
     assert h == 202276345
 
-    h_last = 0
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
-    h_last = h
-    h = jenkins_lookup3(b"", h_last)
-    assert h != h_last
+    h_last = [0]
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
+
+    h = jenkins_lookup3(b"", h_last[-1])
+    assert h not in h_last
+    h_last.append(h)
 
     a = np.frombuffer(b"Four score and seven years ago", dtype="uint8")
     h = jenkins_lookup3(a, 0)
@@ -58,9 +68,17 @@ def test_jenkins_lookup3_codec():
     assert result[-4:] == b'\x51\x05\x77\x17'
     assert bytes(j.decode(result)) == s
 
+    j = JenkinsLookup3(initval=0xdeadbeef)
+    result = j.encode(s)
+    assert bytes(j.decode(result)) == s
+
     j = JenkinsLookup3(initval=1230)
     result = j.encode(s)
     assert result[-4:] == b'\xd7Z\xe2\x0e'
+    assert bytes(j.decode(result)) == s
+
+    j = JenkinsLookup3(initval=1230, prefix=b"Hello world")
+    result = j.encode(s)
     assert bytes(j.decode(result)) == s
 
     chunk_index = b"\x00\x08\x00\x00\x00\x00\x00\x00" + \
