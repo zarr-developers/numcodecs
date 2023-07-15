@@ -93,7 +93,7 @@ class JenkinsLookup3(Checksum32):
                 f" match the expected checksum ({found}).\n"
                 "This could be a sign that the data has been corrupted."
             )
-        if out:
+        if out is not None:
             out.view("uint8")[:] = b[:-4]
             return out
         return memoryview(b[:-4])

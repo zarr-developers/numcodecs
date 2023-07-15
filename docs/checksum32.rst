@@ -36,8 +36,10 @@ Fletcher32
 JenkinsLookup3
 --------------
 
-.. autoclass:: numcodecs.jenkins.JenkinsLookup3
+.. autoclass:: JenkinsLookup3
     
     .. autoattribute:: codec_id
+    .. autoattribute:: initval
+    .. autoattribute:: prefix
     .. automethod:: encode
     .. automethod:: decode

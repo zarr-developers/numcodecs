@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from numcodecs.jenkins import jenkins_lookup3
 from numcodecs.checksum32 import JenkinsLookup3
@@ -119,3 +120,30 @@ def test_jenkins_lookup3_codec():
     result = j.encode(chunk_index[:-4])
     j.decode(result)
     assert result == chunk_index
+
+@pytest.mark.parametrize(
+    "dtype",
+    ["uint8", "int32", "float32"]
+)
+def test_with_data(dtype):
+    data = np.arange(100, dtype=dtype)
+    j = JenkinsLookup3()
+    arr = np.frombuffer(j.decode(j.encode(data)), dtype=dtype)
+    assert (arr == data).all()
+
+
+def test_error():
+    data = np.arange(100)
+    j = JenkinsLookup3()
+    enc = j.encode(data)
+    enc2 = bytearray(enc)
+    enc2[0] += 1
+    with pytest.raises(RuntimeError) as e:
+        j.decode(enc2)
+    assert "Bob Jenkin's lookup3 checksum" in str(e.value)
+
+def test_out():
+    data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
+    j = JenkinsLookup3()
+    result = j.encode(data)
+    j.decode(result, out=data)
