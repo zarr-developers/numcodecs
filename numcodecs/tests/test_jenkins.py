@@ -121,6 +121,7 @@ def test_jenkins_lookup3_codec():
     j.decode(result)
     assert result == chunk_index
 
+
 @pytest.mark.parametrize(
     "dtype",
     ["uint8", "int32", "float32"]
@@ -141,6 +142,7 @@ def test_error():
     with pytest.raises(RuntimeError) as e:
         j.decode(enc2)
     assert "Bob Jenkin's lookup3 checksum" in str(e.value)
+
 
 def test_out():
     data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
