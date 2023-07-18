@@ -79,7 +79,7 @@ class Fletcher32(Codec):
                 f" match the expected checksum ({found}).\n"
                 "This could be a sign that the data has been corrupted."
             )
-        if out is not None:
+        if out:
             out.view("uint8")[:] = b[:-4]
             return out
         return memoryview(b[:-4])

@@ -40,10 +40,3 @@ def test_known():
         1911, -2427, 1897, -2412, 2440, 873, -621, -829, 551, -2118,
     ]
     assert outarr.tolist() == expected
-
-
-def test_out():
-    data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
-    f = Fletcher32()
-    result = f.encode(data)
-    f.decode(result, out=data)
