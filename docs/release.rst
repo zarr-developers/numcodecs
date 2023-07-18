@@ -21,7 +21,7 @@ Enhancements
 Fix
 ~~~
 
-*
+* Fixed docs/Makefile error message when sphinx is not present
 
 Maintenance
 ~~~~~~~~~~~
