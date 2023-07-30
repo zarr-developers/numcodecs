@@ -17,6 +17,8 @@ Enhancements
 
 * Add ``fletcher32`` checksum codec
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
+* Add ``jenkins_lookup3`` checksum codec
+  By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
 
 Fix
 ~~~
