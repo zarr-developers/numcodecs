@@ -18,9 +18,10 @@ jobs:
       CIBW_TEST_COMMAND: pytest --pyargs numcodecs
       CIBW_TEST_REQUIRES: pytest
       CIBW_SKIP: "pp* cp36-* *-musllinux_* *win32 *_i686 *_s390x"
-      CIBW_ENVIRONMENT: "DISABLE_NUMCODECS_AVX2=1"
-      CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.9 DISABLE_NUMCODECS_AVX2=1 CFLAGS="$CFLAGS -Wno-implicit-function-declaration"'
-
+      CIBW_ARCHS_MACOS: 'x86_64 arm64'
+      CIBW_TEST_SKIP: '*-macosx_arm64'
+      # note: CIBW_ENVIRONMENT is now set in pyproject.toml
+      
     steps:
       - uses: actions/checkout@v3
         with:
