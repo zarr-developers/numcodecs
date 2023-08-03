@@ -15,8 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
-      CIBW_TEST_COMMAND: pytest --pyargs numcodecs
-      CIBW_TEST_REQUIRES: pytest
+      CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_SKIP: "pp* cp36-* *-musllinux_* *win32 *_i686 *_s390x"
       CIBW_ARCHS_MACOS: 'x86_64 arm64'
       CIBW_TEST_SKIP: '*-macosx_arm64'
