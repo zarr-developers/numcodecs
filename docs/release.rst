@@ -24,6 +24,9 @@ Fix
 ~~~
 
 * Fixed docs/Makefile error message when sphinx is not present
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`451`.
+* Add missing RTD requirements
+  By :user:`John Kirkham <jakirkham>`, :issue:`455`.
 
 Maintenance
 ~~~~~~~~~~~
