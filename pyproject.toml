@@ -15,7 +15,6 @@ in data storage and communication applications.
 """
 readme =  "README.rst"
 dependencies = [
-    "entrypoints",
     "numpy>=1.7",
 ]
 requires-python = ">=3.8"
@@ -70,6 +69,12 @@ license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
+
+[tool.setuptools.package-data]
+numcodecs = [
+    "tests/package_with_entrypoint/__init__.py",
+    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
+]
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
