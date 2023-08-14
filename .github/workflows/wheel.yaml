@@ -26,7 +26,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.14.1
+      - uses: pypa/cibuildwheel@v2.15.0
 
       - uses: actions/upload-artifact@v3
         with:
