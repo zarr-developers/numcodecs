@@ -64,29 +64,12 @@ Contents
 .. toctree::
     :maxdepth: 2
 
+    compression/index
+    filter/index
+    other/index
+    checksum32
     abc
     registry
-    blosc
-    lz4
-    zfpy
-    zstd
-    zlib
-    gzip
-    bz2
-    lzma
-    delta
-    fixedscaleoffset
-    quantize
-    bitround
-    packbits
-    categorize
-    checksum32
-    astype
-    json
-    pickles
-    msgpacks
-    vlen
-    shuffle
     release
     contributing
 
