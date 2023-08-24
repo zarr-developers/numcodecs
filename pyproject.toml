@@ -50,6 +50,7 @@ docs = [
     "sphinx-issues",
     "numpydoc",
     "mock",
+    "sphinx_rtd_theme",
 ]
 test = [
     "coverage",
@@ -120,4 +121,3 @@ norecursedirs = [
  [[tool.cibuildwheel.overrides]]
  select = "*-macosx_arm64"
  environment = { DISABLE_NUMCODECS_SSE2=1 }
- 
