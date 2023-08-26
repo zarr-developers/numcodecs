@@ -200,3 +200,7 @@ ignore = [
 
 [tool.ruff.format]
 quote-style = "preserve"
+
+[tool.mypy]
+ignore_errors = false
+ignore_missing_imports = true

@@ -25,3 +25,10 @@ repos:
     rev: 2024.08.19
     hooks:
     - id: sp-repo-review
+
+  -   repo: https://github.com/pre-commit/mirrors-mypy
+      rev: 'v1.4.0'
+      hooks:
+      -   id: mypy
+          args: [--config-file, pyproject.toml]
+          additional_dependencies: [numpy, pytest, zfpy]

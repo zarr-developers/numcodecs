@@ -1,6 +1,7 @@
 import struct
 import zlib
-from typing import Literal
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 
@@ -8,12 +9,15 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
+if TYPE_CHECKING:
+    from typing_extensions import Buffer
+
 CHECKSUM_LOCATION = Literal['start', 'end']
 
 
 class Checksum32(Codec):
     # override in sub-class
-    checksum = None
+    checksum: Callable[["Buffer", int], int] | None = None
     location: CHECKSUM_LOCATION = 'start'
 
     def __init__(self, location: CHECKSUM_LOCATION | None = None):
