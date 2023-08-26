@@ -12,7 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-
+from typing import Dict
 import sys
 import os
 from unittest.mock import Mock as MagicMock
@@ -230,7 +230,7 @@ htmlhelp_basename = 'numcodecsdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+latex_elements: Dict[str, str] = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
