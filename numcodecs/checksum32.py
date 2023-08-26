@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class Checksum32(Codec):
     # override in sub-class
-    checksum: Optional[Callable[[Buffer, int], int]] = None
+    checksum: Optional[Callable[["Buffer", int], int]] = None
 
     def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
