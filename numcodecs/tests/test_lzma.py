@@ -1,6 +1,7 @@
 import itertools
+from typing import cast
+from types import ModuleType
 import unittest
-
 
 import numpy as np
 import pytest
@@ -22,6 +23,7 @@ from numcodecs.tests.common import (
     check_err_encode_object_buffer,
 )
 
+_lzma = cast(ModuleType, _lzma)
 
 codecs = [
     LZMA(),

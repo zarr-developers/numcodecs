@@ -1,18 +1,20 @@
+from typing import Optional, Callable, TYPE_CHECKING
 import zlib
-
 
 import numpy as np
 import struct
-
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
+if TYPE_CHECKING:
+    from typing_extensions import Buffer
+
 
 class Checksum32(Codec):
     # override in sub-class
-    checksum = None
+    checksum: Optional[Callable[[Buffer, int], int]] = None
 
     def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
