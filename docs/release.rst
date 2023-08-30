@@ -19,6 +19,8 @@ Enhancements
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
 * Add ``jenkins_lookup3`` checksum codec
   By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Update bundled c-blosc from version 1.21.0 to 1.21.4.
+  By :user:`David Stansby <dstansby>`,
 
 Fix
 ~~~
