@@ -3,7 +3,6 @@
 # cython: linetrace=False
 # cython: binding=False
 # cython: language_level=3
-import threading
 import multiprocessing
 import os
 
@@ -151,7 +150,7 @@ SHUFFLE = BLOSC_SHUFFLE
 BITSHUFFLE = BLOSC_BITSHUFFLE
 # automatic shuffle
 AUTOSHUFFLE = -1
-# automatic block size - let blosc decide
+# automatic block size - let blosc2 decide
 AUTOBLOCKS = 0
 
 # synchronization
@@ -373,13 +372,12 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
                                          dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
 
     finally:
-
         # release buffers
         source_buffer.release()
 
     # check compression was successful
     if cbytes <= 0:
-        raise RuntimeError('error during blosc compression: %d' % cbytes)
+        raise RuntimeError('error during blosc2 compression: %d' % cbytes)
 
     # resize after compression
     dest = dest[:cbytes]
@@ -393,7 +391,7 @@ def decompress(source, dest=None):
     Parameters
     ----------
     source : bytes-like
-        Compressed data, including blosc header. Can be any object supporting the buffer
+        Compressed data, including blosc2 header. Can be any object supporting the buffer
         protocol.
     dest : array-like, optional
         Object to decompress into.
@@ -454,7 +452,7 @@ def decompress(source, dest=None):
 
     # handle errors
     if ret <= 0:
-        raise RuntimeError('error during blosc decompression: %d' % ret)
+        raise RuntimeError('error during blosc2 decompression: %d' % ret)
 
     return dest
 
@@ -466,7 +464,7 @@ def decompress_partial(source, start, nitems, dest=None):
     Parameters
     ----------
     source : bytes-like
-        Compressed data, including blosc header. Can be any object supporting the buffer
+        Compressed data, including blosc2 header. Can be any object supporting the buffer
         protocol.
     start: int,
         Offset in item where we want to start decoding
@@ -526,9 +524,9 @@ def decompress_partial(source, start, nitems, dest=None):
         if dest_buffer is not None:
             dest_buffer.release()
 
-    # ret refers to the number of bytes returned from blosc_getitem.
+    # ret refers to the number of bytes returned from blosc2_getitem.
     if ret <= 0:
-        raise RuntimeError('error during blosc partial decompression: %d', ret)
+        raise RuntimeError('error during blosc2 partial decompression: %d', ret)
 
     return dest
         
@@ -546,8 +544,8 @@ class Blosc2(Codec):
     Parameters
     ----------
     cname : string, optional
-        A string naming one of the compression algorithms available within blosc, e.g.,
-        'zstd', 'blosclz', 'lz4', 'lz4hc', 'zlib' or 'snappy'.
+        A string naming one of the compression algorithms available within blosc2, e.g.,
+        'zstd', 'blosclz', 'lz4', 'lz4hc' or 'zlib'.
     clevel : integer, optional
         An integer between 0 and 9 specifying the compression level.
     shuffle : integer, optional
@@ -560,11 +558,11 @@ class Blosc2(Codec):
 
     See Also
     --------
-    numcodecs.zstd.Zstd, numcodecs.lz4.LZ4
+    numcodecs.zstd.Zstd, numcodecs.lz4.LZ4, numcodecs.blosc.Blosc
 
     """
 
-    codec_id = 'blosc'
+    codec_id = 'blosc2'
     NOSHUFFLE = NOSHUFFLE
     SHUFFLE = SHUFFLE
     BITSHUFFLE = BITSHUFFLE
