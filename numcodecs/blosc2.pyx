@@ -10,6 +10,7 @@ import os
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from libcpp cimport bool as c_bool
 
 
 from .compat_ext cimport Buffer
@@ -18,7 +19,18 @@ from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 
-cdef extern from "blosc.h":
+cdef extern from "<stdint.h>":
+    ctypedef   signed char  int8_t
+    ctypedef   signed short int16_t
+    ctypedef   signed int   int32_t
+    ctypedef   signed long  int64_t
+    ctypedef unsigned char  uint8_t
+    ctypedef unsigned short uint16_t
+    ctypedef unsigned int   uint32_t
+    ctypedef unsigned long long uint64_t
+
+
+cdef extern from "blosc2.h":
     cdef enum:
         BLOSC_MAX_OVERHEAD,
         BLOSC_VERSION_STRING,
@@ -31,30 +43,98 @@ cdef extern from "blosc.h":
         BLOSC_MAX_TYPESIZE,
         BLOSC_DOSHUFFLE,
         BLOSC_DOBITSHUFFLE,
-        BLOSC_MEMCPYED
+        BLOSC_MEMCPYED,
+        BLOSC2_MAX_FILTERS,
 
-    void blosc_init()
-    void blosc_destroy()
-    int blosc_get_nthreads()
-    int blosc_set_nthreads(int nthreads)
-    int blosc_set_compressor(const char *compname)
-    void blosc_set_blocksize(size_t blocksize)
-    char* blosc_list_compressors()
-    int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                       void* src, void* dest, size_t destsize) nogil
-    int blosc_decompress(void *src, void *dest, size_t destsize) nogil
-    int blosc_getitem(void* src, int start, int nitems, void* dest)
-    int blosc_compname_to_compcode(const char* compname)
-    int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                           const void* src, void* dest, size_t destsize,
-                           const char* compressor, size_t blocksize,
-                           int numinternalthreads) nogil
-    int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
-                             int numinternalthreads) nogil
-    void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
-                             size_t* blocksize)
-    char* blosc_cbuffer_complib(const void* cbuffer)
-    void blosc_cbuffer_metainfo(const void* cbuffer, size_t* typesize, int* flags)
+
+    ctypedef struct blosc2_context:
+        pass
+
+    ctypedef struct blosc2_prefilter_params:
+        void* user_data
+        const uint8_t* input
+        uint8_t* output
+        int32_t output_size
+        int32_t output_typesize
+        int32_t output_offset
+        int64_t nchunk
+        int32_t nblock
+        int32_t tid
+        uint8_t* ttmp
+        size_t ttmp_nbytes
+        blosc2_context* ctx
+
+    ctypedef struct blosc2_postfilter_params:
+        void *user_data
+        const uint8_t *input
+        uint8_t *output
+        int32_t size
+        int32_t typesize
+        int32_t offset
+        int64_t nchunk
+        int32_t nblock
+        int32_t tid
+        uint8_t * ttmp
+        size_t ttmp_nbytes
+        blosc2_context *ctx
+
+    ctypedef int(*blosc2_prefilter_fn)(blosc2_prefilter_params* params)
+
+    ctypedef int(*blosc2_postfilter_fn)(blosc2_postfilter_params *params)
+
+    ctypedef struct blosc2_cparams:
+        uint8_t compcode
+        uint8_t compcode_meta
+        uint8_t clevel
+        int use_dict
+        int32_t typesize
+        int16_t nthreads
+        int32_t blocksize
+        int32_t splitmode
+        void *schunk
+        uint8_t filters[BLOSC2_MAX_FILTERS]
+        uint8_t filters_meta[BLOSC2_MAX_FILTERS]
+        blosc2_prefilter_fn prefilter
+        blosc2_prefilter_params* preparams
+        int tuner_id
+        void* tuner_params
+        c_bool instr_codec
+        void* codec_params
+        void* filter_params[BLOSC2_MAX_FILTERS]
+
+    cdef const blosc2_cparams BLOSC2_CPARAMS_DEFAULTS
+
+    ctypedef struct blosc2_dparams:
+        int16_t nthreads
+        void* schunk
+        blosc2_postfilter_fn postfilter
+        blosc2_postfilter_params *postparams
+
+    cdef const blosc2_dparams BLOSC2_DPARAMS_DEFAULTS
+
+    void blosc2_init()
+    void blosc2_destroy()
+    int blosc2_get_nthreads()
+    int blosc2_set_nthreads(int nthreads)
+    int blosc1_set_compressor(const char *compname)
+    void blosc1_set_blocksize(size_t blocksize)
+    char* blosc2_list_compressors()
+    int blosc2_compress(int clevel, int doshuffle, int32_t typesize,
+                        const void *src, int32_t srcsize, void *dest,
+                        int32_t destsize) nogil
+    int blosc2_decompress(const void *src, int32_t srcsize,
+                          void *dest, int32_t destsize) nogil
+    int blosc2_getitem(const void *src, int32_t srcsize, int start, int nitems,
+                       void *dest, int32_t destsize)
+    int blosc2_compname_to_compcode(const char *compname)
+    int blosc2_compress_ctx(blosc2_context *context, const void *src, int32_t srcsize,
+                            void *dest, int32_t destsize) nogil
+    int blosc2_decompress_ctx(blosc2_context *context, const void *src,
+                              int32_t srcsize, void *dest, int32_t destsize) nogil
+    int blosc2_cbuffer_sizes(const void* cbuffer, int32_t* nbytes,
+                             int32_t* cbytes, int32_t* blocksize)
+    const char* blosc2_cbuffer_complib(const void* cbuffer)
+    void blosc1_cbuffer_metainfo(const void *cbuffer, size_t *typesize, int *flags)
 
 
 MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
@@ -87,13 +167,13 @@ _importer_pid = os.getpid()
 
 
 def init():
-    """Initialize the Blosc library environment."""
-    blosc_init()
+    """Initialize the Blosc2 library environment."""
+    blosc2_init()
 
 
 def destroy():
-    """Destroy the Blosc library environment."""
-    blosc_destroy()
+    """Destroy the Blosc2 library environment."""
+    blosc2_destroy()
 
 
 def compname_to_compcode(cname):
@@ -102,26 +182,26 @@ def compname_to_compcode(cname):
     instead."""
     if isinstance(cname, str):
         cname = cname.encode('ascii')
-    return blosc_compname_to_compcode(cname)
+    return blosc2_compname_to_compcode(cname)
 
 
 def list_compressors():
     """Get a list of compressors supported in the current build."""
-    s = blosc_list_compressors()
+    s = blosc2_list_compressors()
     s = s.decode('ascii')
     return s.split(',')
 
 
 def get_nthreads():
-    """Get the number of threads that Blosc uses internally for compression and
+    """Get the number of threads that Blosc2 uses internally for compression and
     decompression."""
-    return blosc_get_nthreads()
+    return blosc2_get_nthreads()
 
 
 def set_nthreads(int nthreads):
-    """Set the number of threads that Blosc uses internally for compression and
+    """Set the number of threads that Blosc2 uses internally for compression and
     decompression."""
-    return blosc_set_nthreads(nthreads)
+    return blosc2_set_nthreads(nthreads)
 
 
 def cbuffer_sizes(source):
@@ -144,7 +224,7 @@ def cbuffer_sizes(source):
     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
-    blosc_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)
+    blosc2_cbuffer_sizes(buffer.ptr, &nbytes, &cbytes, &blocksize)
 
     # release buffers
     buffer.release()
@@ -161,7 +241,7 @@ def cbuffer_complib(source):
     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
-    complib = blosc_cbuffer_complib(buffer.ptr)
+    complib = blosc2_cbuffer_complib(buffer.ptr)
 
     # release buffers
     buffer.release()
@@ -192,7 +272,7 @@ def cbuffer_metainfo(source):
     buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
 
     # determine buffer size
-    blosc_cbuffer_metainfo(buffer.ptr, &typesize, &flags)
+    blosc1_cbuffer_metainfo(buffer.ptr, &typesize, &flags)
 
     # release buffers
     buffer.release()
@@ -278,34 +358,19 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         dest_ptr = PyBytes_AS_STRING(dest)
 
         # perform compression
-        if _get_use_threads():
-            # allow blosc to use threads internally
-
-            # N.B., we are using blosc's global context, and so we need to use a lock
-            # to ensure no-one else can modify the global context while we're setting it
-            # up and using it.
-            with mutex:
-
-                # set compressor
-                compressor_set = blosc_set_compressor(cname)
-                if compressor_set < 0:
-                    # shouldn't happen if we checked against list of compressors
-                    # already, but just in case
-                    err_bad_cname(cname_str)
-
-                # set blocksize
-                blosc_set_blocksize(blocksize)
-
-                # perform compression
-                with nogil:
-                    cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
-
-        else:
-            with nogil:
-                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
-                                            cname, blocksize, 1)
+        with nogil:
+            # cbytes = blosc2_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
+            #                              dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
+            #                              cname, blocksize, 1)
+            cdef blosc2_context *ctx = BLOSC2_CPARAMS_DEFAULTS
+            ctx.clevel = clevel
+            ctx.shuffle = shuffle
+            ctx.itemsize = itemsize
+            ctx.blocksize = blocksize
+            ctx.compcode = compname_to_compcode(cname)
+            ctx.nthreads = blosc2_get_nthreads()
+            cbytes = blosc2_compress_ctx(ctx, source_ptr, nbytes,
+                                         dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
 
     finally:
 
@@ -352,7 +417,7 @@ def decompress(source, dest=None):
     source_ptr = source_buffer.ptr
 
     # determine buffer size
-    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    blosc2_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
 
     # setup destination buffer
     if dest is None:
@@ -374,13 +439,11 @@ def decompress(source, dest=None):
                              'got %s' % (nbytes, dest_nbytes))
 
         # perform decompression
-        if _get_use_threads():
-            # allow blosc to use threads internally
-            with nogil:
-                ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
-        else:
-            with nogil:
-                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+        with nogil:
+            cdef blosc2_context *ctx = BLOSC2_DPARAMS_DEFAULTS
+            ctx.nthreads = blosc2_get_nthreads()
+            ret = blosc2_decompress_ctx(ctx, source_ptr, nbytes,
+                                        dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
 
     finally:
 
@@ -432,6 +495,7 @@ def decompress_partial(source, start, nitems, dest=None):
     # setup source buffer
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
+    nbytes = source_buffer.nbytes
 
     # get encoding size from source buffer header
     encoding_size = source[3]
@@ -456,8 +520,7 @@ def decompress_partial(source, start, nitems, dest=None):
         if dest_nbytes < nitems_bytes:
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nitems_bytes, dest_nbytes))
-        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
-
+        ret = blosc2_getitem(source_ptr, nbytes, start, nitems, dest_ptr, dest_nbytes)
     finally:
         source_buffer.release()
         if dest_buffer is not None:
@@ -474,48 +537,11 @@ def decompress_partial(source, start, nitems, dest=None):
 # default adaptive behaviour
 use_threads = None
 
-
-def _get_use_threads():
-    global use_threads
-    proc = multiprocessing.current_process()
-
-    # check if locks are available, and if not no threads
-    if not mutex:
-        return False
-
-    # check for fork
-    if proc.pid != _importer_pid:
-        # If this module has been imported in the parent process, and the current process
-        # is a fork, attempting to use blosc in multi-threaded mode will cause a
-        # program hang, so we force use of blosc ctx functions, i.e., no threads.
-        return False
-
-    if use_threads in [True, False]:
-        # user has manually overridden the default behaviour
-        _use_threads = use_threads
-
-    else:
-        # Adaptive behaviour: allow blosc to use threads if it is being called from the
-        # main Python thread in the main Python process, inferring that it is being run
-        # from within a single-threaded, single-process program; otherwise do not allow
-        # blosc to use threads, inferring it is being run from within a multi-threaded
-        # program or multi-process program
-
-        if proc.name != 'MainProcess':
-            _use_threads = False
-        elif hasattr(threading, 'main_thread'):
-            _use_threads = (threading.main_thread() == threading.current_thread())
-        else:
-            _use_threads = threading.current_thread().name == 'MainThread'
-
-    return _use_threads
-
-
 _shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
 
 
-class Blosc(Codec):
-    """Codec providing compression using the Blosc meta-compressor.
+class Blosc2(Codec):
+    """Codec providing compression using the Blosc2 meta-compressor.
 
     Parameters
     ----------
