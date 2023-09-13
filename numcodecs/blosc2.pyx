@@ -113,6 +113,9 @@ cdef extern from "blosc2.h":
 
     void blosc2_init()
     void blosc2_destroy()
+    blosc2_context* blosc2_create_cctx(blosc2_cparams cparams)
+    blosc2_context * blosc2_create_dctx(blosc2_dparams dparams)
+    void blosc2_free_ctx(blosc2_context * context)
     int blosc2_get_nthreads()
     int blosc2_set_nthreads(int nthreads)
     int blosc1_set_compressor(const char *compname)
@@ -351,27 +354,24 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
                          shuffle)
 
     try:
-
         # setup destination
         dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
         dest_ptr = PyBytes_AS_STRING(dest)
 
         # perform compression
         with nogil:
-            # cbytes = blosc2_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
-            #                              dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
-            #                              cname, blocksize, 1)
-            cdef blosc2_context *ctx = BLOSC2_CPARAMS_DEFAULTS
-            ctx.clevel = clevel
-            ctx.shuffle = shuffle
-            ctx.itemsize = itemsize
-            ctx.blocksize = blocksize
-            ctx.compcode = compname_to_compcode(cname)
-            ctx.nthreads = blosc2_get_nthreads()
+            cdef blosc2_cparams *cparams = BLOSC2_CPARAMS_DEFAULTS
+            cparams.compcode = compname_to_compcode(cname)
+            cparams.clevel = clevel
+            cparams.shuffle = shuffle
+            cparams.typesize = itemsize
+            cparams.blocksize = blocksize
+            cparams.nthreads = blosc2_get_nthreads()
+            cdef blosc2_context ctx = blosc2_create_cctx(cparams)
             cbytes = blosc2_compress_ctx(ctx, source_ptr, nbytes,
                                          dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
-
     finally:
+        blosc2_free_ctx(ctx)
         # release buffers
         source_buffer.release()
 
@@ -438,13 +438,13 @@ def decompress(source, dest=None):
 
         # perform decompression
         with nogil:
-            cdef blosc2_context *ctx = BLOSC2_DPARAMS_DEFAULTS
-            ctx.nthreads = blosc2_get_nthreads()
+            cdef blosc2_cparams *dparams = BLOSC2_DPARAMS_DEFAULTS
+            dparams.nthreads = blosc2_get_nthreads()
+            cdef blosc2_context ctx = blosc2_create_dctx(dparams)
             ret = blosc2_decompress_ctx(ctx, source_ptr, nbytes,
                                         dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
-
     finally:
-
+        blosc2_free_ctx(ctx)
         # release buffers
         source_buffer.release()
         if dest_buffer is not None:
