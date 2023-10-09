@@ -7,7 +7,7 @@ Release notes
     # re-indented so that it does not show up in the notes.
 
 
-.. _unreleased:
+.. _release_0.12.0:
 
 0.12.0
 ------
