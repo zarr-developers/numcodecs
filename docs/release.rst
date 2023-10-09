@@ -7,6 +7,17 @@ Release notes
     # re-indented so that it does not show up in the notes.
 
 
+.. _release_0.12.1:
+
+0.12.1
+------
+
+Fix
+~~~
+
+* Fix default entrypoint handling on older Pythons
+  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`475`.
+
 .. _release_0.12.0:
 
 0.12.0
