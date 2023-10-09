@@ -19,6 +19,8 @@ Enhancements
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
 * Add ``jenkins_lookup3`` checksum codec
   By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Support Python 3.12.
+  By :user:`John Kirkham <jakirkham>`, :issue:`471`.
 
 Fix
 ~~~
