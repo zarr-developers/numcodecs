@@ -9,8 +9,8 @@ Release notes
 
 .. _unreleased:
 
-Unreleased
-----------
+0.12.0
+------
 
 Enhancements
 ~~~~~~~~~~~~
