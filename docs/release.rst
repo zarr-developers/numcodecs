@@ -15,7 +15,7 @@ Release notes
 Fix
 ~~~
 
-* Fix default entrypoint handling on older Pythons
+* Fix handling of entry points on older Python versions where importlib_metadata compatibility is concerned
   By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
 
 .. _release_0.12.0:
