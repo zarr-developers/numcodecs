@@ -8,7 +8,7 @@ cimport cython
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, Py_ssize_t element_size) nogil:
+cpdef int _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, Py_ssize_t element_size) nogil:
     cdef Py_ssize_t count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(count):
@@ -20,7 +20,7 @@ cpdef void _doShuffle(const unsigned char[::1] src, unsigned char[::1] des, Py_s
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef void _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, Py_ssize_t element_size) nogil:
+cpdef int _doUnshuffle(const unsigned char[::1] src, unsigned char[::1] des, Py_ssize_t element_size) nogil:
     cdef Py_ssize_t count, i, j, offset, byte_index
     count = len(src) // element_size
     for i in range(element_size):
