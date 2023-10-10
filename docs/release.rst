@@ -16,7 +16,7 @@ Fix
 ~~~
 
 * Fix default entrypoint handling on older Pythons
-  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`475`.
+  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
 
 .. _release_0.12.0:
 
