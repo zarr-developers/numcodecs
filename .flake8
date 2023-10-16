@@ -12,3 +12,4 @@ exclude =
     fixture,
     notebooks,
     numcodecs.egg-info,
+    numcodecs/version.py,
