@@ -7,10 +7,10 @@ Release notes
     # re-indented so that it does not show up in the notes.
 
 
-.. _unreleased:
+.. _release_0.12.0:
 
-Unreleased
-----------
+0.12.0
+------
 
 Enhancements
 ~~~~~~~~~~~~
@@ -19,6 +19,8 @@ Enhancements
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
 * Add ``jenkins_lookup3`` checksum codec
   By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Support Python 3.12.
+  By :user:`John Kirkham <jakirkham>`, :issue:`471`.
 
 Fix
 ~~~
@@ -31,7 +33,7 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
-* Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
+* Cleanup ``import``\ s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
 
 .. _release_0.11.0:

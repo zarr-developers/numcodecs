@@ -10,9 +10,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "numcodecs"
 description = """
-A Python package providing buffer compression and transformation codecs for use
-in data storage and communication applications.
-"""
+A Python package providing buffer compression and transformation codecs \
+for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
     "numpy>=1.7",
@@ -114,10 +113,9 @@ norecursedirs = [
     "numcodecs.egg-info",
 ]
 [tool.cibuildwheel]
- environment = { DISABLE_NUMCODECS_AVX2=1 }
- [tool.cibuildwheel.macos]
- environment = { MACOSX_DEPLOYMENT_TARGET=10.9, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
- [[tool.cibuildwheel.overrides]]
- select = "*-macosx_arm64"
- environment = { DISABLE_NUMCODECS_SSE2=1 }
- 
+environment = { DISABLE_NUMCODECS_AVX2=1 }
+[tool.cibuildwheel.macos]
+environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+[[tool.cibuildwheel.overrides]]
+select = "*-macosx_arm64"
+environment = { DISABLE_NUMCODECS_SSE2=1 } 
