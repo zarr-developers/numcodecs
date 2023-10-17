@@ -14,10 +14,12 @@ Release notes
 Fix
 ~~~
 
-* `Codec` is now derived from `abc.ABC`
+* ``Codec`` is now derived from ``abc.ABC``
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
 * Fix handling of entry points on older Python versions where importlib_metadata compatibility is concerned
   By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
+* Make shuffle pyx functions ``noexcept``
+  By :user:`Martin Durant <martindurant>`, :issue:`477`.
 
 .. _release_0.12.0:
 
