@@ -14,8 +14,10 @@ Release notes
 Fix
 ~~~
 
-* `Codec` is now derived from `abc.ABC`
+* ``Codec`` is now derived from ``abc.ABC``
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
+* Make shuffle pyx functions ``noexcept``
+  By :user:`Martin Durant <martindurant>`, :issue:`477`.
 
 .. _release_0.12.0:
 
