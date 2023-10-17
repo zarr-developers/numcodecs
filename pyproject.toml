@@ -55,6 +55,8 @@ test = [
     "flake8",
     "pytest",
     "pytest-cov",
+]
+test_extras = [
     "importlib_metadata",
 ]
 msgpack = [

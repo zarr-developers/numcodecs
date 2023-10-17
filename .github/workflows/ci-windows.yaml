@@ -42,7 +42,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install -v -e .[test,msgpack,zfpy]
+          python -m pip install -v -e .[test,test_extras,msgpack,zfpy]
 
       - name: List installed packages
         shell: "bash -l {0}"
