@@ -16,15 +16,6 @@ Fix
 
 * `Codec` is now derived from `abc.ABC`
   By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
-
-.. _release_0.12.1:
-
-0.12.1
-------
-
-Fix
-~~~
-
 * Fix handling of entry points on older Python versions where importlib_metadata compatibility is concerned
   By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
 
