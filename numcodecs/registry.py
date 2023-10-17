@@ -16,7 +16,7 @@ def run_entrypoints():
         entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
     else:
         # Otherwise, fallback to using get
-        entries.update(eps.get("numcodecs.codecs", []))
+        entries.update({e.name: e for e in eps.get("numcodecs.codecs", [])})
 
 
 run_entrypoints()

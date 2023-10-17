@@ -56,6 +56,9 @@ test = [
     "pytest",
     "pytest-cov",
 ]
+test_extras = [
+    "importlib_metadata",
+]
 msgpack = [
     "msgpack",
 ]
