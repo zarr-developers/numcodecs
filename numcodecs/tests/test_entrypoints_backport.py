@@ -8,7 +8,7 @@ from multiprocessing import Process
 
 import numcodecs.registry
 
-if not pkgutil.find_loader("importlib_metadata"):
+if not pkgutil.find_loader("importlib_metadata"):  # pragma: no cover
     pytest.skip("This test module requires importlib_metadata to be installed")
 
 here = os.path.abspath(os.path.dirname(__file__))
