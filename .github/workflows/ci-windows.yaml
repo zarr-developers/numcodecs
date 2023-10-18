@@ -35,7 +35,7 @@ jobs:
         run: >
           conda create -n env
           c-compiler cxx-compiler
-          'python=${{matrix.python-version}}=*_${{matrix.python-type}}'
+          'python=${{matrix.python-version}}.*=*_${{matrix.python-type}}'
           wheel pip
 
       - name: Show info about `env` environment
