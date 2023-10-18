@@ -330,6 +330,5 @@ def run_setup(with_extensions):
 
 
 if __name__ == '__main__':
-    is_pypy = hasattr(sys, 'pypy_translation_info')
-    with_extensions = not is_pypy and 'DISABLE_NUMCODECS_CEXT' not in os.environ
+    with_extensions = 'DISABLE_NUMCODECS_CEXT' not in os.environ
     run_setup(with_extensions)
