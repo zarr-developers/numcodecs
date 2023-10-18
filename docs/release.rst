@@ -6,26 +6,48 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
+.. _release_0.12.1:
 
-.. _unreleased:
-
-Unreleased
-----------
-
-Enhancements
-~~~~~~~~~~~~
-
-*
+0.12.1
+------
 
 Fix
 ~~~
 
-*
+* ``Codec`` is now derived from ``abc.ABC``
+  By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
+* Fix handling of entry points on older Python versions where ``importlib_metadata`` compatibility is concerned
+  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
+* Make shuffle pyx functions ``noexcept``
+  By :user:`Martin Durant <martindurant>`, :issue:`477`.
+
+.. _release_0.12.0:
+
+0.12.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+
+* Add ``fletcher32`` checksum codec
+  By :user:`Martin Durant <martindurant>`, :issue:`410`.
+* Add ``jenkins_lookup3`` checksum codec
+  By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Support Python 3.12.
+  By :user:`John Kirkham <jakirkham>`, :issue:`471`.
+
+Fix
+~~~
+
+* Fixed docs/Makefile error message when sphinx is not present
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`451`.
+* Add missing RTD requirements
+  By :user:`John Kirkham <jakirkham>`, :issue:`455`.
 
 Maintenance
 ~~~~~~~~~~~
 
-* Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
+* Cleanup ``import``\ s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
 
 .. _release_0.11.0:
@@ -690,7 +712,7 @@ Fixed project description in setup.py.
 -----
 
 First release. This version is a port of the ``codecs`` module from `Zarr
-<http://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
+<https://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
 the original Zarr module:
 
 * Codec classes have been re-organized into separate modules, mostly one per

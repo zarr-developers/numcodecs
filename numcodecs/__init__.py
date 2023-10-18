@@ -98,9 +98,10 @@ with suppress(ImportError):
     from numcodecs.msgpacks import MsgPack
     register_codec(MsgPack)
 
-from numcodecs.checksum32 import CRC32, Adler32
+from numcodecs.checksum32 import CRC32, Adler32, JenkinsLookup3
 register_codec(CRC32)
 register_codec(Adler32)
+register_codec(JenkinsLookup3)
 
 from numcodecs.json import JSON
 register_codec(JSON)
@@ -111,3 +112,6 @@ with suppress(ImportError):
     register_codec(VLenUTF8)
     register_codec(VLenBytes)
     register_codec(VLenArray)
+
+from numcodecs.fletcher32 import Fletcher32
+register_codec(Fletcher32)

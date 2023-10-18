@@ -17,3 +17,5 @@ python:
       path: .
       extra_requirements:
         - docs
+        - msgpack
+        - zfpy

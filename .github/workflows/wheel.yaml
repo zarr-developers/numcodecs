@@ -2,6 +2,10 @@ name: Wheels
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_wheels:
     name: Build wheel on ${{ matrix.os }}
@@ -11,18 +15,18 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
-      CIBW_TEST_COMMAND: pytest --pyargs numcodecs
-      CIBW_TEST_REQUIRES: pytest
+      CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_SKIP: "pp* cp36-* *-musllinux_* *win32 *_i686 *_s390x"
-      CIBW_ENVIRONMENT: "DISABLE_NUMCODECS_AVX2=1"
-      CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.9 DISABLE_NUMCODECS_AVX2=1 CFLAGS="$CFLAGS -Wno-implicit-function-declaration"'
-
+      CIBW_ARCHS_MACOS: 'x86_64 arm64'
+      CIBW_TEST_SKIP: '*-macosx_arm64'
+      # note: CIBW_ENVIRONMENT is now set in pyproject.toml
+      
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.11.3
+      - uses: pypa/cibuildwheel@v2.16.2
 
       - uses: actions/upload-artifact@v3
         with:
@@ -33,7 +37,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 

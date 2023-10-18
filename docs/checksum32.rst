@@ -22,3 +22,24 @@ Adler32
     .. automethod:: decode
     .. automethod:: get_config
     .. automethod:: from_config
+
+
+Fletcher32
+----------
+
+.. autoclass:: numcodecs.fletcher32.Fletcher32
+
+    .. autoattribute:: codec_id
+    .. automethod:: encode
+    .. automethod:: decode
+
+JenkinsLookup3
+--------------
+
+.. autoclass:: JenkinsLookup3
+    
+    .. autoattribute:: codec_id
+    .. autoattribute:: initval
+    .. autoattribute:: prefix
+    .. automethod:: encode
+    .. automethod:: decode

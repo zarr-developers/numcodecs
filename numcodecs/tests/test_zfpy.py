@@ -49,7 +49,7 @@ arrays = [
 
 def test_encode_decode():
     for arr in arrays:
-        if arr.dtype == np.int32 or arr.dtype == np.int64:
+        if arr.dtype in (np.int32, np.int64):
             codec = [codecs[-1]]
         else:
             codec = codecs
