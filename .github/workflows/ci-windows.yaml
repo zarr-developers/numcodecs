@@ -14,9 +14,11 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         python-type: ["cpython"]
+        pip-extras: ["test,test_extras,msgpack,zfpy"]
         include:
           - python-version: "3.9"
             python-type: "pypy"
+            pip-extras: "test,test_extras,msgpack"
 
     steps:
       - name: Checkout source
@@ -47,7 +49,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install -v -e .[test,test_extras,msgpack,zfpy]
+          python -m pip install -v -e '.[${{matrix.pip-extras}}]'
 
       - name: List installed packages
         shell: "bash -l {0}"
