@@ -6,6 +6,20 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
+.. _unreleased:
+
+Unreleased
+----------
+
+Enhancements
+~~~~~~~~~~~~
+
+Fix
+~~~
+
+Maintenance
+~~~~~~~~~~~
+
 .. _release_0.12.1:
 
 0.12.1
