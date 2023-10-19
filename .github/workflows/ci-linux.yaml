@@ -12,11 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -50,7 +50,7 @@ jobs:
         run: |
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,msgpack,zfpy]
+          python -m pip install -v -e .[test,test_extras,msgpack,zfpy]
 
       - name: List installed packages
         shell: "bash -l {0}"

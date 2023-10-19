@@ -22,11 +22,11 @@ jobs:
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
       
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.14.1
+      - uses: pypa/cibuildwheel@v2.16.2
 
       - uses: actions/upload-artifact@v3
         with:
@@ -37,7 +37,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 

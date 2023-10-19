@@ -29,10 +29,10 @@ other and vice versa.
 """
 
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 
-class Codec:
+class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class

@@ -6,7 +6,6 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
-
 .. _unreleased:
 
 Unreleased
@@ -15,10 +14,41 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+Fix
+~~~
+
+Maintenance
+~~~~~~~~~~~
+
+.. _release_0.12.1:
+
+0.12.1
+------
+
+Fix
+~~~
+
+* ``Codec`` is now derived from ``abc.ABC``
+  By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
+* Fix handling of entry points on older Python versions where ``importlib_metadata`` compatibility is concerned
+  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
+* Make shuffle pyx functions ``noexcept``
+  By :user:`Martin Durant <martindurant>`, :issue:`477`.
+
+.. _release_0.12.0:
+
+0.12.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+
 * Add ``fletcher32`` checksum codec
   By :user:`Martin Durant <martindurant>`, :issue:`410`.
 * Add ``jenkins_lookup3`` checksum codec
   By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Support Python 3.12.
+  By :user:`John Kirkham <jakirkham>`, :issue:`471`.
 
 Fix
 ~~~
@@ -31,7 +61,7 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
-* Cleanup ``import``s in ``adhoc/blosc_memleak_check.py``
+* Cleanup ``import``\ s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
 
 .. _release_0.11.0:
