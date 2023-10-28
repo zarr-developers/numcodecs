@@ -14,6 +14,9 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+* Use PyData theme for docs
+  By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+
 Fix
 ~~~
 
