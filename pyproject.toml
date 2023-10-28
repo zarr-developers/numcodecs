@@ -47,6 +47,7 @@ Homepage = "https://github.com/zarr-developers/numcodecs"
 docs = [
     "sphinx<7.0.0",
     "sphinx-issues",
+    "pydata-sphinx-theme",
     "numpydoc",
     "mock",
 ]
