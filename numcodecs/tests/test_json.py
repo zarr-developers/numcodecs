@@ -1,6 +1,5 @@
 import itertools
 
-
 import numpy as np
 import pytest
 
@@ -65,11 +64,16 @@ def test_backwards_compatibility():
         (["11", "1", "1"],  None),
         ([{}], None),
         ([{"key": "value"}, ["list", "of", "strings"]], object),
+        ([0], None),
+        ([{'hi': 0}], "object"),
+        (["hi"], "object"),
+        (0, None)
     ]
 )
 def test_non_numpy_inputs(input_data, dtype):
     # numpy will infer a range of different shapes and dtypes for these inputs.
     # Make sure that round-tripping through encode preserves this.
+    data = np.array(input_data, dtype=dtype)
     for codec in codecs:
-        output_data = codec.decode(codec.encode(input_data))
-        assert np.array_equal(np.array(input_data, dtype=dtype), output_data)
+        output_data = codec.decode(codec.encode(data))
+        assert input_data == output_data.tolist()
