@@ -20,6 +20,9 @@ Enhancements
 Fix
 ~~~
 
+* Fix skip of entry points backport tests
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
+
 Maintenance
 ~~~~~~~~~~~
 
