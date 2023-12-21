@@ -22,9 +22,15 @@ Fix
 
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
+* Fix Upgrade to Zstd 1.5.5 due to potential corruption
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
 
 Maintenance
 ~~~~~~~~~~~
+* Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
+  lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`
+
 
 .. _release_0.12.1:
 
