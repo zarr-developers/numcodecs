@@ -19,6 +19,7 @@ def set_path():
     numcodecs.registry.codec_registry.pop("test")
 
 
-def test_entrypoint_codec(set_path):
+@pytest.mark.usefixtures("set_path")
+def test_entrypoint_codec():
     cls = numcodecs.registry.get_codec({"id": "test"})
     assert cls.codec_id == "test"

@@ -27,11 +27,11 @@ configuration, one class could correctly decode data encoded by the
 other and vice versa.
 
 """
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from typing import Optional
 
 
-class Codec:
+class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class

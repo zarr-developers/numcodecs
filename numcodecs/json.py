@@ -58,14 +58,18 @@ class JSON(Codec):
             buf = np.asarray(buf)
         except ValueError:
             buf = np.asarray(buf, dtype=object)
-        items = buf.tolist()
-        items.extend((buf.dtype.str, buf.shape))
+        items = np.atleast_1d(buf).tolist()
+        items.append(buf.dtype.str)
+        items.append(buf.shape)
         return self._encoder.encode(items).encode(self._text_encoding)
 
     def decode(self, buf, out=None):
         items = self._decoder.decode(ensure_text(buf, self._text_encoding))
         dec = np.empty(items[-1], dtype=items[-2])
-        dec[:] = items[:-2]
+        if not items[-1]:
+            dec[...] = items[0]
+        else:
+            dec[:] = items[:-2]
         if out is not None:
             np.copyto(out, dec)
             return out

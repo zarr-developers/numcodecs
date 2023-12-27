@@ -6,6 +6,8 @@ import cpuinfo
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
+from distutils import ccompiler
+from distutils.command.clean import clean
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -71,6 +73,8 @@ def blosc_extension():
                      if os.path.isdir(d)]
     include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*')
                      if os.path.isdir(d)]
+    # remove minizip because Python.h 3.8 tries to include crypt.h
+    include_dirs = [d for d in include_dirs if 'minizip' not in d]
     define_macros += [('HAVE_LZ4', 1),
                       # ('HAVE_SNAPPY', 1),
                       ('HAVE_ZLIB', 1),
@@ -97,6 +101,15 @@ def blosc_extension():
     else:
         info('compiling Blosc extension without AVX2 support')
 
+    # include assembly files
+    if cpuinfo.platform.machine() == 'x86_64':
+        extra_objects = [
+            S[:-1] + 'o'
+            for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
+        ]
+    else:
+        extra_objects = []
+
     sources = ['numcodecs/blosc.pyx']
 
     # define extension module
@@ -106,6 +119,7 @@ def blosc_extension():
                   include_dirs=include_dirs,
                   define_macros=define_macros,
                   extra_compile_args=extra_compile_args,
+                  extra_objects=extra_objects,
                   ),
     ]
 
@@ -133,6 +147,15 @@ def zstd_extension():
 
     sources = ['numcodecs/zstd.pyx']
 
+    # include assembly files
+    if cpuinfo.platform.machine() == 'x86_64':
+        extra_objects = [
+            S[:-1] + 'o'
+            for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
+        ]
+    else:
+        extra_objects = []
+
     # define extension module
     extensions = [
         Extension('numcodecs.zstd',
@@ -140,6 +163,7 @@ def zstd_extension():
                   include_dirs=include_dirs,
                   define_macros=define_macros,
                   extra_compile_args=extra_compile_args,
+                  extra_objects=extra_objects,
                   ),
     ]
 
@@ -298,6 +322,12 @@ class ve_build_ext(build_ext):
 
     def run(self):
         try:
+            if cpuinfo.platform.machine() == 'x86_64':
+                S_files = glob('c-blosc/internal-complibs/zstd*/decompress/*amd64.S')
+                compiler = ccompiler.new_compiler()
+                compiler.src_extensions.append('.S')
+                compiler.compile(S_files)
+
             build_ext.run(self)
         except PlatformError as e:
             error(e)
@@ -311,6 +341,18 @@ class ve_build_ext(build_ext):
             raise BuildFailed()
 
 
+class Sclean(clean):
+    # Clean up .o files created by .S files
+
+    def run(self):
+        if cpuinfo.platform.machine() == 'x86_64':
+            o_files = glob('c-blosc/internal-complibs/zstd*/decompress/*amd64.o')
+            for f in o_files:
+                os.remove(f)
+
+        clean.run(self)
+
+
 def run_setup(with_extensions):
 
     if with_extensions:
@@ -318,7 +360,7 @@ def run_setup(with_extensions):
                        compat_extension() + shuffle_extension() + vlen_extension() +
                        fletcher_extension() + jenkins_extension())
 
-        cmdclass = dict(build_ext=ve_build_ext)
+        cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
     else:
         ext_modules = []
         cmdclass = {}
