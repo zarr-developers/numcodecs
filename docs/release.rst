@@ -146,6 +146,8 @@ Maintenance
 
 * Cleanup ``import``\ s in ``adhoc/blosc_memleak_check.py``
   By :user:`John Kirkham <jakirkham>`, :issue:`408`.
+* Added mypy type checking to continuous integration.
+  By :user:`David Stansby <dstansby>`, :issue:`460`.
 
 .. _release_0.11.0:
 
