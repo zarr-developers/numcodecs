@@ -96,7 +96,7 @@ cpdef uint32_t jenkins_lookup3(const uint8_t[::1] _data, uint32_t initval=0):
     hash a variable-length key into a 32-bit value
 
     data   : the key (unaligned variable-length array of bytes)
-    initval : can be any 4-byte value, defualts to 0
+    initval : can be any 4-byte value, defaults to 0
 
     Returns a 32-bit value.  Every bit of the key affects every bit of
     the return value.  Two keys differing by one or two bits will have
