@@ -53,7 +53,8 @@ def test_config():
 
 def test_repr():
     check_repr(
-        "PCodec(delta_encoding_order=None, float_mult_spec='enabled', int_mult_spec='enabled', level=3, max_page_n=262144)"
+        "PCodec(delta_encoding_order=None, float_mult_spec='enabled', "
+        "int_mult_spec='enabled', level=3, max_page_n=262144)"
     )
 
 

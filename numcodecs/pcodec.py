@@ -56,9 +56,7 @@ class PCodec(numcodecs.abc.Codec):
         self.max_page_n = max_page_n
 
     def encode(self, buf):
-        print("first", buf.dtype)
         buf = ensure_contiguous_ndarray(buf)
-        print("second", buf.dtype)
         return pcodec.auto_compress(
             buf,
             compression_level=self.level,
