@@ -1,0 +1,69 @@
+import pytest
+import numpy as np
+
+
+from numcodecs.pcodec import PCodec
+from numcodecs.tests.common import (
+    check_encode_decode_array_to_bytes,
+    check_config,
+    check_repr,
+    check_backwards_compatibility,
+    check_err_decode_object_buffer,
+    check_err_encode_object_buffer,
+)
+
+
+codecs = [
+    PCodec(),
+    PCodec(level=1),
+    PCodec(level=5),
+    PCodec(level=9),
+    PCodec(float_mult_spec="disabled", int_mult_spec="disabled"),
+    PCodec(max_page_n=300),
+]
+
+
+# mix of dtypes: integer, float
+# mix of shapes: 1D, 2D
+# mix of orders: C, F
+arrays = [
+    np.arange(1000, dtype="u4"),
+    np.arange(1000, dtype="u8"),
+    np.arange(1000, dtype="i4"),
+    np.arange(1000, dtype="i8"),
+    np.linspace(1000, 1001, 1000, dtype="f4"),
+    np.linspace(1000, 1001, 1000, dtype="f8"),
+    np.random.normal(loc=1000, scale=1, size=(100, 10)),
+    np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(100, 10))),
+    np.random.randint(0, 2**60, size=1000, dtype="u8"),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype="i8"),
+]
+
+
+@pytest.mark.parametrize("arr", arrays)
+@pytest.mark.parametrize("codec", codecs)
+def test_encode_decode(arr, codec):
+    check_encode_decode_array_to_bytes(arr, codec)
+
+
+def test_config():
+    codec = PCodec(level=3)
+    check_config(codec)
+
+
+def test_repr():
+    check_repr(
+        "PCodec(delta_encoding_order=None, float_mult_spec='enabled', int_mult_spec='enabled', level=3, max_page_n=262144)"
+    )
+
+
+def test_backwards_compatibility():
+    check_backwards_compatibility(PCodec.codec_id, arrays, codecs)
+
+
+def test_err_decode_object_buffer():
+    check_err_decode_object_buffer(PCodec())
+
+
+def test_err_encode_object_buffer():
+    check_err_encode_object_buffer(PCodec())
