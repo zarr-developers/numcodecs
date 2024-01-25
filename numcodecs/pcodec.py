@@ -14,7 +14,7 @@ class PCodec(numcodecs.abc.Codec):
     PCodec (or pco, pronounced "pico") losslessly compresses and decompresses
     numerical sequences with high compression ratio and fast speed.
 
-    See `PCodec Repo<https://github.com/mwlon/pcodec>`_ for more information.
+    See `PCodec Repo <https://github.com/mwlon/pcodec>`_ for more information.
 
     Parameters
     ----------
