@@ -16,6 +16,9 @@ class PCodec(numcodecs.abc.Codec):
 
     See `PCodec Repo <https://github.com/mwlon/pcodec>`_ for more information.
 
+    PCodec supports only the following numerical dtypes: uint32, unit64, int32,
+    int64, float32, and float64.
+
     Parameters
     ----------
     level : int
