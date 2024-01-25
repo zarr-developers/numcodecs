@@ -23,7 +23,7 @@ class Mock(MagicMock):
         return Mock()
 
 
-MOCK_MODULES = ['msgpack']
+MOCK_MODULES = ['msgpack', 'pcodec']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 

@@ -1,5 +1,6 @@
-BZ2
-===
+PCodec
+======
+
 .. automodule:: numcodecs.pcodec
 
 .. autoclass:: PCodec
