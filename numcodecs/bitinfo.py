@@ -56,7 +56,7 @@ class BitInfo(BitRound):
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
 
         if self.axes is None:
-            axes = range(a.ndim)
+            self.axes = range(a.ndim)
 
         itemsize = a.dtype.itemsize
         astype = f"u{itemsize}"
@@ -66,7 +66,7 @@ class BitInfo(BitRound):
         a = a.astype(astype)
         keepbits = []
 
-        for ax in axes:
+        for ax in self.axes:
             info_per_bit = bitinformation(a, axis=ax)
             keepbits.append(get_keepbits(info_per_bit, self.inflevel))
 
