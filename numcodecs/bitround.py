@@ -59,11 +59,11 @@ class BitRound(Codec):
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
 
-        return self._bitround(a, self.keepbits)
+        return self._bitround(a, self.keepbits, a.dtype)
 
     @staticmethod
-    def _bitround(buf, keepbits):
-        bits = max_bits[str(buf.dtype)]
+    def _bitround(buf, keepbits, dtype):
+        bits = max_bits[str(dtype)]
         a_int_dtype = np.dtype(buf.dtype.str.replace("f", "i"))
         all_set = np.array(-1, dtype=a_int_dtype)
         b = buf.view(a_int_dtype)
