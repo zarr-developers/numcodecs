@@ -50,6 +50,8 @@ class BitInfo(BitRound):
         compressible.
         """
         a = ensure_ndarray_like(buf)
+        dtype = a.dtype
+
         if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
 
@@ -70,7 +72,7 @@ class BitInfo(BitRound):
 
         keepbits = max(keepbits)
 
-        return BitRound._bitround(a, keepbits)
+        return BitRound._bitround(a, keepbits, dtype)
 
 
 def exponent_bias(dtype):

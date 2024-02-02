@@ -91,6 +91,9 @@ register_codec(Base64)
 from numcodecs.shuffle import Shuffle
 register_codec(Shuffle)
 
+from numcodecs.bitinfo import BitInfo
+register_codec(BitInfo)
+
 from numcodecs.bitround import BitRound
 register_codec(BitRound)
 
