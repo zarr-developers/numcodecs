@@ -9,6 +9,7 @@ from .bitround import BitRound
 
 NMBITS = {64: 12, 32: 9, 16: 6}  # number of non mantissa bits for given dtype
 
+
 class BitInfo(BitRound):
     """Floating-point bit information codec
 
@@ -233,7 +234,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
     ----------
     info_per_bit : array
       Information content of each bit from `get_bitinformation`.
-      
+  
     inflevel : float
       Level of information that shall be preserved.
 
@@ -241,10 +242,10 @@ def get_keepbits(info_per_bit, inflevel=0.99):
     -------
     keepbits : int
       Number of mantissa bits to keep
-      
+ 
     """
     if (inflevel < 0) or (inflevel > 1.0):
-        raise ValueError("Please provide `inflevel` from interval [0.,1.]")  
+        raise ValueError("Please provide `inflevel` from interval [0.,1.]")
 
     cdf = _cdf_from_info_per_bit(info_per_bit)
     bitdim_non_mantissa_bits = NMBITS[len(info_per_bit)]
