@@ -59,20 +59,7 @@ class BitRound(Codec):
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
 
-        return self._bitround(a, self.keepbits, a.dtype)
-
-    @staticmethod
-    def _bitround(buf, keepbits, dtype):
-        bits = max_bits[str(dtype)]
-        a_int_dtype = np.dtype(buf.dtype.str.replace("f", "i"))
-        all_set = np.array(-1, dtype=a_int_dtype)
-        b = buf.view(a_int_dtype)
-        maskbits = bits - keepbits
-        mask = (all_set >> maskbits) << maskbits
-        half_quantum1 = (1 << (maskbits - 1)) - 1
-        b += ((b >> maskbits) & 1) + half_quantum1
-        b &= mask
-        return b
+        return self.bitround(a, self.keepbits, a.dtype)
 
     def decode(self, buf, out=None):
         """Remake floats from ints
@@ -84,3 +71,16 @@ class BitRound(Codec):
         dt = np.dtype(buf.dtype.str.replace("i", "f"))
         data = buf.view(dt)
         return ndarray_copy(data, out)
+
+    @staticmethod
+    def bitround(buf, keepbits, dtype):
+        bits = max_bits[str(dtype)]
+        a_int_dtype = np.dtype(buf.dtype.str.replace("f", "i"))
+        all_set = np.array(-1, dtype=a_int_dtype)
+        b = buf.view(a_int_dtype)
+        maskbits = bits - keepbits
+        mask = (all_set >> maskbits) << maskbits
+        half_quantum1 = (1 << (maskbits - 1)) - 1
+        b += ((b >> maskbits) & 1) + half_quantum1
+        b &= mask
+        return b
