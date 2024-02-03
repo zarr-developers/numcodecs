@@ -23,11 +23,9 @@ class BitInfo(BitRound):
     Parameters
     ----------
 
-    inflevel: float
-        The number of bits of the mantissa to keep. The range allowed
-        depends on the dtype input data. If keepbits is
-        equal to the maximum allowed for the data type, this is equivalent
-        to no transform.
+    info_level: float
+        The level of information to preserve in the data. The value should be
+        between 0. and 1.0. Higher values preserve more information.
 
     axes: int or list of int, optional
         Axes along which to calculate the bit information. If None, all axes
@@ -36,12 +34,21 @@ class BitInfo(BitRound):
 
     codec_id = 'bitinfo'
 
-    def __init__(self, inflevel: float, axes=None):
-        if (inflevel < 0) or (inflevel > 1.0):
-            raise ValueError("Please provide `inflevel` from interval [0.,1.]")
+    def __init__(self, info_level: float, axes=None):
+        if (info_level < 0) or (info_level > 1.0):
+            raise ValueError("Please provide `info_level` from interval [0.,1.]")
 
-        self.inflevel = inflevel
+        elif axes is not None and not isinstance(axes, list):
+            if int(axes) != axes:
+                raise ValueError("axis must be an integer or a list of integers.")
+            axes = [axes]
+
+        elif isinstance(axes, list) and not all(int(ax) == ax for ax in axes):
+            raise ValueError("axis must be an integer or a list of integers.")
+
+        self.info_level = info_level
         self.axes = axes
+
 
     def encode(self, buf):
         """Create int array by rounding floating-point data
@@ -68,11 +75,11 @@ class BitInfo(BitRound):
 
         for ax in self.axes:
             info_per_bit = bitinformation(a, axis=ax)
-            keepbits.append(get_keepbits(info_per_bit, self.inflevel))
+            keepbits.append(get_keepbits(info_per_bit, self.info_level))
 
         keepbits = max(keepbits)
 
-        return BitRound._bitround(a, keepbits, dtype)
+        return BitRound.bitround(buf, keepbits, dtype)
 
 
 def exponent_bias(dtype):
@@ -117,12 +124,12 @@ def signed_exponent(A):
 
     Parameters
     ----------
-    A : :py:class:`numpy.array`
+    a : array
         Array to transform
 
     Returns
     -------
-    B : :py:class:`numpy.array`
+    array
 
     Example
     -------
@@ -162,8 +169,7 @@ def signed_exponent(A):
         eabs = np.uint64(eabs)
         esign = np.uint64(esign)
     esigned = esign | (eabs << sbits)
-    B = (sf | esigned).view(np.int64)
-    return B
+    return (sf | esigned).view(np.int64)
 
 
 def bitpaircount_u1(a, b):
@@ -260,7 +266,8 @@ def get_keepbits(info_per_bit, inflevel=0.99):
 
 def _cdf_from_info_per_bit(info_per_bit):
     """Convert info_per_bit to cumulative distribution function"""
-    tol = info_per_bit[-4:].max() * 1.5
-    info_per_bit[info_per_bit < tol] = 0
+    # TODO this threshold isn't working yet
+    #tol = info_per_bit[-4:].max() * 1.5
+    #info_per_bit[info_per_bit < tol] = 0
     cdf = info_per_bit.cumsum()
     return cdf / cdf[-1]
