@@ -266,8 +266,8 @@ def get_keepbits(info_per_bit, inflevel=0.99):
 
 def _cdf_from_info_per_bit(info_per_bit):
     """Convert info_per_bit to cumulative distribution function"""
-    # TODO this threshold isn't working yet
-    #tol = info_per_bit[-4:].max() * 1.5
-    #info_per_bit[info_per_bit < tol] = 0
+    # TODO this threshold doesn't match implementation in remove_insignificant.jl
+    tol = info_per_bit[-4:].max() * 1.1 # reduced from 1.5
+    info_per_bit[info_per_bit < tol] = 0
     cdf = info_per_bit.cumsum()
     return cdf / cdf[-1]
