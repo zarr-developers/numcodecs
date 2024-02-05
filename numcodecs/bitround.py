@@ -73,7 +73,23 @@ class BitRound(Codec):
         return ndarray_copy(data, out)
 
     @staticmethod
-    def bitround(buf, keepbits, dtype):
+    def bitround(buf, keepbits: int, dtype):
+        """Drop bits from the mantissa of a floating point array
+
+        Parameters
+        ----------
+        buf: ndarray
+            The input array
+        keepbits: int
+            The number of bits to keep
+        dtype: dtype
+            The dtype of the input array
+
+        Returns
+        -------
+        ndarray
+            The bitrounded array transformed to an integer type
+        """
         bits = max_bits[str(dtype)]
         a_int_dtype = np.dtype(buf.dtype.str.replace("f", "i"))
         all_set = np.array(-1, dtype=a_int_dtype)

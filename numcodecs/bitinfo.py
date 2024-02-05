@@ -115,6 +115,8 @@ def exponent_mask(dtype):
         mask = 0x7F80_0000
     elif dtype == np.float64:
         mask = 0x7FF0_0000_0000_0000
+    else:
+        raise ValueError(f"Unsupported dtype {dtype}")
     return mask
 
 
@@ -175,6 +177,7 @@ def signed_exponent(A):
 def bitpaircount_u1(a, b):
     assert a.dtype == "u1"
     assert b.dtype == "u1"
+
     unpack_a = np.unpackbits(a.flatten()).astype("u1")
     unpack_b = np.unpackbits(b.flatten()).astype("u1")
 
@@ -188,6 +191,7 @@ def bitpaircount_u1(a, b):
 def bitpaircount(a, b):
     assert a.dtype.kind == "u"
     assert b.dtype.kind == "u"
+
     nbytes = max(a.dtype.itemsize, b.dtype.itemsize)
 
     a, b = np.broadcast_arrays(a, b)
@@ -203,6 +207,9 @@ def bitpaircount(a, b):
 def mutual_information(a, b, base=2):
     """Calculate the mutual information between two arrays.
     """
+    assert a.dtype == b.dtype
+    assert a.dtype.kind == "u"
+
     size = np.prod(np.broadcast_shapes(a.shape, b.shape))
     counts = bitpaircount(a, b)
 
@@ -228,6 +235,8 @@ def bitinformation(a, axis=0):
     -------
     info_per_bit : array
     """
+    assert a.dtype.kind == "u"
+
     sa = tuple(slice(0, -1) if i == axis else slice(None) for i in range(len(a.shape)))
     sb = tuple(
         slice(1, None) if i == axis else slice(None) for i in range(len(a.shape))
