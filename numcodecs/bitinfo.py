@@ -49,7 +49,6 @@ class BitInfo(BitRound):
         self.info_level = info_level
         self.axes = axes
 
-
     def encode(self, buf):
         """Create int array by rounding floating-point data
 
@@ -251,7 +250,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
     ----------
     info_per_bit : array
       Information content of each bit from `get_bitinformation`.
-  
+
     inflevel : float
       Level of information that shall be preserved.
 
@@ -259,7 +258,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
     -------
     keepbits : int
       Number of mantissa bits to keep
- 
+
     """
     if (inflevel < 0) or (inflevel > 1.0):
         raise ValueError("Please provide `inflevel` from interval [0.,1.]")
@@ -275,8 +274,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
 
 def _cdf_from_info_per_bit(info_per_bit):
     """Convert info_per_bit to cumulative distribution function"""
-    # TODO this threshold doesn't match implementation in remove_insignificant.jl
-    tol = info_per_bit[-4:].max() * 1.1 # reduced from 1.5
+    tol = info_per_bit[-4:].max() * 1.1  # reduced from 1.5
     info_per_bit[info_per_bit < tol] = 0
     cdf = info_per_bit.cumsum()
     return cdf / cdf[-1]

@@ -4,6 +4,7 @@ import pytest
 
 from numcodecs.bitinfo import BitInfo, exponent_bias, mutual_information
 
+
 def test_bitinfo_initialization():
     bitinfo = BitInfo(0.5)
     assert bitinfo.info_level == 0.5
@@ -66,7 +67,7 @@ def test_mutual_information():
     b = a + 1000
     c = a[::-1].copy()
     dt = np.dtype('uint32')
-    a,b,c = map(lambda x: x.view(dt), [a,b,c])
+    a, b, c = map(lambda x: x.view(dt), [a, b, c])
 
     assert mutual_information(a, a).sum() == 7.020411549771797
     assert mutual_information(a, b).sum() == 0.0
