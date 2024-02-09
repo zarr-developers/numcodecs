@@ -15,16 +15,13 @@ from .compat import ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
+from cpython.bytearray cimport (PyByteArray_FromStringAndSize,
+                                PyByteArray_AS_STRING)
+from cpython.unicode cimport (PyUnicode_FromStringAndSize,
+                              PyUnicode_Check)
 from libc.stdint cimport uint8_t
 from libc.string cimport memcpy
 from ._utils cimport store_le32, load_le32
-
-
-cdef extern from "Python.h":
-    bytearray PyByteArray_FromStringAndSize(char *v, Py_ssize_t l)
-    char* PyByteArray_AS_STRING(object string)
-    object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
-    int PyUnicode_Check(object text)
 
 
 # 4 bytes to store number of items
