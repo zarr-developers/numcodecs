@@ -116,5 +116,6 @@ with suppress(ImportError):
 from numcodecs.fletcher32 import Fletcher32
 register_codec(Fletcher32)
 
-from numcodecs.pcodec import PCodec
-register_codec(PCodec)
+with suppress(ImportError):
+    from numcodecs.pcodec import PCodec
+    register_codec(PCodec)
