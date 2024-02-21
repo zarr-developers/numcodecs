@@ -9,6 +9,7 @@ try:
 except ImportError:
     pcodec = None
 
+
 class PCodec(numcodecs.abc.Codec):
     """
     PCodec (or pco, pronounced "pico") losslessly compresses and decompresses
