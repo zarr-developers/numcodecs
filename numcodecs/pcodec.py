@@ -1,13 +1,13 @@
 from typing import Optional, Literal
 
-
-import pcodec
-
-
 import numcodecs
 import numcodecs.abc
 from numcodecs.compat import ensure_contiguous_ndarray
 
+try:
+    import pcodec
+except ImportError:
+    pcodec = None
 
 class PCodec(numcodecs.abc.Codec):
     """
@@ -50,6 +50,9 @@ class PCodec(numcodecs.abc.Codec):
         float_mult_spec: Literal["enabled", "disabled"] = "enabled",
         max_page_n: int = 262144,
     ):
+        if pcodec is None:
+            raise ImportError("pcodec is not available. Please install the pcodec package.")
+
         # note that we use `level` instead of `compression_level` to
         # match other codecs
         self.level = level
