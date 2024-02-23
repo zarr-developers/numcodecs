@@ -1,8 +1,16 @@
 import pytest
 import numpy as np
 
-
 from numcodecs.pcodec import PCodec
+
+try:
+    # initializing codec triggers ImportError
+    PCodec()
+except ImportError:  # pragma: no cover
+    pytest.skip(
+        "pcodec not available", allow_module_level=True
+    )
+
 from numcodecs.tests.common import (
     check_encode_decode_array_to_bytes,
     check_config,
