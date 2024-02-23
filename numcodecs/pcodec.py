@@ -6,7 +6,7 @@ from numcodecs.compat import ensure_contiguous_ndarray
 
 try:
     from pcodec import standalone, ChunkConfig, PagingSpec
-except ImportError:
+except ImportError:  # pragma: no cover
     standalone = None
 
 
@@ -53,7 +53,7 @@ class PCodec(numcodecs.abc.Codec):
         float_mult_spec: Literal["enabled", "disabled"] = "enabled",
         equal_pages_up_to: int = 262144
     ):
-        if standalone is None:
+        if standalone is None:  # pragma: no cover
             raise ImportError(
                 "pcodec must be installed to use the PCodec codec."
             )
