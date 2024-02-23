@@ -19,7 +19,7 @@ codecs = [
     PCodec(level=5),
     PCodec(level=9),
     PCodec(float_mult_spec="disabled", int_mult_spec="disabled"),
-    PCodec(max_page_n=300),
+    PCodec(equal_pages_up_to=300),
 ]
 
 
@@ -53,8 +53,8 @@ def test_config():
 
 def test_repr():
     check_repr(
-        "PCodec(delta_encoding_order=None, float_mult_spec='enabled', "
-        "int_mult_spec='enabled', level=3, max_page_n=262144)"
+        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, float_mult_spec='enabled', "
+        "int_mult_spec='enabled', level=3)"
     )
 
 

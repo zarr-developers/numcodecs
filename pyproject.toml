@@ -67,7 +67,7 @@ zfpy = [
     "zfpy>=1.0.0",
 ]
 pcodec = [
-    "pcodec>=0.0.1",
+    "pcodec>=0.1.0",
 ]
 
 [tool.setuptools]
