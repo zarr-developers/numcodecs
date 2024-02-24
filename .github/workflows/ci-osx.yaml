@@ -50,7 +50,7 @@ jobs:
         run: |
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,msgpack,zfpy]
+          python -m pip install -v -e .[test,test_extras,msgpack,zfpy,pcodec]
 
       - name: List installed packages
         shell: "bash -l {0}"

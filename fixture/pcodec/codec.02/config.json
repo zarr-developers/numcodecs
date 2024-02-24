@@ -1,0 +1,8 @@
+{
+    "delta_encoding_order": null,
+    "equal_pages_up_to": 262144,
+    "float_mult_spec": "enabled",
+    "id": "pcodec",
+    "int_mult_spec": "enabled",
+    "level": 5
+}

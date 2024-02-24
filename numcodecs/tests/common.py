@@ -217,6 +217,17 @@ def check_encode_decode_array(arr, codec):
     assert_array_items_equal(arr, dec)
 
 
+def check_encode_decode_array_to_bytes(arr, codec):
+
+    enc = codec.encode(arr)
+    dec = codec.decode(enc)
+    assert_array_items_equal(arr, dec)
+
+    out = np.empty_like(arr)
+    codec.decode(enc, out=out)
+    assert_array_items_equal(arr, out)
+
+
 def check_config(codec):
     config = codec.get_config()
     # round-trip through JSON to check serialization

@@ -67,6 +67,7 @@ Contents
     abc
     registry
     blosc
+    pcodec
     lz4
     zfpy
     zstd
