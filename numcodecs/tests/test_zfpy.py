@@ -1,5 +1,7 @@
-import pytest
+from typing import cast
+from types import ModuleType
 
+import pytest
 
 import numpy as np
 
@@ -19,6 +21,8 @@ from numcodecs.tests.common import (
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
 )
+
+_zfpy = cast(ModuleType, _zfpy)
 
 
 codecs = [
