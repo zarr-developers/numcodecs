@@ -114,6 +114,7 @@ norecursedirs = [
     "adhoc",
     "build",
     "c-blosc",
+    "c-blosc2",
     "docs",
     "fixture",
     "notebooks",
