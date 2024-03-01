@@ -274,7 +274,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
 
 def _cdf_from_info_per_bit(info_per_bit):
     """Convert info_per_bit to cumulative distribution function"""
-    tol = info_per_bit[-4:].max() * 1.1  # reduced from 1.5
+    tol = info_per_bit[-4:].max() * 1.5
     info_per_bit[info_per_bit < tol] = 0
     cdf = info_per_bit.cumsum()
     return cdf / cdf[-1]
