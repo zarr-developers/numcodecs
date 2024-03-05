@@ -14,8 +14,11 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+* Add BitInfo codec
+  By :user:`Tim Hodson <thodson-usgs>`.
 * Add PCodec
   By :user:`Ryan Abernathey <rabernat>`.
+=======
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
 

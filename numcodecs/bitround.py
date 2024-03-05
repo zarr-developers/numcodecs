@@ -54,19 +54,12 @@ class BitRound(Codec):
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
         bits = max_bits[str(a.dtype)]
         # cast float to int type of same width (preserve endianness)
-        a_int_dtype = np.dtype(a.dtype.str.replace("f", "i"))
-        all_set = np.array(-1, dtype=a_int_dtype)
         if self.keepbits == bits:
             return a
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
-        b = a.view(a_int_dtype)
-        maskbits = bits - self.keepbits
-        mask = (all_set >> maskbits) << maskbits
-        half_quantum1 = (1 << (maskbits - 1)) - 1
-        b += ((b >> maskbits) & 1) + half_quantum1
-        b &= mask
-        return b
+
+        return self.bitround(a, self.keepbits, a.dtype)
 
     def decode(self, buf, out=None):
         """Remake floats from ints
@@ -78,3 +71,32 @@ class BitRound(Codec):
         dt = np.dtype(buf.dtype.str.replace("i", "f"))
         data = buf.view(dt)
         return ndarray_copy(data, out)
+
+    @staticmethod
+    def bitround(buf, keepbits: int, dtype):
+        """Drop bits from the mantissa of a floating point array
+
+        Parameters
+        ----------
+        buf: ndarray
+            The input array
+        keepbits: int
+            The number of bits to keep
+        dtype: dtype
+            The dtype of the input array
+
+        Returns
+        -------
+        ndarray
+            The bitrounded array transformed to an integer type
+        """
+        bits = max_bits[str(dtype)]
+        a_int_dtype = np.dtype(buf.dtype.str.replace("f", "i"))
+        all_set = np.array(-1, dtype=a_int_dtype)
+        b = buf.view(a_int_dtype)
+        maskbits = bits - keepbits
+        mask = (all_set >> maskbits) << maskbits
+        half_quantum1 = (1 << (maskbits - 1)) - 1
+        b += ((b >> maskbits) & 1) + half_quantum1
+        b &= mask
+        return b
