@@ -1,5 +1,5 @@
 {
     "id": "zstd",
-    "level": 1,
-    "write_checksum": false
+    "level": 0,
+    "write_checksum": true
 }

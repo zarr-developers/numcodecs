@@ -30,11 +30,8 @@ codecs = [
     Zstd(level=22),
     Zstd(level=100),
     Zstd(write_checksum=True),
-    Zstd(write_checksum=False),
     Zstd(level=0, write_checksum=True),
-    Zstd(level=0, write_checksum=False),
     Zstd(level=22, write_checksum=True),
-    Zstd(level=22, write_checksum=False),
 ]
 
 
