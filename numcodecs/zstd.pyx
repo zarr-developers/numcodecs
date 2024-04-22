@@ -19,18 +19,30 @@ cdef extern from "zstd.h":
 
     unsigned ZSTD_versionNumber() nogil
 
-    size_t ZSTD_compress(void* dst,
-                         size_t dstCapacity,
-                         const void* src,
-                         size_t srcSize,
-                         int compressionLevel) nogil
+    struct ZSTD_CCtx_s:
+        pass
+    cdef enum ZSTD_cParameter:
+        ZSTD_c_checksumFlag
+
+    ZSTD_CCtx_s* ZSTD_createCCtx() nogil
+    size_t ZSTD_freeCCtx(ZSTD_CCtx_s* cctx) nogil
+    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx_s* cctx, ZSTD_cParameter param, int value) nogil
+
+    size_t ZSTD_compressCCtx(ZSTD_CCtx_s* cctx,
+                             void* dst,
+                             size_t dstCapacity,
+                             const void* src,
+                             size_t srcSize,
+                             int compressionLevel) nogil
 
     size_t ZSTD_decompress(void* dst,
                            size_t dstCapacity,
                            const void* src,
                            size_t compressedSize) nogil
 
-    unsigned long long ZSTD_getDecompressedSize(const void* src,
+    cdef long ZSTD_CONTENTSIZE_UNKNOWN
+    cdef long ZSTD_CONTENTSIZE_ERROR
+    unsigned long long ZSTD_getFrameContentSize(const void* src,
                                                 size_t srcSize) nogil
 
     int ZSTD_maxCLevel() nogil
@@ -55,7 +67,7 @@ DEFAULT_CLEVEL = 1
 MAX_CLEVEL = ZSTD_maxCLevel()
 
 
-def compress(source, int level=DEFAULT_CLEVEL):
+def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=True):
     """Compress data.
 
     Parameters
@@ -65,6 +77,8 @@ def compress(source, int level=DEFAULT_CLEVEL):
         protocol.
     level : int
         Compression level (1-22).
+    write_checksum : bool
+        Flag to enable checksums.
 
     Returns
     -------
@@ -99,10 +113,12 @@ def compress(source, int level=DEFAULT_CLEVEL):
 
         # perform compression
         with nogil:
-            compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)
+            cctx = ZSTD_createCCtx()
+            ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if write_checksum else 0)
+            compressed_size = ZSTD_compressCCtx(cctx, dest_ptr, dest_size, source_ptr, source_size, level)
 
     finally:
-
+        ZSTD_freeCCtx(cctx)
         # release buffers
         source_buffer.release()
 
@@ -148,8 +164,8 @@ def decompress(source, dest=None):
     try:
 
         # determine uncompressed size
-        dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
-        if dest_size == 0:
+        dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
+        if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
             raise RuntimeError('Zstd decompression error: invalid input data')
 
         # setup destination buffer
