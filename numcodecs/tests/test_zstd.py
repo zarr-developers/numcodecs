@@ -29,9 +29,9 @@ codecs = [
     Zstd(level=10),
     Zstd(level=22),
     Zstd(level=100),
-    Zstd(write_checksum=True),
-    Zstd(level=0, write_checksum=True),
-    Zstd(level=22, write_checksum=True),
+    Zstd(checksum=True),
+    Zstd(level=0, checksum=True),
+    Zstd(level=22, checksum=True),
 ]
 
 

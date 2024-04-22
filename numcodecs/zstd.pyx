@@ -70,7 +70,7 @@ DEFAULT_CLEVEL = 1
 MAX_CLEVEL = ZSTD_maxCLevel()
 
 
-def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=False):
+def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     """Compress data.
 
     Parameters
@@ -80,7 +80,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=False):
         protocol.
     level : int
         Compression level (1-22).
-    write_checksum : bool
+    checksum : bool
         Flag to enable checksums. The default is False.
 
     Returns
@@ -108,7 +108,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=False):
     source_size = source_buffer.nbytes
 
     cctx = ZSTD_createCCtx()
-    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if write_checksum else 0)
+    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if checksum else 0)
 
     if ZSTD_isError(param_set_result):
         error = ZSTD_getErrorName(param_set_result)
@@ -219,7 +219,7 @@ class Zstd(Codec):
     ----------
     level : int
         Compression level (1-22).
-    write_checksum : bool
+    checksum : bool
         Flag to enable checksums. The default is False.
 
     See Also
@@ -234,13 +234,13 @@ class Zstd(Codec):
     # practical limit on the size of buffers that Zstd can process and so we don't
     # enforce a max_buffer_size option here.
 
-    def __init__(self, level=DEFAULT_CLEVEL, write_checksum=False):
+    def __init__(self, level=DEFAULT_CLEVEL, checksum=False):
         self.level = level
-        self.write_checksum = write_checksum
+        self.checksum = checksum
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
-        return compress(buf, self.level, self.write_checksum)
+        return compress(buf, self.level, self.checksum)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
