@@ -21,14 +21,17 @@ cdef extern from "zstd.h":
 
     struct ZSTD_CCtx_s:
         pass
+    ctypedef ZSTD_CCtx_s ZSTD_CCtx
     cdef enum ZSTD_cParameter:
         ZSTD_c_checksumFlag
 
-    ZSTD_CCtx_s* ZSTD_createCCtx() nogil
-    size_t ZSTD_freeCCtx(ZSTD_CCtx_s* cctx) nogil
-    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx_s* cctx, ZSTD_cParameter param, int value) nogil
+    ZSTD_CCtx* ZSTD_createCCtx() nogil
+    size_t ZSTD_freeCCtx(ZSTD_CCtx* cctx) nogil
+    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx, 
+                                  ZSTD_cParameter param, 
+                                  int value) nogil
 
-    size_t ZSTD_compressCCtx(ZSTD_CCtx_s* cctx,
+    size_t ZSTD_compressCCtx(ZSTD_CCtx* cctx,
                              void* dst,
                              size_t dstCapacity,
                              const void* src,
@@ -67,7 +70,7 @@ DEFAULT_CLEVEL = 1
 MAX_CLEVEL = ZSTD_maxCLevel()
 
 
-def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=True):
+def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=False):
     """Compress data.
 
     Parameters
@@ -78,7 +81,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=True):
     level : int
         Compression level (1-22).
     write_checksum : bool
-        Flag to enable checksums.
+        Flag to enable checksums. The default is False.
 
     Returns
     -------
@@ -104,6 +107,13 @@ def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=True):
     source_ptr = source_buffer.ptr
     source_size = source_buffer.nbytes
 
+    cctx = ZSTD_createCCtx()
+    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if write_checksum else 0)
+
+    if ZSTD_isError(param_set_result):
+        error = ZSTD_getErrorName(param_set_result)
+        raise RuntimeError('Could not set zstd checksum flag: %s' % error)
+
     try:
 
         # setup destination
@@ -113,12 +123,11 @@ def compress(source, int level=DEFAULT_CLEVEL, bint write_checksum=True):
 
         # perform compression
         with nogil:
-            cctx = ZSTD_createCCtx()
-            ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if write_checksum else 0)
             compressed_size = ZSTD_compressCCtx(cctx, dest_ptr, dest_size, source_ptr, source_size, level)
 
     finally:
-        ZSTD_freeCCtx(cctx)
+        if cctx:
+            ZSTD_freeCCtx(cctx)
         # release buffers
         source_buffer.release()
 
@@ -210,6 +219,8 @@ class Zstd(Codec):
     ----------
     level : int
         Compression level (1-22).
+    write_checksum : bool
+        Flag to enable checksums. The default is False.
 
     See Also
     --------
@@ -223,12 +234,13 @@ class Zstd(Codec):
     # practical limit on the size of buffers that Zstd can process and so we don't
     # enforce a max_buffer_size option here.
 
-    def __init__(self, level=DEFAULT_CLEVEL):
+    def __init__(self, level=DEFAULT_CLEVEL, write_checksum=False):
         self.level = level
+        self.write_checksum = write_checksum
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
-        return compress(buf, self.level)
+        return compress(buf, self.level, self.write_checksum)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
