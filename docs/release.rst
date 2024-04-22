@@ -13,9 +13,10 @@ Unreleased
 
 Enhancements
 ~~~~~~~~~~~~
-
+* Add checksum flag to zstd.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`519`.
 * Add PCodec
-  By :user:`Ryan Abernathey <rabernat>`.
+  By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
 
