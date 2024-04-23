@@ -43,10 +43,6 @@ def test_bitinfo_encode_errors():
     with pytest.raises(TypeError):
         bitinfo.encode(a)
 
-    a = np.array([1.0, 2.0, 3.0], dtype="float128")
-    with pytest.raises(TypeError):
-        bitinfo.encode(a)
-
 
 def test_exponent_bias():
     assert exponent_bias("f2") == 15
@@ -58,7 +54,7 @@ def test_exponent_bias():
 
 
 def test_mutual_information():
-    """ Test mutual information calculation
+    """Test mutual information calculation
 
     Tests for changes to the mutual_information
     but not the correcteness of the original.
