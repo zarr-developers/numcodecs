@@ -2,6 +2,8 @@ import array
 import json as _json
 import os
 from glob import glob
+import platform
+import sys
 
 
 import numpy as np
@@ -19,6 +21,8 @@ greetings = ['¡Hola mundo!', 'Hej Världen!', 'Servus Woid!', 'Hei maailma!',
              'Xin chào thế giới', 'Njatjeta Botë!', 'Γεια σου κόσμε!',
              'こんにちは世界', '世界，你好！', 'Helló, világ!', 'Zdravo svete!',
              'เฮลโลเวิลด์']
+
+is_wasm = (sys.platform == 'emscripten') or (platform.machine() in ['wasm32', 'wasm64'])
 
 
 def compare_arrays(arr, res, precision=None):
