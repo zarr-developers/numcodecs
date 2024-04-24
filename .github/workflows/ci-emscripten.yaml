@@ -10,6 +10,10 @@ on:
 
 env:
   FORCE_COLOR: 3
+  # Disable instructions: AVX2 and SSE2 because Emscripten-specific SIMD
+  # support has not been implemented yet
+  DISABLE_NUMCODECS_AVX2: 1
+  DISABLE_NUMCODECS_SSE2: 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
