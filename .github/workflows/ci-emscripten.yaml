@@ -60,6 +60,7 @@ jobs:
         run: |
           patch -p1 < tools/ci/patches/0001-disable-multiprocessing-and-pthreads.patch
           patch -p1 < tools/ci/patches/0002-add-missing-unistd-headers.patch
+          patch -d $EMSDK/upstream/emscripten/ -p1 < tools/ci/patches/0003-fix-npy-file-access.patch
 
       - name: Install pyodide-build
         run: python -m pip install "pydantic<2" "pyodide-build==${{ env.PYODIDE_VERSION }}"
@@ -90,11 +91,11 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Set up Emscripten toolchain
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: ${{ env.EMSCRIPTEN_VERSION }}
-          actions-cache-folder: emsdk-cache
+      # - name: Set up Emscripten toolchain
+      #   uses: mymindstorm/setup-emsdk@v14
+      #   with:
+      #     version: ${{ env.EMSCRIPTEN_VERSION }}
+      #     actions-cache-folder: emsdk-cache
 
       - name: Install pyodide-build
         run: python -m pip install "pydantic<2" "pyodide-build==${{ env.PYODIDE_VERSION }}"
