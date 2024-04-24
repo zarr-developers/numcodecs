@@ -91,11 +91,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      # - name: Set up Emscripten toolchain
-      #   uses: mymindstorm/setup-emsdk@v14
-      #   with:
-      #     version: ${{ env.EMSCRIPTEN_VERSION }}
-      #     actions-cache-folder: emsdk-cache
+      - name: Checkout necessary patch(es)
+        uses: actions/checkout@v4
+        with:
+          # Check out a single file
+          sparse-checkout: tools/ci/patches/0003-fix-npy-file-access.patch
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Emscripten toolchain
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
+          actions-cache-folder: emsdk-cache
+
+      - name: Apply necessary patch(es)
+        # We just need the third patch to fix the npy file access this time
+        run: patch -d $EMSDK/upstream/emscripten/ -p1 < tools/ci/patches/0003-fix-npy-file-access.patch
 
       - name: Install pyodide-build
         run: python -m pip install "pydantic<2" "pyodide-build==${{ env.PYODIDE_VERSION }}"
