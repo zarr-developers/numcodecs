@@ -59,6 +59,7 @@ test = [
 ]
 test_extras = [
     "importlib_metadata",
+    "xarray",
 ]
 msgpack = [
     "msgpack",
