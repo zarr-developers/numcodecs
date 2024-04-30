@@ -33,16 +33,20 @@ class BitInfo(BitRound):
 
     Examples
     --------
+    This example applies the BitInfo codec to an xarray dataset and
+    writes the data out using xarray's `to_zarr` method. Using this pattern, the
+    information content is computed chunkwise, which is recommended for
+    datasets with variable information content. Note that these data have
+    been quantized creating erroneous results, which is apparent in
+    the output. Do not use with quantized data in practice.
+
     >>> import xarray as xr
     >>> ds = xr.tutorial.open_dataset("air_temperature")
-    >>> # Note these data have already undergone lossy compression,
-    >>> # which should not be combined with bitinformation in practice
-
     >>> from numcodecs import Blosc, BitInfo
     >>> compressor = Blosc(cname="zstd", clevel=3)
     >>> filters = [BitInfo(info_level=0.99)]
     >>> encoding = {"air": {"compressor": compressor, "filters": filters}}
-    >>> ds.to_zarr('xbit.zarr', mode="w", encoding=encoding)
+    >>> _ = ds.to_zarr('xbit.zarr', mode="w", encoding=encoding)
     """
 
     codec_id = 'bitinfo'
