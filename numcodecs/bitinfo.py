@@ -30,6 +30,19 @@ class BitInfo(BitRound):
     axes: int or list of int, optional
         Axes along which to calculate the bit information. If None, all axes
         are used.
+
+    Examples
+    --------
+    >>> import xarray as xr
+    >>> ds = xr.tutorial.open_dataset("air_temperature")
+    >>> # Note these data have already undergone lossy compression,
+    >>> # which should not be combined with bitinformation in practice
+
+    >>> from numcodecs import Blosc, BitInfo
+    >>> compressor = Blosc(cname="zstd", clevel=3)
+    >>> filters = [BitInfo(info_level=0.99)]
+    >>> encoding = {"air": {"compressor": compressor, "filters": filters}}
+    >>> ds.to_zarr('xbit.zarr', mode="w", encoding=encoding)
     """
 
     codec_id = 'bitinfo'
@@ -204,8 +217,7 @@ def bitpaircount(a, b):
 
 
 def mutual_information(a, b, base=2):
-    """Calculate the mutual information between two arrays.
-    """
+    """Calculate the mutual information between two arrays."""
     assert a.dtype == b.dtype
     assert a.dtype.kind == "u"
 
@@ -265,9 +277,7 @@ def get_keepbits(info_per_bit, inflevel=0.99):
 
     cdf = _cdf_from_info_per_bit(info_per_bit)
     bitdim_non_mantissa_bits = NMBITS[len(info_per_bit)]
-    keepmantissabits = (
-        (cdf > inflevel).argmax() + 1 - bitdim_non_mantissa_bits
-    )
+    keepmantissabits = (cdf > inflevel).argmax() + 1 - bitdim_non_mantissa_bits
 
     return keepmantissabits
 
