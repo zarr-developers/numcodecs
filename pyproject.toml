@@ -60,12 +60,6 @@ test = [
 test_extras = [
     "importlib_metadata",
 ]
-doctest = [
-    "xarray",
-    "pooch",
-    "netCDF4",
-    "zarr",
-]
 msgpack = [
     "msgpack",
 ]

@@ -51,7 +51,7 @@ jobs:
         run: |
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,doctest,msgpack,zfpy,pcodec]
+          python -m pip install -v -e .[test,test_extras,msgpack,zfpy,pcodec]
 
       - name: List installed packages
         shell: "bash -l {0}"
@@ -68,8 +68,8 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-            #files: ./coverage1.xml,./coverage2.xml # optional
-            #flags: unittests # optional
-            #name: codecov-umbrella # optional
-            #fail_ci_if_error: true # optional (default = false)
+          #files: ./coverage1.xml,./coverage2.xml # optional
+          #flags: unittests # optional
+          #name: codecov-umbrella # optional
+          #fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
