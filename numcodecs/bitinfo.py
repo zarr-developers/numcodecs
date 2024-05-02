@@ -40,13 +40,13 @@ class BitInfo(BitRound):
     been quantized creating erroneous results, which is apparent in
     the output. Do not use with quantized data in practice.
 
-    >>> import xarray as xr
-    >>> ds = xr.tutorial.open_dataset("air_temperature")
-    >>> from numcodecs import Blosc, BitInfo
-    >>> compressor = Blosc(cname="zstd", clevel=3)
-    >>> filters = [BitInfo(info_level=0.99)]
-    >>> encoding = {"air": {"compressor": compressor, "filters": filters}}
-    >>> _ = ds.to_zarr('xbit.zarr', mode="w", encoding=encoding)
+    import xarray as xr
+    ds = xr.tutorial.open_dataset("air_temperature")
+    from numcodecs import Blosc, BitInfo
+    compressor = Blosc(cname="zstd", clevel=3)
+    filters = [BitInfo(info_level=0.99)]
+    encoding = {"air": {"compressor": compressor, "filters": filters}}
+    ds.to_zarr('xbit.zarr', mode="w", encoding=encoding)
     """
 
     codec_id = 'bitinfo'
