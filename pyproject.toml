@@ -56,6 +56,7 @@ test = [
     "flake8",
     "pytest",
     "pytest-cov",
+    "zarr",
 ]
 test_extras = [
     "importlib_metadata",
@@ -69,6 +70,26 @@ zfpy = [
 pcodec = [
     "pcodec>=0.1.0",
 ]
+
+[project.entry-points."zarr.codecs"]
+"https://zarr.dev/numcodecs/blosc" = "numcodecs.zarr3:BloscCodec"
+"https://zarr.dev/numcodecs/lz4" = "numcodecs.zarr3:Lz4Codec"
+"https://zarr.dev/numcodecs/zstd" = "numcodecs.zarr3:ZstdCodec"
+"https://zarr.dev/numcodecs/zlib" = "numcodecs.zarr3:ZlibCodec"
+"https://zarr.dev/numcodecs/gzip" = "numcodecs.zarr3:GzipCodec"
+"https://zarr.dev/numcodecs/bz2" = "numcodecs.zarr3:Bz2Codec"
+"https://zarr.dev/numcodecs/lzma" = "numcodecs.zarr3:LzmaCodec"
+"https://zarr.dev/numcodecs/shuffle" = "numcodecs.zarr3:ShuffleCodec"
+"https://zarr.dev/numcodecs/delta" = "numcodecs.zarr3:DeltaCodec"
+"https://zarr.dev/numcodecs/bitround" = "numcodecs.zarr3:BitroundCodec"
+"https://zarr.dev/numcodecs/fixedscaleoffset" = "numcodecs.zarr3:FixedScaleOffsetCodec"
+"https://zarr.dev/numcodecs/quantize" = "numcodecs.zarr3:QuantizeCodec"
+"https://zarr.dev/numcodecs/packbits" = "numcodecs.zarr3:PackbitsCodec"
+"https://zarr.dev/numcodecs/astype" = "numcodecs.zarr3:AsTypeCodec"
+"https://zarr.dev/numcodecs/crc32" = "numcodecs.zarr3:Crc32Codec"
+"https://zarr.dev/numcodecs/adler32" = "numcodecs.zarr3:Adler32Codec"
+"https://zarr.dev/numcodecs/fletcher32" = "numcodecs.zarr3:Fletcher32Codec"
+"https://zarr.dev/numcodecs/jenkinks_lookup3" = "numcodecs.zarr3:JenkinsLookup3"
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
