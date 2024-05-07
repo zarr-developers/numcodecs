@@ -18,13 +18,15 @@ Enhancements
   By :user:`Ryan Abernathey <rabernat>`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+* Improve the structure of docs
+  By :user:`David Stansby <dstansby>`, :issue:`458`.
 
 Fix
 ~~~
 
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
-* Fix Upgrade to Zstd 1.5.5 due to potential corruption. 
+* Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
 
 Maintenance
