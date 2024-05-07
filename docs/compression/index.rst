@@ -5,10 +5,11 @@ Compression codecs
     :maxdepth: 2
 
     blosc
-    lz4
-    zfpy
-    zstd
-    zlib
-    gzip
     bz2
+    gzip
     lzma
+    lz4
+    pcodec
+    zfpy
+    zlib
+    zstd
