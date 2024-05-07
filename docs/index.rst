@@ -65,7 +65,6 @@ Contents
     :maxdepth: 2
 
     api
-    registry
     release
     contributing
 

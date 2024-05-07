@@ -9,3 +9,4 @@ API reference
     other/index
     checksum32
     abc
+    registry
