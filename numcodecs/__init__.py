@@ -13,7 +13,7 @@ pipelines in a variety of ways.
 
 If you have a question, find a bug, would like to make a suggestion or
 contribute code, please `raise an issue on GitHub
-<https://github.com/alimanfoo/numcodecs/issues>`_.
+<https://github.com/zarr-developers/numcodecs/issues>`_.
 
 """
 import multiprocessing
@@ -115,3 +115,6 @@ with suppress(ImportError):
 
 from numcodecs.fletcher32 import Fletcher32
 register_codec(Fletcher32)
+
+from numcodecs.pcodec import PCodec
+register_codec(PCodec)

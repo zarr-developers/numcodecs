@@ -14,6 +14,8 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+* Add PCodec
+  By :user:`Ryan Abernathey <rabernat>`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
 
