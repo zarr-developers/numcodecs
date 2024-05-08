@@ -13,7 +13,7 @@ Unreleased
 
 Enhancements
 ~~~~~~~~~~~~
-* Add checksum flag to zstd.
+* Add checksum flag to zstd and sets the default level to 0.
   By :user:`Norman Rzepka <normanrz>`, :issue:`519`.
 * Add PCodec
   By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
