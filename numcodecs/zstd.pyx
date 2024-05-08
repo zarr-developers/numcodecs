@@ -66,7 +66,7 @@ MICRO_VERSION_NUMBER = (
     (MINOR_VERSION_NUMBER * 100)
 )
 __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)
-DEFAULT_CLEVEL = 1
+DEFAULT_CLEVEL = 0
 MAX_CLEVEL = ZSTD_maxCLevel()
 
 
@@ -79,7 +79,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         Data to be compressed. Can be any object supporting the buffer
         protocol.
     level : int
-        Compression level (1-22).
+        Compression level (-131072 to 22).
     checksum : bool
         Flag to enable checksums. The default is False.
 
@@ -97,8 +97,6 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         bytes dest
 
     # check level
-    if level <= 0:
-        level = DEFAULT_CLEVEL
     if level > MAX_CLEVEL:
         level = MAX_CLEVEL
 
@@ -218,7 +216,7 @@ class Zstd(Codec):
     Parameters
     ----------
     level : int
-        Compression level (1-22).
+        Compression level (-131072 to 22).
     checksum : bool
         Flag to enable checksums. The default is False.
 
