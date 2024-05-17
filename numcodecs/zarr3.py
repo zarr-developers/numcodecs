@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cached_property
 import math
 from typing_extensions import Self
@@ -9,16 +9,15 @@ from warnings import warn
 import numpy as np
 import numcodecs
 
-from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec, Codec
+from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec
+from zarr.buffer import NDBuffer, Buffer, as_numpy_array_wrapper
 from zarr.common import (
     JSON,
     ArraySpec,
-    BytesLike,
     parse_named_configuration,
     product,
     to_thread,
 )
-from zarr.config import RuntimeConfiguration
 from zarr.metadata import ArrayMetadata
 
 
@@ -33,12 +32,12 @@ def parse_codec_configuration(
         raise ValueError(
             f"Expected name to start with '{expected_name_prefix}'. Got {parsed_name} instead."
         )
-    id = parsed_name[len(expected_name_prefix):]
+    id = parsed_name[len(expected_name_prefix) :]
     return {"id": id, **parsed_configuration}
 
 
 @dataclass(frozen=True)
-class NumcodecsCodec(Codec):
+class NumcodecsCodec:
     codec_config: dict[str, JSON]
 
     def __init__(
@@ -65,6 +64,7 @@ class NumcodecsCodec(Codec):
 
     @cached_property
     def _codec(self) -> numcodecs.abc.Codec:
+        print(self.codec_config)
         return numcodecs.get_codec(self.codec_config)
 
     @classmethod
@@ -91,26 +91,20 @@ class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
     def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
         super().__init__(codec_id=codec_id, codec_config=codec_config)
 
-    async def decode(
-        self,
-        chunk_bytes: BytesLike,
-        _chunk_spec: ArraySpec,
-        _runtime_configuration: RuntimeConfiguration,
-    ) -> BytesLike:
-        return await to_thread(self._codec.decode, chunk_bytes)
+    async def _decode_single(
+        self, chunk_bytes: Buffer, _chunk_spec: ArraySpec
+    ) -> Buffer:
+        return await to_thread(as_numpy_array_wrapper, self._codec.decode, chunk_bytes)
 
-    def _encode(self, chunk_bytes: BytesLike) -> BytesLike:
-        encoded = self._codec.encode(chunk_bytes)
+    def _encode(self, chunk_bytes: Buffer) -> Buffer:
+        encoded = self._codec.encode(chunk_bytes.as_array_like())
         if isinstance(encoded, np.ndarray):  # Required for checksum codecs
             return encoded.tobytes()
-        return encoded
+        return Buffer.from_bytes(encoded)
 
-    async def encode(
-        self,
-        chunk_bytes: BytesLike,
-        _chunk_spec: ArraySpec,
-        _runtime_configuration: RuntimeConfiguration,
-    ) -> BytesLike:
+    async def _encode_single(
+        self, chunk_bytes: Buffer, _chunk_spec: ArraySpec
+    ) -> Buffer:
         return await to_thread(self._encode, chunk_bytes)
 
 
@@ -118,22 +112,19 @@ class NumcodecsArrayArrayCodec(NumcodecsCodec, ArrayArrayCodec):
     def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
         super().__init__(codec_id=codec_id, codec_config=codec_config)
 
-    async def decode(
-        self,
-        chunk_array: np.ndarray,
-        chunk_spec: ArraySpec,
-        _runtime_configuration: RuntimeConfiguration,
-    ) -> np.ndarray:
-        out = await to_thread(self._codec.decode, chunk_array)
-        return out.reshape(chunk_spec.shape)
+    async def _decode_single(
+        self, chunk_array: NDBuffer, chunk_spec: ArraySpec
+    ) -> NDBuffer:
+        chunk_ndarray = chunk_array.as_ndarray_like()
+        out = await to_thread(self._codec.decode, chunk_ndarray)
+        return NDBuffer.from_ndarray_like(out.reshape(chunk_spec.shape))
 
-    async def encode(
-        self,
-        chunk_array: np.ndarray,
-        _chunk_spec: ArraySpec,
-        _runtime_configuration: RuntimeConfiguration,
-    ) -> np.ndarray:
-        return await to_thread(self._codec.encode, chunk_array)
+    async def _encode_single(
+        self, chunk_array: NDBuffer, _chunk_spec: ArraySpec
+    ) -> NDBuffer:
+        chunk_ndarray = chunk_array.as_ndarray_like()
+        out = await to_thread(self._codec.encode, chunk_ndarray)
+        return NDBuffer.from_ndarray_like(out)
 
 
 def make_bytes_bytes_codec(
@@ -185,7 +176,7 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
     def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
         super().__init__(codec_id="shuffle", codec_config=codec_config)
 
-    def evolve(self, array_spec: ArraySpec) -> Self:
+    def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
             return self.__class__(
                 {**self.codec_config, "elementsize": array_spec.dtype.itemsize}
@@ -199,14 +190,10 @@ class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return ArraySpec(
-                chunk_spec.shape,
-                np.dtype(astype),
-                chunk_spec.fill_value,
-            )
+            return replace(chunk_spec, dtype=np.dtype(astype))
         return chunk_spec
 
-    def evolve(self, array_spec: ArraySpec) -> Self:
+    def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if str(array_spec.dtype) != self.codec_config.get("dtype"):
             return self.__class__({**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
@@ -216,7 +203,7 @@ class QuantizeCodec(NumcodecsArrayArrayCodec):
     def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
         super().__init__(codec_id="quantize", codec_config=codec_config)
 
-    def evolve(self, array_spec: ArraySpec) -> Self:
+    def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if str(array_spec.dtype) != self.codec_config.get("dtype"):
             return self.__class__({**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
@@ -227,13 +214,9 @@ class AsTypeCodec(NumcodecsArrayArrayCodec):
         super().__init__(codec_id="astype", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        return ArraySpec(
-            chunk_spec.shape,
-            np.dtype(self.codec_config["encode_dtype"]),
-            chunk_spec.fill_value,
-        )
+        return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))
 
-    def evolve(self, array_spec: ArraySpec) -> Self:
+    def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         decode_dtype = self.codec_config.get("decode_dtype")
         if str(array_spec.dtype) != decode_dtype:
             return self.__class__(
@@ -247,10 +230,10 @@ class PackbitsCodec(NumcodecsArrayArrayCodec):
         super().__init__(codec_id="packbits", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        return ArraySpec(
-            (1 + math.ceil(product(chunk_spec.shape) / 8),),
-            np.dtype("uint8"),
-            chunk_spec.fill_value,
+        return replace(
+            chunk_spec,
+            shape=(1 + math.ceil(product(chunk_spec.shape) / 8),),
+            dtype=np.dtype("uint8"),
         )
 
     def validate(self, array_metadata: ArrayMetadata) -> None:
@@ -282,4 +265,4 @@ BitroundCodec = make_array_array_codec("bitround", "BitroundCodec")
 Crc32Codec = make_checksum_codec("crc32", "Crc32Codec")
 Adler32Codec = make_checksum_codec("adler32", "Adler32Codec")
 Fletcher32Codec = make_checksum_codec("fletcher32", "Fletcher32Codec")
-JenkinsLookup3 = make_checksum_codec("jenkinks_lookup3", "JenkinsLookup3")
+JenkinsLookup3 = make_checksum_codec("jenkins_lookup3", "JenkinsLookup3")
