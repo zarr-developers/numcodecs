@@ -76,7 +76,7 @@ You will need your own fork to work on the code. Go to the link above and hit
 the "Fork" button. Then clone your fork to your local machine::
 
     $ git clone --recursive git@github.com:your-user-name/numcodecs.git  # with ``ssh``
-    
+
 or::
 
     $ git clone --recursive https://github.com/your-user-name/numcodecs.git  # with ``https``
@@ -97,7 +97,7 @@ you have cloned the NumCodecs source code and your current working directory is 
 the repository, you can do something like the following::
 
     $ mkdir -p ~/pyenv/numcodecs-dev
-    $ virtualenv --no-site-packages --python=/usr/bin/python3.9 ~/pyenv/numcodecs-dev
+    $ virtualenv --no-site-packages --python=/usr/bin/python3.X ~/pyenv/numcodecs-dev
     $ source ~/pyenv/numcodecs-dev/bin/activate
     $ pip install -e .[docs,test,msgpack,zfpy]
 
@@ -111,7 +111,7 @@ Creating a branch
 Before you do any new work or submit a pull request, please open an issue on GitHub to
 report the bug or propose the feature you'd like to add.
 
-It's best to create a new, separate branch for each piece of work you want to do. E.g.::
+It's best to create a new, separate branch for each piece of work you want to do. E.g.:
 
     git fetch upstream
     git checkout -b shiny-new-feature upstream/main
@@ -144,12 +144,11 @@ docstrings. The simplest way to run the unit tests is to invoke::
 
     $ pytest -v
 
-NumCodecs currently supports Python 6-3.9, so the above command must
+NumCodecs currently supports Python 3.8 and later, so the above command must
 succeed before code can be accepted into the main code base.
 
-All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
-integration services for every pull request. Tests must pass under both services before
-code can be accepted.
+All tests are automatically run via continuous integration services for every pull request
+provided by GitHub Actions. Tests must pass under both services before code can be accepted.
 
 Code standards
 ~~~~~~~~~~~~~~
@@ -163,11 +162,11 @@ Conformance can be checked by running::
 Test coverage
 ~~~~~~~~~~~~~
 
-NumCodecs maintains 100% test coverage under the latest Python stable release (currently
-Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``pytest -v`` will automatically run the test suite with coverage
-and produce a coverage report. This should be 100% before code can be accepted into the
-main code base.
+NumCodecs maintains 100% test coverage under the latest Python stable release.
+Both unit tests and docstring doctests are included when computing coverage. Running
+``pytest -v`` will automatically run the test suite with coverage and produce a
+coverage report. This should be 100% before code can be accepted into the main
+code base.
 
 When submitting a pull request, coverage will also be collected across all supported
 Python versions via the Codecov service, and will be reported back within the pull
@@ -179,7 +178,7 @@ Documentation
 Docstrings for user-facing classes and functions should follow the `numpydoc
 <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
-under Python 3.9.
+under a stable version of Python.
 
 NumCodecs uses Sphinx for documentation, hosted on readthedocs.org. Documentation is
 written in the RestructuredText markup language (.rst files) in the ``docs`` folder.
@@ -207,8 +206,8 @@ Pull requests submitted by an external contributor should be reviewed and approv
 one core developers before being merged. Ideally, pull requests submitted by a core developer
 should be reviewed and approved by at least one other core developers before being merged.
 
-Pull requests should not be merged until all CI checks have passed (Travis, AppVeyor,
-Codecov) against code that has had the latest main merged in.
+Pull requests should not be merged until all CI checks have passed (GitHub Actions,
+CodeCov) against code that has had the latest main merged in.
 
 Compatibility and versioning policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
