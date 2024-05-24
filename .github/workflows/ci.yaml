@@ -44,7 +44,7 @@ jobs:
 
       - name: Install clang
         shell: "bash -l {0}"
-        if: ${{ matrix.platform == 'macos-12' }}
+        if: ${{ matrix.platform }} == 'macos-12'
         run: |
           conda activate env
           conda install -y 'clang>=12.0.1,<17'
