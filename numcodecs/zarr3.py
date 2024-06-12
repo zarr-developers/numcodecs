@@ -11,9 +11,9 @@ import numcodecs
 
 from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec
 from zarr.buffer import NDBuffer, Buffer, as_numpy_array_wrapper
+from zarr.array_spec import ArraySpec
 from zarr.common import (
     JSON,
-    ArraySpec,
     parse_named_configuration,
     product,
     to_thread,
@@ -32,7 +32,7 @@ def parse_codec_configuration(
         raise ValueError(
             f"Expected name to start with '{expected_name_prefix}'. Got {parsed_name} instead."
         )
-    id = parsed_name[len(expected_name_prefix):]
+    id = parsed_name[slice(len(expected_name_prefix), None)]
     return {"id": id, **parsed_configuration}
 
 
