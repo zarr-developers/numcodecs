@@ -4,13 +4,23 @@ from typing import Iterator
 
 import numpy as np
 import pytest
-from zarr.codecs.registry import get_codec_class
-from zarr.array import Array
-from zarr.common import JSON
-from zarr.codecs import BytesCodec
+import sys
 
-from zarr.abc.store import Store
-from zarr.store import MemoryStore, StorePath
+try:
+    from zarr.codecs.registry import get_codec_class
+    from zarr.array import Array
+    from zarr.common import JSON
+    from zarr.codecs import BytesCodec
+    from zarr.abc.store import Store
+    from zarr.store import MemoryStore, StorePath
+
+except ImportError:
+    pass
+
+
+pytestmark = pytest.mark.skipif(
+    sys.version_info < (3, 10), reason="zarr-python 3 requires Python 3.10 or higher"
+)
 
 
 @pytest.fixture
