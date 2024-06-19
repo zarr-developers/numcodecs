@@ -11,12 +11,7 @@ entries = {}
 def run_entrypoints():
     entries.clear()
     eps = entry_points()
-    if hasattr(eps, 'select'):
-        # If entry_points() has a select method, use that. Python 3.10+
-        entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
-    else:
-        # Otherwise, fallback to using get
-        entries.update({e.name: e for e in eps.get("numcodecs.codecs", [])})
+    entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
 
 
 run_entrypoints()
