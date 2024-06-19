@@ -13,12 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-12]
+        # macos-12 is an intel runner, macos-14 is a arm64 runner
+        os: [ubuntu-latest, windows-latest, macos-12, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_SKIP: "pp* cp36-* *-musllinux_* *win32 *_i686 *_s390x"
-      CIBW_ARCHS_MACOS: 'x86_64 arm64'
-      CIBW_TEST_SKIP: '*-macosx_arm64'
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
     steps:
