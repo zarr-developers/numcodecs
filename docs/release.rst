@@ -11,6 +11,10 @@ Release notes
 Unreleased
 ----------
 
+Maintenance
+~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+
 Enhancements
 ~~~~~~~~~~~~
 
@@ -24,7 +28,7 @@ Fix
 
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
-* Fix Upgrade to Zstd 1.5.5 due to potential corruption. 
+* Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
 
 Maintenance
