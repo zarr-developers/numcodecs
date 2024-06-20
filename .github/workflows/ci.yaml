@@ -13,7 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
-        platform: [ubuntu-latest, windows-latest, macos-12]
+        # macos-12 is an intel runner, macos-14 is a arm64 runner
+        platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
 
     steps:
       - name: Checkout source
@@ -44,7 +45,7 @@ jobs:
 
       - name: Install clang
         shell: "bash -l {0}"
-        if: ${{ matrix.platform }} == 'macos-12'
+        if: matrix.platform == 'macos-12'
         run: |
           conda activate env
           conda install -y 'clang>=12.0.1,<17'
@@ -59,7 +60,16 @@ jobs:
         run: |
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,msgpack,zfpy,pcodec]
+          # TODO: put back zfpy import when it supports numpy 2.0
+          python -m pip install -v -e .[test,test_extras,msgpack,pcodec]
+
+      # This is used to test with zfpy, which does not yet support numpy 2.0
+      - name: Install older numpy and zfpy
+        if: matrix.python-version == '3.10'
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          python -m pip install "zfpy>=1" "numpy<2"
 
       - name: List installed packages
         shell: "bash -l {0}"
