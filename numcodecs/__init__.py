@@ -42,13 +42,12 @@ with suppress(ImportError):
     from numcodecs.blosc import Blosc
     register_codec(Blosc)
     # initialize blosc
+    import blosc2
     try:
         ncores = multiprocessing.cpu_count()
     except OSError:  # pragma: no cover
         ncores = 1
-    blosc.init()
-    blosc.set_nthreads(min(8, ncores))
-    atexit.register(blosc.destroy)
+    blosc2.nthreads = min(8, ncores)
 
 with suppress(ImportError):
     from numcodecs import zstd
