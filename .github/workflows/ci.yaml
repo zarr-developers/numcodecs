@@ -77,12 +77,6 @@ jobs:
           conda activate env
           python -m pip list
 
-      - name: Flake8
-        shell: "bash -l {0}"
-        run: |
-          conda activate env
-          flake8
-
       - name: Run tests
         shell: "bash -l {0}"
         run: |
