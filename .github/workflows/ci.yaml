@@ -62,6 +62,14 @@ jobs:
           # TODO: put back zfpy import when it supports numpy 2.0
           python -m pip install -v -e .[test,test_extras,msgpack,pcodec]
 
+      # This is used to test with zfpy, which does not yet support numpy 2.0
+      - name: Install older numpy and zfpy
+        if: ${{ matrix.python-version }} == '3.10'
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          python -m pip install zfpy>1 numpy<2
+
       - name: List installed packages
         shell: "bash -l {0}"
         run: |
