@@ -44,7 +44,7 @@ jobs:
 
       - name: Install clang
         shell: "bash -l {0}"
-        if: ${{ matrix.platform }} == 'macos-12'
+        if: matrix.platform == 'macos-12'
         run: |
           conda activate env
           conda install -y 'clang>=12.0.1,<17'
@@ -64,7 +64,7 @@ jobs:
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
-        if: ${{ matrix.python-version }} == '3.10'
+        if: matrix.python-version == '3.10'
         shell: "bash -l {0}"
         run: |
           conda activate env
