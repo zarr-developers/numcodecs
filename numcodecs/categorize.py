@@ -63,8 +63,8 @@ class Categorize(Codec):
         enc = np.zeros_like(arr, dtype=self.astype)
 
         # apply encoding, reserving 0 for values not specified in labels
-        for i, l in enumerate(self.labels):
-            enc[arr == l] = i + 1
+        for i, label in enumerate(self.labels):
+            enc[arr == label] = i + 1
 
         return enc
 
@@ -80,8 +80,8 @@ class Categorize(Codec):
         dec = np.full_like(enc, fill_value='', dtype=self.dtype)
 
         # apply decoding
-        for i, l in enumerate(self.labels):
-            dec[enc == (i + 1)] = l
+        for i, label in enumerate(self.labels):
+            dec[enc == (i + 1)] = label
 
         # handle output
         dec = ndarray_copy(dec, out)

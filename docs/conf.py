@@ -16,6 +16,7 @@
 import sys
 import os
 from unittest.mock import Mock as MagicMock
+import numcodecs
 
 class Mock(MagicMock):
     @classmethod
@@ -77,7 +78,6 @@ author = 'Alistair Miles'
 # built documents.
 #
 # The short X.Y version.
-import numcodecs
 version = numcodecs.__version__
 # The full version, including alpha/beta/rc tags.
 release = numcodecs.__version__
