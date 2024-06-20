@@ -4,8 +4,14 @@ import numpy as np
 import pytest
 
 from numcodecs.json import JSON
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings)
+from numcodecs.tests.common import (
+    check_config,
+    check_repr,
+    check_encode_decode_array,
+    check_backwards_compatibility,
+    greetings,
+)
+
 codecs = [
     JSON(),
     JSON(indent=True),
@@ -61,14 +67,14 @@ def test_backwards_compatibility():
         ([[[0, 0]], [[1, 1]], [[2, 3]]], None),
         (["1"], None),
         (["11", "11"], None),
-        (["11", "1", "1"],  None),
+        (["11", "1", "1"], None),
         ([{}], None),
         ([{"key": "value"}, ["list", "of", "strings"]], object),
         ([0], None),
         ([{'hi': 0}], "object"),
         (["hi"], "object"),
-        (0, None)
-    ]
+        (0, None),
+    ],
 )
 def test_non_numpy_inputs(input_data, dtype):
     # numpy will infer a range of different shapes and dtypes for these inputs.

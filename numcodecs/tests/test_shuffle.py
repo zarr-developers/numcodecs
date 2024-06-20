@@ -9,21 +9,21 @@ import pytest
 try:
     from numcodecs.shuffle import Shuffle
 except ImportError:  # pragma: no cover
-    pytest.skip(
-        "numcodecs.shuffle not available", allow_module_level=True
-    )
+    pytest.skip("numcodecs.shuffle not available", allow_module_level=True)
 
 
-from numcodecs.tests.common import (check_encode_decode,
-                                    check_config,
-                                    check_backwards_compatibility)
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_config,
+    check_backwards_compatibility,
+)
 
 
 codecs = [
     Shuffle(),
     Shuffle(elementsize=0),
     Shuffle(elementsize=4),
-    Shuffle(elementsize=8)
+    Shuffle(elementsize=8),
 ]
 
 
@@ -40,10 +40,10 @@ arrays = [
     np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
 
@@ -132,22 +132,33 @@ def test_backwards_compatibility():
 #         with pytest.raises(RuntimeError):
 #             codec.decode(bytearray(0))
 
+
 def test_expected_result():
     # If the input is treated as a 2D byte array, with shape (size of element, number of elements),
     # the shuffle is essentially a transpose. This can be made more apparent by using an array of
     # big-endian integers, as below.
-    arr = np.array([0x0001020304050607, 0x08090a0b0c0d0e0f, 0x1011121314151617, 0x18191a1b1c1d1e1f],
-                   dtype='>u8')
-    expected = np.array([
-        0x00081018,
-        0x01091119,
-        0x020a121a,
-        0x030b131b,
-        0x040c141c,
-        0x050d151d,
-        0x060e161e,
-        0x070f171f,
-    ], dtype='u4')
+    arr = np.array(
+        [
+            0x0001020304050607,
+            0x08090A0B0C0D0E0F,
+            0x1011121314151617,
+            0x18191A1B1C1D1E1F,
+        ],
+        dtype='>u8',
+    )
+    expected = np.array(
+        [
+            0x00081018,
+            0x01091119,
+            0x020A121A,
+            0x030B131B,
+            0x040C141C,
+            0x050D151D,
+            0x060E161E,
+            0x070F171F,
+        ],
+        dtype='u4',
+    )
     codec = Shuffle(elementsize=arr.data.itemsize)
     enc = codec.encode(arr)
     np.testing.assert_array_equal(np.frombuffer(enc.data, '>u4'), expected)

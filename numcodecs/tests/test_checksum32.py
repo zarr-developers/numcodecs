@@ -6,9 +6,13 @@ import pytest
 
 
 from numcodecs.checksum32 import CRC32, Adler32
-from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
-                                    check_backwards_compatibility,
-                                    check_err_encode_object_buffer)
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_config,
+    check_repr,
+    check_backwards_compatibility,
+    check_err_encode_object_buffer,
+)
 
 
 # mix of dtypes: integer, float, bool, string
@@ -19,7 +23,7 @@ arrays = [
     np.linspace(1000, 1001, 1000, dtype='f8'),
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
     np.random.randint(0, 2, size=1000, dtype=bool).reshape(100, 10, order='F'),
-    np.random.choice([b'a', b'bb', b'ccc'], size=1000).reshape(10, 10, 10)
+    np.random.choice([b'a', b'bb', b'ccc'], size=1000).reshape(10, 10, 10),
 ]
 
 codecs = [CRC32(), Adler32()]

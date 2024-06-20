@@ -4,8 +4,12 @@ import pytest
 
 
 from numcodecs.delta import Delta
-from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
-                                    check_backwards_compatibility)
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_config,
+    check_repr,
+    check_backwards_compatibility,
+)
 
 
 # mix of dtypes: integer, float
