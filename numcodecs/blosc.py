@@ -21,10 +21,10 @@ def cbuffer_complib(source):
     """Return the name of the compression library used to compress `source`."""
     return blosc2.get_clib(source)
 
-def compress(source, cname: bytes, clevel, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
+def compress(source, cname: bytes, clevel, shuffle: int=SHUFFLE, blocksize=AUTOBLOCKS):
     cname = cname.decode('ascii')
     blosc2.set_blocksize(blocksize)
-    return blosc2.compress(source, codec=getattr(blosc2.Codec, cname.upper()), clevel=clevel, filter=shuffle)
+    return blosc2.compress(source, codec=getattr(blosc2.Codec, cname.upper()), clevel=clevel, filter=_shuffles[shuffle])
 
 
 class Blosc(Codec):
@@ -66,7 +66,7 @@ class Blosc(Codec):
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return compress(buf, bytes(self.cname, 'ascii'), self.clevel, _shuffles[self.shuffle], self.blocksize)
+        return compress(buf, bytes(self.cname, 'ascii'), self.clevel, self.shuffle, self.blocksize)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
