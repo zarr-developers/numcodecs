@@ -11,6 +11,10 @@ Release notes
 Unreleased
 ----------
 
+Maintenance
+~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+
 Enhancements
 ~~~~~~~~~~~~
 

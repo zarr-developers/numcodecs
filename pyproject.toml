@@ -16,7 +16,7 @@ readme =  "README.rst"
 dependencies = [
     "numpy>=1.7",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dynamic = [
   "version",
 ]
