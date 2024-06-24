@@ -3,8 +3,12 @@ from numpy.testing import assert_array_equal
 
 
 from numcodecs.astype import AsType
-from numcodecs.tests.common import check_encode_decode, check_config, \
-    check_repr, check_backwards_compatibility
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_config,
+    check_repr,
+    check_backwards_compatibility,
+)
 
 
 # mix of dtypes: integer, float
@@ -55,7 +59,6 @@ def test_repr():
 
 
 def test_backwards_compatibility():
-
     # integers
     arrs = [
         np.arange(1000, dtype='<i4'),
@@ -70,5 +73,4 @@ def test_backwards_compatibility():
         np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('<f8'),
     ]
     codec = AsType(encode_dtype='<f4', decode_dtype='<f8')
-    check_backwards_compatibility(AsType.codec_id, arrs, [codec], precision=[3],
-                                  prefix='f')
+    check_backwards_compatibility(AsType.codec_id, arrs, [codec], precision=[3], prefix='f')

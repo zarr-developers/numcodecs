@@ -14,7 +14,7 @@ def test_ensure_text():
         b'adsdasdas',
         'adsdasdas',
         np.asarray(memoryview(b'adsdasdas')),
-        array.array('B', b'qwertyuiqwertyui')
+        array.array('B', b'qwertyuiqwertyui'),
     ]
     for buf in bufs:
         b = ensure_text(buf)
@@ -26,7 +26,7 @@ def test_ensure_bytes():
         b'adsdasdas',
         bytes(20),
         np.arange(100),
-        array.array('l', b'qwertyuiqwertyui')
+        array.array('l', b'qwertyuiqwertyui'),
     ]
     for buf in bufs:
         b = ensure_bytes(buf)
@@ -45,7 +45,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
         ('f', 8, array.array('d', b'qwertyuiqwertyui')),
         ('i', 1, array.array('b', b'qwertyuiqwertyui')),
         ('u', 1, array.array('B', b'qwertyuiqwertyui')),
-        ('u', 1, mmap.mmap(-1, 10))
+        ('u', 1, mmap.mmap(-1, 10)),
     ]
     for expected_kind, expected_itemsize, buf in typed_bufs:
         a = ensure_contiguous_ndarray(buf)
@@ -59,7 +59,6 @@ def test_ensure_contiguous_ndarray_shares_memory():
 
 
 def test_ensure_bytes_invalid_inputs():
-
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
     for e in (a, memoryview(a)):
@@ -68,7 +67,6 @@ def test_ensure_bytes_invalid_inputs():
 
 
 def test_ensure_contiguous_ndarray_invalid_inputs():
-
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
     for e in (a, memoryview(a)):
@@ -98,16 +96,15 @@ def test_ensure_contiguous_ndarray_writeable():
 
 def test_ensure_contiguous_ndarray_max_buffer_size():
     for max_buffer_size in (4, 64, 1024):
-        ensure_contiguous_ndarray(
-            np.zeros(max_buffer_size - 1, dtype=np.int8), max_buffer_size)
-        ensure_contiguous_ndarray(
-            np.zeros(max_buffer_size, dtype=np.int8), max_buffer_size)
+        ensure_contiguous_ndarray(np.zeros(max_buffer_size - 1, dtype=np.int8), max_buffer_size)
+        ensure_contiguous_ndarray(np.zeros(max_buffer_size, dtype=np.int8), max_buffer_size)
         buffers = [
             bytes(b"x" * (max_buffer_size + 1)),
             np.zeros(max_buffer_size + 1, dtype=np.int8),
             np.zeros(max_buffer_size + 2, dtype=np.int8),
             np.zeros(max_buffer_size, dtype=np.int16),
-            np.zeros(max_buffer_size, dtype=np.int32)]
+            np.zeros(max_buffer_size, dtype=np.int32),
+        ]
         for buf in buffers:
             with pytest.raises(ValueError):
                 ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)

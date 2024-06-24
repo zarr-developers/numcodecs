@@ -51,12 +51,10 @@ class PCodec(numcodecs.abc.Codec):
         delta_encoding_order: Optional[int] = None,
         int_mult_spec: Literal["enabled", "disabled"] = "enabled",
         float_mult_spec: Literal["enabled", "disabled"] = "enabled",
-        equal_pages_up_to: int = 262144
+        equal_pages_up_to: int = 262144,
     ):
         if standalone is None:  # pragma: no cover
-            raise ImportError(
-                "pcodec must be installed to use the PCodec codec."
-            )
+            raise ImportError("pcodec must be installed to use the PCodec codec.")
 
         # note that we use `level` instead of `compression_level` to
         # match other codecs
