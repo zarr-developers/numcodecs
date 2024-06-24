@@ -86,3 +86,10 @@ def test_checksum():
     assert len(Zstd(level=0, checksum=False).encode(data)) + 4 == len(
         Zstd(level=0, checksum=True).encode(data)
     )
+
+
+def test_native_functions():
+    # Note, these assertions might need to be changed for new versions of zstd
+    assert Zstd.default_level == 3
+    assert Zstd.min_level == -131072
+    assert Zstd.max_level == 22

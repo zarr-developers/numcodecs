@@ -48,7 +48,9 @@ cdef extern from "zstd.h":
     unsigned long long ZSTD_getFrameContentSize(const void* src,
                                                 size_t srcSize) nogil
 
+    int ZSTD_minCLevel() nogil
     int ZSTD_maxCLevel() nogil
+    int ZSTD_defaultCLevel() nogil
 
     size_t ZSTD_compressBound(size_t srcSize) nogil
 
@@ -255,3 +257,18 @@ class Zstd(Codec):
             (type(self).__name__,
              self.level)
         return r
+
+    @classmethod
+    @property
+    def default_level(cls):
+        return ZSTD_defaultCLevel()
+
+    @classmethod
+    @property
+    def min_level(cls):
+        return ZSTD_minCLevel()
+
+    @classmethod
+    @property
+    def max_level(cls):
+        return ZSTD_maxCLevel()
