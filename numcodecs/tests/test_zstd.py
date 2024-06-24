@@ -79,3 +79,10 @@ def test_err_decode_object_buffer():
 
 def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Zstd())
+
+
+def test_checksum():
+    data = np.arange(0, 64, dtype="uint8")
+    assert len(Zstd(level=0, checksum=False).encode(data)) + 4 == len(
+        Zstd(level=0, checksum=True).encode(data)
+    )
