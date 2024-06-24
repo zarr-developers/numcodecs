@@ -82,7 +82,6 @@ class FixedScaleOffset(Codec):
             raise ValueError('object arrays are not supported')
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -101,7 +100,6 @@ class FixedScaleOffset(Codec):
         return enc
 
     def decode(self, buf, out=None):
-
         # interpret buffer as numpy array
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -124,12 +122,16 @@ class FixedScaleOffset(Codec):
             scale=self.scale,
             offset=self.offset,
             dtype=self.dtype.str,
-            astype=self.astype.str
+            astype=self.astype.str,
         )
 
     def __repr__(self):
-        r = '%s(scale=%s, offset=%s, dtype=%r' % \
-            (type(self).__name__, self.scale, self.offset, self.dtype.str)
+        r = '%s(scale=%s, offset=%s, dtype=%r' % (
+            type(self).__name__,
+            self.scale,
+            self.offset,
+            self.dtype.str,
+        )
         if self.astype != self.dtype:
             r += ', astype=%r' % self.astype.str
         r += ')'

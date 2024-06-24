@@ -28,7 +28,7 @@ class Shuffle(Codec):
             out = ensure_contiguous_ndarray(out)
 
         if self.elementsize <= 1:
-            out.view(buf.dtype)[:len(buf)] = buf[:]  # no shuffling needed
+            out.view(buf.dtype)[: len(buf)] = buf[:]  # no shuffling needed
             return buf, out
 
         if buf.nbytes % self.elementsize != 0:
@@ -57,7 +57,5 @@ class Shuffle(Codec):
         return out
 
     def __repr__(self):
-        r = '%s(elementsize=%s)' % \
-            (type(self).__name__,
-             self.elementsize)
+        r = '%s(elementsize=%s)' % (type(self).__name__, self.elementsize)
         return r

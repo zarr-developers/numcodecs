@@ -1,5 +1,6 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
+
 from importlib.metadata import entry_points
 import logging
 

@@ -11,8 +11,13 @@ except ImportError:  # pragma: no cover
     raise unittest.SkipTest("msgpack not available")
 
 
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings)
+from numcodecs.tests.common import (
+    check_config,
+    check_repr,
+    check_encode_decode_array,
+    check_backwards_compatibility,
+    greetings,
+)
 
 
 # object array with strings
@@ -69,7 +74,7 @@ def test_backwards_compatibility():
         ([b"11", b"11"], None),
         ([b"11", b"1", b"1"], None),
         ([{b"key": b"value"}, [b"list", b"of", b"strings"]], object),
-    ]
+    ],
 )
 def test_non_numpy_inputs(input_data, dtype):
     codec = MsgPack()
