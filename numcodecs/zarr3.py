@@ -24,9 +24,7 @@ from zarr.metadata import ArrayMetadata
 CODEC_PREFIX = "https://zarr.dev/numcodecs/"
 
 
-def parse_codec_configuration(
-    data: dict[str, JSON], expected_name_prefix: str
-) -> dict[str, JSON]:
+def parse_codec_configuration(data: dict[str, JSON], expected_name_prefix: str) -> dict[str, JSON]:
     parsed_name, parsed_configuration = parse_named_configuration(data)
     if not parsed_name.startswith(expected_name_prefix):
         raise ValueError(
@@ -40,9 +38,7 @@ def parse_codec_configuration(
 class NumcodecsCodec:
     codec_config: dict[str, JSON]
 
-    def __init__(
-        self, *, codec_id: str | None = None, codec_config: dict[str, JSON]
-    ) -> None:
+    def __init__(self, *, codec_id: str | None = None, codec_config: dict[str, JSON]) -> None:
         if "id" not in codec_config:
             if not codec_id:
                 raise ValueError(
@@ -51,9 +47,7 @@ class NumcodecsCodec:
                 )
             codec_config = {"id": codec_id, **codec_config}
         elif codec_id and codec_config["id"] != codec_id:
-            raise ValueError(
-                f"Codec id does not match {codec_id}. Got: {codec_config['id']}."
-            )
+            raise ValueError(f"Codec id does not match {codec_id}. Got: {codec_config['id']}.")
 
         object.__setattr__(self, "codec_config", codec_config)
         warn(
@@ -80,9 +74,7 @@ class NumcodecsCodec:
             "configuration": codec_config,
         }
 
-    def compute_encoded_size(
-        self, input_byte_length: int, chunk_spec: ArraySpec
-    ) -> int:
+    def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
         return input_byte_length
 
 
@@ -90,9 +82,7 @@ class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
     def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
         super().__init__(codec_id=codec_id, codec_config=codec_config)
 
-    async def _decode_single(
-        self, chunk_bytes: Buffer, chunk_spec: ArraySpec
-    ) -> Buffer:
+    async def _decode_single(self, chunk_bytes: Buffer, chunk_spec: ArraySpec) -> Buffer:
         return await to_thread(
             as_numpy_array_wrapper,
             self._codec.decode,
@@ -106,9 +96,7 @@ class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
             return prototype.buffer.from_bytes(encoded.tobytes())
         return prototype.buffer.from_bytes(encoded)
 
-    async def _encode_single(
-        self, chunk_bytes: Buffer, chunk_spec: ArraySpec
-    ) -> Buffer:
+    async def _encode_single(self, chunk_bytes: Buffer, chunk_spec: ArraySpec) -> Buffer:
         return await to_thread(self._encode, chunk_bytes, chunk_spec.prototype)
 
 
@@ -116,26 +104,18 @@ class NumcodecsArrayArrayCodec(NumcodecsCodec, ArrayArrayCodec):
     def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
         super().__init__(codec_id=codec_id, codec_config=codec_config)
 
-    async def _decode_single(
-        self, chunk_array: NDBuffer, chunk_spec: ArraySpec
-    ) -> NDBuffer:
+    async def _decode_single(self, chunk_array: NDBuffer, chunk_spec: ArraySpec) -> NDBuffer:
         chunk_ndarray = chunk_array.as_ndarray_like()
         out = await to_thread(self._codec.decode, chunk_ndarray)
-        return chunk_spec.prototype.nd_buffer.from_ndarray_like(
-            out.reshape(chunk_spec.shape)
-        )
+        return chunk_spec.prototype.nd_buffer.from_ndarray_like(out.reshape(chunk_spec.shape))
 
-    async def _encode_single(
-        self, chunk_array: NDBuffer, chunk_spec: ArraySpec
-    ) -> NDBuffer:
+    async def _encode_single(self, chunk_array: NDBuffer, chunk_spec: ArraySpec) -> NDBuffer:
         chunk_ndarray = chunk_array.as_ndarray_like()
         out = await to_thread(self._codec.encode, chunk_ndarray)
         return chunk_spec.prototype.nd_buffer.from_ndarray_like(out)
 
 
-def make_bytes_bytes_codec(
-    codec_id: str, cls_name: str
-) -> type[NumcodecsBytesBytesCodec]:
+def make_bytes_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
     # rename for class scope
     _codec_id = codec_id
 
@@ -147,9 +127,7 @@ def make_bytes_bytes_codec(
     return _Codec
 
 
-def make_array_array_codec(
-    codec_id: str, cls_name: str
-) -> type[NumcodecsArrayArrayCodec]:
+def make_array_array_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayArrayCodec]:
     # rename for class scope
     _codec_id = codec_id
 
@@ -169,9 +147,7 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
         def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
-        def compute_encoded_size(
-            self, input_byte_length: int, chunk_spec: ArraySpec
-        ) -> int:
+        def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
             return input_byte_length + 4
 
     _ChecksumCodec.__name__ = cls_name
@@ -184,9 +160,7 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
-            return self.__class__(
-                {**self.codec_config, "elementsize": array_spec.dtype.itemsize}
-            )
+            return self.__class__({**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self
 
 
@@ -225,9 +199,7 @@ class AsTypeCodec(NumcodecsArrayArrayCodec):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         decode_dtype = self.codec_config.get("decode_dtype")
         if str(array_spec.dtype) != decode_dtype:
-            return self.__class__(
-                {**self.codec_config, "decode_dtype": str(array_spec.dtype)}
-            )
+            return self.__class__({**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 
 
@@ -244,9 +216,7 @@ class PackbitsCodec(NumcodecsArrayArrayCodec):
 
     def validate(self, array_metadata: ArrayMetadata) -> None:
         if array_metadata.dtype != np.dtype("bool"):
-            raise ValueError(
-                f"Packbits filter requires bool dtype. Got {array_metadata.dtype}."
-            )
+            raise ValueError(f"Packbits filter requires bool dtype. Got {array_metadata.dtype}.")
 
 
 # bytes-to-bytes codecs

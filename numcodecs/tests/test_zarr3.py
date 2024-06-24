@@ -43,9 +43,7 @@ def test_generic_codec(store: Store, codec_id: str):
             fill_value=0,
             codecs=[
                 BytesCodec(),
-                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")(
-                    {"id": codec_id}
-                ),
+                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")({"id": codec_id}),
             ],
         )
 
@@ -156,9 +154,7 @@ def test_generic_filter_packbits(store: Store):
     assert np.array_equal(data, a[:, :])
 
 
-@pytest.mark.parametrize(
-    "codec_id", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"]
-)
+@pytest.mark.parametrize("codec_id", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"])
 def test_generic_checksum(store: Store, codec_id: str):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
