@@ -53,7 +53,6 @@ docs = [
 ]
 test = [
     "coverage",
-    "flake8",
     "pytest",
     "pytest-cov",
 ]
@@ -126,3 +125,9 @@ environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS=
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "preserve"

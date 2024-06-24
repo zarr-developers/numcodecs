@@ -28,7 +28,6 @@ other and vice versa.
 
 """
 
-
 from abc import ABC, abstractmethod
 
 
@@ -114,15 +113,16 @@ class Codec(ABC):
             return False
 
     def __repr__(self):
-
         # override in sub-class if need special representation
 
         # by default, assume all non-private members are configuration
         # parameters and valid keyword arguments to constructor function
 
         r = '%s(' % type(self).__name__
-        params = ['{}={!r}'.format(k, getattr(self, k))
-                  for k in sorted(self.__dict__)
-                  if not k.startswith('_')]
+        params = [
+            '{}={!r}'.format(k, getattr(self, k))
+            for k in sorted(self.__dict__)
+            if not k.startswith('_')
+        ]
         r += ', '.join(params) + ')'
         return r
