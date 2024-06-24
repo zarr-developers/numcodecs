@@ -261,14 +261,17 @@ class Zstd(Codec):
     @classmethod
     @property
     def default_level(cls):
+        """Returns the default compression level of the underlying zstd library."""
         return ZSTD_defaultCLevel()
 
     @classmethod
     @property
     def min_level(cls):
+        """Returns the minimum compression level of the underlying zstd library."""
         return ZSTD_minCLevel()
 
     @classmethod
     @property
     def max_level(cls):
+        """Returns the maximum compression level of the underlying zstd library."""
         return ZSTD_maxCLevel()
