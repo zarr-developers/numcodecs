@@ -23,7 +23,8 @@ cdef extern from "zstd.h":
         pass
     ctypedef ZSTD_CCtx_s ZSTD_CCtx
     cdef enum ZSTD_cParameter:
-        ZSTD_c_checksumFlag
+        ZSTD_c_compressionLevel=100
+        ZSTD_c_checksumFlag=201
 
     ZSTD_CCtx* ZSTD_createCCtx() nogil
     size_t ZSTD_freeCCtx(ZSTD_CCtx* cctx) nogil
@@ -31,12 +32,11 @@ cdef extern from "zstd.h":
                                   ZSTD_cParameter param, 
                                   int value) nogil
 
-    size_t ZSTD_compressCCtx(ZSTD_CCtx* cctx,
-                             void* dst,
-                             size_t dstCapacity,
-                             const void* src,
-                             size_t srcSize,
-                             int compressionLevel) nogil
+    size_t ZSTD_compress2(ZSTD_CCtx* cctx,
+                          void* dst,
+                          size_t dstCapacity,
+                          const void* src,
+                          size_t srcSize) nogil
 
     size_t ZSTD_decompress(void* dst,
                            size_t dstCapacity,
@@ -106,6 +106,12 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     source_size = source_buffer.nbytes
 
     cctx = ZSTD_createCCtx()
+    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, level)
+
+    if ZSTD_isError(param_set_result):
+        error = ZSTD_getErrorName(param_set_result)
+        raise RuntimeError('Could not set zstd compression level: %s' % error)
+
     param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if checksum else 0)
 
     if ZSTD_isError(param_set_result):
@@ -121,7 +127,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
 
         # perform compression
         with nogil:
-            compressed_size = ZSTD_compressCCtx(cctx, dest_ptr, dest_size, source_ptr, source_size, level)
+            compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
 
     finally:
         if cctx:
