@@ -76,7 +76,7 @@ You will need your own fork to work on the code. Go to the link above and hit
 the "Fork" button. Then clone your fork to your local machine::
 
     $ git clone --recursive git@github.com:your-user-name/numcodecs.git  # with ``ssh``
-    
+
 or::
 
     $ git clone --recursive https://github.com/your-user-name/numcodecs.git  # with ``https``
@@ -158,7 +158,7 @@ All code must conform to the PEP8 standard. Regarding line length, lines up to 1
 characters are allowed, although please try to keep under 90 wherever possible.
 Conformance can be checked by running::
 
-    $ flake8
+    $ pre-commit run ruff
 
 Test coverage
 ~~~~~~~~~~~~~

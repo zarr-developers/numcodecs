@@ -2,8 +2,12 @@ import numpy as np
 
 
 from numcodecs.packbits import PackBits
-from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
-                                    check_backwards_compatibility)
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_config,
+    check_repr,
+    check_backwards_compatibility,
+)
 
 
 arrays = [

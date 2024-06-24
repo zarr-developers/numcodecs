@@ -21,7 +21,6 @@ class Zlib(Codec):
         self.level = level
 
     def encode(self, buf):
-
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
 
@@ -30,7 +29,6 @@ class Zlib(Codec):
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
-
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
         if out is not None:

@@ -9,9 +9,14 @@ try:
     from numcodecs.vlen import VLenUTF8
 except ImportError:  # pragma: no cover
     raise unittest.SkipTest("vlen-utf8 not available")
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings,
-                                    assert_array_items_equal)
+from numcodecs.tests.common import (
+    check_config,
+    check_repr,
+    check_encode_decode_array,
+    check_backwards_compatibility,
+    greetings,
+    assert_array_items_equal,
+)
 
 
 arrays = [

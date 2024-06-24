@@ -10,18 +10,18 @@ try:
     from numcodecs import blosc
     from numcodecs.blosc import Blosc
 except ImportError:  # pragma: no cover
-    pytest.skip(
-        "numcodecs.blosc not available", allow_module_level=True
-    )
+    pytest.skip("numcodecs.blosc not available", allow_module_level=True)
 
 
-from numcodecs.tests.common import (check_encode_decode,
-                                    check_encode_decode_partial,
-                                    check_config,
-                                    check_backwards_compatibility,
-                                    check_err_decode_object_buffer,
-                                    check_err_encode_object_buffer,
-                                    check_max_buffer_size)
+from numcodecs.tests.common import (
+    check_encode_decode,
+    check_encode_decode_partial,
+    check_config,
+    check_backwards_compatibility,
+    check_err_decode_object_buffer,
+    check_err_encode_object_buffer,
+    check_max_buffer_size,
+)
 
 
 codecs = [
@@ -54,10 +54,10 @@ arrays = [
     np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
 
@@ -79,9 +79,13 @@ def test_encode_decode(array, codec):
 
 
 @pytest.mark.parametrize('codec', codecs)
-@pytest.mark.parametrize('array', [pytest.param(x) if len(x.shape) == 1
-                                   else pytest.param(x, marks=[pytest.mark.xfail])
-                                   for x in arrays])
+@pytest.mark.parametrize(
+    'array',
+    [
+        pytest.param(x) if len(x.shape) == 1 else pytest.param(x, marks=[pytest.mark.xfail])
+        for x in arrays
+    ],
+)
 def test_partial_decode(codec, array):
     _skip_null(codec)
     check_encode_decode_partial(array, codec)
@@ -105,8 +109,7 @@ def test_repr():
     actual = repr(Blosc(cname='zlib', clevel=9, shuffle=Blosc.BITSHUFFLE, blocksize=512))
     assert expect == actual
     expect = "Blosc(cname='blosclz', clevel=5, shuffle=AUTOSHUFFLE, blocksize=1024)"
-    actual = repr(Blosc(cname='blosclz', clevel=5, shuffle=Blosc.AUTOSHUFFLE,
-                        blocksize=1024))
+    actual = repr(Blosc(cname='blosclz', clevel=5, shuffle=Blosc.AUTOSHUFFLE, blocksize=1024))
     assert expect == actual
 
 
