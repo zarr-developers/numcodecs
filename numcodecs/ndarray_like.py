@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Protocol, Tuple, Type, runtime_checkable
 
 
-class _CachedProtocolMeta(Protocol.__class__): # type: ignore[name-defined]
+class _CachedProtocolMeta(Protocol.__class__):  # type: ignore[name-defined]
     """Custom implementation of @runtime_checkable
 
     The native implementation of @runtime_checkable is slow,
