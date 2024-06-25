@@ -6,6 +6,8 @@ import numpy as np
 import pytest
 import sys
 
+from numcodecs.registry import get_codec
+
 try:
     from zarr.codecs.registry import get_codec_class
     from zarr.array import Array
@@ -178,16 +180,15 @@ def test_generic_checksum(store: Store, codec_id: str):
 
 @pytest.mark.parametrize("codec_id", ["pcodec", "zfpy"])
 def test_generic_bytes_codec(store: Store, codec_id: str):
-    data = np.arange(0, 256, dtype="float32").reshape((16, 16))
-
     try:
-        codec_class = get_codec_class(f"numcodecs.{codec_id}")
+        get_codec({"id": codec_id})
     except ValueError as e:
-        # zfpy is not available on all platforms and versions
         if "codec not available" in str(e):
-            return
+            pytest.xfail(f"{codec_id} is not available")
         else:
             raise
+
+    data = np.arange(0, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match="Numcodecs.*"):
         a = Array.create(
@@ -197,7 +198,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                codec_class({"id": codec_id}),
+                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
             ],
         )
 
