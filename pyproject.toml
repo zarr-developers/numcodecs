@@ -88,7 +88,9 @@ pcodec = [
 "https://zarr.dev/numcodecs/crc32" = "numcodecs.zarr3:Crc32Codec"
 "https://zarr.dev/numcodecs/adler32" = "numcodecs.zarr3:Adler32Codec"
 "https://zarr.dev/numcodecs/fletcher32" = "numcodecs.zarr3:Fletcher32Codec"
-"https://zarr.dev/numcodecs/jenkins_lookup3" = "numcodecs.zarr3:JenkinsLookup3"
+"https://zarr.dev/numcodecs/jenkins_lookup3" = "numcodecs.zarr3:JenkinsLookup3Codec"
+"https://zarr.dev/numcodecs/pcodec" = "numcodecs.zarr3:PCodecCodec"
+"https://zarr.dev/numcodecs/zfpy" = "numcodecs.zarr3:ZFPYCodec"
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]

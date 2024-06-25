@@ -174,3 +174,23 @@ def test_generic_checksum(store: Store, codec_id: str):
         a[:, :] = data.copy()
         a = Array.open(store / "generic_checksum")
     assert np.array_equal(data, a[:, :])
+
+
+@pytest.mark.parametrize("codec_id", ["pcodec", "zfpy"])
+def test_generic_bytes_codec(store: Store, codec_id: str):
+    data = np.arange(0, 256, dtype="float32").reshape((16, 16))
+
+    with pytest.warns(UserWarning, match="Numcodecs.*"):
+        a = Array.create(
+            store / "generic",
+            shape=data.shape,
+            chunk_shape=(16, 16),
+            dtype=data.dtype,
+            fill_value=0,
+            codecs=[
+                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")({"id": codec_id}),
+            ],
+        )
+
+    a[:, :] = data.copy()
+    assert np.array_equal(data, a[:, :])

@@ -9,7 +9,7 @@ from warnings import warn
 import numpy as np
 import numcodecs
 
-from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec
+from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec, ArrayBytesCodec
 from zarr.buffer import NDBuffer, Buffer, BufferPrototype, as_numpy_array_wrapper
 from zarr.array_spec import ArraySpec
 from zarr.common import (
@@ -115,6 +115,21 @@ class NumcodecsArrayArrayCodec(NumcodecsCodec, ArrayArrayCodec):
         return chunk_spec.prototype.nd_buffer.from_ndarray_like(out)
 
 
+class NumcodecsArrayBytesCodec(NumcodecsCodec, ArrayBytesCodec):
+    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
+        super().__init__(codec_id=codec_id, codec_config=codec_config)
+
+    async def _decode_single(self, chunk_buffer: Buffer, chunk_spec: ArraySpec) -> NDBuffer:
+        chunk_bytes = chunk_buffer.to_bytes()
+        out = await to_thread(self._codec.decode, chunk_bytes)
+        return chunk_spec.prototype.nd_buffer.from_ndarray_like(out.reshape(chunk_spec.shape))
+
+    async def _encode_single(self, chunk_ndbuffer: NDBuffer, chunk_spec: ArraySpec) -> Buffer:
+        chunk_ndarray = chunk_ndbuffer.as_ndarray_like()
+        out = await to_thread(self._codec.encode, chunk_ndarray)
+        return chunk_spec.prototype.buffer.from_bytes(out)
+
+
 def make_bytes_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
     # rename for class scope
     _codec_id = codec_id
@@ -132,6 +147,18 @@ def make_array_array_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayA
     _codec_id = codec_id
 
     class _Codec(NumcodecsArrayArrayCodec):
+        def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+            super().__init__(codec_id=_codec_id, codec_config=codec_config)
+
+    _Codec.__name__ = cls_name
+    return _Codec
+
+
+def make_array_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayBytesCodec]:
+    # rename for class scope
+    _codec_id = codec_id
+
+    class _Codec(NumcodecsArrayBytesCodec):
         def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
@@ -241,4 +268,8 @@ BitroundCodec = make_array_array_codec("bitround", "BitroundCodec")
 Crc32Codec = make_checksum_codec("crc32", "Crc32Codec")
 Adler32Codec = make_checksum_codec("adler32", "Adler32Codec")
 Fletcher32Codec = make_checksum_codec("fletcher32", "Fletcher32Codec")
-JenkinsLookup3 = make_checksum_codec("jenkins_lookup3", "JenkinsLookup3")
+JenkinsLookup3Codec = make_checksum_codec("jenkins_lookup3", "JenkinsLookup3Codec")
+
+# array-to-bytes codecs
+PCodecCodec = make_array_bytes_codec("pcodec", "PCodecCodec")
+ZFPYCodec = make_array_bytes_codec("zfpy", "ZFPYCodec")
