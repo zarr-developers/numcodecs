@@ -21,7 +21,7 @@ from zarr.common import (
 from zarr.metadata import ArrayMetadata
 
 
-CODEC_PREFIX = "https://zarr.dev/numcodecs/"
+CODEC_PREFIX = "numcodecs."
 
 
 def parse_codec_configuration(data: dict[str, JSON], expected_name_prefix: str) -> dict[str, JSON]:

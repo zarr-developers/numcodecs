@@ -43,7 +43,7 @@ def test_generic_codec(store: Store, codec_id: str):
             fill_value=0,
             codecs=[
                 BytesCodec(),
-                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")({"id": codec_id}),
+                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
             ],
         )
 
@@ -80,7 +80,7 @@ def test_generic_filter(store: Store, codec_config: dict[str, JSON]):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")(codec_config),
+                get_codec_class(f"numcodecs.{codec_id}")(codec_config),
                 BytesCodec(),
             ],
         )
@@ -101,7 +101,7 @@ def test_generic_filter_bitround(store: Store):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class("https://zarr.dev/numcodecs/bitround")({"keepbits": 3}),
+                get_codec_class("numcodecs.bitround")({"keepbits": 3}),
                 BytesCodec(),
             ],
         )
@@ -122,7 +122,7 @@ def test_generic_filter_quantize(store: Store):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class("https://zarr.dev/numcodecs/quantize")({"digits": 3}),
+                get_codec_class("numcodecs.quantize")({"digits": 3}),
                 BytesCodec(),
             ],
         )
@@ -144,7 +144,7 @@ def test_generic_filter_packbits(store: Store):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class("https://zarr.dev/numcodecs/packbits")(),
+                get_codec_class("numcodecs.packbits")(),
                 BytesCodec(),
             ],
         )
@@ -167,7 +167,7 @@ def test_generic_checksum(store: Store, codec_id: str):
             fill_value=0,
             codecs=[
                 BytesCodec(),
-                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")(),
+                get_codec_class(f"numcodecs.{codec_id}")(),
             ],
         )
 
@@ -188,7 +188,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class(f"https://zarr.dev/numcodecs/{codec_id}")({"id": codec_id}),
+                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
             ],
         )
 
