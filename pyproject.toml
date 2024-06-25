@@ -55,7 +55,6 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
-    "zarr",
 ]
 test_extras = [
     "importlib_metadata",
