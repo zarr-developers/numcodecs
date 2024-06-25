@@ -180,6 +180,15 @@ def test_generic_checksum(store: Store, codec_id: str):
 def test_generic_bytes_codec(store: Store, codec_id: str):
     data = np.arange(0, 256, dtype="float32").reshape((16, 16))
 
+    try:
+        codec_class = get_codec_class(f"numcodecs.{codec_id}")
+    except ValueError as e:
+        # zfpy is not available on all platforms and versions
+        if "codec not available" in str(e):
+            return
+        else:
+            raise
+
     with pytest.warns(UserWarning, match="Numcodecs.*"):
         a = Array.create(
             store / "generic",
@@ -188,7 +197,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
+                codec_class({"id": codec_id}),
             ],
         )
 
