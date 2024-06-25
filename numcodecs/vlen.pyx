@@ -7,6 +7,7 @@
 
 import cython
 cimport cython
+from numpy cimport ndarray
 import numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
@@ -74,7 +75,7 @@ class VLenUTF8(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, l, n_items, data_length, total_length
-            object[:] input_values
+            ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
             char* encv
