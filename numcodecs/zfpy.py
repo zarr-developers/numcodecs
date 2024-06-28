@@ -1,8 +1,11 @@
 from contextlib import suppress
+from types import ModuleType
+from typing import Optional
 
-_zfpy = None
+_zfpy: Optional[ModuleType] = None
+
 with suppress(ImportError):
-    import zfpy as _zfpy
+    import zfpy as _zfpy  # type: ignore[no-redef]
 
 
 if _zfpy:
