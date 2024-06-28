@@ -17,9 +17,10 @@ Maintenance
 
 Enhancements
 ~~~~~~~~~~~~
-
+* Add checksum flag to zstd and sets the default level to 0.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`519`.
 * Add PCodec
-  By :user:`Ryan Abernathey <rabernat>`.
+  By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
 * Improve the structure of docs
