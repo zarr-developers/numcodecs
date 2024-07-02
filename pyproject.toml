@@ -14,7 +14,7 @@ A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
-    "numpy>=1.7, <2.0",
+    "numpy>=1.7",
 ]
 requires-python = ">=3.10"
 dynamic = [
@@ -64,6 +64,7 @@ msgpack = [
 ]
 zfpy = [
     "zfpy>=1.0.0",
+    "numpy<2.0.0",    
 ]
 pcodec = [
     "pcodec>=0.1.0",
