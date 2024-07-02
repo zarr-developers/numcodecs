@@ -31,6 +31,8 @@ Fix
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
 * Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
+* Add version constraint(<2.0) for numpy in zfpy.
+  By :user:`Tom Liang <px39n>`, :issue:540.
 
 Maintenance
 ~~~~~~~~~~~
