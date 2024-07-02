@@ -1,6 +1,6 @@
 from contextlib import suppress
+from importlib.metadata import PackageNotFoundError, version
 import warnings
-import numpy as np
 
 _zfpy = None
 
