@@ -11,7 +11,7 @@ with suppress(PackageNotFoundError):
 if _zfpy_version:
     # Check NumPy version
     _numpy_version: tuple = tuple(map(int, version("numpy").split('.')))
-    if numpy_version_tuple >= (2, 0, 0) and zfpy_version_tuple <= (1, 0, 1):
+    if _numpy_version >= (2, 0, 0) and _zfpy_version <= (1, 0, 1):
         _zfpy_version = ()
         warnings.warn(
             "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
