@@ -16,11 +16,11 @@ if _zfpy_version:
         warnings.warn(
             "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
             "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
-            UserWarning
+            UserWarning,
         )
 else:
     with suppress(ImportError):
-        import zfpy as _zfpy 
+        import zfpy as _zfpy
 
 if _zfpy:
     from .abc import Codec
