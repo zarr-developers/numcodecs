@@ -4,16 +4,20 @@ import warnings
 
 _zfpy = None
 
-# Check NumPy version
-numpy_version = np.__version__
-numpy_version_tuple = tuple(map(int, numpy_version.split('.')))
-if numpy_version_tuple >= (2, 0, 0):
-    _zfpy = None
-    warnings.warn(
-        "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
-        "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
-        UserWarning
-    )
+_zfpy_version: tuple = ()
+with suppress(PackageNotFoundError):
+    _zfpy_version = tuple(map(int, version("zfpy").split(".")))
+
+if _zfpy_version:
+    # Check NumPy version
+    _numpy_version: tuple = tuple(map(int, version("numpy").split('.')))
+    if numpy_version_tuple >= (2, 0, 0) and zfpy_version_tuple <= (1, 0, 1):
+        _zfpy_version = ()
+        warnings.warn(
+            "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
+            "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
+            UserWarning
+        )
 else:
     with suppress(ImportError):
         import zfpy as _zfpy 
