@@ -18,9 +18,9 @@ if _zfpy_version:
             "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
             UserWarning,
         )
-else:
-    with suppress(ImportError):
-        import zfpy as _zfpy
+    else:
+        with suppress(ImportError):
+            import zfpy as _zfpy
 
 if _zfpy:
     from .abc import Codec
