@@ -1,9 +1,22 @@
 from contextlib import suppress
+import warnings
+import numpy as np
 
 _zfpy = None
-with suppress(ImportError):
-    import zfpy as _zfpy
 
+# Check NumPy version
+numpy_version = np.__version__
+numpy_version_tuple = tuple(map(int, numpy_version.split('.')))
+if numpy_version_tuple >= (2, 0, 0):
+    _zfpy = None
+    warnings.warn(
+        "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
+        "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
+        UserWarning
+    )
+else:
+    with suppress(ImportError):
+    import zfpy as _zfpy 
 
 if _zfpy:
     from .abc import Codec
