@@ -16,7 +16,7 @@ if numpy_version_tuple >= (2, 0, 0):
     )
 else:
     with suppress(ImportError):
-    import zfpy as _zfpy 
+        import zfpy as _zfpy 
 
 if _zfpy:
     from .abc import Codec
