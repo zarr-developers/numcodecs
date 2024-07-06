@@ -1,8 +1,7 @@
 {
     "delta_encoding_order": null,
     "equal_pages_up_to": 300,
-    "float_mult_spec": "enabled",
     "id": "pcodec",
-    "int_mult_spec": "enabled",
-    "level": 8
+    "level": 8,
+    "mode_spec": "auto"
 }
