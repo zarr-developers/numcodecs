@@ -92,8 +92,8 @@ Creating a development environment
 To work with the NumCodecs source code, it is recommended to set up a Python virtual
 environment and install all NumCodecs dependencies using the same versions as are used by
 the core developers and continuous integration services. Assuming you have a Python
-3 interpreter matching [the `requires-python` constraint](../pyproject.toml)
-already installed, and you have cloned the NumCodecs source code and your
+3 interpreter already installed matching the ``requires-python`` constraint from
+``pyproject.toml``, and you have cloned the NumCodecs source code and your
 current working directory is the root of the repository, you can do something
 like the following::
 
