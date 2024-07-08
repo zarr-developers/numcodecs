@@ -68,7 +68,7 @@ class PCodec(numcodecs.abc.Codec):
                 mode_spec = ModeSpec.auto()
             case 'classic':
                 mode_spec = ModeSpec.classic()
-            case _:
+            case _:  # pragma: no cover
                 raise ValueError(f"unknown value for mode_spec: {self.mode_spec}")
         paging_spec = PagingSpec.equal_pages_up_to(self.equal_pages_up_to)
 
