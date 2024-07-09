@@ -24,7 +24,7 @@ codecs = [
     PCodec(level=1),
     PCodec(level=5),
     PCodec(level=9),
-    PCodec(float_mult_spec="disabled", int_mult_spec="disabled"),
+    PCodec(mode_spec='classic'),
     PCodec(equal_pages_up_to=300),
 ]
 
@@ -57,10 +57,15 @@ def test_config():
     check_config(codec)
 
 
+def test_invalid_config_error():
+    with pytest.raises(ValueError):
+        codec = PCodec(mode_spec='bogus')
+        check_encode_decode_array_to_bytes(arrays[0], codec)
+
+
 def test_repr():
     check_repr(
-        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, float_mult_spec='enabled', "
-        "int_mult_spec='enabled', level=3)"
+        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, level=3, mode_spec='auto')"
     )
 
 
