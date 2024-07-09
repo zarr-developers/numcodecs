@@ -11,11 +11,16 @@ Release notes
 Unreleased
 ----------
 
+Maintenance
+~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+
 Enhancements
 ~~~~~~~~~~~~
-
+* Add checksum flag to zstd and sets the default level to 0.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`519`.
 * Add PCodec
-  By :user:`Ryan Abernathey <rabernat>`.
+  By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
 
@@ -24,8 +29,10 @@ Fix
 
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
-* Fix Upgrade to Zstd 1.5.5 due to potential corruption. 
+* Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
+* Add version constraint(<2.0) for numpy in zfpy.
+  By :user:`Tom Liang <px39n>`, :issue:`540`.
 
 Maintenance
 ~~~~~~~~~~~

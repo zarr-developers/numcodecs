@@ -55,8 +55,7 @@ def blosc_extension():
     define_macros = []
 
     # setup blosc sources
-    blosc_sources = [f for f in glob('c-blosc/blosc/*.c')
-                     if 'avx2' not in f and 'sse2' not in f]
+    blosc_sources = [f for f in glob('c-blosc/blosc/*.c') if 'avx2' not in f and 'sse2' not in f]
     include_dirs = [os.path.join('c-blosc', 'blosc')]
 
     # add internal complibs
@@ -67,18 +66,17 @@ def blosc_extension():
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
     blosc_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*')
-                     if os.path.isdir(d)]
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*')
-                     if os.path.isdir(d)]
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*')
-                     if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/*') if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*') if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*') if os.path.isdir(d)]
     # remove minizip because Python.h 3.8 tries to include crypt.h
     include_dirs = [d for d in include_dirs if 'minizip' not in d]
-    define_macros += [('HAVE_LZ4', 1),
-                      # ('HAVE_SNAPPY', 1),
-                      ('HAVE_ZLIB', 1),
-                      ('HAVE_ZSTD', 1)]
+    define_macros += [
+        ('HAVE_LZ4', 1),
+        # ('HAVE_SNAPPY', 1),
+        ('HAVE_ZLIB', 1),
+        ('HAVE_ZSTD', 1),
+    ]
     # define_macros += [('CYTHON_TRACE', '1')]
 
     # SSE2
@@ -104,8 +102,7 @@ def blosc_extension():
     # include assembly files
     if cpuinfo.platform.machine() == 'x86_64':
         extra_objects = [
-            S[:-1] + 'o'
-            for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
+            S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
         ]
     else:
         extra_objects = []
@@ -114,13 +111,14 @@ def blosc_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.blosc',
-                  sources=sources + blosc_sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  extra_objects=extra_objects,
-                  ),
+        Extension(
+            'numcodecs.blosc',
+            sources=sources + blosc_sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+            extra_objects=extra_objects,
+        ),
     ]
 
     return extensions
@@ -139,10 +137,8 @@ def zstd_extension():
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
     zstd_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*')
-                     if os.path.isdir(d)]
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*/*')
-                     if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*') if os.path.isdir(d)]
+    include_dirs += [d for d in glob('c-blosc/internal-complibs/zstd*/*') if os.path.isdir(d)]
     # define_macros += [('CYTHON_TRACE', '1')]
 
     sources = ['numcodecs/zstd.pyx']
@@ -150,21 +146,21 @@ def zstd_extension():
     # include assembly files
     if cpuinfo.platform.machine() == 'x86_64':
         extra_objects = [
-            S[:-1] + 'o'
-            for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
+            S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
         ]
     else:
         extra_objects = []
 
     # define extension module
     extensions = [
-        Extension('numcodecs.zstd',
-                  sources=sources + zstd_sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  extra_objects=extra_objects,
-                  ),
+        Extension(
+            'numcodecs.zstd',
+            sources=sources + zstd_sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+            extra_objects=extra_objects,
+        ),
     ]
 
     return extensions
@@ -186,12 +182,13 @@ def lz4_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.lz4',
-                  sources=sources + lz4_sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  ),
+        Extension(
+            'numcodecs.lz4',
+            sources=sources + lz4_sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+        ),
     ]
 
     return extensions
@@ -212,12 +209,13 @@ def vlen_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.vlen',
-                  sources=sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  ),
+        Extension(
+            'numcodecs.vlen',
+            sources=sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+        ),
     ]
 
     return extensions
@@ -237,12 +235,13 @@ def fletcher_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.fletcher32',
-                  sources=sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  ),
+        Extension(
+            'numcodecs.fletcher32',
+            sources=sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+        ),
     ]
 
     return extensions
@@ -262,12 +261,13 @@ def jenkins_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.jenkins',
-                  sources=sources,
-                  include_dirs=include_dirs,
-                  define_macros=define_macros,
-                  extra_compile_args=extra_compile_args,
-                  ),
+        Extension(
+            'numcodecs.jenkins',
+            sources=sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+        ),
     ]
 
     return extensions
@@ -282,9 +282,11 @@ def compat_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs.compat_ext',
-                  sources=sources,
-                  extra_compile_args=extra_compile_args),
+        Extension(
+            'numcodecs.compat_ext',
+            sources=sources,
+            extra_compile_args=extra_compile_args,
+        ),
     ]
 
     return extensions
@@ -299,17 +301,14 @@ def shuffle_extension():
 
     # define extension module
     extensions = [
-        Extension('numcodecs._shuffle',
-                  sources=sources,
-                  extra_compile_args=extra_compile_args),
+        Extension('numcodecs._shuffle', sources=sources, extra_compile_args=extra_compile_args),
     ]
 
     return extensions
 
 
 if sys.platform == 'win32':
-    ext_errors = (CCompilerError, ExecError, PlatformError,
-                  IOError, ValueError)
+    ext_errors = (CCompilerError, ExecError, PlatformError, IOError, ValueError)
 else:
     ext_errors = (CCompilerError, ExecError, PlatformError)
 
@@ -355,11 +354,17 @@ class Sclean(clean):
 
 
 def run_setup(with_extensions):
-
     if with_extensions:
-        ext_modules = (blosc_extension() + zstd_extension() + lz4_extension() +
-                       compat_extension() + shuffle_extension() + vlen_extension() +
-                       fletcher_extension() + jenkins_extension())
+        ext_modules = (
+            blosc_extension()
+            + zstd_extension()
+            + lz4_extension()
+            + compat_extension()
+            + shuffle_extension()
+            + vlen_extension()
+            + fletcher_extension()
+            + jenkins_extension()
+        )
 
         cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
     else:

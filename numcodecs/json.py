@@ -33,9 +33,18 @@ class JSON(Codec):
 
     codec_id = 'json2'
 
-    def __init__(self, encoding='utf-8', skipkeys=False, ensure_ascii=True,
-                 check_circular=True, allow_nan=True, sort_keys=True, indent=None,
-                 separators=None, strict=True):
+    def __init__(
+        self,
+        encoding='utf-8',
+        skipkeys=False,
+        ensure_ascii=True,
+        check_circular=True,
+        allow_nan=True,
+        sort_keys=True,
+        indent=None,
+        separators=None,
+        strict=True,
+    ):
         self._text_encoding = encoding
         if separators is None:
             # ensure separators are explicitly specified, and consistent behaviour across
@@ -45,10 +54,15 @@ class JSON(Codec):
             else:
                 separators = ', ', ': '
         separators = tuple(separators)
-        self._encoder_config = dict(skipkeys=skipkeys, ensure_ascii=ensure_ascii,
-                                    check_circular=check_circular, allow_nan=allow_nan,
-                                    indent=indent, separators=separators,
-                                    sort_keys=sort_keys)
+        self._encoder_config = dict(
+            skipkeys=skipkeys,
+            ensure_ascii=ensure_ascii,
+            check_circular=check_circular,
+            allow_nan=allow_nan,
+            indent=indent,
+            separators=separators,
+            sort_keys=sort_keys,
+        )
         self._encoder = _json.JSONEncoder(**self._encoder_config)
         self._decoder_config = dict(strict=strict)
         self._decoder = _json.JSONDecoder(**self._decoder_config)

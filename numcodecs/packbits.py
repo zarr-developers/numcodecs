@@ -34,7 +34,6 @@ class PackBits(Codec):
         pass
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(bool)
 
@@ -43,7 +42,7 @@ class PackBits(Codec):
 
         # determine size of packed data
         n = arr.size
-        n_bytes_packed = (n // 8)
+        n_bytes_packed = n // 8
         n_bits_leftover = n % 8
         if n_bits_leftover > 0:
             n_bytes_packed += 1
@@ -64,7 +63,6 @@ class PackBits(Codec):
         return enc
 
     def decode(self, buf, out=None):
-
         # normalise input
         enc = ensure_ndarray(buf).view('u1')
 
