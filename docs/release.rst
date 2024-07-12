@@ -26,7 +26,8 @@ Enhancements
 
 Fix
 ~~~
-
+* Fix VLenUTF8 encoding for read-only buffers.
+  By :user:`Isaac Virshup <ivirshup>`, :issue:`514`.
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
 * Fix Upgrade to Zstd 1.5.5 due to potential corruption.
