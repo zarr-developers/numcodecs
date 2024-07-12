@@ -11,9 +11,22 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+
+Fix
+~~~
+
+
 Maintenance
 ~~~~~~~~~~~
-* The minimum supported Python version is now Python 3.10.
+
+
+.. _release_0.13.0:
+
+0.13.0
+------
 
 Enhancements
 ~~~~~~~~~~~~
@@ -37,6 +50,10 @@ Fix
 
 Maintenance
 ~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+* Add numpy 2 compatibility.
+  By :user:`David Stansby <dstansby>`, :issue:`535`
 * Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
   lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`
