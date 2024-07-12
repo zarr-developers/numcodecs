@@ -11,6 +11,17 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+
+Fix
+~~~
+
+
+Maintenance
+~~~~~~~~~~~
+
 
 .. _release_0.13.0:
 
