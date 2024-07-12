@@ -11,6 +11,12 @@ Release notes
 Unreleased
 ----------
 
+
+.. _release_0.13.0:
+
+0.13.0
+------
+
 Enhancements
 ~~~~~~~~~~~~
 * Add checksum flag to zstd and sets the default level to 0.
