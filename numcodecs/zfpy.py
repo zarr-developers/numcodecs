@@ -1,8 +1,10 @@
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
 import warnings
+from typing import Optional
+from types import ModuleType
 
-_zfpy = None
+_zfpy: Optional[ModuleType] = None
 
 _zfpy_version: tuple = ()
 with suppress(PackageNotFoundError):
@@ -20,7 +22,7 @@ if _zfpy_version:
         )
     else:
         with suppress(ImportError):
-            import zfpy as _zfpy
+            import zfpy as _zfpy  # type: ignore[no-redef]
 
 if _zfpy:
     from .abc import Codec
