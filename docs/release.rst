@@ -11,9 +11,22 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+
+Fix
+~~~
+
+
 Maintenance
 ~~~~~~~~~~~
-* The minimum supported Python version is now Python 3.10.
+
+
+.. _release_0.13.0:
+
+0.13.0
+------
 
 Enhancements
 ~~~~~~~~~~~~
@@ -28,14 +41,21 @@ Enhancements
 
 Fix
 ~~~
-
+* Fix VLenUTF8 encoding for read-only buffers.
+  By :user:`Isaac Virshup <ivirshup>`, :issue:`514`.
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
 * Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
+* Add version constraint(<2.0) for numpy in zfpy.
+  By :user:`Tom Liang <px39n>`, :issue:`540`.
 
 Maintenance
 ~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+* Add numpy 2 compatibility.
+  By :user:`David Stansby <dstansby>`, :issue:`535`
 * Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
   lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`
