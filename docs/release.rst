@@ -22,6 +22,9 @@ Fix
 Maintenance
 ~~~~~~~~~~~
 
+* Remove pin on Sphinx
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
+
 
 .. _release_0.13.0:
 

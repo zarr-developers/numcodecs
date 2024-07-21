@@ -46,7 +46,7 @@ Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
 docs = [
-    "sphinx<7.0.0",
+    "sphinx",
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
