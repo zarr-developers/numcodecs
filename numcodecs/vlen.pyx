@@ -7,7 +7,6 @@
 
 import cython
 cimport cython
-from numpy cimport ndarray
 import numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
@@ -16,7 +15,7 @@ from .compat import ensure_contiguous_ndarray
 from cpython cimport (PyBytes_GET_SIZE, PyBytes_AS_STRING, PyBytes_Check,
                       PyBytes_FromStringAndSize, PyUnicode_AsUTF8String)
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS
-from libc.stdint cimport uint8_t
+from libc.stdint cimport uint8_t, uintptr_t
 from libc.string cimport memcpy
 from ._utils cimport store_le32, load_le32
 
@@ -27,6 +26,14 @@ cdef extern from "Python.h":
     object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
     int PyUnicode_Check(object text)
 
+
+# Hacky workaround for lack of `const object[:]`.
+# Appears hiding `object` in a fused type works.
+# xref: https://github.com/cython/cython/issues/2485
+# xref: https://github.com/scipy/scipy/pull/18192#pullrequestreview-1359581611
+ctypedef fused object_fused_t:
+    object
+    uintptr_t
 
 # 4 bytes to store number of items
 cdef Py_ssize_t HEADER_LENGTH = 4
@@ -75,7 +82,7 @@ class VLenUTF8(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, l, n_items, data_length, total_length
-            ndarray[object, ndim=1] input_values
+            const object_fused_t[:] input_values
             object[:] encoded_values
             int[:] encoded_lengths
             char* encv
