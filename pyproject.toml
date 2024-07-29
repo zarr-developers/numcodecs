@@ -5,6 +5,7 @@ requires = [
     "Cython",
     "py-cpuinfo",
     "numpy",
+    "pkgconfig"
 ]
 build-backend = "setuptools.build_meta"
 
