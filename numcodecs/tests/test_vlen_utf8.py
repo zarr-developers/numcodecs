@@ -82,11 +82,8 @@ def test_decode_errors():
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
 
 
-@pytest.mark.parametrize("writable", [True, False])
-def test_encode_utf8(writable):
+def test_encode_utf8():
     a = np.array(['foo', None, 'bar'], dtype=object)
-    if not writable:
-        a.setflags(write=False)
     codec = VLenUTF8()
     enc = codec.encode(a)
     dec = codec.decode(enc)

@@ -196,13 +196,12 @@ def lz4_extension():
 
 def vlen_extension():
     info('setting up vlen extension')
-    import numpy
 
     extra_compile_args = base_compile_args.copy()
     define_macros = []
 
     # setup sources
-    include_dirs = ['numcodecs', numpy.get_include()]
+    include_dirs = ['numcodecs']
     # define_macros += [('CYTHON_TRACE', '1')]
 
     sources = ['numcodecs/vlen.pyx']
