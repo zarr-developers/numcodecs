@@ -2,7 +2,7 @@ import itertools
 
 
 import numpy as np
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_equal, assert_allclose
 import pytest
 
 
@@ -30,6 +30,7 @@ codecs = [
     FixedScaleOffset(offset=1000, scale=10**6, dtype='<f8', astype='<i4'),
     FixedScaleOffset(offset=1000, scale=10**12, dtype='<f8', astype='<i8'),
     FixedScaleOffset(offset=1000, scale=10**12, dtype='<f8'),
+    FixedScaleOffset(offset=1000, scale=10**12, dtype='<f8', round_to_int=False),
 ]
 
 
@@ -49,6 +50,14 @@ def test_encode():
     assert_array_equal(expect, actual)
     assert np.dtype(astype) == actual.dtype
 
+def test_encode_no_round():
+    dtype = '<f8'
+    astype = dtype
+    codec = FixedScaleOffset(scale=1, offset=1000, dtype=dtype, astype=astype, round_to_int=False)
+    arr = np.linspace(1000, 1001, 10, dtype=dtype)
+    expect = np.linspace(0, 1, 10, dtype=dtype)
+    actual = codec.encode(arr)
+    assert_allclose(expect, actual)
 
 def test_config():
     codec = FixedScaleOffset(dtype='<f8', astype='<i4', scale=10, offset=100)
