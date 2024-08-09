@@ -8,7 +8,7 @@ from .compat import ensure_ndarray, ndarray_copy
 class FixedScaleOffset(Codec):
     """Simplified version of the scale-offset filter available in HDF5.
     Applies the transformation `(x - offset) * scale` to all chunks. Results
-    are rounded to the nearest integer but are not packed according to the
+    are optionally rounded to the nearest integer but are not packed according to the
     minimum number of bits.
 
     Parameters
@@ -21,6 +21,8 @@ class FixedScaleOffset(Codec):
         Data type to use for decoded data.
     astype : dtype, optional
         Data type to use for encoded data.
+    round_to_int : boolean
+        Flag to control rounding encoded data to integers after applying scale and offset
 
     Notes
     -----
@@ -70,10 +72,11 @@ class FixedScaleOffset(Codec):
 
     codec_id = 'fixedscaleoffset'
 
-    def __init__(self, offset, scale, dtype, astype=None):
+    def __init__(self, offset, scale, dtype, astype=None, round_to_int=True):
         self.offset = offset
         self.scale = scale
         self.dtype = np.dtype(dtype)
+        self.round_to_int = round_to_int
         if astype is None:
             self.astype = self.dtype
         else:
@@ -91,8 +94,9 @@ class FixedScaleOffset(Codec):
         # compute scale offset
         enc = (arr - self.offset) * self.scale
 
-        # round to nearest integer
-        enc = np.around(enc)
+        if self.round_to_int:
+            # round to nearest integer
+            enc = np.around(enc)
 
         # convert dtype
         enc = enc.astype(self.astype, copy=False)
