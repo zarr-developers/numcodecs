@@ -50,6 +50,7 @@ def test_encode():
     assert_array_equal(expect, actual)
     assert np.dtype(astype) == actual.dtype
 
+
 def test_encode_no_round():
     dtype = '<f8'
     astype = dtype
@@ -58,6 +59,7 @@ def test_encode_no_round():
     expect = np.linspace(0, 1, 10, dtype=dtype)
     actual = codec.encode(arr)
     assert_allclose(expect, actual)
+
 
 def test_config():
     codec = FixedScaleOffset(dtype='<f8', astype='<i4', scale=10, offset=100)
