@@ -27,8 +27,8 @@ def test_all_classes_registered():
     see #346 for more info
     """
     missing = set()
-    for name, submod in inspect.getmembers(numcodecs, inspect.ismodule):
-        for name, obj in inspect.getmembers(submod):
+    for _name, submod in inspect.getmembers(numcodecs, inspect.ismodule):
+        for _name, obj in inspect.getmembers(submod):
             if inspect.isclass(obj):
                 if issubclass(obj, numcodecs.abc.Codec):
                     if obj.codec_id not in numcodecs.registry.codec_registry:

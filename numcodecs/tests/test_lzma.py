@@ -9,8 +9,8 @@ import pytest
 try:
     # noinspection PyProtectedMember
     from numcodecs.lzma import LZMA, _lzma
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("LZMA not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("LZMA not available") from e
 
 
 from numcodecs.tests.common import (

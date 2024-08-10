@@ -17,6 +17,7 @@ if _zfpy_version:
             "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
             "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
             UserWarning,
+            stacklevel=2,
         )
     else:
         with suppress(ImportError):

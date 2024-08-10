@@ -5,8 +5,8 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenArray
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-array not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-array not available") from e
 from numcodecs.tests.common import (
     check_config,
     check_repr,

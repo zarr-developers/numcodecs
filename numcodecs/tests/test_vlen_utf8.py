@@ -7,8 +7,8 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenUTF8
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-utf8 not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-utf8 not available") from e
 from numcodecs.tests.common import (
     check_config,
     check_repr,

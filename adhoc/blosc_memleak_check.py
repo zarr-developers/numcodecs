@@ -7,7 +7,7 @@ from numpy.testing import assert_array_equal
 
 codec = numcodecs.Blosc()
 data = np.arange(int(sys.argv[1]))
-for i in range(int(sys.argv[2])):
+for _ in range(int(sys.argv[2])):
     enc = codec.encode(data)
     dec = codec.decode(enc)
     arr = np.frombuffer(dec, dtype=data.dtype)

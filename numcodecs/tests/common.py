@@ -200,7 +200,7 @@ def assert_array_items_equal(res, arr):
     # and values
     arr = arr.ravel().tolist()
     res = res.ravel().tolist()
-    for a, r in zip(arr, res):
+    for a, r in zip(arr, res, strict=True):
         if isinstance(a, np.ndarray):
             assert_array_equal(a, r)
         elif a != a:

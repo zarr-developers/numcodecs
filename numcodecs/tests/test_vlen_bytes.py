@@ -5,8 +5,8 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenBytes
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-bytes not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-bytes not available") from e
 from numcodecs.tests.common import (
     check_config,
     check_repr,

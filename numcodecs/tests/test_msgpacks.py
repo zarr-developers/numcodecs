@@ -7,8 +7,8 @@ import pytest
 
 try:
     from numcodecs.msgpacks import MsgPack
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("msgpack not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("msgpack not available") from e
 
 
 from numcodecs.tests.common import (
