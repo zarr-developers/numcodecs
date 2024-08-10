@@ -13,7 +13,7 @@ from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
 
 # star import needed for repr tests so eval finds names
-from numcodecs import *  # noqa
+from numcodecs import *  # noqa: F403
 
 
 greetings = [

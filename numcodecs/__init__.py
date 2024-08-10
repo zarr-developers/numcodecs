@@ -1,4 +1,4 @@
-# flake8: noqa
+# ruff: noqa: E402,F401
 """Numcodecs is a Python package providing buffer compression and
 transformation codecs for use in data storage and communication
 applications. These include:
