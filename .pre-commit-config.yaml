@@ -1,3 +1,4 @@
+exclude: ^fixture/  # files with trailing whitespaces on purpose
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
@@ -6,8 +7,15 @@ default_stages: [commit, push]
 default_language_version:
   python: python3
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    - id: trailing-whitespace
+    - id: check-yaml
+    - id: debug-statements
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.6.9'
+    rev: v0.6.9
     hooks:
     - id: ruff
       args: ["--fix", "--show-fixes"]

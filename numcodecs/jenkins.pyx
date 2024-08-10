@@ -168,7 +168,7 @@ cpdef uint32_t jenkins_lookup3(const uint8_t[::1] _data, uint32_t initval=0):
     if length == 12:
         c += (<uint32_t>k[11]) << 24
         length -= 1
-        
+
     if length == 11:
         c += (<uint32_t>k[10]) << 16
         length -= 1
@@ -231,7 +231,7 @@ cdef inline uint32_t _jenkins_lookup3_final(uint32_t a, uint32_t b, uint32_t c):
       the output delta to a Gray code (a^(a>>1)) so a string of 1's (as
       is commonly produced by subtraction) look like a single 1-bit
       difference.
-    * the base values were pseudorandom, all zero but one bit set, or 
+    * the base values were pseudorandom, all zero but one bit set, or
       all zero plus a counter that starts at zero.
 
     These constants passed:
@@ -279,7 +279,7 @@ cdef inline (uint32_t, uint32_t, uint32_t) _jenkins_lookup3_mix(uint32_t a, uint
       the output delta to a Gray code (a^(a>>1)) so a string of 1's (as
       is commonly produced by subtraction) look like a single 1-bit
       difference.
-    * the base values were pseudorandom, all zero but one bit set, or 
+    * the base values were pseudorandom, all zero but one bit set, or
       all zero plus a counter that starts at zero.
 
     Some k values for my "a-=c; a^=rot(c,k); c+=b;" arrangement that
@@ -289,7 +289,7 @@ cdef inline (uint32_t, uint32_t, uint32_t) _jenkins_lookup3_mix(uint32_t a, uint
        14  9  3  7 17  3
     Well, "9 15 3 18 27 15" didn't quite get 32 bits diffing
     for "differ" defined as + with a one-bit base and a two-bit delta.  I
-    used http://burtleburtle.net/bob/hash/avalanche.html to choose 
+    used http://burtleburtle.net/bob/hash/avalanche.html to choose
     the operations, constants, and arrangements of the variables.
 
     This does not achieve avalanche.  There are input bits of (a,b,c)
