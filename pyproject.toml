@@ -121,6 +121,7 @@ norecursedirs = [
     "numcodecs.egg-info",
 ]
 log_cli_level = "INFO"
+xfail_strict = true
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
