@@ -120,6 +120,7 @@ norecursedirs = [
     "notebooks",
     "numcodecs.egg-info",
 ]
+log_cli_level = "INFO"
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
