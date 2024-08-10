@@ -98,6 +98,9 @@ exclude_lines = [
     "pragma: ${PY_MAJOR_VERSION} no cover",
 ]
 
+[tool.repo-review]
+ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
+
 [tool.pytest.ini_options]
 addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
 doctest_optionflags = [
