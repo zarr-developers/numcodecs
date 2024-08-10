@@ -13,9 +13,10 @@
 # serve to show the default.
 
 
-import sys
 import os
+import sys
 from unittest.mock import Mock as MagicMock
+
 import numcodecs
 
 

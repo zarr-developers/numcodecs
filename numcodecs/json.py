@@ -1,9 +1,7 @@
 import json as _json
 import textwrap
 
-
 import numpy as np
-
 
 from .abc import Codec
 from .compat import ensure_text

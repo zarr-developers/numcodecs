@@ -1,8 +1,7 @@
-from .abc import Codec
-from .compat import ensure_ndarray, ndarray_copy, ensure_text
-
-
 import numpy as np
+
+from .abc import Codec
+from .compat import ensure_ndarray, ensure_text, ndarray_copy
 
 
 class Categorize(Codec):

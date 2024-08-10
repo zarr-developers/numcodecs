@@ -10,7 +10,7 @@ except ImportError:  # pragma: no cover
 
 if _lzma:
     from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray
+    from .compat import ensure_contiguous_ndarray, ndarray_copy
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):

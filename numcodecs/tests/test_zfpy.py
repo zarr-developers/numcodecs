@@ -1,8 +1,5 @@
-import pytest
-
-
 import numpy as np
-
+import pytest
 
 try:
     # noinspection PyProtectedMember
@@ -12,14 +9,13 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
-    check_encode_decode_array,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 codecs = [
     ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),

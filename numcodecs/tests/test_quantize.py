@@ -1,19 +1,16 @@
 import itertools
 
-
 import numpy as np
-from numpy.testing import assert_array_equal, assert_array_almost_equal
 import pytest
-
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from numcodecs.quantize import Quantize
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_repr,
 )
-
 
 arrays = [
     np.linspace(100, 200, 1000, dtype='<f8'),

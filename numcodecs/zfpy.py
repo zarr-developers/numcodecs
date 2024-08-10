@@ -1,6 +1,6 @@
+import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
-import warnings
 
 _zfpy = None
 
@@ -24,9 +24,10 @@ if _zfpy_version:
             import zfpy as _zfpy
 
 if _zfpy:
-    from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
     import numpy as np
+
+    from .abc import Codec
+    from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):

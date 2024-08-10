@@ -1,10 +1,8 @@
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 
-
 import numpy as np
 import pytest
-
 
 try:
     from numcodecs import blosc
@@ -14,15 +12,14 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
+    check_backwards_compatibility,
+    check_config,
     check_encode_decode,
     check_encode_decode_partial,
-    check_config,
-    check_backwards_compatibility,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
 )
-
 
 codecs = [
     Blosc(shuffle=Blosc.SHUFFLE),

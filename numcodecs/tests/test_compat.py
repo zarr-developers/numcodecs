@@ -1,12 +1,10 @@
 import array
 import mmap
 
-
 import numpy as np
 import pytest
 
-
-from numcodecs.compat import ensure_text, ensure_bytes, ensure_contiguous_ndarray
+from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text
 
 
 def test_ensure_text():

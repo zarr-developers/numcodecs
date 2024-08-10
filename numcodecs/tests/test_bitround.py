@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest
 
 from numcodecs.bitround import BitRound, max_bits

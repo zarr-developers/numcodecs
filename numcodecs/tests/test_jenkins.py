@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from numcodecs.jenkins import jenkins_lookup3
 from numcodecs.checksum32 import JenkinsLookup3
+from numcodecs.jenkins import jenkins_lookup3
 
 
 def test_jenkins_lookup3():

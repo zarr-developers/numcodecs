@@ -1,6 +1,6 @@
-import pytest
-
 import inspect
+
+import pytest
 
 import numcodecs
 from numcodecs.registry import get_codec

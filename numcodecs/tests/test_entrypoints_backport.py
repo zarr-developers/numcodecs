@@ -1,10 +1,9 @@
 import os.path
 import pkgutil
 import sys
+from multiprocessing import Process
 
 import pytest
-
-from multiprocessing import Process
 
 import numcodecs.registry
 

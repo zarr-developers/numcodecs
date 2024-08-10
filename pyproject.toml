@@ -134,7 +134,7 @@ environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
 line-length = 100
 
 [tool.ruff.lint]
-extend-select = [ "B", "RUF", "UP" ]
+extend-select = [ "B", "I", "RUF", "UP" ]
 ignore = [ "RUF001", "UP007" ]
 
 [tool.ruff.format]

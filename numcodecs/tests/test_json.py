@@ -5,10 +5,10 @@ import pytest
 
 from numcodecs.json import JSON
 from numcodecs.tests.common import (
-    check_config,
-    check_repr,
-    check_encode_decode_array,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
     greetings,
 )
 

@@ -8,14 +8,13 @@ try:
 except ImportError as e:  # pragma: no cover
     raise unittest.SkipTest("vlen-bytes not available") from e
 from numcodecs.tests.common import (
-    check_config,
-    check_repr,
-    check_encode_decode_array,
-    check_backwards_compatibility,
-    greetings,
     assert_array_items_equal,
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
+    greetings,
 )
-
 
 greetings_bytes = [g.encode('utf-8') for g in greetings]
 
