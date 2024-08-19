@@ -8,6 +8,7 @@ from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 from distutils import ccompiler
 from distutils.command.clean import clean
+from distutils.sysconfig import customize_compiler
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -325,6 +326,7 @@ class ve_build_ext(build_ext):
             if cpuinfo.platform.machine() == 'x86_64':
                 S_files = glob('c-blosc/internal-complibs/zstd*/decompress/*amd64.S')
                 compiler = ccompiler.new_compiler()
+                customize_compiler(compiler)
                 compiler.src_extensions.append('.S')
                 compiler.compile(S_files)
 
