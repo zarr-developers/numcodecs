@@ -33,6 +33,10 @@ jobs:
 
       - uses: pypa/cibuildwheel@v2.22.0
 
+      - name: Set up QEMU
+        if: ${{ matrix.archs == 'aarch64' }}
+        uses: docker/setup-qemu-action@v3
+
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
