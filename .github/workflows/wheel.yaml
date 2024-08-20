@@ -8,17 +8,22 @@ concurrency:
 
 jobs:
   build_wheels:
-    name: Build wheel on ${{ matrix.os }}
+    name: Build ${{ matrix.archs }} wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is a arm64 runner
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        archs: ["native"]
+        include:
+          - os: ubuntu-latest
+            archs: "aarch64"
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_* *win32 *_i686 *_s390x"
+      CIBW_ARCHS: ${{ matrix.archs }}
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
     steps:
