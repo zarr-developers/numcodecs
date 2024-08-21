@@ -21,6 +21,8 @@ Fix
 
 Maintenance
 ~~~~~~~~~~~
+* Change format() and old string formatting to f-strings.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
 
 * Remove pin on Sphinx
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.

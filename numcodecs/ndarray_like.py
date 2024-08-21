@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Protocol, Tuple, Type, runtime_checkable
+from typing import Any, Optional, Protocol, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):
@@ -11,7 +11,7 @@ class _CachedProtocolMeta(Protocol.__class__):
     isinstance checks using the object's class as the cache key.
     """
 
-    _instancecheck_cache: Dict[Tuple[Type, Type], bool] = {}
+    _instancecheck_cache: dict[tuple[type, type], bool] = {}
 
     def __instancecheck__(self, instance):
         key = (self, instance.__class__)
@@ -39,8 +39,8 @@ class FlagsObj(Protocol, metaclass=_CachedProtocolMeta):
 @runtime_checkable
 class NDArrayLike(Protocol, metaclass=_CachedProtocolMeta):
     dtype: DType
-    shape: Tuple[int, ...]
-    strides: Tuple[int, ...]
+    shape: tuple[int, ...]
+    strides: tuple[int, ...]
     ndim: int
     size: int
     itemsize: int

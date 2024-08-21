@@ -126,13 +126,8 @@ class FixedScaleOffset(Codec):
         )
 
     def __repr__(self):
-        r = '%s(scale=%s, offset=%s, dtype=%r' % (
-            type(self).__name__,
-            self.scale,
-            self.offset,
-            self.dtype.str,
-        )
+        r = f'{type(self).__name__}(scale={self.scale}, offset={self.offset}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r
