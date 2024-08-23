@@ -8,22 +8,21 @@ concurrency:
 
 jobs:
   build_wheels:
-    name: Build ${{ matrix.archs }} wheel on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is a arm64 runner
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        archs: ["native"]
-        include:
-          - os: ubuntu-latest
-            archs: "aarch64"
+        build_all:
+          - ${{ (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')) || contains(github.event.pull_request.labels.*.name, 'test all wheels')}}
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-*"
-      CIBW_SKIP: "pp* *-musllinux_* *win32 *_i686 *_s390x"
-      CIBW_ARCHS: ${{ matrix.archs }}
+      CIBW_ARCHS_MACOS: native
+      CIBW_ARCHS_WINDOWS: native
+      CIBW_ARCHS_LINUX: "x86_64 aarch64"
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
     steps:
@@ -31,11 +30,16 @@ jobs:
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.22.0
+      - name: Restrict number of wheel builds on PRs
+        if: ${{ !matrix.build_all }}
+        run: |
+          echo "CIBW_BUILD=cp310-win_amd64 cp311-manylinux_x86_64 cp312-macosx_x86_64 cp312-macosx_arm64" >> $GITHUB_ENV
 
       - name: Set up QEMU
-        if: ${{ matrix.archs == 'aarch64' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: docker/setup-qemu-action@v3
+
+      - uses: pypa/cibuildwheel@v2.22.0
 
       - uses: actions/upload-artifact@v4
         with:
