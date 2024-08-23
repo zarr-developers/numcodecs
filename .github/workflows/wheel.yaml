@@ -15,8 +15,16 @@ jobs:
       matrix:
         # macos-13 is an intel runner, macos-14 is a arm64 runner
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        build_all:
-          - ${{ (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')) || contains(github.event.pull_request.labels.*.name, 'test all wheels')}}
+        # Build all wheels on either:
+        #    - tagged release
+        #    - pull request opened with "test all wheels" label
+        #    - pull requests when "test all wheels" label is added
+        build_all: |
+          ${{
+              (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v'))
+              || contains(github.event.pull_request.labels.*.name, 'test all wheels')
+              || (github.event.action == 'labeled' && github.event.label.name == 'test all wheels')
+          }}
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-*"
