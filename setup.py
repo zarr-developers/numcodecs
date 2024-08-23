@@ -140,12 +140,7 @@ def _blosc_extension_with_system_libs():
 
     # remove minizip because Python.h 3.8 tries to include crypt.h
     include_dirs = [d for d in include_dirs if 'minizip' not in d]
-    define_macros += [
-        ('HAVE_LZ4', 1),
-        # ('HAVE_SNAPPY', 1),
-        ('HAVE_ZLIB', 1),
-        ('HAVE_ZSTD', 1),
-    ]
+
     # define_macros += [('CYTHON_TRACE', '1')]
 
     # SSE2
