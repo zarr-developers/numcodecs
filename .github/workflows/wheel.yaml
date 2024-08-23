@@ -6,6 +6,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Build all wheels on either:
+  #    - tagged release
+  #    - pull request opened with "test all wheels" label
+  #    - pull requests when "test all wheels" label is added
+  BUILD_ALL: |
+    ${{
+        (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v'))
+        || contains(github.event.pull_request.labels.*.name, 'test all wheels')
+        || (github.event.action == 'labeled' && github.event.label.name == 'test all wheels')
+    }}
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -15,16 +27,6 @@ jobs:
       matrix:
         # macos-13 is an intel runner, macos-14 is a arm64 runner
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        # Build all wheels on either:
-        #    - tagged release
-        #    - pull request opened with "test all wheels" label
-        #    - pull requests when "test all wheels" label is added
-        build_all: |
-          ${{
-              (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v'))
-              || contains(github.event.pull_request.labels.*.name, 'test all wheels')
-              || (github.event.action == 'labeled' && github.event.label.name == 'test all wheels')
-          }}
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-*"
@@ -39,7 +41,7 @@ jobs:
           submodules: true
 
       - name: Restrict number of wheel builds on PRs
-        if: ${{ !matrix.build_all }}
+        if: ${{ !env.BUILD_ALL }}
         run: |
           echo "CIBW_BUILD=cp310-win_amd64 cp311-manylinux_x86_64 cp312-macosx_x86_64 cp312-macosx_arm64" >> $GITHUB_ENV
 
