@@ -1,7 +1,0 @@
-cython
-entrypoints
-numpy
-msgpack
-pytest
-zfpy
-typing-extensions

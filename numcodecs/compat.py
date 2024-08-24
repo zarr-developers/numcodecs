@@ -67,9 +67,7 @@ def ensure_ndarray(buf) -> np.ndarray:
     return np.array(ensure_ndarray_like(buf), copy=False)
 
 
-def ensure_contiguous_ndarray_like(
-    buf, max_buffer_size=None, flatten=True
-) -> NDArrayLike:
+def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> NDArrayLike:
     """Convenience function to coerce `buf` to ndarray-like array.
     Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -117,7 +115,7 @@ def ensure_contiguous_ndarray_like(
         raise ValueError("an array with contiguous memory is required")
 
     if max_buffer_size is not None and arr.nbytes > max_buffer_size:
-        msg = "Codec does not support buffers of > {} bytes".format(max_buffer_size)
+        msg = f"Codec does not support buffers of > {max_buffer_size} bytes"
         raise ValueError(msg)
 
     return arr
@@ -152,9 +150,7 @@ def ensure_contiguous_ndarray(buf, max_buffer_size=None, flatten=True) -> np.arr
     """
 
     return ensure_ndarray(
-        ensure_contiguous_ndarray_like(
-            buf, max_buffer_size=max_buffer_size, flatten=flatten
-        )
+        ensure_contiguous_ndarray_like(buf, max_buffer_size=max_buffer_size, flatten=flatten)
     )
 
 

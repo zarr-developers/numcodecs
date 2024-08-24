@@ -1,7 +1,8 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
+
+from importlib.metadata import entry_points
 import logging
-from contextlib import suppress
 
 logger = logging.getLogger("numcodecs")
 codec_registry = {}
@@ -9,13 +10,12 @@ entries = {}
 
 
 def run_entrypoints():
-    import entrypoints
     entries.clear()
-    entries.update(entrypoints.get_group_named("numcodecs.codecs"))
+    eps = entry_points()
+    entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
 
 
-with suppress(ImportError):
-    run_entrypoints()
+run_entrypoints()
 
 
 def get_codec(config):
@@ -49,7 +49,7 @@ def get_codec(config):
             register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
-    raise ValueError('codec not available: %r' % codec_id)
+    raise ValueError(f'codec not available: {codec_id!r}')
 
 
 def register_codec(cls, codec_id=None):

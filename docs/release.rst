@@ -11,6 +11,108 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+
+Fix
+~~~
+
+
+Maintenance
+~~~~~~~~~~~
+* Change format() and old string formatting to f-strings.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
+
+* Remove pin on Sphinx
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
+
+
+.. _release_0.13.0:
+
+0.13.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+* Add checksum flag to zstd and sets the default level to 0.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`519`.
+* Add PCodec
+  By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
+* Use PyData theme for docs
+  By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+
+Fix
+~~~
+* Fix VLenUTF8 encoding for read-only buffers.
+  By :user:`Isaac Virshup <ivirshup>`, :issue:`514`.
+* Fix skip of entry points backport tests
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
+* Fix Upgrade to Zstd 1.5.5 due to potential corruption.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
+* Add version constraint(<2.0) for numpy in zfpy.
+  By :user:`Tom Liang <px39n>`, :issue:`540`.
+
+Maintenance
+~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+* Add numpy 2 compatibility.
+  By :user:`David Stansby <dstansby>`, :issue:`535`
+* Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
+  lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`
+
+
+.. _release_0.12.1:
+
+0.12.1
+------
+
+Fix
+~~~
+
+* ``Codec`` is now derived from ``abc.ABC``
+  By :user:`Mads R. B. Kristensen <madsbk>`, :issue:`472`.
+* Fix handling of entry points on older Python versions where ``importlib_metadata`` compatibility is concerned
+  By :user:`Vyas Ramasubramani <vyasr>`, :issue:`478`.
+* Make shuffle pyx functions ``noexcept``
+  By :user:`Martin Durant <martindurant>`, :issue:`477`.
+
+.. _release_0.12.0:
+
+0.12.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+
+* Add ``fletcher32`` checksum codec
+  By :user:`Martin Durant <martindurant>`, :issue:`410`.
+* Add ``jenkins_lookup3`` checksum codec
+  By :user:`Mark Kittisopkul <mkitti>`, :issue:`445`.
+* Support Python 3.12.
+  By :user:`John Kirkham <jakirkham>`, :issue:`471`.
+
+Fix
+~~~
+
+* Fixed docs/Makefile error message when sphinx is not present
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`451`.
+* Add missing RTD requirements
+  By :user:`John Kirkham <jakirkham>`, :issue:`455`.
+
+Maintenance
+~~~~~~~~~~~
+
+* Cleanup ``import``\ s in ``adhoc/blosc_memleak_check.py``
+  By :user:`John Kirkham <jakirkham>`, :issue:`408`.
+
+.. _release_0.11.0:
+
+0.11.0
+------
+
 Fix
 ~~~
 
@@ -20,6 +122,9 @@ Fix
 
 Maintenance
 ~~~~~~~~~~~
+
+* Remove unnecessary None argument to .get(), it is the default value.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`395`.
 
 * Apply refurb suggestions.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`372`.
@@ -34,10 +139,14 @@ Maintenance
   By :user:`John Kirkham <jakirkham>`, :issue:`375`.
 
 * Remove Python 2 code.
-  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>` :issue:`368`,
+  :issue:`387`.
 
 * Support Python 3.11.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
+
+* Drop Python 3.7.
+  By :user:`John Kirkham <jakirkham>`,, :issue:`405` :issue:`406`.
 
 * Test with zfpy 1.0.0.
   By :user:`John Kirkham <jakirkham>`, :issue:`385`.
@@ -52,11 +161,24 @@ Maintenance
 * Add tests for all registry classes.
   By :user:`Josh Moore <joshmoore>`, :issue:`349`.
 
+* Add workflow to label PRs with "needs release notes".
+  By :user:`Saransh Chopra <Saransh-cpp>` :issue:`396`.
+
+* Finish ``pyproject.toml`` migration.
+  By :user:`John Kirkham <jakirkham>` :issue:`382`.
+
 * Drop tox.
   By :user:`John Kirkham <jakirkham>`, :issue:`384`.
 
 * Update ReadTheDocs.
   By :user:`John Kirkham <jakirkham>`, :issue:`383`.
+
+* Use `conda-incubator/setup-miniconda@v2.2.0` (and use Conda on Linux).
+  By :user:`John Kirkham <jakirkham>` :issue:`398`.
+
+* Bring coverage back up to 100%.
+  By :user:`John Kirkham <jakirkham>` and :user:`Martin Durant <martindurant>`,
+  :issue:`392` and :issue:`393`.
 
 * Collect coverage on all OSes & enable Codecov.
   By :user:`John Kirkham <jakirkham>`, :issue:`386`, :issue:`388`,
@@ -648,7 +770,7 @@ Fixed project description in setup.py.
 -----
 
 First release. This version is a port of the ``codecs`` module from `Zarr
-<http://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
+<https://zarr.readthedocs.io>`_ 2.1.0. The following changes have been made from
 the original Zarr module:
 
 * Codec classes have been re-organized into separate modules, mostly one per

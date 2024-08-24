@@ -9,9 +9,14 @@ try:
     from numcodecs.vlen import VLenUTF8
 except ImportError:  # pragma: no cover
     raise unittest.SkipTest("vlen-utf8 not available")
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings,
-                                    assert_array_items_equal)
+from numcodecs.tests.common import (
+    check_config,
+    check_repr,
+    check_encode_decode_array,
+    check_backwards_compatibility,
+    greetings,
+    assert_array_items_equal,
+)
 
 
 arrays = [
@@ -77,8 +82,11 @@ def test_decode_errors():
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
 
 
-def test_encode_utf8():
+@pytest.mark.parametrize("writable", [True, False])
+def test_encode_utf8(writable):
     a = np.array(['foo', None, 'bar'], dtype=object)
+    if not writable:
+        a.setflags(write=False)
     codec = VLenUTF8()
     enc = codec.encode(a)
     dec = codec.decode(enc)

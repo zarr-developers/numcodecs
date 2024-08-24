@@ -28,14 +28,14 @@ class Delta(Codec):
     --------
     >>> import numcodecs
     >>> import numpy as np
-    >>> x = np.arange(100, 120, 2, dtype='i8')
-    >>> codec = numcodecs.Delta(dtype='i8', astype='i1')
+    >>> x = np.arange(100, 120, 2, dtype='i2')
+    >>> codec = numcodecs.Delta(dtype='i2', astype='i1')
     >>> y = codec.encode(x)
     >>> y
     array([100,   2,   2,   2,   2,   2,   2,   2,   2,   2], dtype=int8)
     >>> z = codec.decode(y)
     >>> z
-    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118])
+    array([100, 102, 104, 106, 108, 110, 112, 114, 116, 118], dtype=int16)
 
     """
 
@@ -47,11 +47,10 @@ class Delta(Codec):
             self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
-        if self.dtype == object or self.astype == object:
+        if self.dtype == np.dtype(object) or self.astype == np.dtype(object):
             raise ValueError('object arrays are not supported')
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -70,7 +69,6 @@ class Delta(Codec):
         return enc
 
     def decode(self, buf, out=None):
-
         # normalise input
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -90,15 +88,11 @@ class Delta(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            dtype=self.dtype.str,
-            astype=self.astype.str
-        )
+        return dict(id=self.codec_id, dtype=self.dtype.str, astype=self.astype.str)
 
     def __repr__(self):
-        r = '{}(dtype={!r}'.format(type(self).__name__, self.dtype.str)
+        r = f'{type(self).__name__}(dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

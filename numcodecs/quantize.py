@@ -60,19 +60,18 @@ class Quantize(Codec):
             raise ValueError('only floating point data types are supported')
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
         # apply scaling
-        precision = 10. ** -self.digits
+        precision = 10.0**-self.digits
         exp = math.log(precision, 10)
         if exp < 0:
             exp = int(math.floor(exp))
         else:
             exp = int(math.ceil(exp))
-        bits = math.ceil(math.log(10. ** -exp, 2))
-        scale = 2. ** bits
+        bits = math.ceil(math.log(10.0**-exp, 2))
+        scale = 2.0**bits
         enc = np.around(scale * arr) / scale
 
         # cast dtype
@@ -92,13 +91,12 @@ class Quantize(Codec):
             id=self.codec_id,
             digits=self.digits,
             dtype=self.dtype.str,
-            astype=self.astype.str
+            astype=self.astype.str,
         )
 
     def __repr__(self):
-        r = '%s(digits=%s, dtype=%r' % \
-            (type(self).__name__, self.digits, self.dtype.str)
+        r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

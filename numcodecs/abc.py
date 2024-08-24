@@ -28,11 +28,10 @@ other and vice versa.
 
 """
 
+from abc import ABC, abstractmethod
 
-from abc import abstractmethod
 
-
-class Codec:
+class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class
@@ -114,15 +113,14 @@ class Codec:
             return False
 
     def __repr__(self):
-
         # override in sub-class if need special representation
 
         # by default, assume all non-private members are configuration
         # parameters and valid keyword arguments to constructor function
 
-        r = '%s(' % type(self).__name__
-        params = ['{}={!r}'.format(k, getattr(self, k))
-                  for k in sorted(self.__dict__)
-                  if not k.startswith('_')]
+        r = f'{type(self).__name__}('
+        params = [
+            f'{k}={getattr(self, k)!r}' for k in sorted(self.__dict__) if not k.startswith('_')
+        ]
         r += ', '.join(params) + ')'
         return r

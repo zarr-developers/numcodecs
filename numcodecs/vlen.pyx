@@ -7,6 +7,7 @@
 
 import cython
 cimport cython
+from numpy cimport ndarray
 import numpy as np
 from .abc import Codec
 from .compat_ext cimport Buffer
@@ -74,7 +75,7 @@ class VLenUTF8(Codec):
     def encode(self, buf):
         cdef:
             Py_ssize_t i, l, n_items, data_length, total_length
-            object[:] input_values
+            ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
             char* encv
@@ -98,7 +99,7 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             u = input_values[i]
             if u is None or u == 0:  # treat these as missing value, normalize
-                u = u''
+                u = ''
             elif not PyUnicode_Check(u):
                 raise TypeError('expected unicode string, found %r' % u)
             b = PyUnicode_AsUTF8String(u)
@@ -310,11 +311,14 @@ class VLenArray(Codec):
     --------
     >>> import numcodecs
     >>> import numpy as np
-    >>> x = np.array([[1, 3, 5], [4], [7, 9]], dtype='object')
-    >>> codec = numcodecs.VLenArray('<i4')
+    >>> x1 = np.array([1, 3, 5], dtype=np.int16)
+    >>> x2 = np.array([4], dtype=np.int16)
+    >>> x3 = np.array([7, 9], dtype=np.int16)
+    >>> x = np.array([x1, x2, x3], dtype='object')
+    >>> codec = numcodecs.VLenArray('<i2')
     >>> codec.decode(codec.encode(x))
-    array([array([1, 3, 5], dtype=int32), array([4], dtype=int32),
-           array([7, 9], dtype=int32)], dtype=object)
+    array([array([1, 3, 5], dtype=int16), array([4], dtype=int16),
+           array([7, 9], dtype=int16)], dtype=object)
 
     See Also
     --------

@@ -1,0 +1,89 @@
+name: Tests
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        # macos-12 is an intel runner, macos-14 is a arm64 runner
+        platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3.0.4
+        with:
+            channels: conda-forge
+            miniforge-version: latest
+            python-version: ${{ matrix.python-version }}
+
+      - name: Show info about `base` environment
+        shell: "bash -l {0}"
+        run: |
+          conda info
+          conda config --show-sources
+          conda list --show-channel-urls
+
+      - name: Set up `env`
+        shell: "bash -l {0}"
+        run: >
+          conda create -n env
+          c-compiler cxx-compiler
+          python=${{matrix.python-version}} wheel pip
+
+      - name: Install clang
+        shell: "bash -l {0}"
+        if: matrix.platform == 'macos-12'
+        run: |
+          conda activate env
+          conda install -y 'clang>=12.0.1,<17'
+
+      - name: Show info about `env` environment
+        shell: "bash -l {0}"
+        run: |
+          conda list --show-channel-urls -n env
+
+      - name: Install numcodecs
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          export DISABLE_NUMCODECS_AVX2=""
+          # TODO: put back zfpy import when it supports numpy 2.0
+          python -m pip install -v -e .[test,test_extras,msgpack,pcodec]
+
+      # This is used to test with zfpy, which does not yet support numpy 2.0
+      - name: Install older numpy and zfpy
+        if: matrix.python-version == '3.10'
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          python -m pip install "zfpy>=1" "numpy<2"
+
+      - name: List installed packages
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          python -m pip list
+
+      - name: Run tests
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          pytest -v
+
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
