@@ -99,10 +99,4 @@ class Categorize(Codec):
         labels = repr(self.labels[:3])
         if len(self.labels) > 3:
             labels = labels[:-1] + ', ...]'
-        r = '%s(dtype=%r, astype=%r, labels=%s)' % (
-            type(self).__name__,
-            self.dtype.str,
-            self.astype.str,
-            labels,
-        )
-        return r
+        return f'{type(self).__name__}(dtype={self.dtype.str!r}, astype={self.astype.str!r}, labels={labels})'

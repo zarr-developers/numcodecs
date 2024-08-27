@@ -84,6 +84,4 @@ class MsgPack(Codec):
         )
 
     def __repr__(self):
-        return 'MsgPack(raw={!r}, use_bin_type={!r}, use_single_float={!r})'.format(
-            self.raw, self.use_bin_type, self.use_single_float
-        )
+        return f'MsgPack(raw={self.raw!r}, use_bin_type={self.use_bin_type!r}, use_single_float={self.use_single_float!r})'

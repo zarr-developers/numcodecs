@@ -66,11 +66,4 @@ if _lzma:
             return ndarray_copy(dec, out)
 
         def __repr__(self):
-            r = '%s(format=%r, check=%r, preset=%r, filters=%r)' % (
-                type(self).__name__,
-                self.format,
-                self.check,
-                self.preset,
-                self.filters,
-            )
-            return r
+            return f'{type(self).__name__}(format={self.format!r}, check={self.check!r}, preset={self.preset!r}, filters={self.filters!r})'

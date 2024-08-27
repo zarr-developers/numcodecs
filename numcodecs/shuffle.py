@@ -57,5 +57,4 @@ class Shuffle(Codec):
         return out
 
     def __repr__(self):
-        r = '%s(elementsize=%s)' % (type(self).__name__, self.elementsize)
-        return r
+        return f'{type(self).__name__}(elementsize={self.elementsize})'
