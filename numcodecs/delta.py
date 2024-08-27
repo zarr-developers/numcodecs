@@ -91,8 +91,8 @@ class Delta(Codec):
         return dict(id=self.codec_id, dtype=self.dtype.str, astype=self.astype.str)
 
     def __repr__(self):
-        r = '{}(dtype={!r}'.format(type(self).__name__, self.dtype.str)
+        r = f'{type(self).__name__}(dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r
