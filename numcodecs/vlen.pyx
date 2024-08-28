@@ -250,7 +250,10 @@ class VLenBytes(Codec):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
             data += 4
-            encv = PyBytes_AS_STRING(values[i])
+            b = values[i]
+            if b is None or b == 0:  # treat these as missing value, normalize
+                b = b''
+            encv = PyBytes_AS_STRING(b)
             memcpy(data, encv, l)
             data += l
 
