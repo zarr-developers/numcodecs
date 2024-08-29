@@ -251,7 +251,7 @@ class VLenBytes(Codec):
             store_le32(<uint8_t*>data, l)
             data += 4
             if l > 0:
-                encv = PyBytes_AS_STRING(b)
+                encv = PyBytes_AS_STRING(values[i])
                 memcpy(data, encv, l)
                 data += l
 
