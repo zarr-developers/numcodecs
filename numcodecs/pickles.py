@@ -52,4 +52,4 @@ class Pickle(Codec):
         return dict(id=self.codec_id, protocol=self.protocol)
 
     def __repr__(self):
-        return 'Pickle(protocol=%s)' % self.protocol
+        return f'Pickle(protocol={self.protocol})'

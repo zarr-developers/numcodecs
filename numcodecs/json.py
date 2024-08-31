@@ -97,12 +97,13 @@ class JSON(Codec):
         return config
 
     def __repr__(self):
-        params = ['encoding=%r' % self._text_encoding]
+        params = [f'encoding={self._text_encoding!r}']
         for k, v in sorted(self._encoder_config.items()):
-            params.append('{}={!r}'.format(k, v))
+            params.append(f'{k}={v!r}')
         for k, v in sorted(self._decoder_config.items()):
-            params.append('{}={!r}'.format(k, v))
+            params.append(f'{k}={v!r}')
         classname = type(self).__name__
-        r = '{}({})'.format(classname, ', '.join(params))
-        r = textwrap.fill(r, width=80, break_long_words=False, subsequent_indent='     ')
-        return r
+        params = ', '.join(params)
+        return textwrap.fill(
+            f'{classname}({params})', width=80, break_long_words=False, subsequent_indent='     '
+        )
