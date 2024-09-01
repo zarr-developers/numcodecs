@@ -18,32 +18,32 @@ List of behaviour to deprecate:
 
 """
 
-from numcodecs.abc import Codec
 import numpy as np
 
 import blosc
 from blosc import (
     BITSHUFFLE,
-    SHUFFLE,
-    NOSHUFFLE,
     MAX_BUFFERSIZE,
     MAX_THREADS,
     MAX_TYPESIZE,
-    VERSION_STRING,
+    NOSHUFFLE,
+    SHUFFLE,
     VERSION_DATE,
+    VERSION_STRING,
 )
+from numcodecs.abc import Codec
 
 __all__ = [
     "BITSHUFFLE",
-    "SHUFFLE",
-    "NOSHUFFLE",
     "MAX_BUFFERSIZE",
     "MAX_THREADS",
     "MAX_TYPESIZE",
-    "VERSION_STRING",
+    "NOSHUFFLE",
+    "SHUFFLE",
     "VERSION_DATE",
-    "list_compressors",
+    "VERSION_STRING",
     'get_nthreads',
+    "list_compressors",
 ]
 
 AUTOBLOCKS = 0
@@ -52,20 +52,30 @@ _shuffle_repr = ['AUTOSHUFFLE', 'NOSHUFFLE', 'SHUFFLE', 'BITSHUFFLE']
 
 
 def list_compressors() -> list[str]:
+    """Get a list of compressors supported in blosc."""
     return blosc.compressor_list()
 
 
 def get_nthreads() -> int:
+    """
+    Get the number of threads that Blosc uses internally for compression and
+    decompression.
+    """
     nthreads = blosc.set_nthreads(1)
     blosc.set_nthreads(nthreads)
     return nthreads
 
 
 def set_nthreads(nthreads: int) -> None:
+    """
+    Set the number of threads that Blosc uses internally for compression and
+    decompression.
+    """
     blosc.set_nthreads(nthreads)
 
 
-def cbuffer_complib(source):
+def cbuffer_complib(source) -> str:
+    """Return the name of the compression library used to compress `source`."""
     return blosc.get_clib(source)
 
 
@@ -86,6 +96,32 @@ def _check_buffer_size(buf, max_buffer_size):
 
 
 def compress(source, cname: str, clevel: int, shuffle: int = SHUFFLE, blocksize=AUTOBLOCKS):
+    """
+    Compress data.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Data to be compressed. Can be any object supporting the buffer
+        protocol.
+    cname : bytes
+        Name of compression library to use.
+    clevel : int
+        Compression level.
+    shuffle : int
+        Either NOSHUFFLE (0), SHUFFLE (1), BITSHUFFLE (2) or AUTOSHUFFLE (-1). If AUTOSHUFFLE,
+        bit-shuffle will be used for buffers with itemsize 1, and byte-shuffle will
+        be used otherwise. The default is `SHUFFLE`.
+    blocksize : int
+        The requested size of the compressed blocks.  If 0, an automatic blocksize will
+        be used.
+
+    Returns
+    -------
+    dest : bytes
+        Compressed data.
+
+    """
     if shuffle == AUTOSHUFFLE:
         if source.itemsize == 1:
             shuffle = BITSHUFFLE
@@ -109,6 +145,23 @@ def compress(source, cname: str, clevel: int, shuffle: int = SHUFFLE, blocksize=
 
 
 def decompress(source, dest: np.ndarray | bytearray | None = None):
+    """
+    Decompress data.
+
+    Parameters
+    ----------
+    source : bytes-like
+        Compressed data, including blosc header. Can be any object supporting the buffer
+        protocol.
+    dest : array-like, optional
+        Object to decompress into.
+
+    Returns
+    -------
+    dest : bytes
+        Object containing decompressed data.
+
+    """
     if dest is None:
         return blosc.decompress(source)
     elif isinstance(dest, np.ndarray):
@@ -119,7 +172,8 @@ def decompress(source, dest: np.ndarray | bytearray | None = None):
 
 
 class Blosc(Codec):
-    """Codec providing compression using the Blosc meta-compressor.
+    """
+    Codec providing compression using the Blosc meta-compressor.
 
     Parameters
     ----------
@@ -170,11 +224,5 @@ class Blosc(Codec):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % (
-            type(self).__name__,
-            self.cname,
-            self.clevel,
-            _shuffle_repr[self.shuffle + 1],
-            self.blocksize,
-        )
+        r = f'{type(self).__name__}(cname={self.cname!r}, clevel={self.clevel!r}, shuffle={_shuffle_repr[self.shuffle + 1]}, blocksize={self.blocksize})'
         return r
