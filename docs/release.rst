@@ -41,6 +41,8 @@ Enhancements
   By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+* Improve the structure of docs
+  By :user:`David Stansby <dstansby>`, :issue:`458`.
 
 Fix
 ~~~
