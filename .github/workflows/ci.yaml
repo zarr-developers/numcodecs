@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13.0rc2"]
         # macos-12 is an intel runner, macos-14 is a arm64 runner
         platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
 
@@ -25,7 +25,7 @@ jobs:
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v3.0.4
         with:
-            channels: conda-forge
+            channels: conda-forge, conda-forge/label/python_rc
             miniforge-version: latest
             python-version: ${{ matrix.python-version }}
 
