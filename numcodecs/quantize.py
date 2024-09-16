@@ -95,12 +95,8 @@ class Quantize(Codec):
         )
 
     def __repr__(self):
-        r = '%s(digits=%s, dtype=%r' % (
-            type(self).__name__,
-            self.digits,
-            self.dtype.str,
-        )
+        r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

@@ -24,6 +24,8 @@ Fix
 
 Maintenance
 ~~~~~~~~~~~
+* Change format() and old string formatting to f-strings.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
 
 * Remove pin on Sphinx
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
@@ -42,6 +44,8 @@ Enhancements
   By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+* Improve the structure of docs
+  By :user:`David Stansby <dstansby>`, :issue:`458`.
 
 Fix
 ~~~
