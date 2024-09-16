@@ -73,6 +73,4 @@ class AsType(Codec):
         }
 
     def __repr__(self):
-        return '{}(encode_dtype={!r}, decode_dtype={!r})'.format(
-            type(self).__name__, self.encode_dtype.str, self.decode_dtype.str
-        )
+        return f'{type(self).__name__}(encode_dtype={self.encode_dtype.str!r}, decode_dtype={self.decode_dtype.str!r})'

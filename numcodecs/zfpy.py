@@ -102,11 +102,8 @@ if _zfpy:
                 return dec
 
         def __repr__(self):
-            r = "%s(mode=%r, tolerance=%s, rate=%s, precision=%s)" % (
-                type(self).__name__,
-                self.mode,
-                self.tolerance,
-                self.rate,
-                self.precision,
+            return (
+                f"{type(self).__name__}(mode={self.mode!r}, "
+                f"tolerance={self.tolerance}, rate={self.rate}, "
+                f"precision={self.precision})"
             )
-            return r

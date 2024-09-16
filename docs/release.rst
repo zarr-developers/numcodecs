@@ -11,9 +11,27 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+
+Fix
+~~~
+
+
 Maintenance
 ~~~~~~~~~~~
-* The minimum supported Python version is now Python 3.10.
+* Change format() and old string formatting to f-strings.
+  By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
+
+* Remove pin on Sphinx
+  By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
+
+
+.. _release_0.13.0:
+
+0.13.0
+------
 
 Enhancements
 ~~~~~~~~~~~~
@@ -23,10 +41,13 @@ Enhancements
   By :user:`Ryan Abernathey <rabernat>`, :issue:`501`.
 * Use PyData theme for docs
   By :user:`John Kirkham <jakirkham>`, :issue:`485`.
+* Improve the structure of docs
+  By :user:`David Stansby <dstansby>`, :issue:`458`.
 
 Fix
 ~~~
-
+* Fix VLenUTF8 encoding for read-only buffers.
+  By :user:`Isaac Virshup <ivirshup>`, :issue:`514`.
 * Fix skip of entry points backport tests
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
 * Fix Upgrade to Zstd 1.5.5 due to potential corruption.
@@ -36,6 +57,10 @@ Fix
 
 Maintenance
 ~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.10.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+* Add numpy 2 compatibility.
+  By :user:`David Stansby <dstansby>`, :issue:`535`
 * Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
   lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`

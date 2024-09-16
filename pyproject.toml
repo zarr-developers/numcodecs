@@ -3,7 +3,8 @@ requires = [
     "setuptools>=64",
     "setuptools-scm[toml]>=6.2",
     "Cython",
-    "py-cpuinfo"
+    "py-cpuinfo",
+    "numpy",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -45,7 +46,7 @@ Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
 docs = [
-    "sphinx<7.0.0",
+    "sphinx",
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
@@ -151,6 +152,10 @@ environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
+extend-select = [ "UP" ]
+ignore = ["UP007"]
 
 [tool.ruff.format]
 quote-style = "preserve"

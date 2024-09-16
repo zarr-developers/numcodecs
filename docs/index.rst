@@ -64,30 +64,7 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    abc
-    registry
-    blosc
-    pcodec
-    lz4
-    zfpy
-    zstd
-    zlib
-    gzip
-    bz2
-    lzma
-    delta
-    fixedscaleoffset
-    quantize
-    bitround
-    packbits
-    categorize
-    checksum32
-    astype
-    json
-    pickles
-    msgpacks
-    vlen
-    shuffle
+    api
     release
     contributing
 
