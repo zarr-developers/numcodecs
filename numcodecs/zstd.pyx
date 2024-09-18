@@ -28,8 +28,8 @@ cdef extern from "zstd.h":
 
     ZSTD_CCtx* ZSTD_createCCtx() nogil
     size_t ZSTD_freeCCtx(ZSTD_CCtx* cctx) nogil
-    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx, 
-                                  ZSTD_cParameter param, 
+    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx,
+                                  ZSTD_cParameter param,
                                   int value) nogil
 
     size_t ZSTD_compress2(ZSTD_CCtx* cctx,
@@ -235,7 +235,7 @@ class Zstd(Codec):
     """
 
     codec_id = 'zstd'
-    
+
     # Note: unlike the LZ4 and Blosc codecs, there does not appear to be a (currently)
     # practical limit on the size of buffers that Zstd can process and so we don't
     # enforce a max_buffer_size option here.
@@ -259,19 +259,16 @@ class Zstd(Codec):
         return r
 
     @classmethod
-    @property
     def default_level(cls):
         """Returns the default compression level of the underlying zstd library."""
         return ZSTD_defaultCLevel()
 
     @classmethod
-    @property
     def min_level(cls):
         """Returns the minimum compression level of the underlying zstd library."""
         return ZSTD_minCLevel()
 
     @classmethod
-    @property
     def max_level(cls):
         """Returns the maximum compression level of the underlying zstd library."""
         return ZSTD_maxCLevel()
