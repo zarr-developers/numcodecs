@@ -37,37 +37,34 @@ from numcodecs.bz2 import BZ2
 
 register_codec(BZ2)
 
-with suppress(ImportError):
-    from numcodecs.lzma import LZMA
+from numcodecs.lzma import LZMA
 
-    register_codec(LZMA)
+register_codec(LZMA)
 
-with suppress(ImportError):
-    from numcodecs import blosc
-    from numcodecs.blosc import Blosc
+from numcodecs import blosc
+from numcodecs.blosc import Blosc
 
-    register_codec(Blosc)
-    # initialize blosc
-    try:
-        ncores = multiprocessing.cpu_count()
-    except OSError:  # pragma: no cover
-        ncores = 1
-    blosc.init()
-    blosc.set_nthreads(min(8, ncores))
-    atexit.register(blosc.destroy)
+register_codec(Blosc)
+# initialize blosc
+try:
+    ncores = multiprocessing.cpu_count()
+except OSError:  # pragma: no cover
+    ncores = 1
+blosc.init()
+blosc.set_nthreads(min(8, ncores))
+atexit.register(blosc.destroy)
 
-with suppress(ImportError):
-    from numcodecs import zstd
-    from numcodecs.zstd import Zstd
+from numcodecs import zstd
+from numcodecs.zstd import Zstd
 
-    register_codec(Zstd)
+register_codec(Zstd)
 
-with suppress(ImportError):
-    from numcodecs import lz4
-    from numcodecs.lz4 import LZ4
+from numcodecs import lz4
+from numcodecs.lz4 import LZ4
 
-    register_codec(LZ4)
+register_codec(LZ4)
 
+# zfpy is an optional external dependency
 with suppress(ImportError):
     from numcodecs.zfpy import ZFPY
 
@@ -113,6 +110,7 @@ from numcodecs.bitround import BitRound
 
 register_codec(BitRound)
 
+# msgpack is an optional external dependency
 with suppress(ImportError):
     from numcodecs.msgpacks import MsgPack
 
@@ -128,18 +126,19 @@ from numcodecs.json import JSON
 
 register_codec(JSON)
 
-with suppress(ImportError):
-    from numcodecs import vlen
-    from numcodecs.vlen import VLenUTF8, VLenBytes, VLenArray
+from numcodecs import vlen
+from numcodecs.vlen import VLenUTF8, VLenBytes, VLenArray
 
-    register_codec(VLenUTF8)
-    register_codec(VLenBytes)
-    register_codec(VLenArray)
+register_codec(VLenUTF8)
+register_codec(VLenBytes)
+register_codec(VLenArray)
 
 from numcodecs.fletcher32 import Fletcher32
 
 register_codec(Fletcher32)
 
-from numcodecs.pcodec import PCodec
+# pcodec is an optional external dependency
+with suppress(ImportError):
+    from numcodecs.pcodec import PCodec
 
-register_codec(PCodec)
+    register_codec(PCodec)
