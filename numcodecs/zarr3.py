@@ -9,6 +9,13 @@ from warnings import warn
 import numpy as np
 import numcodecs
 
+try:
+    import zarr
+
+    assert zarr.__version__ >= "3.0.0"
+except ImportError:
+    raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
+
 from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec, ArrayBytesCodec
 from zarr.buffer import NDBuffer, Buffer, BufferPrototype, as_numpy_array_wrapper
 from zarr.array_spec import ArraySpec

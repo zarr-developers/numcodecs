@@ -1,28 +1,25 @@
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 
 import numpy as np
 import pytest
-import sys
 
 from numcodecs.registry import get_codec
 
-try:
-    from zarr.codecs.registry import get_codec_class
-    from zarr.array import Array
-    from zarr.common import JSON
-    from zarr.codecs import BytesCodec
-    from zarr.abc.store import Store
-    from zarr.store import MemoryStore, StorePath
 
-except ImportError:
-    pass
+zarr = pytest.importorskip("docutils")
+
+get_codec_class = zarr.codecs.registry.get_codec_class
+Array = zarr.array.Array
+JSON = zarr.common.JSON
+BytesCodec = zarr.codecs.BytesCodec
+Store = zarr.abc.store.Store
+MemoryStore = zarr.store.MemoryStore
+StorePath = zarr.store.StorePath
 
 
-pytestmark = pytest.mark.skipif(
-    sys.version_info < (3, 10), reason="zarr-python 3 requires Python 3.10 or higher"
-)
+EXPECTED_WARNING_STR = "Numcodecs codecs are not in the Zarr version 3.*"
 
 
 @pytest.fixture
@@ -36,7 +33,7 @@ def store() -> Iterator[Store]:
 def test_generic_codec(store: Store, codec_id: str):
     data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic",
             shape=data.shape,
@@ -50,7 +47,7 @@ def test_generic_codec(store: Store, codec_id: str):
         )
 
     a[:, :] = data.copy()
-    assert np.array_equal(data, a[:, :])
+    np.testing.assert_array_equal(data, a[:, :])
 
 
 @pytest.mark.parametrize(
@@ -74,7 +71,7 @@ def test_generic_filter(store: Store, codec_config: dict[str, JSON]):
     codec_id = codec_config["id"]
     del codec_config["id"]
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic",
             shape=data.shape,
@@ -89,13 +86,13 @@ def test_generic_filter(store: Store, codec_config: dict[str, JSON]):
 
         a[:, :] = data.copy()
         a = Array.open(store / "generic")
-    assert np.array_equal(data, a[:, :])
+    np.testing.assert_array_equal(data, a[:, :])
 
 
 def test_generic_filter_bitround(store: Store):
     data = np.linspace(0, 1, 256, dtype="float32").reshape((16, 16))
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic_bitround",
             shape=data.shape,
@@ -116,7 +113,7 @@ def test_generic_filter_bitround(store: Store):
 def test_generic_filter_quantize(store: Store):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic_quantize",
             shape=data.shape,
@@ -138,7 +135,7 @@ def test_generic_filter_packbits(store: Store):
     data = np.zeros((16, 16), dtype="bool")
     data[0:4, :] = True
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic_packbits",
             shape=data.shape,
@@ -153,14 +150,14 @@ def test_generic_filter_packbits(store: Store):
 
         a[:, :] = data.copy()
         a = Array.open(store / "generic_packbits")
-    assert np.array_equal(data, a[:, :])
+    np.testing.assert_array_equal(data, a[:, :])
 
 
 @pytest.mark.parametrize("codec_id", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"])
 def test_generic_checksum(store: Store, codec_id: str):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic_checksum",
             shape=data.shape,
@@ -175,7 +172,7 @@ def test_generic_checksum(store: Store, codec_id: str):
 
         a[:, :] = data.copy()
         a = Array.open(store / "generic_checksum")
-    assert np.array_equal(data, a[:, :])
+    np.testing.assert_array_equal(data, a[:, :])
 
 
 @pytest.mark.parametrize("codec_id", ["pcodec", "zfpy"])
@@ -190,7 +187,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
 
     data = np.arange(0, 256, dtype="float32").reshape((16, 16))
 
-    with pytest.warns(UserWarning, match="Numcodecs.*"):
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
         a = Array.create(
             store / "generic",
             shape=data.shape,
@@ -203,4 +200,4 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
         )
 
     a[:, :] = data.copy()
-    assert np.array_equal(data, a[:, :])
+    np.testing.assert_array_equal(data, a[:, :])
