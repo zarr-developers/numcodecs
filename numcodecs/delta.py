@@ -64,7 +64,7 @@ class Delta(Codec):
         enc[0] = arr[0]
 
         # compute differences
-        np.subtract(arr[1:], arr[0:-1], out = enc[1:])
+        np.subtract(arr[1:], arr[0:-1], out=enc[1:])
 
         return enc
 
