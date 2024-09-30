@@ -133,7 +133,7 @@ def test_compress_blocksize_default(use_threads):
     assert blocksize > 0
 
 
-@pytest.mark.parametrize('bs', (2**7, 2**8))
+@pytest.mark.parametrize('bs', [2**7, 2**8])
 def test_compress_blocksize(use_threads, bs):
     arr = np.arange(1000, dtype='i4')
 
@@ -225,7 +225,7 @@ def _decode_worker(enc):
     return data
 
 
-@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+@pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(use_threads, pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)
