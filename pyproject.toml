@@ -138,7 +138,12 @@ line-length = 100
 
 [tool.ruff.lint]
 extend-select = [ "B", "I", "RUF", "UP" ]
-ignore = [ "RUF001", "UP007" ]
+ignore = [
+	"RUF001",
+    "UP007",
+    "UP027",  # deprecated
+    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+]
 
 [tool.ruff.format]
 quote-style = "preserve"
