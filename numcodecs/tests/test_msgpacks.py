@@ -56,7 +56,7 @@ def test_backwards_compatibility():
 
 
 @pytest.mark.parametrize(
-    "input_data, dtype",
+    ("input_data", "dtype"),
     [
         ([0, 1], None),
         ([[0, 1], [2, 3]], None),
