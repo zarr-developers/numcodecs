@@ -39,12 +39,20 @@ def test_encode_decode():
         check_encode_decode(arr, codec, precision=precision)
 
 
-def test_encode():
+@pytest.mark.parametrize(
+    "offset, scale, expected",
+    [
+        (1000, 10, [0, 6, 11, 17, 22, 28, 33, 39, 44, 50]),
+        (1002.5, 10, [-25, -19, -14, -8, -3, 3, 8, 14, 19, 25]),
+        (1000, 0.5, [0, 0, 1, 1, 1, 1, 2, 2, 2, 2]),
+    ],
+)
+def test_encode(offset: float, scale: float, expected: list[int]):
     dtype = '<f8'
-    astype = '|u1'
-    codec = FixedScaleOffset(scale=10, offset=1000, dtype=dtype, astype=astype)
-    arr = np.linspace(1000, 1001, 10, dtype=dtype)
-    expect = np.array([0, 1, 2, 3, 4, 6, 7, 8, 9, 10], dtype=astype)
+    astype = np.int16
+    codec = FixedScaleOffset(scale=scale, offset=offset, dtype=dtype, astype=astype)
+    arr = np.linspace(1000, 1005, 10, dtype=dtype)
+    expect = np.array(expected, dtype=astype)
     actual = codec.encode(arr)
     assert_array_equal(expect, actual)
     assert np.dtype(astype) == actual.dtype
