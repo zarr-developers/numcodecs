@@ -49,82 +49,6 @@ def error(*msg):
     print('[numcodecs]', *msg, **kwargs)
 
 
-def blosc_extension():
-    info('setting up Blosc extension')
-
-    extra_compile_args = base_compile_args.copy()
-    define_macros = []
-
-    # setup blosc sources
-    blosc_sources = [f for f in glob('c-blosc/blosc/*.c') if 'avx2' not in f and 'sse2' not in f]
-    include_dirs = [os.path.join('c-blosc', 'blosc')]
-
-    # add internal complibs
-    blosc_sources += glob('c-blosc/internal-complibs/lz4*/*.c')
-    blosc_sources += glob('c-blosc/internal-complibs/snappy*/*.cc')
-    blosc_sources += glob('c-blosc/internal-complibs/zlib*/*.c')
-    blosc_sources += glob('c-blosc/internal-complibs/zstd*/common/*.c')
-    blosc_sources += glob('c-blosc/internal-complibs/zstd*/compress/*.c')
-    blosc_sources += glob('c-blosc/internal-complibs/zstd*/decompress/*.c')
-    blosc_sources += glob('c-blosc/internal-complibs/zstd*/dictBuilder/*.c')
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*') if os.path.isdir(d)]
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*') if os.path.isdir(d)]
-    include_dirs += [d for d in glob('c-blosc/internal-complibs/*/*/*') if os.path.isdir(d)]
-    # remove minizip because Python.h 3.8 tries to include crypt.h
-    include_dirs = [d for d in include_dirs if 'minizip' not in d]
-    define_macros += [
-        ('HAVE_LZ4', 1),
-        # ('HAVE_SNAPPY', 1),
-        ('HAVE_ZLIB', 1),
-        ('HAVE_ZSTD', 1),
-    ]
-    # define_macros += [('CYTHON_TRACE', '1')]
-
-    # SSE2
-    if have_sse2 and not disable_sse2:
-        info('compiling Blosc extension with SSE2 support')
-        extra_compile_args.append('-DSHUFFLE_SSE2_ENABLED')
-        blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'sse2' in f]
-        if os.name == 'nt':
-            define_macros += [('__SSE2__', 1)]
-    else:
-        info('compiling Blosc extension without SSE2 support')
-
-    # AVX2
-    if have_avx2 and not disable_avx2:
-        info('compiling Blosc extension with AVX2 support')
-        extra_compile_args.append('-DSHUFFLE_AVX2_ENABLED')
-        blosc_sources += [f for f in glob('c-blosc/blosc/*.c') if 'avx2' in f]
-        if os.name == 'nt':
-            define_macros += [('__AVX2__', 1)]
-    else:
-        info('compiling Blosc extension without AVX2 support')
-
-    # include assembly files
-    if cpuinfo.platform.machine() == 'x86_64':
-        extra_objects = [
-            S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
-        ]
-    else:
-        extra_objects = []
-
-    sources = ['numcodecs/blosc.pyx']
-
-    # define extension module
-    extensions = [
-        Extension(
-            'numcodecs.blosc',
-            sources=sources + blosc_sources,
-            include_dirs=include_dirs,
-            define_macros=define_macros,
-            extra_compile_args=extra_compile_args,
-            extra_objects=extra_objects,
-        ),
-    ]
-
-    return extensions
-
-
 def zstd_extension():
     info('setting up Zstandard extension')
 
@@ -358,8 +282,8 @@ class Sclean(clean):
 def run_setup(with_extensions):
     if with_extensions:
         ext_modules = (
-            blosc_extension()
-            + zstd_extension()
+            # blosc_extension()
+            zstd_extension()
             + lz4_extension()
             + compat_extension()
             + shuffle_extension()
