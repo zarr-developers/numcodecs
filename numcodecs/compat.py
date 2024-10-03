@@ -104,7 +104,7 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> N
 
     # check for datetime or timedelta ndarray, the buffer interface doesn't support those
     if arr.dtype.kind in "Mm":
-        arr = arr.view(np.int64)
+        arr = arr.view(np.int64)  # type: ignore[arg-type]
 
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
@@ -121,7 +121,7 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> N
     return arr
 
 
-def ensure_contiguous_ndarray(buf, max_buffer_size=None, flatten=True) -> np.array:
+def ensure_contiguous_ndarray(buf, max_buffer_size=None, flatten=True) -> np.ndarray:
     """Convenience function to coerce `buf` to a numpy array, if it is not already a
     numpy array. Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is

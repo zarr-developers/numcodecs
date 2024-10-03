@@ -120,6 +120,7 @@ norecursedirs = [
     "notebooks",
     "numcodecs.egg-info",
 ]
+
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
@@ -137,3 +138,7 @@ ignore = ["UP007"]
 
 [tool.ruff.format]
 quote-style = "preserve"
+
+[tool.mypy]
+ignore_errors = false
+ignore_missing_imports = true

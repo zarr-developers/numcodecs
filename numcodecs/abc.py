@@ -29,13 +29,14 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class
-    codec_id = None
+    codec_id: Optional[str] = None
     """Codec identifier."""
 
     @abstractmethod
