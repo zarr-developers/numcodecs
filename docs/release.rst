@@ -21,7 +21,8 @@ Breaking changes
 
 Enhancements
 ~~~~~~~~~~~~
-
+* Add bitinfo codec
+  By :user:`Timothy Hodson <thodson-usgs>` :pr:`503`.
 
 Fix
 ~~~

@@ -1,4 +1,4 @@
-name: Tests
+name: OSX CI
 
 on: [push, pull_request]
 
@@ -8,13 +8,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ${{ matrix.platform }}
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-        # macos-12 is an intel runner, macos-14 is a arm64 runner
-        platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout source
@@ -40,15 +38,8 @@ jobs:
         shell: "bash -l {0}"
         run: >
           conda create -n env
-          c-compiler cxx-compiler
+          c-compiler cxx-compiler 'clang>=12.0.1'
           python=${{matrix.python-version}} wheel pip
-
-      - name: Install clang
-        shell: "bash -l {0}"
-        if: matrix.platform == 'macos-12'
-        run: |
-          conda activate env
-          conda install -y 'clang>=12.0.1,<17'
 
       - name: Show info about `env` environment
         shell: "bash -l {0}"
@@ -60,16 +51,7 @@ jobs:
         run: |
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
-          # TODO: put back zfpy import when it supports numpy 2.0
-          python -m pip install -v -e .[test,test_extras,msgpack,pcodec]
-
-      # This is used to test with zfpy, which does not yet support numpy 2.0
-      - name: Install older numpy and zfpy
-        if: matrix.python-version == '3.10'
-        shell: "bash -l {0}"
-        run: |
-          conda activate env
-          python -m pip install "zfpy>=1" "numpy<2"
+          python -m pip install -v -e .[test,test_extras,msgpack,zfpy,pcodec]
 
       - name: List installed packages
         shell: "bash -l {0}"
@@ -83,16 +65,11 @@ jobs:
           conda activate env
           pytest -v
 
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v3
         with:
-<<<<<<< HEAD:.github/workflows/ci.yaml
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-=======
           #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           #files: ./coverage1.xml,./coverage2.xml # optional
           #flags: unittests # optional
           #name: codecov-umbrella # optional
           #fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
->>>>>>> ba38507 (Remove usage example from doctest):.github/workflows/ci-linux.yaml
