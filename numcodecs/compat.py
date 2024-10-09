@@ -2,8 +2,6 @@
 import array
 import codecs
 import functools
-import sys
-from functools import reduce
 
 import numpy as np
 
