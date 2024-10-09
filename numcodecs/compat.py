@@ -1,9 +1,7 @@
 # flake8: noqa
 import functools
-import sys
 import codecs
 import array
-from functools import reduce
 
 import numpy as np
 
