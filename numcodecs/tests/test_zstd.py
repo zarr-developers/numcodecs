@@ -90,6 +90,6 @@ def test_checksum():
 
 def test_native_functions():
     # Note, these assertions might need to be changed for new versions of zstd
-    assert Zstd.default_level == 3
-    assert Zstd.min_level == -131072
-    assert Zstd.max_level == 22
+    assert Zstd.default_level() == 3
+    assert Zstd.min_level() == -131072
+    assert Zstd.max_level() == 22

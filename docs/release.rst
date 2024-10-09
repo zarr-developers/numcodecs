@@ -11,6 +11,14 @@ Release notes
 Unreleased
 ----------
 
+Breaking changes
+~~~~~~~~~~~~~~~~
+* `Zstd.default_level`, `Zstd.min_level`, and `Zstd.max_level` are now class methods
+  instead of properties. This means they must now be called like ``Zstd.default_level()``
+  instead of ``Zstd.default_level``. This breaking change has been made because Python 3.13
+  removes support for class properties.
+  By :user:`David Stansby <dstansby>`
+
 Enhancements
 ~~~~~~~~~~~~
 
