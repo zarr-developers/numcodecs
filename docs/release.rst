@@ -8,8 +8,8 @@ Release notes
 
 .. _unreleased:
 
-Unreleased
-----------
+0.13.1
+------
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -17,7 +17,7 @@ Breaking changes
   instead of properties. This means they must now be called like ``Zstd.default_level()``
   instead of ``Zstd.default_level``. This breaking change has been made because Python 3.13
   removes support for class properties.
-  By :user:`David Stansby <dstansby>`
+  By :user:`David Stansby <dstansby>`, :issue:`576`.
 
 Enhancements
 ~~~~~~~~~~~~
@@ -25,16 +25,14 @@ Enhancements
 * Update bundled c-blosc to v1.26.1. This updates Zlib to v1.3.1
   and Zstd to v1.5.6.
   By :user:`David Stansby <dstansby>`, :issue:`560`.
-
-Fix
-~~~
-
+* Added support for Python 3.13 :user:`David Stansby <dstansby>`, :issue:`576`.
+* Cleaned up the table of contents in the documentation to list codecs by category
+  :user:`David Stansby <dstansby>`, :issue:`458`.
 
 Maintenance
 ~~~~~~~~~~~
 * Change format() and old string formatting to f-strings.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
-
 * Remove pin on Sphinx
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
 
