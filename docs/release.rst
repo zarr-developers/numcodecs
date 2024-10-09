@@ -25,6 +25,8 @@ Enhancements
 * Update bundled c-blosc to v1.26.1. This updates Zlib to v1.3.1
   and Zstd to v1.5.6.
   By :user:`David Stansby <dstansby>`, :issue:`560`.
+* Build aarch64 wheels on linuxL
+  By :user:`David Stansby <dstansby>`, :issue:`531`
 
 Fix
 ~~~
@@ -37,6 +39,13 @@ Maintenance
 
 * Remove pin on Sphinx
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
+
+* Restrict the number of wheels built on pull requests.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+
+* Add an option to build all wheels on pull requests by adding
+  the 'build all wheels' label.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
 
 
 .. _release_0.13.0:
