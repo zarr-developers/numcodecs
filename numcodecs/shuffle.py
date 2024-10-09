@@ -1,7 +1,8 @@
 import numpy as np
-from .compat import ensure_contiguous_ndarray
-from .abc import Codec
+
 from ._shuffle import _doShuffle, _doUnshuffle
+from .abc import Codec
+from .compat import ensure_contiguous_ndarray
 
 
 class Shuffle(Codec):

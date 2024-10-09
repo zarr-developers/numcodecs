@@ -1,7 +1,7 @@
-# flake8: noqa
-import functools
-import codecs
+# ruff: noqa: F401
 import array
+import codecs
+import functools
 
 import numpy as np
 

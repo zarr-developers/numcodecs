@@ -5,16 +5,15 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenArray
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-array not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-array not available") from e
 from numcodecs.tests.common import (
-    check_config,
-    check_repr,
-    check_encode_decode_array,
-    check_backwards_compatibility,
     assert_array_items_equal,
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
 )
-
 
 arrays = [
     np.array([np.array([1, 2, 3]), np.array([4]), np.array([5, 6])] * 300, dtype=object),

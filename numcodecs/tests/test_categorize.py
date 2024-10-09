@@ -1,16 +1,14 @@
 import numpy as np
-from numpy.testing import assert_array_equal
 import pytest
-
+from numpy.testing import assert_array_equal
 
 from numcodecs.categorize import Categorize
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
     check_encode_decode_array,
 )
-
 
 labels = ['ƒöõ', 'ßàř', 'ßāẑ', 'ƪùüx']
 arrays = [

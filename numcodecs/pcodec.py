@@ -1,11 +1,11 @@
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 import numcodecs
 import numcodecs.abc
 from numcodecs.compat import ensure_contiguous_ndarray
 
 try:
-    from pcodec import standalone, ChunkConfig, PagingSpec, ModeSpec
+    from pcodec import ChunkConfig, ModeSpec, PagingSpec, standalone
 except ImportError:  # pragma: no cover
     standalone = None
 

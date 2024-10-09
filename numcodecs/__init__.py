@@ -1,4 +1,4 @@
-# flake8: noqa
+# ruff: noqa: E402,F401
 """Numcodecs is a Python package providing buffer compression and
 transformation codecs for use in data storage and communication
 applications. These include:
@@ -17,14 +17,12 @@ contribute code, please `raise an issue on GitHub
 
 """
 
-import multiprocessing
 import atexit
+import multiprocessing
 from contextlib import suppress
 
-
-from numcodecs.version import version as __version__
 from numcodecs.registry import get_codec, register_codec
-
+from numcodecs.version import version as __version__
 from numcodecs.zlib import Zlib
 
 register_codec(Zlib)
@@ -130,7 +128,7 @@ register_codec(JSON)
 
 with suppress(ImportError):
     from numcodecs import vlen
-    from numcodecs.vlen import VLenUTF8, VLenBytes, VLenArray
+    from numcodecs.vlen import VLenArray, VLenBytes, VLenUTF8
 
     register_codec(VLenUTF8)
     register_codec(VLenBytes)
