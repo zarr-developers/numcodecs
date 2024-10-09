@@ -22,6 +22,9 @@ Breaking changes
 Enhancements
 ~~~~~~~~~~~~
 
+* Update bundled c-blosc to v1.26.1. This updates Zlib to v1.3.1
+  and Zstd to v1.5.6.
+  By :user:`David Stansby <dstansby>`, :issue:`560`.
 
 Fix
 ~~~
