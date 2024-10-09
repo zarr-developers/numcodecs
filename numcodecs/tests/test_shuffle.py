@@ -89,7 +89,7 @@ def _decode_worker(enc):
     return data
 
 
-@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+@pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)

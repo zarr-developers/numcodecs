@@ -42,11 +42,10 @@ def get_codec(config):
     config = dict(config)
     codec_id = config.pop('id', None)
     cls = codec_registry.get(codec_id)
-    if cls is None:
-        if codec_id in entries:
-            logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
-            cls = entries[codec_id].load()
-            register_codec(cls, codec_id=codec_id)
+    if cls is None and codec_id in entries:
+        logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
+        cls = entries[codec_id].load()
+        register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
     raise ValueError(f'codec not available: {codec_id!r}')

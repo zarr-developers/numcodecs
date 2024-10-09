@@ -333,14 +333,14 @@ class ve_build_ext(build_ext):
             build_ext.run(self)
         except PlatformError as e:
             error(e)
-            raise BuildFailed() from e
+            raise BuildFailed from e
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
         except ext_errors as e:
             error(e)
-            raise BuildFailed() from e
+            raise BuildFailed from e
 
 
 class Sclean(clean):

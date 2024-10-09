@@ -1,11 +1,11 @@
+import contextlib
+
 _lzma = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
-    try:
+    with contextlib.suppress(ImportError):
         from backports import lzma as _lzma
-    except ImportError:
-        pass
 
 
 if _lzma:
