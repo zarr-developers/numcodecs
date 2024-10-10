@@ -65,9 +65,9 @@ class Delta(Codec):
         # compute differences
         # using np.subtract for in-place operations
         if arr.dtype == bool:
-            np.not_equal(arr[1:], arr[0:-1], out=enc[1:])
+            np.not_equal(arr[1:], arr[:-1], out=enc[1:])
         else:
-            np.subtract(arr[1:], arr[0:-1], out=enc[1:])
+            np.subtract(arr[1:], arr[:-1], out=enc[1:])
 
         return enc
 
