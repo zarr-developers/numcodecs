@@ -1,6 +1,5 @@
-import numpy as np
 import msgpack
-
+import numpy as np
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray

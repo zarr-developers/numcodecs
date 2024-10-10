@@ -1,10 +1,8 @@
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 
-
 import numpy as np
 import pytest
-
 
 try:
     from numcodecs import blosc
@@ -14,15 +12,14 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
+    check_backwards_compatibility,
+    check_config,
     check_encode_decode,
     check_encode_decode_partial,
-    check_config,
-    check_backwards_compatibility,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
 )
-
 
 codecs = [
     Blosc(shuffle=Blosc.SHUFFLE),
@@ -136,7 +133,7 @@ def test_compress_blocksize_default(use_threads):
     assert blocksize > 0
 
 
-@pytest.mark.parametrize('bs', (2**7, 2**8))
+@pytest.mark.parametrize('bs', [2**7, 2**8])
 def test_compress_blocksize(use_threads, bs):
     arr = np.arange(1000, dtype='i4')
 
@@ -228,7 +225,7 @@ def _decode_worker(enc):
     return data
 
 
-@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+@pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(use_threads, pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)

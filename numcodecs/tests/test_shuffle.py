@@ -1,10 +1,8 @@
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 
-
 import numpy as np
 import pytest
-
 
 try:
     from numcodecs.shuffle import Shuffle
@@ -13,11 +11,10 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
 )
-
 
 codecs = [
     Shuffle(),
@@ -92,7 +89,7 @@ def _decode_worker(enc):
     return data
 
 
-@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+@pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)

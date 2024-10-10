@@ -65,7 +65,7 @@ msgpack = [
 ]
 zfpy = [
     "zfpy>=1.0.0",
-    "numpy<2.0.0",    
+    "numpy<2.0.0",
 ]
 pcodec = [
     "pcodec>=0.2.0",
@@ -98,8 +98,11 @@ exclude_lines = [
     "pragma: ${PY_MAJOR_VERSION} no cover",
 ]
 
+[tool.repo-review]
+ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
+
 [tool.pytest.ini_options]
-addopts = "--cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
+addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
@@ -120,6 +123,8 @@ norecursedirs = [
     "notebooks",
     "numcodecs.egg-info",
 ]
+log_cli_level = "INFO"
+xfail_strict = true
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
@@ -132,8 +137,28 @@ environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
 line-length = 100
 
 [tool.ruff.lint]
-extend-select = [ "UP" ]
-ignore = ["UP007"]
+extend-select = [
+    "B",
+    "I",
+    "PGH",
+    "PT",
+    "RSE",
+    "RUF",
+    "UP",
+]
+ignore = [
+    "B028",
+    "B904",
+    "PT001",
+    "PT004",  # deprecated
+    "PT005",  # deprecated
+    "PT011",
+    "PT012",
+	"RUF001",
+    "UP007",
+    "UP027",  # deprecated
+    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+]
 
 [tool.ruff.format]
 quote-style = "preserve"

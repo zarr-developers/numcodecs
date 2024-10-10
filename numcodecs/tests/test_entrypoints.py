@@ -5,7 +5,6 @@ import pytest
 
 import numcodecs.registry
 
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 

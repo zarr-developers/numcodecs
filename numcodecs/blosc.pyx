@@ -468,7 +468,7 @@ def decompress_partial(source, start, nitems, dest=None):
         raise RuntimeError('error during blosc partial decompression: %d', ret)
 
     return dest
-        
+
 
 # set the value of this variable to True or False to override the
 # default adaptive behaviour

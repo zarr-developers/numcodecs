@@ -1,7 +1,7 @@
 import numpy as np
 
 from .abc import Codec
-from .compat import ndarray_copy, ensure_ndarray
+from .compat import ensure_ndarray, ndarray_copy
 
 
 class AsType(Codec):

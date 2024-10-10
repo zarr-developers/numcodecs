@@ -5,10 +5,10 @@ import pytest
 
 from numcodecs.json import JSON
 from numcodecs.tests.common import (
-    check_config,
-    check_repr,
-    check_encode_decode_array,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
     greetings,
 )
 
@@ -59,7 +59,7 @@ def test_backwards_compatibility():
 
 
 @pytest.mark.parametrize(
-    "input_data, dtype",
+    ('input_data', 'dtype'),
     [
         ([0, 1], None),
         ([[0, 1], [2, 3]], None),

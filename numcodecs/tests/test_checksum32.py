@@ -1,19 +1,16 @@
 import itertools
 
-
 import numpy as np
 import pytest
 
-
 from numcodecs.checksum32 import CRC32, Adler32
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 # mix of dtypes: integer, float, bool, string
 # mix of shapes: 1D, 2D, 3D
