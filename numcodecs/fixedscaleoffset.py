@@ -94,9 +94,7 @@ class FixedScaleOffset(Codec):
         enc = np.around(enc)
 
         # convert dtype
-        enc = enc.astype(self.astype, copy=False)
-
-        return enc
+        return enc.astype(self.astype, copy=False)
 
     def decode(self, buf, out=None):
         # interpret buffer as numpy array
