@@ -178,6 +178,7 @@ extend-select = [
     "PIE",
     "PT",
     "PYI",
+    "RET",
     "RSE",
     "RUF",
     "UP",
@@ -192,6 +193,9 @@ ignore = [
     "PT004",  # deprecated
     "PT005",  # deprecated
     "PT011",
+    "PT012",
+    "RET505",
+    "RET506",
 	"RUF001",
     "UP007",
     "UP027",  # deprecated
