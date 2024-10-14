@@ -6,6 +6,7 @@ from distutils.sysconfig import customize_compiler
 from glob import glob
 
 import cpuinfo
+import platform
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
@@ -23,6 +24,8 @@ have_cflags = 'CFLAGS' in os.environ
 base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
+    pass
+elif platform.machine() == 'aarch64':
     pass
 elif os.name == 'posix':
     if disable_sse2:
