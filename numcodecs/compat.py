@@ -1,4 +1,3 @@
-# ruff: noqa: F401
 import array
 import codecs
 
