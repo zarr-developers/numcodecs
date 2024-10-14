@@ -3,12 +3,12 @@ ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
   autofix_prs: false
-default_stages: [commit, push]
+default_stages: [pre-commit, pre-push]
 default_language_version:
   python: python3
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
     - id: trailing-whitespace
     - id: check-yaml
@@ -22,6 +22,6 @@ repos:
     - id: ruff-format
 
   - repo: https://github.com/scientific-python/cookie
-    rev: 2024.04.23
+    rev: 2024.08.19
     hooks:
     - id: sp-repo-review
