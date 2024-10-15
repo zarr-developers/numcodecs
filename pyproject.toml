@@ -139,17 +139,25 @@ line-length = 100
 [tool.ruff.lint]
 extend-select = [
     "B",
+    "FLY",
+    "FURB",
+    "G",
     "I",
+    "PERF",
     "PGH",
     "PIE",
     "PT",
+    "PYI",
     "RSE",
     "RUF",
     "UP",
+    # "W",  https://github.com/astral-sh/ruff/issues/13763
 ]
 ignore = [
     "B028",
     "B904",
+    "FURB101",
+    "FURB103",
     "PT001",
     "PT004",  # deprecated
     "PT005",  # deprecated
