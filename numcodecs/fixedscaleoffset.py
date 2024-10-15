@@ -116,13 +116,13 @@ class FixedScaleOffset(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            scale=self.scale,
-            offset=self.offset,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        return {
+            'id': self.codec_id,
+            'scale': self.scale,
+            'offset': self.offset,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         r = f'{type(self).__name__}(scale={self.scale}, offset={self.offset}, dtype={self.dtype.str!r}'

@@ -85,12 +85,12 @@ class Categorize(Codec):
         return dec
 
     def get_config(self):
-        config = dict(
-            id=self.codec_id,
-            labels=self.labels,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        config = {
+            'id': self.codec_id,
+            'labels': self.labels,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
         return config
 
     def __repr__(self):
