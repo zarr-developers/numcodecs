@@ -85,12 +85,12 @@ class Quantize(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            digits=self.digits,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        return {
+            'id': self.codec_id,
+            'digits': self.digits,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'

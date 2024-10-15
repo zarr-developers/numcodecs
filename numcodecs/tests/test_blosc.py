@@ -199,12 +199,12 @@ def test_config_blocksize():
     # explicitly stated
 
     # blocksize not stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 0
 
     # blocksize stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE, blocksize=2**8)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE, "blocksize": 2**8}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 2**8
 
