@@ -63,8 +63,8 @@ class BitRound(Codec):
         maskbits = bits - self.keepbits
         mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
-        b += ((b >> maskbits) & 1) + half_quantum1
-        b &= mask
+        b = b + ((b >> maskbits) & 1) + half_quantum1
+        b = b & mask
         return b
 
     def decode(self, buf, out=None):
