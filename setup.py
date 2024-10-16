@@ -507,7 +507,10 @@ def run_setup(with_extensions):
             + jenkins_extension()
         )
 
-        cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
+        if use_system_libraries:
+            cmdclass = dict(build_ext=build_ext, clean=clean)
+        else:
+            cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
     else:
         ext_modules = []
         cmdclass = {}
