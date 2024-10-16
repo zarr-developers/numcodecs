@@ -8,7 +8,7 @@ import pytest
 from numcodecs.registry import get_codec
 
 
-zarr = pytest.importorskip("docutils")
+zarr = pytest.importorskip("zarr")
 
 get_codec_class = zarr.codecs.registry.get_codec_class
 Array = zarr.array.Array
