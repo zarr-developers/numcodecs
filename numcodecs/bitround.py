@@ -59,12 +59,12 @@ class BitRound(Codec):
             return a
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
-        b = a.view(a_int_dtype)
+        b = a.astype(a_int_dtype, copy=True)
         maskbits = bits - self.keepbits
         mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
-        b = b + ((b >> maskbits) & 1) + half_quantum1
-        b = b & mask
+        b += ((b >> maskbits) & 1) + half_quantum1
+        b &= mask
         return b
 
     def decode(self, buf, out=None):
