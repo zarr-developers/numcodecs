@@ -3,18 +3,14 @@ import json as _json
 import os
 from glob import glob
 
-
 import numpy as np
-from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
-
-
-from numcodecs.compat import ensure_bytes, ensure_ndarray
-from numcodecs.registry import get_codec
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 # star import needed for repr tests so eval finds names
-from numcodecs import *  # noqa
-
+from numcodecs import *  # noqa: F403
+from numcodecs.compat import ensure_bytes, ensure_ndarray
+from numcodecs.registry import get_codec
 
 greetings = [
     '¡Hola mundo!',
@@ -200,7 +196,7 @@ def assert_array_items_equal(res, arr):
     # and values
     arr = arr.ravel().tolist()
     res = res.ravel().tolist()
-    for a, r in zip(arr, res):
+    for a, r in zip(arr, res, strict=True):
         if isinstance(a, np.ndarray):
             assert_array_equal(a, r)
         elif a != a:

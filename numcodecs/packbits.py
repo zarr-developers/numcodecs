@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
 

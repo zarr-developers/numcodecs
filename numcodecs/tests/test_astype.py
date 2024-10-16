@@ -1,15 +1,13 @@
 import numpy as np
 from numpy.testing import assert_array_equal
 
-
 from numcodecs.astype import AsType
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_repr,
 )
-
 
 # mix of dtypes: integer, float
 # mix of shapes: 1D, 2D, 3D

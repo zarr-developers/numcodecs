@@ -1,16 +1,16 @@
+import contextlib
+
 _lzma = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
-    try:
+    with contextlib.suppress(ImportError):
         from backports import lzma as _lzma
-    except ImportError:
-        pass
 
 
 if _lzma:
     from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray
+    from .compat import ensure_contiguous_ndarray, ndarray_copy
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):

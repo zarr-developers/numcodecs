@@ -1,8 +1,7 @@
 import bz2 as _bz2
 
-
 from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_copy, ensure_contiguous_ndarray
+from numcodecs.compat import ensure_contiguous_ndarray, ndarray_copy
 
 
 class BZ2(Codec):

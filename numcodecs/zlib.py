@@ -1,8 +1,7 @@
 import zlib as _zlib
 
-
 from .abc import Codec
-from .compat import ndarray_copy, ensure_contiguous_ndarray
+from .compat import ensure_contiguous_ndarray, ndarray_copy
 
 
 class Zlib(Codec):

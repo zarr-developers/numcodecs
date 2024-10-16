@@ -1,9 +1,7 @@
+import struct
 import zlib
 
-
 import numpy as np
-import struct
-
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
