@@ -8,6 +8,14 @@ Release notes
 
 .. _unreleased:
 
+X.Y.Z
+-----
+
+Fix
+~~~
+* Fix in-place mutation of input array in `BitRound`.
+  By :user:`Sam Levang <slevang>`, :issue:`608`
+
 0.13.1
 ------
 
