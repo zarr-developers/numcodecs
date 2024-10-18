@@ -1,9 +1,7 @@
 import itertools
 
-
 import numpy as np
 import pytest
-
 
 try:
     from numcodecs.zstd import Zstd
@@ -12,14 +10,13 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 codecs = [
     Zstd(),
@@ -90,6 +87,6 @@ def test_checksum():
 
 def test_native_functions():
     # Note, these assertions might need to be changed for new versions of zstd
-    assert Zstd.default_level == 3
-    assert Zstd.min_level == -131072
-    assert Zstd.max_level == 22
+    assert Zstd.default_level() == 3
+    assert Zstd.min_level() == -131072
+    assert Zstd.max_level() == 22

@@ -1,7 +1,7 @@
 Numcodecs
 =========
 
-Numcodecs is a Python package providing buffer compression and transformation 
+Numcodecs is a Python package providing buffer compression and transformation
 codecs for use in data storage and communication applications.
 
 .. image:: https://readthedocs.org/projects/numcodecs/badge/?version=latest

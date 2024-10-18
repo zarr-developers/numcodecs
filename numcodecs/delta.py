@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
 
@@ -64,7 +63,11 @@ class Delta(Codec):
         enc[0] = arr[0]
 
         # compute differences
-        enc[1:] = np.diff(arr)
+        # using np.subtract for in-place operations
+        if arr.dtype == bool:
+            np.not_equal(arr[1:], arr[:-1], out=enc[1:])
+        else:
+            np.subtract(arr[1:], arr[:-1], out=enc[1:])
 
         return enc
 

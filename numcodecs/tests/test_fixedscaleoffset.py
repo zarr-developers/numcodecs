@@ -1,19 +1,16 @@
 import itertools
 
-
 import numpy as np
-from numpy.testing import assert_array_equal
 import pytest
-
+from numpy.testing import assert_array_equal
 
 from numcodecs.fixedscaleoffset import FixedScaleOffset
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_repr,
 )
-
 
 arrays = [
     np.linspace(1000, 1001, 1000, dtype='<f8'),

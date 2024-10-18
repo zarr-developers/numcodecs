@@ -1,14 +1,12 @@
 import numpy as np
 
-
 from numcodecs.packbits import PackBits
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_repr,
 )
-
 
 arrays = [
     np.random.randint(0, 2, size=1000, dtype=bool),

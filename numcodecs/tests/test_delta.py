@@ -1,21 +1,20 @@
 import numpy as np
-from numpy.testing import assert_array_equal
 import pytest
-
+from numpy.testing import assert_array_equal
 
 from numcodecs.delta import Delta
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_repr,
 )
-
 
 # mix of dtypes: integer, float
 # mix of shapes: 1D, 2D, 3D
 # mix of orders: C, F
 arrays = [
+    np.random.randint(0, 1, size=110, dtype='?').reshape(10, 11),
     np.arange(1000, dtype='<i4'),
     np.linspace(1000, 1001, 1000, dtype='<f4').reshape(100, 10),
     np.random.normal(loc=1000, scale=1, size=(10, 10, 10)).astype('<f8'),

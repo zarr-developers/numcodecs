@@ -1,27 +1,24 @@
 import itertools
 import unittest
 
-
 import numpy as np
 import pytest
-
 
 try:
     # noinspection PyProtectedMember
     from numcodecs.lzma import LZMA, _lzma
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("LZMA not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("LZMA not available") from e
 
 
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 codecs = [
     LZMA(),

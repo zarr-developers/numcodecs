@@ -1,4 +1,4 @@
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, ClassVar, Optional, Protocol, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):
@@ -11,7 +11,7 @@ class _CachedProtocolMeta(Protocol.__class__):
     isinstance checks using the object's class as the cache key.
     """
 
-    _instancecheck_cache: dict[tuple[type, type], bool] = {}
+    _instancecheck_cache: ClassVar[dict[tuple[type, type], bool]] = {}
 
     def __instancecheck__(self, instance):
         key = (self, instance.__class__)

@@ -1,6 +1,6 @@
+import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
-import warnings
 
 _zfpy = None
 
@@ -17,15 +17,17 @@ if _zfpy_version:
             "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
             "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
             UserWarning,
+            stacklevel=2,
         )
     else:
         with suppress(ImportError):
             import zfpy as _zfpy
 
 if _zfpy:
-    from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
     import numpy as np
+
+    from .abc import Codec
+    from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):

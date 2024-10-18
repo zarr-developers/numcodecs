@@ -1,8 +1,6 @@
 import math
 
-
 import numpy as np
-
 
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
@@ -65,12 +63,12 @@ class Quantize(Codec):
 
         # apply scaling
         precision = 10.0**-self.digits
-        exp = math.log(precision, 10)
+        exp = math.log10(precision)
         if exp < 0:
             exp = int(math.floor(exp))
         else:
             exp = int(math.ceil(exp))
-        bits = math.ceil(math.log(10.0**-exp, 2))
+        bits = math.ceil(math.log2(10.0**-exp))
         scale = 2.0**bits
         enc = np.around(scale * arr) / scale
 

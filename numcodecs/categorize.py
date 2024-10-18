@@ -1,8 +1,7 @@
-from .abc import Codec
-from .compat import ensure_ndarray, ndarray_copy, ensure_text
-
-
 import numpy as np
+
+from .abc import Codec
+from .compat import ensure_ndarray, ensure_text, ndarray_copy
 
 
 class Categorize(Codec):
@@ -41,7 +40,7 @@ class Categorize(Codec):
     def __init__(self, labels, dtype, astype='u1'):
         self.dtype = np.dtype(dtype)
         if self.dtype.kind not in 'UO':
-            raise TypeError("only unicode ('U') and object ('O') dtypes are " "supported")
+            raise TypeError("only unicode ('U') and object ('O') dtypes are supported")
         self.labels = [ensure_text(label) for label in labels]
         self.astype = np.dtype(astype)
         if self.astype == np.dtype(object):

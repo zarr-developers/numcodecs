@@ -1,20 +1,17 @@
 import itertools
 
-
 import numpy as np
 import pytest
 
-
-from numcodecs.zlib import Zlib
 from numcodecs.tests.common import (
-    check_encode_decode,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
+from numcodecs.zlib import Zlib
 
 codecs = [
     Zlib(),

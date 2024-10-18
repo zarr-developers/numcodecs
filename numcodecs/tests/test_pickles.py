@@ -6,13 +6,12 @@ import pytest
 
 from numcodecs.pickles import Pickle
 from numcodecs.tests.common import (
-    check_config,
-    check_repr,
-    check_encode_decode_array,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
     greetings,
 )
-
 
 codecs = [Pickle(protocol=i) for i in range(5)]
 
