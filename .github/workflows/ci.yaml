@@ -15,6 +15,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
         # macos-12 is an intel runner, macos-14 is a arm64 runner
         platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
+        zarr-version: [">=2,<3", "==3.0.0b0"]
 
     steps:
       - name: Checkout source
@@ -68,7 +69,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install zarr==3.0.0b0
+          python -m pip install zarr${{ matrix.zarr-version }}
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
