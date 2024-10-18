@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import math
 from dataclasses import dataclass, replace
 from functools import cached_property
-import math
-from typing_extensions import Self
 from warnings import warn
 
 import numpy as np
+from typing_extensions import Self
+
 import numcodecs
 
 try:
@@ -18,17 +19,16 @@ try:
 except ImportError:
     raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
 
-from zarr.abc.codec import ArrayArrayCodec, BytesBytesCodec, ArrayBytesCodec
-from zarr.core.buffer import NDBuffer, Buffer, BufferPrototype
-from zarr.core.buffer.cpu import as_numpy_array_wrapper
+from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
 from zarr.core.array_spec import ArraySpec
+from zarr.core.buffer import Buffer, BufferPrototype, NDBuffer
+from zarr.core.buffer.cpu import as_numpy_array_wrapper
 from zarr.core.common import (
     JSON,
     parse_named_configuration,
     product,
 )
 from zarr.core.metadata import ArrayMetadata
-
 
 CODEC_PREFIX = "numcodecs."
 
