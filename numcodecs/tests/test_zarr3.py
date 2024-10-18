@@ -8,7 +8,7 @@ import pytest
 from numcodecs.registry import get_codec
 
 
-zarr = pytest.importorskip("zarr")
+zarr = pytest.importorskip("zarr", minversion="3.0.0")
 
 get_codec_class = zarr.codecs.registry.get_codec_class
 Array = zarr.array.Array
