@@ -182,7 +182,6 @@ extend-select = [
     "RSE",
     "RUF",
     "UP",
-    # "W",  https://github.com/astral-sh/ruff/issues/13763
 ]
 ignore = [
     "FURB101",
@@ -196,6 +195,9 @@ ignore = [
     "UP027",  # deprecated
     "UP038",  # https://github.com/astral-sh/ruff/issues/7871
 ]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
 quote-style = "preserve"
