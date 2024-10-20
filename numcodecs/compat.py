@@ -1,7 +1,5 @@
-# ruff: noqa: F401
 import array
 import codecs
-import functools
 
 import numpy as np
 
