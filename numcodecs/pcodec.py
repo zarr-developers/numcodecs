@@ -105,13 +105,12 @@ class PCodec(Codec):
             case _:
                 raise ValueError(f"paging_spec {self.paging_spec} is not supported")
 
-        config = ChunkConfig(
+        return ChunkConfig(
             compression_level=self.level,
             delta_spec=delta_spec,
             mode_spec=mode_spec,
             paging_spec=paging_spec,
         )
-        return config
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
