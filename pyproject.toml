@@ -184,8 +184,6 @@ extend-select = [
     # "W",  https://github.com/astral-sh/ruff/issues/13763
 ]
 ignore = [
-    "B028",
-    "B904",
     "FURB101",
     "FURB103",
     "PT001",
