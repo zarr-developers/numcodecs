@@ -206,6 +206,21 @@ ignore = [
     "UP007",
     "UP027",  # deprecated
     "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
