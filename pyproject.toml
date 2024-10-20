@@ -190,6 +190,7 @@ extend-select = [
     "SIM",
     "SLOT",
     "TID",
+    "TRY",
     "UP",
 ]
 ignore = [
@@ -203,6 +204,7 @@ ignore = [
     "RET505",
     "RET506",
     "SIM108",
+    "TRY003",
     "UP007",
     "UP027",  # deprecated
     "UP038",  # https://github.com/astral-sh/ruff/issues/7871
@@ -224,7 +226,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300"]
+"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
 "notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
