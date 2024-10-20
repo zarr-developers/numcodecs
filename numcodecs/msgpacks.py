@@ -75,12 +75,12 @@ class MsgPack(Codec):
             return dec
 
     def get_config(self):
-        return dict(
-            id=self.codec_id,
-            raw=self.raw,
-            use_single_float=self.use_single_float,
-            use_bin_type=self.use_bin_type,
-        )
+        return {
+            'id': self.codec_id,
+            'raw': self.raw,
+            'use_single_float': self.use_single_float,
+            'use_bin_type': self.use_bin_type,
+        }
 
     def __repr__(self):
         return f'MsgPack(raw={self.raw!r}, use_bin_type={self.use_bin_type!r}, use_single_float={self.use_single_float!r})'
