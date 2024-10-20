@@ -162,7 +162,7 @@ def test_expected_result():
 
 
 def test_incompatible_elementsize():
+    arr = np.arange(1001, dtype='u1')
+    codec = Shuffle(elementsize=4)
     with pytest.raises(ValueError):
-        arr = np.arange(1001, dtype='u1')
-        codec = Shuffle(elementsize=4)
         codec.encode(arr)
