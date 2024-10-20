@@ -19,7 +19,7 @@ Fix
 Enhancements
 ~~~~~~~~~~~~
 * Add Crc32c checksum codec
-  By :user:`Norman Rzepka <normanrz>`, :issue:`1`.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
 
 .. _release_0.13.1:
 
