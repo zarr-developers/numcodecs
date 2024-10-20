@@ -29,9 +29,6 @@ class PackBits(Codec):
 
     codec_id = 'packbits'
 
-    def __init__(self):
-        pass
-
     def encode(self, buf):
         # normalise input
         arr = ensure_ndarray(buf).view(bool)
