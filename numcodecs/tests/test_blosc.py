@@ -215,14 +215,12 @@ def test_backwards_compatibility():
 
 def _encode_worker(data):
     compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
-    enc = compressor.encode(data)
-    return enc
+    return compressor.encode(data)
 
 
 def _decode_worker(enc):
     compressor = Blosc()
-    data = compressor.decode(enc)
-    return data
+    return compressor.decode(enc)
 
 
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
