@@ -5,6 +5,7 @@ requires = [
     "Cython",
     "py-cpuinfo",
     "numpy",
+    "crc32c",
 ]
 build-backend = "setuptools.build_meta"
 
