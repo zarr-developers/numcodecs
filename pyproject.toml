@@ -5,7 +5,6 @@ requires = [
     "Cython",
     "py-cpuinfo",
     "numpy",
-    "crc32c",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -17,6 +16,7 @@ for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
     "numpy>=1.7",
+    "crc32c>=2.7",
 ]
 requires-python = ">=3.10"
 dynamic = [
