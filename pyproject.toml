@@ -16,6 +16,7 @@ for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
     "numpy>=1.7",
+    "typing_extensions",
 ]
 requires-python = ">=3.10"
 dynamic = [
@@ -71,6 +72,28 @@ pcodec = [
     "pcodec>=0.2.0",
 ]
 
+[project.entry-points."zarr.codecs"]
+"numcodecs.blosc" = "numcodecs._zarr3:BloscCodec"
+"numcodecs.lz4" = "numcodecs._zarr3:Lz4Codec"
+"numcodecs.zstd" = "numcodecs._zarr3:ZstdCodec"
+"numcodecs.zlib" = "numcodecs._zarr3:ZlibCodec"
+"numcodecs.gzip" = "numcodecs._zarr3:GzipCodec"
+"numcodecs.bz2" = "numcodecs._zarr3:Bz2Codec"
+"numcodecs.lzma" = "numcodecs._zarr3:LzmaCodec"
+"numcodecs.shuffle" = "numcodecs._zarr3:ShuffleCodec"
+"numcodecs.delta" = "numcodecs._zarr3:DeltaCodec"
+"numcodecs.bitround" = "numcodecs._zarr3:BitroundCodec"
+"numcodecs.fixedscaleoffset" = "numcodecs._zarr3:FixedScaleOffsetCodec"
+"numcodecs.quantize" = "numcodecs._zarr3:QuantizeCodec"
+"numcodecs.packbits" = "numcodecs._zarr3:PackbitsCodec"
+"numcodecs.astype" = "numcodecs._zarr3:AsTypeCodec"
+"numcodecs.crc32" = "numcodecs._zarr3:Crc32Codec"
+"numcodecs.adler32" = "numcodecs._zarr3:Adler32Codec"
+"numcodecs.fletcher32" = "numcodecs._zarr3:Fletcher32Codec"
+"numcodecs.jenkins_lookup3" = "numcodecs._zarr3:JenkinsLookup3Codec"
+"numcodecs.pcodec" = "numcodecs._zarr3:PCodecCodec"
+"numcodecs.zfpy" = "numcodecs._zarr3:ZFPYCodec"
+
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
@@ -109,7 +132,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs",
+    "numcodecs/tests",
 ]
 norecursedirs = [
     ".git",
