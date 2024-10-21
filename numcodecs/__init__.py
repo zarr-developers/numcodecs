@@ -141,3 +141,7 @@ register_codec(Fletcher32)
 from numcodecs.pcodec import PCodec
 
 register_codec(PCodec)
+
+from numcodecs.crc32c_ import Crc32c
+
+register_codec(Crc32c)
