@@ -40,6 +40,14 @@ def test_checksum():
     assert np.frombuffer(buf, dtype="<u4", offset=(len(buf) - 4))[0] == np.uint32(4218238699)
 
 
+def test_err_checksum():
+    arr = np.arange(0, 64, dtype="uint8")
+    buf = bytearray(Crc32c().encode(arr))
+    buf[-1] = 0  # corrupt the checksum
+    with pytest.raises(ValueError):
+        Crc32c().decode(buf)
+
+
 def test_repr():
     check_repr("Crc32c()")
 
@@ -71,6 +79,12 @@ def test_err_encode_non_contiguous():
     arr = np.arange(1000, dtype='i4')[::2]
     with pytest.raises(ValueError):
         Crc32c().encode(arr)
+
+
+def test_err_input_too_small():
+    buf = b'000'  # 3 bytes are too little for a CRC32C checksum
+    with pytest.raises(ValueError):
+        Crc32c().decode(buf)
 
 
 def test_err_out_too_small():
