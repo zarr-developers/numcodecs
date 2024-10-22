@@ -162,7 +162,6 @@ ignore = [
     "PT004",  # deprecated
     "PT005",  # deprecated
     "PT011",
-    "PT012",
 	"RUF001",
     "UP007",
     "UP027",  # deprecated
