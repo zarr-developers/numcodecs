@@ -34,7 +34,7 @@ def parse_codec_configuration(data: dict[str, JSON], expected_name_prefix: str) 
     if not parsed_name.startswith(expected_name_prefix):
         raise ValueError(
             f"Expected name to start with '{expected_name_prefix}'. Got {parsed_name} instead."
-        )
+        )  # pragma: no cover
     id = parsed_name[slice(len(expected_name_prefix), None)]
     return {"id": id, **parsed_configuration}
 
@@ -43,16 +43,22 @@ def parse_codec_configuration(data: dict[str, JSON], expected_name_prefix: str) 
 class NumcodecsCodec:
     codec_config: dict[str, JSON]
 
-    def __init__(self, *, codec_id: str | None = None, codec_config: dict[str, JSON]) -> None:
+    def __init__(
+        self, *, codec_id: str | None = None, codec_config: dict[str, JSON] | None = None
+    ) -> None:
+        if codec_config is None:
+            codec_config = {}
         if "id" not in codec_config:
             if not codec_id:
                 raise ValueError(
                     "The codec id needs to be supplied either through the id attribute "
                     "of the codec_config or through the codec_id argument."
-                )
+                )  # pragma: no cover
             codec_config = {"id": codec_id, **codec_config}
         elif codec_id and codec_config["id"] != codec_id:
-            raise ValueError(f"Codec id does not match {codec_id}. Got: {codec_config['id']}.")
+            raise ValueError(
+                f"Codec id does not match {codec_id}. Got: {codec_config['id']}."
+            )  # pragma: no cover
 
         object.__setattr__(self, "codec_config", codec_config)
         warn(
@@ -84,7 +90,7 @@ class NumcodecsCodec:
 
 
 class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
-    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
+    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON] | None = None) -> None:
         super().__init__(codec_id=codec_id, codec_config=codec_config)
 
     async def _decode_single(self, chunk_bytes: Buffer, chunk_spec: ArraySpec) -> Buffer:
@@ -141,8 +147,6 @@ def make_bytes_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesB
 
     class _Codec(NumcodecsBytesBytesCodec):
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            if codec_config is None:
-                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -155,8 +159,6 @@ def make_array_array_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayA
 
     class _Codec(NumcodecsArrayArrayCodec):
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            if codec_config is None:
-                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -169,8 +171,6 @@ def make_array_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayB
 
     class _Codec(NumcodecsArrayBytesCodec):
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            if codec_config is None:
-                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -183,8 +183,6 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
 
     class _ChecksumCodec(NumcodecsBytesBytesCodec):
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            if codec_config is None:
-                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
         def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:

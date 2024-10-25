@@ -184,7 +184,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
         if "codec not available" in str(e):
             pytest.xfail(f"{codec_id} is not available: {e}")
         else:
-            raise
+            raise  # pragma: no cover
     except ImportError as e:
         pytest.xfail(f"{codec_id} is not available: {e}")
 
