@@ -57,8 +57,8 @@ def test_config():
 
 
 def test_invalid_config_error():
+    codec = PCodec(mode_spec='bogus')
     with pytest.raises(ValueError):
-        codec = PCodec(mode_spec='bogus')
         check_encode_decode_array_to_bytes(arrays[0], codec)
 
 
