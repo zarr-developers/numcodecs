@@ -14,7 +14,7 @@ import numcodecs
 try:
     import zarr
 
-    if zarr.__version__ < "3.0.0":
+    if zarr.__version__ < "3.0.0":  # pragma: no cover
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
 except ImportError:
     raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
