@@ -5,15 +5,19 @@ import pytest
 
 from numcodecs.registry import get_codec
 
-zarr = pytest.importorskip("zarr", minversion="3.0.0")
+zarr = pytest.importorskip("zarr")
 
-get_codec_class = zarr.codecs.registry.get_codec_class
-Array = zarr.array.Array
-JSON = zarr.common.JSON
+pytestmark = pytest.mark.skipif(
+    zarr.__version__ < "3.0.0", reason="zarr 3.0.0 or later is required"
+)
+
+get_codec_class = zarr.registry.get_codec_class
+Array = zarr.Array
+JSON = zarr.core.common.JSON
 BytesCodec = zarr.codecs.BytesCodec
 Store = zarr.abc.store.Store
-MemoryStore = zarr.store.MemoryStore
-StorePath = zarr.store.StorePath
+MemoryStore = zarr.storage.MemoryStore
+StorePath = zarr.storage.StorePath
 
 
 EXPECTED_WARNING_STR = "Numcodecs codecs are not in the Zarr version 3.*"

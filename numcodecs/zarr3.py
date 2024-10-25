@@ -59,6 +59,7 @@ class NumcodecsCodec:
             raise ValueError(f"Codec id does not match {codec_id}. Got: {codec_config['id']}.")
 
         object.__setattr__(self, "codec_config", codec_config)
+        print("HELLO")
         warn(
             "Numcodecs codecs are not in the Zarr version 3 specification and "
             "may not be supported by other zarr implementations.",
