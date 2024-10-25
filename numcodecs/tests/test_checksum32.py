@@ -42,12 +42,12 @@ codecs = [
 ]
 
 
-@pytest.mark.parametrize("codec,arr", itertools.product(codecs, arrays))
+@pytest.mark.parametrize(("codec", "arr"), itertools.product(codecs, arrays))
 def test_encode_decode(codec, arr):
     check_encode_decode(arr, codec)
 
 
-@pytest.mark.parametrize("codec,arr", itertools.product(codecs, arrays))
+@pytest.mark.parametrize(("codec", "arr"), itertools.product(codecs, arrays))
 def test_errors(codec, arr):
     enc = codec.encode(arr)
     with pytest.raises(RuntimeError):
