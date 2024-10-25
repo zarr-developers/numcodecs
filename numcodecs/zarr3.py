@@ -199,7 +199,7 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
             return self.__class__({**self.codec_config, "elementsize": array_spec.dtype.itemsize})
-        return self
+        return self  # pragma: no cover
 
 
 class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
