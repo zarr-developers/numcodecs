@@ -88,7 +88,7 @@ class CRC32C(Checksum32):
             from crc32c import crc32c as crc32c_
 
             return crc32c_(buf)
-        except ImportError:
+        except ImportError:  # pragma: no cover
             raise ImportError("crc32c must be installed to use the CRC32C checksum codec.")
 
     location = 'end'
