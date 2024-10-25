@@ -204,3 +204,7 @@ quote-style = "preserve"
 [tool.mypy]
 ignore_errors = false
 ignore_missing_imports = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+# TODO: set options below to true
+strict = false
+warn_unreachable = false
