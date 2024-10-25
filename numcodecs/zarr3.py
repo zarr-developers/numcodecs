@@ -144,7 +144,9 @@ def make_bytes_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesB
     _codec_id = codec_id
 
     class _Codec(NumcodecsBytesBytesCodec):
-        def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+        def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+            if codec_config is None:
+                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -156,7 +158,9 @@ def make_array_array_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayA
     _codec_id = codec_id
 
     class _Codec(NumcodecsArrayArrayCodec):
-        def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+        def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+            if codec_config is None:
+                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -168,7 +172,9 @@ def make_array_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayB
     _codec_id = codec_id
 
     class _Codec(NumcodecsArrayBytesCodec):
-        def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+        def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+            if codec_config is None:
+                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
     _Codec.__name__ = cls_name
@@ -180,7 +186,9 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
     _codec_id = codec_id
 
     class _ChecksumCodec(NumcodecsBytesBytesCodec):
-        def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+        def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+            if codec_config is None:
+                codec_config = {}
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
         def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
@@ -191,7 +199,9 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
 
 
 class ShuffleCodec(NumcodecsBytesBytesCodec):
-    def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+    def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+        if codec_config is None:
+            codec_config = {}
         super().__init__(codec_id="shuffle", codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
@@ -201,7 +211,9 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
 
 
 class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
-    def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+    def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+        if codec_config is None:
+            codec_config = {}
         super().__init__(codec_id="fixedscaleoffset", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
@@ -216,7 +228,9 @@ class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
 
 
 class QuantizeCodec(NumcodecsArrayArrayCodec):
-    def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+    def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+        if codec_config is None:
+            codec_config = {}
         super().__init__(codec_id="quantize", codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
@@ -226,7 +240,9 @@ class QuantizeCodec(NumcodecsArrayArrayCodec):
 
 
 class AsTypeCodec(NumcodecsArrayArrayCodec):
-    def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+    def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+        if codec_config is None:
+            codec_config = {}
         super().__init__(codec_id="astype", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
@@ -240,7 +256,9 @@ class AsTypeCodec(NumcodecsArrayArrayCodec):
 
 
 class PackbitsCodec(NumcodecsArrayArrayCodec):
-    def __init__(self, codec_config: dict[str, JSON] = {}) -> None:
+    def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
+        if codec_config is None:
+            codec_config = {}
         super().__init__(codec_id="packbits", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
