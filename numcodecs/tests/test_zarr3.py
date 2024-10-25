@@ -153,6 +153,19 @@ def test_generic_filter_packbits(store: Store):
         a = Array.open(store / "generic_packbits")
     np.testing.assert_array_equal(data, a[:, :])
 
+    with pytest.raises(ValueError, match="packbits filter requires bool dtype"):
+        Array.create(
+            store / "generic_packbits_err",
+            shape=data.shape,
+            chunk_shape=(16, 16),
+            dtype="uint32",
+            fill_value=0,
+            codecs=[
+                get_codec_class("numcodecs.packbits")(),
+                BytesCodec(),
+            ],
+        )
+
 
 @pytest.mark.parametrize("codec_id", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"])
 def test_generic_checksum(store: Store, codec_id: str):

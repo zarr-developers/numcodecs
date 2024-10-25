@@ -86,7 +86,7 @@ class NumcodecsCodec:
         }
 
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-        return input_byte_length
+        return input_byte_length  # pragma: no cover
 
 
 class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
@@ -186,7 +186,7 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
             super().__init__(codec_id=_codec_id, codec_config=codec_config)
 
         def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-            return input_byte_length + 4
+            return input_byte_length + 4  # pragma: no cover
 
     _ChecksumCodec.__name__ = cls_name
     return _ChecksumCodec
