@@ -1,37 +1,75 @@
 import struct
 import zlib
+from typing import Literal
 
 import numpy as np
+from crc32c import crc32c as crc32c_
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
+CHECKSUM_LOCATION = Literal['start', 'end']
+
 
 class Checksum32(Codec):
     # override in sub-class
     checksum = None
+    location: CHECKSUM_LOCATION = 'start'
+
+    def __init__(self, location: CHECKSUM_LOCATION | None = None):
+        if location is not None:
+            self.location = location
 
     def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
         checksum = self.checksum(arr) & 0xFFFFFFFF
         enc = np.empty(arr.nbytes + 4, dtype='u1')
-        enc[:4].view('<u4')[0] = checksum
-        ndarray_copy(arr, enc[4:])
+        if self.location == 'start':
+            checksum_view = enc[:4]
+            payload_view = enc[4:]
+        elif self.location == 'end':
+            checksum_view = enc[-4:]
+            payload_view = enc[:-4]
+        else:
+            raise ValueError(f"Invalid checksum location: {self.location}")
+        checksum_view.view('<u4')[0] = checksum
+        ndarray_copy(arr, payload_view)
         return enc
 
     def decode(self, buf, out=None):
+        if len(buf) < 4:
+            raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
+        if out is not None:
+            ensure_contiguous_ndarray(out)  # check that out is a valid ndarray
+
         arr = ensure_contiguous_ndarray(buf).view('u1')
-        expect = arr[:4].view('<u4')[0]
-        checksum = self.checksum(arr[4:]) & 0xFFFFFFFF
+        if self.location == 'start':
+            checksum_view = arr[:4]
+            payload_view = arr[4:]
+        elif self.location == 'end':
+            checksum_view = arr[-4:]
+            payload_view = arr[:-4]
+        else:
+            raise ValueError(f"Invalid checksum location: {self.location}")
+        expect = checksum_view.view('<u4')[0]
+        checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
-            raise RuntimeError('checksum failed')
-        return ndarray_copy(arr[4:], out)
+            raise RuntimeError(
+                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+            )
+        return ndarray_copy(payload_view, out)
 
 
 class CRC32(Checksum32):
     codec_id = 'crc32'
     checksum = zlib.crc32
+
+
+class CRC32C(Checksum32):
+    codec_id = 'crc32c'
+    checksum = crc32c_
+    location = 'end'
 
 
 class Adler32(Checksum32):
