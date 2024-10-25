@@ -181,7 +181,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
     try:
         get_codec({"id": codec_id})
     except ValueError as e:
-        if "codec not available" in str(e):
+        if "codec not available" in str(e) or "codec must be installed" in str(e):
             pytest.xfail(f"{codec_id} is not available")
         else:
             raise
