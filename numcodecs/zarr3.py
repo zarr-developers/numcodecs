@@ -4,6 +4,7 @@ import asyncio
 import math
 from dataclasses import dataclass, replace
 from functools import cached_property
+from typing import Any
 from warnings import warn
 
 import numpy as np
@@ -23,12 +24,7 @@ from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
 from zarr.core.array_spec import ArraySpec
 from zarr.core.buffer import Buffer, BufferPrototype, NDBuffer
 from zarr.core.buffer.cpu import as_numpy_array_wrapper
-from zarr.core.common import (
-    JSON,
-    parse_named_configuration,
-    product,
-)
-from zarr.core.metadata import ArrayMetadata
+from zarr.core.common import JSON, parse_named_configuration, product
 
 CODEC_PREFIX = "numcodecs."
 
@@ -59,7 +55,6 @@ class NumcodecsCodec:
             raise ValueError(f"Codec id does not match {codec_id}. Got: {codec_config['id']}.")
 
         object.__setattr__(self, "codec_config", codec_config)
-        print("HELLO")
         warn(
             "Numcodecs codecs are not in the Zarr version 3 specification and "
             "may not be supported by other zarr implementations.",
@@ -269,9 +264,9 @@ class PackbitsCodec(NumcodecsArrayArrayCodec):
             dtype=np.dtype("uint8"),
         )
 
-    def validate(self, array_metadata: ArrayMetadata) -> None:
-        if array_metadata.dtype != np.dtype("bool"):
-            raise ValueError(f"Packbits filter requires bool dtype. Got {array_metadata.dtype}.")
+    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:
+        if dtype != np.dtype("bool"):
+            raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
 # bytes-to-bytes codecs
