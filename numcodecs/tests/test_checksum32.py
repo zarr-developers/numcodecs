@@ -81,6 +81,15 @@ def test_err_encode_list(codec):
         codec.encode(data)
 
 
+def test_err_location():
+    with pytest.raises(ValueError):
+        CRC32(location="foo")
+    with pytest.raises(ValueError):
+        CRC32C(location="foo")
+    with pytest.raises(ValueError):
+        Adler32(location="foo")
+
+
 def test_repr():
     check_repr("CRC32(location='start')")
     check_repr("CRC32C(location='start')")
