@@ -20,6 +20,8 @@ class Checksum32(Codec):
     def __init__(self, location: CHECKSUM_LOCATION | None = None):
         if location is not None:
             self.location = location
+        if self.location not in ['start', 'end']:
+            raise ValueError(f"Invalid checksum location: {self.location}")
 
     def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
@@ -28,11 +30,9 @@ class Checksum32(Codec):
         if self.location == 'start':
             checksum_view = enc[:4]
             payload_view = enc[4:]
-        elif self.location == 'end':
+        else:
             checksum_view = enc[-4:]
             payload_view = enc[:-4]
-        else:
-            raise ValueError(f"Invalid checksum location: {self.location}")
         checksum_view.view('<u4')[0] = checksum
         ndarray_copy(arr, payload_view)
         return enc
@@ -47,11 +47,9 @@ class Checksum32(Codec):
         if self.location == 'start':
             checksum_view = arr[:4]
             payload_view = arr[4:]
-        elif self.location == 'end':
+        else:
             checksum_view = arr[-4:]
             payload_view = arr[:-4]
-        else:
-            raise ValueError(f"Invalid checksum location: {self.location}")
         expect = checksum_view.view('<u4')[0]
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
