@@ -194,8 +194,6 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
 
 class ShuffleCodec(NumcodecsBytesBytesCodec):
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        if codec_config is None:
-            codec_config = {}
         super().__init__(codec_id="shuffle", codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
@@ -206,8 +204,6 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
 
 class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        if codec_config is None:
-            codec_config = {}
         super().__init__(codec_id="fixedscaleoffset", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
@@ -223,8 +219,6 @@ class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
 
 class QuantizeCodec(NumcodecsArrayArrayCodec):
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        if codec_config is None:
-            codec_config = {}
         super().__init__(codec_id="quantize", codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
@@ -235,8 +229,6 @@ class QuantizeCodec(NumcodecsArrayArrayCodec):
 
 class AsTypeCodec(NumcodecsArrayArrayCodec):
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        if codec_config is None:
-            codec_config = {}
         super().__init__(codec_id="astype", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
@@ -251,8 +243,6 @@ class AsTypeCodec(NumcodecsArrayArrayCodec):
 
 class PackbitsCodec(NumcodecsArrayArrayCodec):
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        if codec_config is None:
-            codec_config = {}
         super().__init__(codec_id="packbits", codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
