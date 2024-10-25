@@ -1,12 +1,9 @@
 from __future__ import annotations
-from collections.abc import Iterator
-
 
 import numpy as np
 import pytest
 
 from numcodecs.registry import get_codec
-
 
 zarr = pytest.importorskip("zarr", minversion="3.0.0")
 
@@ -23,8 +20,8 @@ EXPECTED_WARNING_STR = "Numcodecs codecs are not in the Zarr version 3.*"
 
 
 @pytest.fixture
-def store() -> Iterator[Store]:
-    yield StorePath(MemoryStore(mode="w"))
+def store() -> Store:
+    return StorePath(MemoryStore(mode="w"))
 
 
 @pytest.mark.parametrize(
