@@ -60,19 +60,45 @@ class Checksum32(Codec):
 
 
 class CRC32(Checksum32):
+    """Codec add a crc32 checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
+
     codec_id = 'crc32'
     checksum = zlib.crc32
+    location = 'start'
 
 
 class CRC32C(Checksum32):
+    """Codec add a crc32c checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
+
     codec_id = 'crc32c'
     checksum = crc32c_
     location = 'end'
 
 
 class Adler32(Checksum32):
+    """Codec add a adler32 checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
+
     codec_id = 'adler32'
     checksum = zlib.adler32
+    location = 'start'
 
 
 class JenkinsLookup3(Checksum32):
@@ -86,9 +112,12 @@ class JenkinsLookup3(Checksum32):
     the data portion and compared with the four-byte checksum, raising
     RuntimeError if inconsistent.
 
-    Attributes:
-       initval: initial seed passed to the hash algorithm, default: 0
-       prefix: bytes prepended to the buffer before evaluating the hash, default: None
+    Parameters
+    ----------
+    initval : int
+        initial seed passed to the hash algorithm, default: 0
+    prefix : int
+        bytes prepended to the buffer before evaluating the hash, default: None
     """
 
     checksum = jenkins_lookup3
