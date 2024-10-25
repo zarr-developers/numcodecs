@@ -3,7 +3,6 @@ import zlib
 from typing import Literal
 
 import numpy as np
-from crc32c import crc32c as crc32c_
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
@@ -83,7 +82,15 @@ class CRC32C(Checksum32):
     """
 
     codec_id = 'crc32c'
-    checksum = crc32c_
+
+    def checksum(self, buf):
+        try:
+            from crc32c import crc32c as crc32c_
+
+            return crc32c_(buf)
+        except ImportError:
+            raise ImportError("crc32c must be installed to use the CRC32C checksum codec.")
+
     location = 'end'
 
 
