@@ -6,6 +6,7 @@
 import threading
 import multiprocessing
 import os
+from deprecated import deprecated
 
 
 from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
@@ -95,23 +96,30 @@ def get_mutex():
 _importer_pid = os.getpid()
 
 
-def init():
+def _init():
     """Initialize the Blosc library environment."""
     blosc_init()
 
+init = deprecated(_init)
 
-def destroy():
+
+def _destroy():
     """Destroy the Blosc library environment."""
     blosc_destroy()
 
 
-def compname_to_compcode(cname):
+destroy = deprecated(_destroy)
+
+
+def _compname_to_compcode(cname):
     """Return the compressor code associated with the compressor name. If the compressor
     name is not recognized, or there is not support for it in this build, -1 is returned
     instead."""
     if isinstance(cname, str):
         cname = cname.encode('ascii')
     return blosc_compname_to_compcode(cname)
+
+compname_to_compcode = deprecated(_compname_to_compcode)
 
 
 def list_compressors():
@@ -133,7 +141,7 @@ def set_nthreads(int nthreads):
     return blosc_set_nthreads(nthreads)
 
 
-def cbuffer_sizes(source):
+def _cbuffer_sizes(source):
     """Return information about a compressed buffer, namely the number of uncompressed
     bytes (`nbytes`) and compressed (`cbytes`).  It also returns the `blocksize` (which
     is used internally for doing the compression by blocks).
@@ -160,6 +168,7 @@ def cbuffer_sizes(source):
 
     return nbytes, cbytes, blocksize
 
+cbuffer_sizes = deprecated(_cbuffer_sizes)
 
 def cbuffer_complib(source):
     """Return the name of the compression library used to compress `source`."""
@@ -180,7 +189,7 @@ def cbuffer_complib(source):
     return complib
 
 
-def cbuffer_metainfo(source):
+def _cbuffer_metainfo(source):
     """Return some meta-information about the compressed buffer in `source`, including
     the typesize, whether the shuffle or bit-shuffle filters were used, and the
     whether the buffer was memcpyed.
@@ -217,11 +226,13 @@ def cbuffer_metainfo(source):
 
     return typesize, shuffle, memcpyed
 
+cbuffer_metainfo = deprecated(_cbuffer_metainfo)
 
-def err_bad_cname(cname):
+def _err_bad_cname(cname):
     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
                      '%s' % (cname, list_compressors()))
 
+err_bad_cname = deprecated(_err_bad_cname)
 
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
              int blocksize=AUTOBLOCKS):
@@ -405,7 +416,7 @@ def decompress(source, dest=None):
     return dest
 
 
-def decompress_partial(source, start, nitems, dest=None):
+def _decompress_partial(source, start, nitems, dest=None):
     """**Experimental**
     Decompress data of only a part of a buffer.
 
@@ -478,6 +489,7 @@ def decompress_partial(source, start, nitems, dest=None):
 
     return dest
 
+decompress_partial = deprecated(_decompress_partial)
 
 # set the value of this variable to True or False to override the
 # default adaptive behaviour
