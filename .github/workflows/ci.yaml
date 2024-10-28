@@ -61,7 +61,7 @@ jobs:
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
           # TODO: put back zfpy import when it supports numpy 2.0
-          python -m pip install -v -e .[test,test_extras,msgpack]
+          python -m pip install -v -e .[test,test_extras,msgpack,crc32c]
 
       - name: Install pcodec
         if: matrix.python-version != '3.13.0'
