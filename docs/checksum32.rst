@@ -13,6 +13,17 @@ CRC32
     .. automethod:: from_config
 
 
+CRC32C
+------
+.. autoclass:: CRC32C
+
+    .. autoattribute:: codec_id
+    .. automethod:: encode
+    .. automethod:: decode
+    .. automethod:: get_config
+    .. automethod:: from_config
+
+
 Adler32
 -------
 .. autoclass:: Adler32
