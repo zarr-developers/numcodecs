@@ -20,6 +20,11 @@ Fix
   subsequently.
   By :user:`Clément Robert <neutrinoceros>` :issue:`522`
 
+Enhancements
+~~~~~~~~~~~~
+* Add Crc32c checksum codec
+  By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
+
 .. _release_0.13.1:
 
 0.13.1

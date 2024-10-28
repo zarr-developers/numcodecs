@@ -70,6 +70,9 @@ zfpy = [
 pcodec = [
     "pcodec>=0.2.0",
 ]
+crc32c = [
+    "crc32c>=2.7",
+]
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
