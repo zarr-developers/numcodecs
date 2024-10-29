@@ -28,9 +28,9 @@ Enhancements
 Maintenance
 ~~~~~~~~~~~
 * The minimum supported Python version is now Python 3.11.
-  By :user:`David Stansby <dstansby>`, :issue:`621`
+  By :user:`David Stansby <dstansby>`, :issue:`622`
 * The minimum supported numpy version is now 1.24.
-  By :user:`David Stansby <dstansby>`, :issue:`621`
+  By :user:`David Stansby <dstansby>`, :issue:`622`
 
 .. _release_0.13.1:
 
