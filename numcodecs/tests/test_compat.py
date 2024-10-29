@@ -64,6 +64,7 @@ def test_ensure_bytes_invalid_inputs():
             ensure_bytes(e)
 
 
+@pytest.mark.filterwarnings("ignore:The 'u' type code is deprecated and will be removed in Python 3.16")
 def test_ensure_contiguous_ndarray_invalid_inputs():
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
