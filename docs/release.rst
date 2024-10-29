@@ -25,6 +25,13 @@ Enhancements
 * Add Crc32c checksum codec
   By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
 
+Maintenance
+~~~~~~~~~~~
+* The minimum supported Python version is now Python 3.11.
+  By :user:`David Stansby <dstansby>`, :issue:`621`
+* The minimum supported numpy version is now 1.24.
+  By :user:`David Stansby <dstansby>`, :issue:`621`
+
 .. _release_0.13.1:
 
 0.13.1
