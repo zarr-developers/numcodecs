@@ -8,6 +8,25 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Fix
+~~~
+* Fix in-place mutation of input array in `BitRound`.
+  By :user:`Sam Levang <slevang>`, :issue:`608`
+* Fix an issue where importing numcodecs would lock the state of `multiprocessing`
+  and prevent user code to call `multiprocessing.set_start_method("spawn")`
+  subsequently.
+  By :user:`Clément Robert <neutrinoceros>` :issue:`522`
+
+Enhancements
+~~~~~~~~~~~~
+* Add Crc32c checksum codec
+  By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
+
+.. _release_0.13.1:
+
 0.13.1
 ------
 

@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13.0"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
         # macos-12 is an intel runner, macos-14 is a arm64 runner
         platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
 
@@ -61,10 +61,10 @@ jobs:
           conda activate env
           export DISABLE_NUMCODECS_AVX2=""
           # TODO: put back zfpy import when it supports numpy 2.0
-          python -m pip install -v -e .[test,test_extras,msgpack]
+          python -m pip install -v -e .[test,test_extras,msgpack,crc32c]
 
       - name: Install pcodec
-        if: matrix.python-version != '3.13.0'
+        if: matrix.python-version != '3.13'
         shell: "bash -l {0}"
         run: |
             conda activate env
