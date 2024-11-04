@@ -4,7 +4,7 @@ requires = [
     "setuptools-scm[toml]>=6.2",
     "Cython",
     "py-cpuinfo",
-    "numpy",
+    "numpy>2",
     "pkgconfig"
 ]
 build-backend = "setuptools.build_meta"
@@ -16,9 +16,9 @@ A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
-    "numpy>=1.7",
+    "numpy>=1.23",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dynamic = [
   "version",
 ]
@@ -69,7 +69,7 @@ zfpy = [
     "numpy<2.0.0",
 ]
 pcodec = [
-    "pcodec>=0.2.0",
+    "pcodec>=0.2,<0.3",
 ]
 crc32c = [
     "crc32c>=2.7",
