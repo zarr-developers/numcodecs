@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
         # macos-12 is an intel runner, macos-14 is a arm64 runner
         platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
 
@@ -68,12 +68,12 @@ jobs:
         shell: "bash -l {0}"
         run: |
             conda activate env
-            python -m pip install -v pcodec
+            python -m pip install -v ".[pcodec]"
 
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
         shell: "bash -l {0}"
         run: |
           conda activate env
