@@ -4,6 +4,17 @@ import numpy as np
 import pytest
 
 from numcodecs.registry import get_codec
+from numcodecs.zarr3 import (
+    BloscCodec,
+    BZ2Codec,
+    GZipCodec,
+    LZ4Codec,
+    LZMACodec,
+    NumcodecsCodec,
+    ShuffleCodec,
+    ZlibCodec,
+    ZstdCodec,
+)
 
 zarr = pytest.importorskip("zarr")
 
@@ -29,9 +40,9 @@ def store() -> Store:
 
 
 @pytest.mark.parametrize(
-    "codec_id", ["blosc", "lz4", "zstd", "zlib", "gzip", "bz2", "lzma", "shuffle"]
+    "codec_name", ["blosc", "lz4", "zstd", "zlib", "gzip", "bz2", "lzma", "shuffle"]
 )
-def test_generic_codec(store: Store, codec_id: str):
+def test_generic_codec(store: Store, codec_name: str):
     data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -43,7 +54,40 @@ def test_generic_codec(store: Store, codec_id: str):
             fill_value=0,
             codecs=[
                 BytesCodec(),
-                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
+                get_codec_class(f"numcodecs.{codec_name}")({"id": codec_name}),
+            ],
+        )
+
+    a[:, :] = data.copy()
+    np.testing.assert_array_equal(data, a[:, :])
+
+
+@pytest.mark.parametrize(
+    "codec_class",
+    [
+        BloscCodec,
+        LZ4Codec,
+        ZstdCodec,
+        ZlibCodec,
+        GZipCodec,
+        BZ2Codec,
+        LZMACodec,
+        ShuffleCodec,
+    ],
+)
+def test_generic_codec_class(store: Store, codec_class: type[NumcodecsCodec]):
+    data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
+
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
+        a = Array.create(
+            store / "generic",
+            shape=data.shape,
+            chunk_shape=(16, 16),
+            dtype=data.dtype,
+            fill_value=0,
+            codecs=[
+                BytesCodec(),
+                codec_class(),
             ],
         )
 
@@ -69,7 +113,7 @@ def test_generic_codec(store: Store, codec_id: str):
 def test_generic_filter(store: Store, codec_config: dict[str, JSON]):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
-    codec_id = codec_config["id"]
+    codec_name = codec_config["id"]
     del codec_config["id"]
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -80,7 +124,7 @@ def test_generic_filter(store: Store, codec_config: dict[str, JSON]):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class(f"numcodecs.{codec_id}")(codec_config),
+                get_codec_class(f"numcodecs.{codec_name}")(codec_config),
                 BytesCodec(),
             ],
         )
@@ -167,8 +211,8 @@ def test_generic_filter_packbits(store: Store):
         )
 
 
-@pytest.mark.parametrize("codec_id", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"])
-def test_generic_checksum(store: Store, codec_id: str):
+@pytest.mark.parametrize("codec_name", ["crc32", "adler32", "fletcher32", "jenkins_lookup3"])
+def test_generic_checksum(store: Store, codec_name: str):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -180,7 +224,7 @@ def test_generic_checksum(store: Store, codec_id: str):
             fill_value=0,
             codecs=[
                 BytesCodec(),
-                get_codec_class(f"numcodecs.{codec_id}")(),
+                get_codec_class(f"numcodecs.{codec_name}")(),
             ],
         )
 
@@ -189,17 +233,17 @@ def test_generic_checksum(store: Store, codec_id: str):
     np.testing.assert_array_equal(data, a[:, :])
 
 
-@pytest.mark.parametrize("codec_id", ["pcodec", "zfpy"])
-def test_generic_bytes_codec(store: Store, codec_id: str):
+@pytest.mark.parametrize("codec_name", ["pcodec", "zfpy"])
+def test_generic_bytes_codec(store: Store, codec_name: str):
     try:
-        get_codec({"id": codec_id})
+        get_codec({"id": codec_name})
     except ValueError as e:
         if "codec not available" in str(e):
-            pytest.xfail(f"{codec_id} is not available: {e}")
+            pytest.xfail(f"{codec_name} is not available: {e}")
         else:
             raise  # pragma: no cover
     except ImportError as e:
-        pytest.xfail(f"{codec_id} is not available: {e}")
+        pytest.xfail(f"{codec_name} is not available: {e}")
 
     data = np.arange(0, 256, dtype="float32").reshape((16, 16))
 
@@ -211,7 +255,7 @@ def test_generic_bytes_codec(store: Store, codec_id: str):
             dtype=data.dtype,
             fill_value=0,
             codecs=[
-                get_codec_class(f"numcodecs.{codec_id}")({"id": codec_id}),
+                get_codec_class(f"numcodecs.{codec_name}")({"id": codec_name}),
             ],
         )
 

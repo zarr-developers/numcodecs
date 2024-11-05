@@ -1,3 +1,16 @@
+"""
+This module provides the compatibility for `numcodecs` in Zarr version 3.
+
+A compatibility module is required because the codec handling in Zarr version 3 is different from Zarr version 2.
+
+>>> import zarr
+>>> import numcodecs.zarr3
+
+>>> blosc_codec = numcodecs.zarr3.Blosc({"cname="zstd", clevel=3, shuffle=numcodecs.Blosc.BITSHUFFLE)
+>>> array = zarr.open("data.zarr", mode="w", shape=(1024, 1024), chunks=(64, 64), dtype="float32", codecs=[])
+
+"""
+
 from __future__ import annotations
 
 import asyncio
@@ -28,35 +41,43 @@ from zarr.core.common import JSON, parse_named_configuration, product
 CODEC_PREFIX = "numcodecs."
 
 
-def parse_codec_configuration(data: dict[str, JSON], expected_name_prefix: str) -> dict[str, JSON]:
-    parsed_name, parsed_configuration = parse_named_configuration(data)
-    if not parsed_name.startswith(expected_name_prefix):
+def _expect_name_prefix(codec_name: str) -> str:
+    if not codec_name.startswith(CODEC_PREFIX):
         raise ValueError(
-            f"Expected name to start with '{expected_name_prefix}'. Got {parsed_name} instead."
+            f"Expected name to start with '{CODEC_PREFIX}'. Got {codec_name} instead."
         )  # pragma: no cover
-    id = parsed_name[slice(len(expected_name_prefix), None)]
+    return codec_name[len(CODEC_PREFIX) :]
+
+
+def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
+    parsed_name, parsed_configuration = parse_named_configuration(data)
+    if not parsed_name.startswith(CODEC_PREFIX):
+        raise ValueError(
+            f"Expected name to start with '{CODEC_PREFIX}'. Got {parsed_name} instead."
+        )  # pragma: no cover
+    id = _expect_name_prefix(parsed_name)
     return {"id": id, **parsed_configuration}
 
 
 @dataclass(frozen=True)
 class NumcodecsCodec:
+    codec_name: str
     codec_config: dict[str, JSON]
 
-    def __init__(
-        self, *, codec_id: str | None = None, codec_config: dict[str, JSON] | None = None
-    ) -> None:
+    def __init__(self, *, codec_config: dict[str, JSON] | None = None) -> None:
+        if not self.codec_name:
+            raise ValueError(
+                "The codec name needs to be supplied through the `codec_name` attribute."
+            )  # pragma: no cover
+        unprefixed_codec_name = _expect_name_prefix(self.codec_name)
+
         if codec_config is None:
             codec_config = {}
         if "id" not in codec_config:
-            if not codec_id:
-                raise ValueError(
-                    "The codec id needs to be supplied either through the id attribute "
-                    "of the codec_config or through the codec_id argument."
-                )  # pragma: no cover
-            codec_config = {"id": codec_id, **codec_config}
-        elif codec_id and codec_config["id"] != codec_id:
+            codec_config = {"id": unprefixed_codec_name, **codec_config}
+        elif codec_config["id"] != unprefixed_codec_name:
             raise ValueError(
-                f"Codec id does not match {codec_id}. Got: {codec_config['id']}."
+                f"Codec id does not match {unprefixed_codec_name}. Got: {codec_config['id']}."
             )  # pragma: no cover
 
         object.__setattr__(self, "codec_config", codec_config)
@@ -72,15 +93,13 @@ class NumcodecsCodec:
 
     @classmethod
     def from_dict(cls, data: dict[str, JSON]) -> Self:
-        codec_config = parse_codec_configuration(data, CODEC_PREFIX)
-        assert isinstance(codec_config["id"], str)  # for mypy
+        codec_config = _parse_codec_configuration(data)
         return cls(codec_config=codec_config)
 
     def to_dict(self) -> JSON:
         codec_config = self.codec_config.copy()
-        codec_id = codec_config.pop("id")
         return {
-            "name": f"{CODEC_PREFIX}{codec_id}",
+            "name": self.codec_name,
             "configuration": codec_config,
         }
 
@@ -89,8 +108,8 @@ class NumcodecsCodec:
 
 
 class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
-    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id=codec_id, codec_config=codec_config)
+    def __init__(self, *, codec_config: dict[str, JSON] | None = None) -> None:
+        super().__init__(codec_config=codec_config)
 
     async def _decode_single(self, chunk_bytes: Buffer, chunk_spec: ArraySpec) -> Buffer:
         return await asyncio.to_thread(
@@ -111,8 +130,8 @@ class NumcodecsBytesBytesCodec(NumcodecsCodec, BytesBytesCodec):
 
 
 class NumcodecsArrayArrayCodec(NumcodecsCodec, ArrayArrayCodec):
-    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
-        super().__init__(codec_id=codec_id, codec_config=codec_config)
+    def __init__(self, *, codec_config: dict[str, JSON]) -> None:
+        super().__init__(codec_config=codec_config)
 
     async def _decode_single(self, chunk_array: NDBuffer, chunk_spec: ArraySpec) -> NDBuffer:
         chunk_ndarray = chunk_array.as_ndarray_like()
@@ -126,8 +145,8 @@ class NumcodecsArrayArrayCodec(NumcodecsCodec, ArrayArrayCodec):
 
 
 class NumcodecsArrayBytesCodec(NumcodecsCodec, ArrayBytesCodec):
-    def __init__(self, *, codec_id: str, codec_config: dict[str, JSON]) -> None:
-        super().__init__(codec_id=codec_id, codec_config=codec_config)
+    def __init__(self, *, codec_config: dict[str, JSON]) -> None:
+        super().__init__(codec_config=codec_config)
 
     async def _decode_single(self, chunk_buffer: Buffer, chunk_spec: ArraySpec) -> NDBuffer:
         chunk_bytes = chunk_buffer.to_bytes()
@@ -140,49 +159,57 @@ class NumcodecsArrayBytesCodec(NumcodecsCodec, ArrayBytesCodec):
         return chunk_spec.prototype.buffer.from_bytes(out)
 
 
-def make_bytes_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
+def make_bytes_bytes_codec(codec_name: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
     # rename for class scope
-    _codec_id = codec_id
+    _codec_name = CODEC_PREFIX + codec_name
 
     class _Codec(NumcodecsBytesBytesCodec):
+        codec_name = _codec_name
+
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            super().__init__(codec_id=_codec_id, codec_config=codec_config)
+            super().__init__(codec_config=codec_config)
 
     _Codec.__name__ = cls_name
     return _Codec
 
 
-def make_array_array_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayArrayCodec]:
+def make_array_array_codec(codec_name: str, cls_name: str) -> type[NumcodecsArrayArrayCodec]:
     # rename for class scope
-    _codec_id = codec_id
+    _codec_name = CODEC_PREFIX + codec_name
 
     class _Codec(NumcodecsArrayArrayCodec):
+        codec_name = _codec_name
+
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            super().__init__(codec_id=_codec_id, codec_config=codec_config)
+            super().__init__(codec_config=codec_config)
 
     _Codec.__name__ = cls_name
     return _Codec
 
 
-def make_array_bytes_codec(codec_id: str, cls_name: str) -> type[NumcodecsArrayBytesCodec]:
+def make_array_bytes_codec(codec_name: str, cls_name: str) -> type[NumcodecsArrayBytesCodec]:
     # rename for class scope
-    _codec_id = codec_id
+    _codec_name = CODEC_PREFIX + codec_name
 
     class _Codec(NumcodecsArrayBytesCodec):
+        codec_name = _codec_name
+
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            super().__init__(codec_id=_codec_id, codec_config=codec_config)
+            super().__init__(codec_config=codec_config)
 
     _Codec.__name__ = cls_name
     return _Codec
 
 
-def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
+def make_checksum_codec(codec_name: str, cls_name: str) -> type[NumcodecsBytesBytesCodec]:
     # rename for class scope
-    _codec_id = codec_id
+    _codec_name = CODEC_PREFIX + codec_name
 
     class _ChecksumCodec(NumcodecsBytesBytesCodec):
+        codec_name = _codec_name
+
         def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-            super().__init__(codec_id=_codec_id, codec_config=codec_config)
+            super().__init__(codec_config=codec_config)
 
         def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
             return input_byte_length + 4  # pragma: no cover
@@ -192,8 +219,10 @@ def make_checksum_codec(codec_id: str, cls_name: str) -> type[NumcodecsBytesByte
 
 
 class ShuffleCodec(NumcodecsBytesBytesCodec):
+    codec_name = f"{CODEC_PREFIX}shuffle"
+
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id="shuffle", codec_config=codec_config)
+        super().__init__(codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
@@ -202,8 +231,10 @@ class ShuffleCodec(NumcodecsBytesBytesCodec):
 
 
 class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
+    codec_name = f"{CODEC_PREFIX}fixedscaleoffset"
+
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id="fixedscaleoffset", codec_config=codec_config)
+        super().__init__(codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
@@ -217,8 +248,10 @@ class FixedScaleOffsetCodec(NumcodecsArrayArrayCodec):
 
 
 class QuantizeCodec(NumcodecsArrayArrayCodec):
+    codec_name = f"{CODEC_PREFIX}quantize"
+
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id="quantize", codec_config=codec_config)
+        super().__init__(codec_config=codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Self:
         if str(array_spec.dtype) != self.codec_config.get("dtype"):
@@ -227,8 +260,10 @@ class QuantizeCodec(NumcodecsArrayArrayCodec):
 
 
 class AsTypeCodec(NumcodecsArrayArrayCodec):
+    codec_name = f"{CODEC_PREFIX}astype"
+
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id="astype", codec_config=codec_config)
+        super().__init__(codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))
@@ -241,8 +276,10 @@ class AsTypeCodec(NumcodecsArrayArrayCodec):
 
 
 class PackbitsCodec(NumcodecsArrayArrayCodec):
+    codec_name = f"{CODEC_PREFIX}packbits"
+
     def __init__(self, codec_config: dict[str, JSON] | None = None) -> None:
-        super().__init__(codec_id="packbits", codec_config=codec_config)
+        super().__init__(codec_config=codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(
@@ -258,12 +295,12 @@ class PackbitsCodec(NumcodecsArrayArrayCodec):
 
 # bytes-to-bytes codecs
 BloscCodec = make_bytes_bytes_codec("blosc", "BloscCodec")
-Lz4Codec = make_bytes_bytes_codec("lz4", "Lz4Codec")
+LZ4Codec = make_bytes_bytes_codec("lz4", "LZ4Codec")
 ZstdCodec = make_bytes_bytes_codec("zstd", "ZstdCodec")
 ZlibCodec = make_bytes_bytes_codec("zlib", "ZlibCodec")
-GzipCodec = make_bytes_bytes_codec("gzip", "GzipCodec")
-Bz2Codec = make_bytes_bytes_codec("bz2", "Bz2Codec")
-LzmaCodec = make_bytes_bytes_codec("lzma", "LzmaCodec")
+GZipCodec = make_bytes_bytes_codec("gzip", "GZipCodec")
+BZ2Codec = make_bytes_bytes_codec("bz2", "BZ2Codec")
+LZMACodec = make_bytes_bytes_codec("lzma", "LZMACodec")
 # ShuffleCodec
 
 # array-to-array codecs ("filters")
@@ -276,6 +313,7 @@ BitroundCodec = make_array_array_codec("bitround", "BitroundCodec")
 
 # bytes-to-bytes checksum codecs
 Crc32Codec = make_checksum_codec("crc32", "Crc32Codec")
+Crc32cCodec = make_checksum_codec("crc32c", "Crc32cCodec")
 Adler32Codec = make_checksum_codec("adler32", "Adler32Codec")
 Fletcher32Codec = make_checksum_codec("fletcher32", "Fletcher32Codec")
 JenkinsLookup3Codec = make_checksum_codec("jenkins_lookup3", "JenkinsLookup3Codec")

@@ -10,3 +10,4 @@ API reference
     checksum32
     abc
     registry
+    zarr3

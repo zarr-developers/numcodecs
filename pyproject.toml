@@ -76,12 +76,12 @@ crc32c = [
 
 [project.entry-points."zarr.codecs"]
 "numcodecs.blosc" = "numcodecs.zarr3:BloscCodec"
-"numcodecs.lz4" = "numcodecs.zarr3:Lz4Codec"
+"numcodecs.lz4" = "numcodecs.zarr3:LZ4Codec"
 "numcodecs.zstd" = "numcodecs.zarr3:ZstdCodec"
 "numcodecs.zlib" = "numcodecs.zarr3:ZlibCodec"
-"numcodecs.gzip" = "numcodecs.zarr3:GzipCodec"
-"numcodecs.bz2" = "numcodecs.zarr3:Bz2Codec"
-"numcodecs.lzma" = "numcodecs.zarr3:LzmaCodec"
+"numcodecs.gzip" = "numcodecs.zarr3:GZipCodec"
+"numcodecs.bz2" = "numcodecs.zarr3:BZ2Codec"
+"numcodecs.lzma" = "numcodecs.zarr3:LZMACodec"
 "numcodecs.shuffle" = "numcodecs.zarr3:ShuffleCodec"
 "numcodecs.delta" = "numcodecs.zarr3:DeltaCodec"
 "numcodecs.bitround" = "numcodecs.zarr3:BitroundCodec"
