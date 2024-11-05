@@ -83,8 +83,6 @@ class _NumcodecsCodec:
             )  # pragma: no cover
         unprefixed_codec_name = _expect_name_prefix(self.codec_name)
 
-        if codec_config is None:
-            codec_config = {}
         if "id" not in codec_config:
             codec_config = {"id": unprefixed_codec_name, **codec_config}
         elif codec_config["id"] != unprefixed_codec_name:
