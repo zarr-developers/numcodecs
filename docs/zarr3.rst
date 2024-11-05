@@ -5,95 +5,95 @@ Zarr 3 codecs
 
 Bytes-to-bytes codecs
 ---------------------
-.. autoclass:: BloscCodec()
+.. autoclass:: Blosc()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: Lz4Codec()
+.. autoclass:: LZ4()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: ZstdCodec()
+.. autoclass:: Zstd()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: ZlibCodec()
+.. autoclass:: Zlib()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: GzipCodec()
+.. autoclass:: GZip()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: Bz2Codec()
+.. autoclass:: BZ2()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: LzmaCodec()
+.. autoclass:: LZMA()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: ShuffleCodec()
+.. autoclass:: Shuffle()
 
     .. autoattribute:: codec_name
 
 
 Array-to-array codecs
 ---------------------
-.. autoclass:: DeltaCodec()
+.. autoclass:: Delta()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: BitroundCodec()
+.. autoclass:: BitRound()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: FixedScaleOffsetCodec()
+.. autoclass:: FixedScaleOffset()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: QuantizeCodec()
+.. autoclass:: Quantize()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: PackbitsCodec()
+.. autoclass:: PackBits()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: AsTypeCodec()
+.. autoclass:: AsType()
 
     .. autoattribute:: codec_name
 
 
 Bytes-to-bytes checksum codecs
 ------------------------------
-.. autoclass:: Crc32Codec()
+.. autoclass:: CRC32()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: Crc32cCodec()
+.. autoclass:: CRC32C()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: Adler32Codec()
+.. autoclass:: Adler32()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: Fletcher32Codec()
+.. autoclass:: Fletcher32()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: JenkinsLookup3Codec()
+.. autoclass:: JenkinsLookup3()
 
     .. autoattribute:: codec_name
 
 
 Array-to-bytes codecs
 ---------------------
-.. autoclass:: PCodecCodec()
+.. autoclass:: PCodec()
 
     .. autoattribute:: codec_name
 
-.. autoclass:: ZFPYCodec()
+.. autoclass:: ZFPY()
 
     .. autoattribute:: codec_name
