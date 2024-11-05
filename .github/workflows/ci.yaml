@@ -72,7 +72,6 @@ jobs:
 
 
       - name: Install zarr-python
-        if : matrix.python-version != '3.10'
         shell: "bash -l {0}"
         run: |
           conda activate env
