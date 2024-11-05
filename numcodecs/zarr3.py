@@ -4,11 +4,10 @@ import asyncio
 import math
 from dataclasses import dataclass, replace
 from functools import cached_property
-from typing import Any
+from typing import Any, Self
 from warnings import warn
 
 import numpy as np
-from typing_extensions import Self
 
 import numcodecs
 
