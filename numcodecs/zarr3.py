@@ -26,8 +26,9 @@ from __future__ import annotations
 
 import asyncio
 import math
+from collections.abc import Callable
 from dataclasses import dataclass, replace
-from functools import cached_property
+from functools import cached_property, partial
 from typing import Any, Self, TypeVar
 from warnings import warn
 
@@ -180,6 +181,10 @@ def _add_docstring(cls: type[T], ref_class_name: str) -> type[T]:
     return cls
 
 
+def _add_docstring_wrapper(ref_class_name: str) -> Callable[[type[T]], type[T]]:
+    return partial(_add_docstring, ref_class_name=ref_class_name)
+
+
 def _make_bytes_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytesBytesCodec]:
     # rename for class scope
     _codec_name = CODEC_PREFIX + codec_name
@@ -249,6 +254,7 @@ BZ2 = _add_docstring(_make_bytes_bytes_codec("bz2", "BZ2"), "numcodecs.bz2.BZ2")
 LZMA = _add_docstring(_make_bytes_bytes_codec("lzma", "LZMA"), "numcodecs.lzma.LZMA")
 
 
+@_add_docstring_wrapper("numcodecs.shuffle.Shuffle")
 class Shuffle(_NumcodecsBytesBytesCodec):
     codec_name = f"{CODEC_PREFIX}shuffle"
 
@@ -261,8 +267,6 @@ class Shuffle(_NumcodecsBytesBytesCodec):
         return self  # pragma: no cover
 
 
-Shuffle = _add_docstring(Shuffle, "numcodecs.shuffle.Shuffle")
-
 # array-to-array codecs ("filters")
 Delta = _add_docstring(_make_array_array_codec("delta", "Delta"), "numcodecs.delta.Delta")
 BitRound = _add_docstring(
@@ -270,6 +274,7 @@ BitRound = _add_docstring(
 )
 
 
+@_add_docstring_wrapper("numcodecs.fixedscaleoffset.FixedScaleOffset")
 class FixedScaleOffset(_NumcodecsArrayArrayCodec):
     codec_name = f"{CODEC_PREFIX}fixedscaleoffset"
 
@@ -287,9 +292,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
         return self
 
 
-FixedScaleOffset = _add_docstring(FixedScaleOffset, "numcodecs.fixedscaleoffset.FixedScaleOffset")
-
-
+@_add_docstring_wrapper("numcodecs.quantize.Quantize")
 class Quantize(_NumcodecsArrayArrayCodec):
     codec_name = f"{CODEC_PREFIX}quantize"
 
@@ -302,9 +305,7 @@ class Quantize(_NumcodecsArrayArrayCodec):
         return self
 
 
-_add_docstring(Quantize, "numcodecs.quantize.Quantize")
-
-
+@_add_docstring_wrapper("numcodecs.packbits.PackBits")
 class PackBits(_NumcodecsArrayArrayCodec):
     codec_name = f"{CODEC_PREFIX}packbits"
 
@@ -323,9 +324,7 @@ class PackBits(_NumcodecsArrayArrayCodec):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
-PackBits = _add_docstring(PackBits, "numcodecs.packbits.PackBits")
-
-
+@_add_docstring_wrapper("numcodecs.astype.AsType")
 class AsType(_NumcodecsArrayArrayCodec):
     codec_name = f"{CODEC_PREFIX}astype"
 
@@ -342,8 +341,6 @@ class AsType(_NumcodecsArrayArrayCodec):
         return self
 
 
-AsType = _add_docstring(AsType, "numcodecs.astype.AsType")
-
 # bytes-to-bytes checksum codecs
 CRC32 = _add_docstring(_make_checksum_codec("crc32", "CRC32"), "numcodecs.checksum32.CRC32")
 CRC32C = _add_docstring(_make_checksum_codec("crc32c", "CRC32C"), "numcodecs.checksum32.CRC32C")
@@ -358,3 +355,27 @@ JenkinsLookup3 = _add_docstring(
 # array-to-bytes codecs
 PCodec = _add_docstring(_make_array_bytes_codec("pcodec", "PCodec"), "numcodecs.pcodec.PCodec")
 ZFPY = _add_docstring(_make_array_bytes_codec("zfpy", "ZFPY"), "numcodecs.zfpy.ZFPY")
+
+__all__ = [
+    "Blosc",
+    "LZ4",
+    "Zstd",
+    "Zlib",
+    "GZip",
+    "BZ2",
+    "LZMA",
+    "Shuffle",
+    "Delta",
+    "BitRound",
+    "FixedScaleOffset",
+    "Quantize",
+    "PackBits",
+    "AsType",
+    "CRC32",
+    "CRC32C",
+    "Adler32",
+    "Fletcher32",
+    "JenkinsLookup3",
+    "PCodec",
+    "ZFPY",
+]

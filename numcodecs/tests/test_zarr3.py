@@ -28,35 +28,18 @@ def store() -> Store:
     return StorePath(MemoryStore(mode="w"))
 
 
-@pytest.mark.parametrize(
-    ("codec_name", "codec_class"),
-    [
-        ("numcodecs.blosc", numcodecs.zarr3.Blosc),
-        ("numcodecs.lz4", numcodecs.zarr3.LZ4),
-        ("numcodecs.zstd", numcodecs.zarr3.Zstd),
-        ("numcodecs.zlib", numcodecs.zarr3.Zlib),
-        ("numcodecs.gzip", numcodecs.zarr3.GZip),
-        ("numcodecs.bz2", numcodecs.zarr3.BZ2),
-        ("numcodecs.lzma", numcodecs.zarr3.LZMA),
-        ("numcodecs.shuffle", numcodecs.zarr3.Shuffle),
-        ("numcodecs.delta", numcodecs.zarr3.Delta),
-        ("numcodecs.bitround", numcodecs.zarr3.BitRound),
-        ("numcodecs.fixedscaleoffset", numcodecs.zarr3.FixedScaleOffset),
-        ("numcodecs.quantize", numcodecs.zarr3.Quantize),
-        ("numcodecs.packbits", numcodecs.zarr3.PackBits),
-        ("numcodecs.astype", numcodecs.zarr3.AsType),
-        ("numcodecs.crc32", numcodecs.zarr3.CRC32),
-        ("numcodecs.crc32c", numcodecs.zarr3.CRC32C),
-        ("numcodecs.adler32", numcodecs.zarr3.Adler32),
-        ("numcodecs.fletcher32", numcodecs.zarr3.Fletcher32),
-        ("numcodecs.jenkins_lookup3", numcodecs.zarr3.JenkinsLookup3),
-        ("numcodecs.pcodec", numcodecs.zarr3.PCodec),
-        ("numcodecs.zfpy", numcodecs.zarr3.ZFPY),
-    ],
-)
-def test_entry_points(codec_name: str, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
-    assert codec_class.codec_name == codec_name
+ALL_CODECS = [getattr(numcodecs.zarr3, cls_name) for cls_name in numcodecs.zarr3.__all__]
+
+
+@pytest.mark.parametrize("codec_class", ALL_CODECS)
+def test_entry_points(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+    codec_name = codec_class.codec_name
     assert get_codec_class(codec_name) == codec_class
+
+
+@pytest.mark.parametrize("codec_class", ALL_CODECS)
+def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+    assert "See :class:`numcodecs." in codec_class.__doc__
 
 
 @pytest.mark.parametrize(
