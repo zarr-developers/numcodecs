@@ -206,7 +206,7 @@ def test_generic_checksum(store: Store, codec_class: type[numcodecs.zarr3._Numco
 @pytest.mark.parametrize("codec_class", [numcodecs.zarr3.PCodec, numcodecs.zarr3.ZFPY])
 def test_generic_bytes_codec(store: Store, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     try:
-        codec_class()
+        codec_class()._codec  # noqa: B018
     except ValueError as e:
         if "codec not available" in str(e):
             pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
