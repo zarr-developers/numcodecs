@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.0.4
+        uses: conda-incubator/setup-miniconda@v3.1.0
         with:
             channels: conda-forge
             miniforge-version: latest
