@@ -74,7 +74,8 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install 'zarr==3.0.0b1'
+          # TODO: remove --pre option when zarr v3 is out
+          python -m pip install --pre 'zarr==3'
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
