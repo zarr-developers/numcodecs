@@ -15,14 +15,14 @@ env:
   DISABLE_NUMCODECS_AVX2: 1
   DISABLE_NUMCODECS_SSE2: 1
   # Common environment variables for both build and test jobs
-  PYODIDE_VERSION: 0.25.1
+  PYODIDE_VERSION: 0.27.0a2
   # PYTHON_VERSION and EMSCRIPTEN_VERSION are determined by PYODIDE_VERSION.
   # The appropriate versions can be found in the Pyodide repodata.json
   # "info" field, or in Makefile.envs:
   # https://github.com/pyodide/pyodide/blob/main/Makefile.envs#L2
-  PYTHON_VERSION: 3.11.3
-  EMSCRIPTEN_VERSION: 3.1.46
-  NODE_VERSION: 18
+  PYTHON_VERSION: 3.12.1
+  EMSCRIPTEN_VERSION: 3.1.58
+  NODE_VERSION: 20
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -62,68 +62,30 @@ jobs:
           patch -p1 < tools/ci/patches/0002-add-missing-unistd-headers.patch
 
       - name: Install pyodide-build
-        run: python -m pip install "pydantic<2" "pyodide-build==${{ env.PYODIDE_VERSION }}"
+        run: python -m pip install pyodide-build
 
-      - name: Build numcodecs for Pyodide
-        run: |
-          pyodide build
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Upload Pyodide wheel artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: numcodecs-pyodide-wheel
-          path: dist/*.whl
-
-  test-wasm-emscripten:
-    name: Test numcodecs Pyodide distribution
-    runs-on: ubuntu-22.04
-    needs: [build-wasm-emscripten]
-    steps:
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Checkout necessary patch(es)
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: tools/ci/patches/0003-fix-npy-file-access.patch
-          sparse-checkout-cone-mode: false
-
-      - name: Set up Emscripten toolchain
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: ${{ env.EMSCRIPTEN_VERSION }}
-          actions-cache-folder: emsdk-cache
-
-      - name: Apply necessary patch(es)
-        # We just need the third patch to fix the npy file access this time
-        run: patch -d $EMSDK/upstream/emscripten/ -p1 < tools/ci/patches/0003-fix-npy-file-access.patch
-
-      - name: Install pyodide-build
-        run: python -m pip install "pydantic<2" "pyodide-build==${{ env.PYODIDE_VERSION }}"
+      - name: Build numcodecs for Pyodide/WASM
+        run: pyodide build
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Download Pyodide wheel artifact
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-          merge-multiple: true
 
       - name: Set up Pyodide virtual environment and test numcodecs for Pyodide
         run: |
+          # Pin to a specific version of Pyodide to ensure reliability
+          pyodide xbuildenv install ${{ env.PYODIDE_VERSION }}
+
+          # Set up Pyodide virtual environment and activate it
           pyodide venv .venv-pyodide
           source .venv-pyodide/bin/activate
+
+          # Install the built numcodecs WASM package
           python -m pip install dist/*.whl
           python -m pip install pytest pytest-cov coverage
+
+          # Change into a different directory before running tests to avoid
+          # the test runner picking up the local numcodecs package
+          cd docs
           python -m pytest --pyargs numcodecs
