@@ -5,28 +5,34 @@ from glob import glob
 import platform
 import sys
 
-
 import numpy as np
-from numpy.testing import assert_array_almost_equal, assert_array_equal
 import pytest
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-
+# star import needed for repr tests so eval finds names
+from numcodecs import *  # noqa: F403
 from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
-# star import needed for repr tests so eval finds names
-from numcodecs import *  # noqa
 
-
-greetings = ['¡Hola mundo!', 'Hej Världen!', 'Servus Woid!', 'Hei maailma!',
-             'Xin chào thế giới', 'Njatjeta Botë!', 'Γεια σου κόσμε!',
-             'こんにちは世界', '世界，你好！', 'Helló, világ!', 'Zdravo svete!',
-             'เฮลโลเวิลด์']
+greetings = [
+    '¡Hola mundo!',
+    'Hej Världen!',
+    'Servus Woid!',
+    'Hei maailma!',
+    'Xin chào thế giới',
+    'Njatjeta Botë!',
+    'Γεια σου κόσμε!',
+    'こんにちは世界',
+    '世界，你好！',
+    'Helló, világ!',
+    'Zdravo svete!',
+    'เฮลโลเวิลด์',
+]
 
 is_wasm = (sys.platform == 'emscripten') or (platform.machine() in ['wasm32', 'wasm64'])
 
 
 def compare_arrays(arr, res, precision=None):
-
     # ensure numpy array with matching dtype
     res = ensure_ndarray(res).view(arr.dtype)
 
@@ -47,7 +53,6 @@ def compare_arrays(arr, res, precision=None):
 
 
 def check_encode_decode(arr, codec, precision=None):
-
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -116,7 +121,6 @@ def check_encode_decode(arr, codec, precision=None):
 
 
 def check_encode_decode_partial(arr, codec, precision=None):
-
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -126,7 +130,7 @@ def check_encode_decode_partial(arr, codec, precision=None):
 
     itemsize = arr.itemsize
     start, nitems = 5, 10
-    compare_arr = arr[start:start+nitems]
+    compare_arr = arr[start : start + nitems]
     # test encoding of numpy array
     enc = codec.encode(arr)
     dec = codec.decode_partial(enc, start, nitems)
@@ -139,19 +143,19 @@ def check_encode_decode_partial(arr, codec, precision=None):
     # test partial decode of encoded bytes
     buf = arr.tobytes(order='A')
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test partial decode of encoded bytearray
     buf = bytearray(arr.tobytes(order='A'))
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test partial decode of encoded array.array
     buf = array.array('b', arr.tobytes(order='A'))
     enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # # decoding should support any object exporting the buffer protocol,
@@ -160,32 +164,31 @@ def check_encode_decode_partial(arr, codec, precision=None):
     enc_bytes = ensure_bytes(enc)
 
     # test decoding of raw bytes into numpy array
-    dec = codec.decode_partial(enc_bytes, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(enc_bytes, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test partial decoding of bytearray
-    dec = codec.decode_partial(bytearray(enc_bytes), start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(bytearray(enc_bytes), start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test partial decoding of array.array
     buf = array.array('b', enc_bytes)
-    dec = codec.decode_partial(buf, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(buf, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test decoding of numpy array into numpy array
     buf = np.frombuffer(enc_bytes, dtype='u1')
-    dec = codec.decode_partial(buf, start*itemsize, nitems*itemsize, out=out)
+    dec = codec.decode_partial(buf, start * itemsize, nitems * itemsize, out=out)
     compare_arrays(compare_arr, dec, precision=precision)
 
     # test decoding directly into bytearray
     out = bytearray(compare_arr.nbytes)
-    codec.decode_partial(enc_bytes, start*itemsize, nitems*itemsize, out=out)
+    codec.decode_partial(enc_bytes, start * itemsize, nitems * itemsize, out=out)
     # noinspection PyTypeChecker
     compare_arrays(compare_arr, out, precision=precision)
 
 
 def assert_array_items_equal(res, arr):
-
     assert isinstance(res, np.ndarray)
     res = res.reshape(-1, order='A')
     arr = arr.reshape(-1, order='A')
@@ -197,7 +200,7 @@ def assert_array_items_equal(res, arr):
     # and values
     arr = arr.ravel().tolist()
     res = res.ravel().tolist()
-    for a, r in zip(arr, res):
+    for a, r in zip(arr, res, strict=True):
         if isinstance(a, np.ndarray):
             assert_array_equal(a, r)
         elif a != a:
@@ -207,7 +210,6 @@ def assert_array_items_equal(res, arr):
 
 
 def check_encode_decode_array(arr, codec):
-
     enc = codec.encode(arr)
     dec = codec.decode(enc)
     assert_array_items_equal(arr, dec)
@@ -222,7 +224,6 @@ def check_encode_decode_array(arr, codec):
 
 
 def check_encode_decode_array_to_bytes(arr, codec):
-
     enc = codec.encode(arr)
     dec = codec.decode(enc)
     assert_array_items_equal(arr, dec)
@@ -247,7 +248,6 @@ def check_repr(stmt):
 
 
 def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, prefix=None):
-
     # setup directory to hold data fixture
     if prefix:
         fixture_dir = os.path.join('fixture', codec_id, prefix)
@@ -258,13 +258,12 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
     # save fixture data
     for i, arr in enumerate(arrays):
-        arr_fn = os.path.join(fixture_dir, 'array.{:02d}.npy'.format(i))
+        arr_fn = os.path.join(fixture_dir, f'array.{i:02d}.npy')
         if not os.path.exists(arr_fn):  # pragma: no cover
             np.save(arr_fn, arr)
 
     # load fixture data
     for arr_fn in glob(os.path.join(fixture_dir, 'array.*.npy')):
-
         # setup
         i = int(arr_fn.split('.')[-2])
         arr = np.load(arr_fn, allow_pickle=True)
@@ -275,12 +274,11 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             order = 'C'
 
         for j, codec in enumerate(codecs):
-
             if codec is None:
                 pytest.skip("codec has been removed")
 
             # setup a directory to hold encoded data
-            codec_dir = os.path.join(fixture_dir, 'codec.{:02d}'.format(j))
+            codec_dir = os.path.join(fixture_dir, f'codec.{j:02d}')
             if not os.path.exists(codec_dir):  # pragma: no cover
                 os.makedirs(codec_dir)
 
@@ -295,7 +293,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                 config = _json.load(cf)
                 assert codec == get_codec(config)
 
-            enc_fn = os.path.join(codec_dir, 'encoded.{:02d}.dat'.format(i))
+            enc_fn = os.path.join(codec_dir, f'encoded.{i:02d}.dat')
 
             # one time encode and save array
             if not os.path.exists(enc_fn):  # pragma: no cover
@@ -349,7 +347,8 @@ def check_max_buffer_size(codec):
                 np.zeros(max_buffer_size + 1, dtype=np.int8),
                 np.zeros(max_buffer_size + 2, dtype=np.int8),
                 np.zeros(max_buffer_size, dtype=np.int16),
-                np.zeros(max_buffer_size, dtype=np.int32)]
+                np.zeros(max_buffer_size, dtype=np.int32),
+            ]
             for buf in buffers:
                 with pytest.raises(ValueError):
                     codec.encode(buf)

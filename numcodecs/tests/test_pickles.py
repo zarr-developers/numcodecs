@@ -5,9 +5,13 @@ import numpy as np
 import pytest
 
 from numcodecs.pickles import Pickle
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings)
-
+from numcodecs.tests.common import (
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
+    greetings,
+)
 
 codecs = [Pickle(protocol=i) for i in range(5)]
 
@@ -45,14 +49,13 @@ def test_repr():
 
 # Details on xfail
 # https://stackoverflow.com/questions/58194852/modulenotfounderror-no-module-named-numpy-core-multiarray-r
-@pytest.mark.skipif(
-    sys.byteorder != "little", reason="Pickle does not restore byte orders"
-)
+@pytest.mark.skipif(sys.byteorder != "little", reason="Pickle does not restore byte orders")
 @pytest.mark.xfail(
-    sys.platform == "win32", reason=(
+    sys.platform == "win32",
+    reason=(
         "Pickle fails to read w/ Windows carriage return "
         "( https://github.com/zarr-developers/numcodecs/issues/271 )"
-    )
+    ),
 )
 def test_backwards_compatibility():
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)

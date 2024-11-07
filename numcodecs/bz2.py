@@ -1,8 +1,7 @@
 import bz2 as _bz2
 
-
 from numcodecs.abc import Codec
-from numcodecs.compat import ndarray_copy, ensure_contiguous_ndarray
+from numcodecs.compat import ensure_contiguous_ndarray, ndarray_copy
 
 
 class BZ2(Codec):
@@ -21,7 +20,6 @@ class BZ2(Codec):
         self.level = level
 
     def encode(self, buf):
-
         # normalise input
         buf = ensure_contiguous_ndarray(buf)
 
@@ -30,7 +28,6 @@ class BZ2(Codec):
 
     # noinspection PyMethodMayBeStatic
     def decode(self, buf, out=None):
-
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
         if out is not None:

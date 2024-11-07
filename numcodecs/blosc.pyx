@@ -75,12 +75,21 @@ AUTOSHUFFLE = -1
 AUTOBLOCKS = 0
 
 # synchronization
-try:
-    mutex = multiprocessing.Lock()
-except OSError:
-    mutex = None
-except ImportError:
-    mutex = None
+_MUTEX = None
+_MUTEX_IS_INIT = False
+
+def get_mutex():
+    global _MUTEX_IS_INIT, _MUTEX
+    if not _MUTEX_IS_INIT:
+        try:
+            mutex = multiprocessing.Lock()
+        except OSError:
+            mutex = None
+        except ImportError:
+            mutex = None
+        _MUTEX = mutex
+        _MUTEX_IS_INIT = True
+    return _MUTEX
 
 # store ID of process that first loads the module, so we can detect a fork later
 _importer_pid = os.getpid()
@@ -284,7 +293,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
             # N.B., we are using blosc's global context, and so we need to use a lock
             # to ensure no-one else can modify the global context while we're setting it
             # up and using it.
-            with mutex:
+            with get_mutex():
 
                 # set compressor
                 compressor_set = blosc_set_compressor(cname)
@@ -468,7 +477,7 @@ def decompress_partial(source, start, nitems, dest=None):
         raise RuntimeError('error during blosc partial decompression: %d', ret)
 
     return dest
-        
+
 
 # set the value of this variable to True or False to override the
 # default adaptive behaviour
@@ -480,7 +489,7 @@ def _get_use_threads():
     proc = multiprocessing.current_process()
 
     # check if locks are available, and if not no threads
-    if not mutex:
+    if not get_mutex():
         return False
 
     # check for fork

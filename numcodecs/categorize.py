@@ -1,8 +1,7 @@
-from .abc import Codec
-from .compat import ensure_ndarray, ndarray_copy, ensure_text
-
-
 import numpy as np
+
+from .abc import Codec
+from .compat import ensure_ndarray, ensure_text, ndarray_copy
 
 
 class Categorize(Codec):
@@ -41,17 +40,15 @@ class Categorize(Codec):
     def __init__(self, labels, dtype, astype='u1'):
         self.dtype = np.dtype(dtype)
         if self.dtype.kind not in 'UO':
-            raise TypeError("only unicode ('U') and object ('O') dtypes are "
-                            "supported")
+            raise TypeError("only unicode ('U') and object ('O') dtypes are supported")
         self.labels = [ensure_text(label) for label in labels]
         self.astype = np.dtype(astype)
-        if self.astype == object:
+        if self.astype == np.dtype(object):
             raise TypeError('encoding as object array not supported')
 
     def encode(self, buf):
-
         # normalise input
-        if self.dtype == object:
+        if self.dtype == np.dtype(object):
             arr = np.asarray(buf, dtype=object)
         else:
             arr = ensure_ndarray(buf).view(self.dtype)
@@ -63,13 +60,12 @@ class Categorize(Codec):
         enc = np.zeros_like(arr, dtype=self.astype)
 
         # apply encoding, reserving 0 for values not specified in labels
-        for i, l in enumerate(self.labels):
-            enc[arr == l] = i + 1
+        for i, label in enumerate(self.labels):
+            enc[arr == label] = i + 1
 
         return enc
 
     def decode(self, buf, out=None):
-
         # normalise input
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -80,8 +76,8 @@ class Categorize(Codec):
         dec = np.full_like(enc, fill_value='', dtype=self.dtype)
 
         # apply decoding
-        for i, l in enumerate(self.labels):
-            dec[enc == (i + 1)] = l
+        for i, label in enumerate(self.labels):
+            dec[enc == (i + 1)] = label
 
         # handle output
         dec = ndarray_copy(dec, out)
@@ -93,7 +89,7 @@ class Categorize(Codec):
             id=self.codec_id,
             labels=self.labels,
             dtype=self.dtype.str,
-            astype=self.astype.str
+            astype=self.astype.str,
         )
         return config
 
@@ -102,6 +98,4 @@ class Categorize(Codec):
         labels = repr(self.labels[:3])
         if len(self.labels) > 3:
             labels = labels[:-1] + ', ...]'
-        r = '%s(dtype=%r, astype=%r, labels=%s)' % \
-            (type(self).__name__, self.dtype.str, self.astype.str, labels)
-        return r
+        return f'{type(self).__name__}(dtype={self.dtype.str!r}, astype={self.astype.str!r}, labels={labels})'

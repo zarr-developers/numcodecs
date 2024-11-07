@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Protocol, Tuple, Type, runtime_checkable
+from typing import Any, ClassVar, Optional, Protocol, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):
@@ -10,7 +10,8 @@ class _CachedProtocolMeta(Protocol.__class__):
     This metaclass keeps an unbounded cache of the result of
     isinstance checks using the object's class as the cache key.
     """
-    _instancecheck_cache: Dict[Tuple[Type, Type], bool] = {}
+
+    _instancecheck_cache: ClassVar[dict[tuple[type, type], bool]] = {}
 
     def __instancecheck__(self, instance):
         key = (self, instance.__class__)
@@ -38,31 +39,25 @@ class FlagsObj(Protocol, metaclass=_CachedProtocolMeta):
 @runtime_checkable
 class NDArrayLike(Protocol, metaclass=_CachedProtocolMeta):
     dtype: DType
-    shape: Tuple[int, ...]
-    strides: Tuple[int, ...]
+    shape: tuple[int, ...]
+    strides: tuple[int, ...]
     ndim: int
     size: int
     itemsize: int
     nbytes: int
     flags: FlagsObj
 
-    def __len__(self) -> int:
-        ...    # pragma: no cover
+    def __len__(self) -> int: ...  # pragma: no cover
 
-    def __getitem__(self, key) -> Any:
-        ...    # pragma: no cover
+    def __getitem__(self, key) -> Any: ...  # pragma: no cover
 
-    def __setitem__(self, key, value):
-        ...    # pragma: no cover
+    def __setitem__(self, key, value): ...  # pragma: no cover
 
-    def tobytes(self, order: Optional[str] = ...) -> bytes:
-        ...    # pragma: no cover
+    def tobytes(self, order: Optional[str] = ...) -> bytes: ...  # pragma: no cover
 
-    def reshape(self, *shape: int, order: str = ...) -> "NDArrayLike":
-        ...    # pragma: no cover
+    def reshape(self, *shape: int, order: str = ...) -> "NDArrayLike": ...  # pragma: no cover
 
-    def view(self, dtype: DType = ...) -> "NDArrayLike":
-        ...    # pragma: no cover
+    def view(self, dtype: DType = ...) -> "NDArrayLike": ...  # pragma: no cover
 
 
 def is_ndarray_like(obj: object) -> bool:

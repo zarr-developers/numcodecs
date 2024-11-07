@@ -3,7 +3,8 @@ requires = [
     "setuptools>=64",
     "setuptools-scm[toml]>=6.2",
     "Cython",
-    "py-cpuinfo"
+    "py-cpuinfo",
+    "numpy>2",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -14,9 +15,9 @@ A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
-    "numpy>=1.7",
+    "numpy>=1.23",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dynamic = [
   "version",
 ]
@@ -45,7 +46,7 @@ Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
 docs = [
-    "sphinx<7.0.0",
+    "sphinx",
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
@@ -53,7 +54,6 @@ docs = [
 ]
 test = [
     "coverage",
-    "flake8",
     "pytest",
     "pytest-cov",
 ]
@@ -65,9 +65,13 @@ msgpack = [
 ]
 zfpy = [
     "zfpy>=1.0.0",
+    "numpy<2.0.0",
 ]
 pcodec = [
-    "pcodec>=0.1.0",
+    "pcodec>=0.2,<0.3",
+]
+crc32c = [
+    "crc32c>=2.7",
 ]
 
 [tool.setuptools]
@@ -97,8 +101,11 @@ exclude_lines = [
     "pragma: ${PY_MAJOR_VERSION} no cover",
 ]
 
+[tool.repo-review]
+ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
+
 [tool.pytest.ini_options]
-addopts = "--cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
+addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
@@ -119,6 +126,8 @@ norecursedirs = [
     "notebooks",
     "numcodecs.egg-info",
 ]
+log_cli_level = "INFO"
+xfail_strict = true
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
@@ -126,3 +135,41 @@ environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS=
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+extend-select = [
+    "B",
+    "FLY",
+    "FURB",
+    "G",
+    "I",
+    "PERF",
+    "PGH",
+    "PIE",
+    "PT",
+    "PYI",
+    "RSE",
+    "RUF",
+    "UP",
+    # "W",  https://github.com/astral-sh/ruff/issues/13763
+]
+ignore = [
+    "B028",
+    "B904",
+    "FURB101",
+    "FURB103",
+    "PT001",
+    "PT004",  # deprecated
+    "PT005",  # deprecated
+    "PT011",
+	"RUF001",
+    "UP007",
+    "UP027",  # deprecated
+    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+]
+
+[tool.ruff.format]
+quote-style = "preserve"

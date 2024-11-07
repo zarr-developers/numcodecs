@@ -1,5 +1,5 @@
-import pytest
 import numpy as np
+import pytest
 
 from numcodecs.pcodec import PCodec
 
@@ -7,26 +7,23 @@ try:
     # initializing codec triggers ImportError
     PCodec()
 except ImportError:  # pragma: no cover
-    pytest.skip(
-        "pcodec not available", allow_module_level=True
-    )
+    pytest.skip("pcodec not available", allow_module_level=True)
 
 from numcodecs.tests.common import (
-    check_encode_decode_array_to_bytes,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array_to_bytes,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 codecs = [
     PCodec(),
     PCodec(level=1),
     PCodec(level=5),
     PCodec(level=9),
-    PCodec(float_mult_spec="disabled", int_mult_spec="disabled"),
+    PCodec(mode_spec='classic'),
     PCodec(equal_pages_up_to=300),
 ]
 
@@ -59,10 +56,15 @@ def test_config():
     check_config(codec)
 
 
+def test_invalid_config_error():
+    codec = PCodec(mode_spec='bogus')
+    with pytest.raises(ValueError):
+        check_encode_decode_array_to_bytes(arrays[0], codec)
+
+
 def test_repr():
     check_repr(
-        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, float_mult_spec='enabled', "
-        "int_mult_spec='enabled', level=3)"
+        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, level=3, mode_spec='auto')"
     )
 
 

@@ -1,7 +1,8 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
-from importlib.metadata import entry_points
+
 import logging
+from importlib.metadata import entry_points
 
 logger = logging.getLogger("numcodecs")
 codec_registry = {}
@@ -11,12 +12,7 @@ entries = {}
 def run_entrypoints():
     entries.clear()
     eps = entry_points()
-    if hasattr(eps, 'select'):
-        # If entry_points() has a select method, use that. Python 3.10+
-        entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
-    else:
-        # Otherwise, fallback to using get
-        entries.update({e.name: e for e in eps.get("numcodecs.codecs", [])})
+    entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
 
 
 run_entrypoints()
@@ -46,14 +42,13 @@ def get_codec(config):
     config = dict(config)
     codec_id = config.pop('id', None)
     cls = codec_registry.get(codec_id)
-    if cls is None:
-        if codec_id in entries:
-            logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
-            cls = entries[codec_id].load()
-            register_codec(cls, codec_id=codec_id)
+    if cls is None and codec_id in entries:
+        logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
+        cls = entries[codec_id].load()
+        register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
-    raise ValueError('codec not available: %r' % codec_id)
+    raise ValueError(f'codec not available: {codec_id!r}')
 
 
 def register_codec(cls, codec_id=None):

@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest
 
 from numcodecs.bitround import BitRound, max_bits
@@ -25,21 +24,21 @@ def test_round_zero_to_zero(dtype):
     # Don't understand Milan's original test:
     # How is it possible to have negative keepbits?
     # for k in range(-5, 50):
-    for k in range(0, max_bits[dtype]):
+    for k in range(max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
 def test_round_one_to_one(dtype):
     a = np.ones((3, 2), dtype=dtype)
-    for k in range(0, max_bits[dtype]):
+    for k in range(max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
 def test_round_minus_one_to_minus_one(dtype):
     a = -np.ones((3, 2), dtype=dtype)
-    for k in range(0, max_bits[dtype]):
+    for k in range(max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 

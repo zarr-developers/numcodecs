@@ -1,30 +1,31 @@
 import itertools
 import unittest
 
-
 import numpy as np
 import pytest
-
 
 try:
     # noinspection PyProtectedMember
     from numcodecs.lzma import LZMA, _lzma
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("LZMA not available")
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("LZMA not available") from e
 
 
-from numcodecs.tests.common import (check_encode_decode, check_config, check_repr,
-                                    check_backwards_compatibility,
-                                    check_err_decode_object_buffer,
-                                    check_err_encode_object_buffer)
-
+from numcodecs.tests.common import (
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_err_decode_object_buffer,
+    check_err_encode_object_buffer,
+    check_repr,
+)
 
 codecs = [
     LZMA(),
     LZMA(preset=1),
     LZMA(preset=5),
     LZMA(preset=9),
-    LZMA(format=_lzma.FORMAT_RAW, filters=[dict(id=_lzma.FILTER_LZMA2, preset=1)])
+    LZMA(format=_lzma.FORMAT_RAW, filters=[dict(id=_lzma.FILTER_LZMA2, preset=1)]),
 ]
 
 
@@ -41,10 +42,10 @@ arrays = [
     np.random.randint(0, 2**60, size=1000, dtype='u8').view('m8[ns]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('M8[m]'),
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[ns]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('M8[m]'),
-    np.random.randint(-2**63, -2**63 + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
 

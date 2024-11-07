@@ -1,8 +1,5 @@
-import pytest
-
-
 import numpy as np
-
+import pytest
 
 try:
     # noinspection PyProtectedMember
@@ -12,14 +9,13 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
-    check_encode_decode_array,
-    check_config,
-    check_repr,
     check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
+    check_repr,
 )
-
 
 codecs = [
     ZFPY(mode=_zfpy.mode_fixed_rate, rate=-1),
@@ -38,12 +34,8 @@ arrays = [
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
     np.random.normal(loc=1000, scale=1, size=(10, 10, 10)),
     np.random.normal(loc=1000, scale=1, size=(2, 5, 10, 10)),
-    np.random.randint(-(2 ** 31), -(2 ** 31) + 20, size=1000, dtype="i4").reshape(
-        100, 10
-    ),
-    np.random.randint(-(2 ** 63), -(2 ** 63) + 20, size=1000, dtype="i8").reshape(
-        10, 10, 10
-    ),
+    np.random.randint(-(2**31), -(2**31) + 20, size=1000, dtype="i4").reshape(100, 10),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype="i8").reshape(10, 10, 10),
 ]
 
 
@@ -72,9 +64,7 @@ def test_backwards_compatibility():
             codec = [code]
             check_backwards_compatibility(ZFPY.codec_id, arrays, codec)
         else:
-            check_backwards_compatibility(
-                ZFPY.codec_id, arrays[: len(arrays) - 2], codecs
-            )
+            check_backwards_compatibility(ZFPY.codec_id, arrays[: len(arrays) - 2], codecs)
 
 
 def test_err_decode_object_buffer():

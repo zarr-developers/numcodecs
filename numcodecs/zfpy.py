@@ -1,15 +1,33 @@
+import warnings
 from contextlib import suppress
+from importlib.metadata import PackageNotFoundError, version
 
 _zfpy = None
-with suppress(ImportError):
-    import zfpy as _zfpy
 
+_zfpy_version: tuple = ()
+with suppress(PackageNotFoundError):
+    _zfpy_version = tuple(map(int, version("zfpy").split(".")))
+
+if _zfpy_version:
+    # Check NumPy version
+    _numpy_version: tuple = tuple(map(int, version("numpy").split('.')))
+    if _numpy_version >= (2, 0, 0) and _zfpy_version <= (1, 0, 1):  # pragma: no cover
+        _zfpy_version = ()
+        warnings.warn(
+            "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
+            "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
+            UserWarning,
+            stacklevel=2,
+        )
+    else:
+        with suppress(ImportError):
+            import zfpy as _zfpy
 
 if _zfpy:
+    import numpy as np
 
     from .abc import Codec
-    from .compat import ndarray_copy, ensure_contiguous_ndarray, ensure_bytes
-    import numpy as np
+    from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):
@@ -52,25 +70,25 @@ if _zfpy:
             self.precision = precision
 
         def encode(self, buf):
-
             # not flatten c-order array and raise exception for f-order array
             if not isinstance(buf, np.ndarray):
-                raise TypeError("The zfp codec does not support none numpy arrays."
-                                f" Your buffers were {type(buf)}.")
+                raise TypeError(
+                    "The zfp codec does not support none numpy arrays."
+                    f" Your buffers were {type(buf)}."
+                )
             if buf.flags.c_contiguous:
                 flatten = False
             else:
-                raise ValueError("The zfp codec does not support F order arrays. "
-                                 f"Your arrays flags were {buf.flags}.")
+                raise ValueError(
+                    "The zfp codec does not support F order arrays. "
+                    f"Your arrays flags were {buf.flags}."
+                )
             buf = ensure_contiguous_ndarray(buf, flatten=flatten)
 
             # do compression
-            return _zfpy.compress_numpy(
-                buf, write_header=True, **self.compression_kwargs
-            )
+            return _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
 
         def decode(self, buf, out=None):
-
             # normalise inputs
             buf = ensure_bytes(buf)
             if out is not None:
@@ -86,11 +104,8 @@ if _zfpy:
                 return dec
 
         def __repr__(self):
-            r = "%s(mode=%r, tolerance=%s, rate=%s, precision=%s)" % (
-                type(self).__name__,
-                self.mode,
-                self.tolerance,
-                self.rate,
-                self.precision,
+            return (
+                f"{type(self).__name__}(mode={self.mode!r}, "
+                f"tolerance={self.tolerance}, rate={self.rate}, "
+                f"precision={self.precision})"
             )
-            return r

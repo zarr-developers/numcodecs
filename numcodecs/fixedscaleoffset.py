@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
 
@@ -15,7 +14,7 @@ class FixedScaleOffset(Codec):
     ----------
     offset : float
         Value to subtract from data.
-    scale : int
+    scale : float
         Value to multiply by data.
     dtype : dtype
         Data type to use for decoded data.
@@ -78,11 +77,10 @@ class FixedScaleOffset(Codec):
             self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
-        if self.dtype == object or self.astype == object:
+        if self.dtype == np.dtype(object) or self.astype == np.dtype(object):
             raise ValueError('object arrays are not supported')
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -101,7 +99,6 @@ class FixedScaleOffset(Codec):
         return enc
 
     def decode(self, buf, out=None):
-
         # interpret buffer as numpy array
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -124,13 +121,12 @@ class FixedScaleOffset(Codec):
             scale=self.scale,
             offset=self.offset,
             dtype=self.dtype.str,
-            astype=self.astype.str
+            astype=self.astype.str,
         )
 
     def __repr__(self):
-        r = '%s(scale=%s, offset=%s, dtype=%r' % \
-            (type(self).__name__, self.scale, self.offset, self.dtype.str)
+        r = f'{type(self).__name__}(scale={self.scale}, offset={self.offset}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

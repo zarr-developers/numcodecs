@@ -5,11 +5,10 @@ import pytest
 
 import numcodecs.registry
 
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-@pytest.fixture()
+@pytest.fixture
 def set_path():
     sys.path.append(here)
     numcodecs.registry.run_entrypoints()

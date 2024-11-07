@@ -1,13 +1,14 @@
 import numpy as np
-from numpy.testing import assert_array_equal
 import pytest
-
+from numpy.testing import assert_array_equal
 
 from numcodecs.categorize import Categorize
-from numcodecs.tests.common import (check_encode_decode, check_config,
-                                    check_backwards_compatibility,
-                                    check_encode_decode_array)
-
+from numcodecs.tests.common import (
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode,
+    check_encode_decode_array,
+)
 
 labels = ['ƒöõ', 'ßàř', 'ßāẑ', 'ƪùüx']
 arrays = [
@@ -20,7 +21,6 @@ arrays_object = [a.astype(object) for a in arrays]
 
 
 def test_encode_decode():
-
     # unicode dtype
     for arr in arrays:
         codec = Categorize(labels, dtype=arr.dtype)
@@ -34,7 +34,6 @@ def test_encode_decode():
 
 def test_encode():
     for dtype in 'U', object:
-
         arr = np.array(['ƒöõ', 'ßàř', 'ƒöõ', 'ßāẑ', 'ƪùüx'], dtype=dtype)
         # miss off quux
         codec = Categorize(labels=labels[:-1], dtype=arr.dtype, astype='u1')
@@ -61,8 +60,7 @@ def test_config():
 def test_repr():
     dtype = '<U3'
     astype = '|u1'
-    codec = Categorize(labels=['foo', 'bar', 'baz', 'qux'],
-                       dtype=dtype, astype=astype)
+    codec = Categorize(labels=['foo', 'bar', 'baz', 'qux'], dtype=dtype, astype=astype)
     expect = "Categorize(dtype='<U3', astype='|u1', labels=['foo', 'bar', 'baz', ...])"
     actual = repr(codec)
     assert expect == actual
@@ -77,11 +75,9 @@ def test_repr():
 
 def test_backwards_compatibility():
     codec = Categorize(labels=labels, dtype='<U4', astype='u1')
-    check_backwards_compatibility(Categorize.codec_id, arrays, [codec],
-                                  prefix='U')
+    check_backwards_compatibility(Categorize.codec_id, arrays, [codec], prefix='U')
     codec = Categorize(labels=labels, dtype=object, astype='u1')
-    check_backwards_compatibility(Categorize.codec_id, arrays_object,
-                                  [codec], prefix='O')
+    check_backwards_compatibility(Categorize.codec_id, arrays_object, [codec], prefix='O')
 
 
 def test_errors():

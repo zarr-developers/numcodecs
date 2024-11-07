@@ -19,21 +19,38 @@ cdef extern from "zstd.h":
 
     unsigned ZSTD_versionNumber() nogil
 
-    size_t ZSTD_compress(void* dst,
-                         size_t dstCapacity,
-                         const void* src,
-                         size_t srcSize,
-                         int compressionLevel) nogil
+    struct ZSTD_CCtx_s:
+        pass
+    ctypedef ZSTD_CCtx_s ZSTD_CCtx
+    cdef enum ZSTD_cParameter:
+        ZSTD_c_compressionLevel=100
+        ZSTD_c_checksumFlag=201
+
+    ZSTD_CCtx* ZSTD_createCCtx() nogil
+    size_t ZSTD_freeCCtx(ZSTD_CCtx* cctx) nogil
+    size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx,
+                                  ZSTD_cParameter param,
+                                  int value) nogil
+
+    size_t ZSTD_compress2(ZSTD_CCtx* cctx,
+                          void* dst,
+                          size_t dstCapacity,
+                          const void* src,
+                          size_t srcSize) nogil
 
     size_t ZSTD_decompress(void* dst,
                            size_t dstCapacity,
                            const void* src,
                            size_t compressedSize) nogil
 
-    unsigned long long ZSTD_getDecompressedSize(const void* src,
+    cdef long ZSTD_CONTENTSIZE_UNKNOWN
+    cdef long ZSTD_CONTENTSIZE_ERROR
+    unsigned long long ZSTD_getFrameContentSize(const void* src,
                                                 size_t srcSize) nogil
 
+    int ZSTD_minCLevel() nogil
     int ZSTD_maxCLevel() nogil
+    int ZSTD_defaultCLevel() nogil
 
     size_t ZSTD_compressBound(size_t srcSize) nogil
 
@@ -51,11 +68,11 @@ MICRO_VERSION_NUMBER = (
     (MINOR_VERSION_NUMBER * 100)
 )
 __version__ = '%s.%s.%s' % (MAJOR_VERSION_NUMBER, MINOR_VERSION_NUMBER, MICRO_VERSION_NUMBER)
-DEFAULT_CLEVEL = 1
+DEFAULT_CLEVEL = 0
 MAX_CLEVEL = ZSTD_maxCLevel()
 
 
-def compress(source, int level=DEFAULT_CLEVEL):
+def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     """Compress data.
 
     Parameters
@@ -64,7 +81,9 @@ def compress(source, int level=DEFAULT_CLEVEL):
         Data to be compressed. Can be any object supporting the buffer
         protocol.
     level : int
-        Compression level (1-22).
+        Compression level (-131072 to 22).
+    checksum : bool
+        Flag to enable checksums. The default is False.
 
     Returns
     -------
@@ -80,8 +99,6 @@ def compress(source, int level=DEFAULT_CLEVEL):
         bytes dest
 
     # check level
-    if level <= 0:
-        level = DEFAULT_CLEVEL
     if level > MAX_CLEVEL:
         level = MAX_CLEVEL
 
@@ -89,6 +106,19 @@ def compress(source, int level=DEFAULT_CLEVEL):
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     source_size = source_buffer.nbytes
+
+    cctx = ZSTD_createCCtx()
+    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, level)
+
+    if ZSTD_isError(param_set_result):
+        error = ZSTD_getErrorName(param_set_result)
+        raise RuntimeError('Could not set zstd compression level: %s' % error)
+
+    param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_checksumFlag, 1 if checksum else 0)
+
+    if ZSTD_isError(param_set_result):
+        error = ZSTD_getErrorName(param_set_result)
+        raise RuntimeError('Could not set zstd checksum flag: %s' % error)
 
     try:
 
@@ -99,10 +129,11 @@ def compress(source, int level=DEFAULT_CLEVEL):
 
         # perform compression
         with nogil:
-            compressed_size = ZSTD_compress(dest_ptr, dest_size, source_ptr, source_size, level)
+            compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
 
     finally:
-
+        if cctx:
+            ZSTD_freeCCtx(cctx)
         # release buffers
         source_buffer.release()
 
@@ -148,8 +179,8 @@ def decompress(source, dest=None):
     try:
 
         # determine uncompressed size
-        dest_size = ZSTD_getDecompressedSize(source_ptr, source_size)
-        if dest_size == 0:
+        dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
+        if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
             raise RuntimeError('Zstd decompression error: invalid input data')
 
         # setup destination buffer
@@ -193,7 +224,9 @@ class Zstd(Codec):
     Parameters
     ----------
     level : int
-        Compression level (1-22).
+        Compression level (-131072 to 22).
+    checksum : bool
+        Flag to enable checksums. The default is False.
 
     See Also
     --------
@@ -202,17 +235,18 @@ class Zstd(Codec):
     """
 
     codec_id = 'zstd'
-    
+
     # Note: unlike the LZ4 and Blosc codecs, there does not appear to be a (currently)
     # practical limit on the size of buffers that Zstd can process and so we don't
     # enforce a max_buffer_size option here.
 
-    def __init__(self, level=DEFAULT_CLEVEL):
+    def __init__(self, level=DEFAULT_CLEVEL, checksum=False):
         self.level = level
+        self.checksum = checksum
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
-        return compress(buf, self.level)
+        return compress(buf, self.level, self.checksum)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
@@ -223,3 +257,18 @@ class Zstd(Codec):
             (type(self).__name__,
              self.level)
         return r
+
+    @classmethod
+    def default_level(cls):
+        """Returns the default compression level of the underlying zstd library."""
+        return ZSTD_defaultCLevel()
+
+    @classmethod
+    def min_level(cls):
+        """Returns the minimum compression level of the underlying zstd library."""
+        return ZSTD_minCLevel()
+
+    @classmethod
+    def max_level(cls):
+        """Returns the maximum compression level of the underlying zstd library."""
+        return ZSTD_maxCLevel()

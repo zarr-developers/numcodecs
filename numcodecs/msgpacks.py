@@ -1,6 +1,5 @@
-import numpy as np
 import msgpack
-
+import numpy as np
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray
@@ -58,8 +57,11 @@ class MsgPack(Codec):
             buf = np.asarray(buf, dtype=object)
         items = buf.tolist()
         items.extend((buf.dtype.str, buf.shape))
-        return msgpack.packb(items, use_bin_type=self.use_bin_type,
-                             use_single_float=self.use_single_float)
+        return msgpack.packb(
+            items,
+            use_bin_type=self.use_bin_type,
+            use_single_float=self.use_single_float,
+        )
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf)
@@ -73,13 +75,12 @@ class MsgPack(Codec):
             return dec
 
     def get_config(self):
-        return dict(id=self.codec_id,
-                    raw=self.raw,
-                    use_single_float=self.use_single_float,
-                    use_bin_type=self.use_bin_type)
+        return dict(
+            id=self.codec_id,
+            raw=self.raw,
+            use_single_float=self.use_single_float,
+            use_bin_type=self.use_bin_type,
+        )
 
     def __repr__(self):
-        return (
-            'MsgPack(raw={!r}, use_bin_type={!r}, use_single_float={!r})'
-            .format(self.raw, self.use_bin_type, self.use_single_float)
-        )
+        return f'MsgPack(raw={self.raw!r}, use_bin_type={self.use_bin_type!r}, use_single_float={self.use_single_float!r})'

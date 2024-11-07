@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
 
@@ -47,11 +46,10 @@ class Delta(Codec):
             self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
-        if self.dtype == object or self.astype == object:
+        if self.dtype == np.dtype(object) or self.astype == np.dtype(object):
             raise ValueError('object arrays are not supported')
 
     def encode(self, buf):
-
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -65,12 +63,15 @@ class Delta(Codec):
         enc[0] = arr[0]
 
         # compute differences
-        enc[1:] = np.diff(arr)
+        # using np.subtract for in-place operations
+        if arr.dtype == bool:
+            np.not_equal(arr[1:], arr[:-1], out=enc[1:])
+        else:
+            np.subtract(arr[1:], arr[:-1], out=enc[1:])
 
         return enc
 
     def decode(self, buf, out=None):
-
         # normalise input
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -90,15 +91,11 @@ class Delta(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            dtype=self.dtype.str,
-            astype=self.astype.str
-        )
+        return dict(id=self.codec_id, dtype=self.dtype.str, astype=self.astype.str)
 
     def __repr__(self):
-        r = '{}(dtype={!r}'.format(type(self).__name__, self.dtype.str)
+        r = f'{type(self).__name__}(dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
-            r += ', astype=%r' % self.astype.str
+            r += f', astype={self.astype.str!r}'
         r += ')'
         return r

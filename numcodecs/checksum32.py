@@ -1,47 +1,111 @@
+import struct
 import zlib
-
+from typing import Literal
 
 import numpy as np
-import struct
-
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
+CHECKSUM_LOCATION = Literal['start', 'end']
+
 
 class Checksum32(Codec):
-
     # override in sub-class
     checksum = None
+    location: CHECKSUM_LOCATION = 'start'
+
+    def __init__(self, location: CHECKSUM_LOCATION | None = None):
+        if location is not None:
+            self.location = location
+        if self.location not in ['start', 'end']:
+            raise ValueError(f"Invalid checksum location: {self.location}")
 
     def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
-        checksum = self.checksum(arr) & 0xffffffff
+        checksum = self.checksum(arr) & 0xFFFFFFFF
         enc = np.empty(arr.nbytes + 4, dtype='u1')
-        enc[:4].view('<u4')[0] = checksum
-        ndarray_copy(arr, enc[4:])
+        if self.location == 'start':
+            checksum_view = enc[:4]
+            payload_view = enc[4:]
+        else:
+            checksum_view = enc[-4:]
+            payload_view = enc[:-4]
+        checksum_view.view('<u4')[0] = checksum
+        ndarray_copy(arr, payload_view)
         return enc
 
     def decode(self, buf, out=None):
+        if len(buf) < 4:
+            raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
+        if out is not None:
+            ensure_contiguous_ndarray(out)  # check that out is a valid ndarray
+
         arr = ensure_contiguous_ndarray(buf).view('u1')
-        expect = arr[:4].view('<u4')[0]
-        checksum = self.checksum(arr[4:]) & 0xffffffff
+        if self.location == 'start':
+            checksum_view = arr[:4]
+            payload_view = arr[4:]
+        else:
+            checksum_view = arr[-4:]
+            payload_view = arr[:-4]
+        expect = checksum_view.view('<u4')[0]
+        checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
-            raise RuntimeError('checksum failed')
-        return ndarray_copy(arr[4:], out)
+            raise RuntimeError(
+                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+            )
+        return ndarray_copy(payload_view, out)
 
 
 class CRC32(Checksum32):
+    """Codec add a crc32 checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
 
     codec_id = 'crc32'
     checksum = zlib.crc32
+    location = 'start'
+
+
+class CRC32C(Checksum32):
+    """Codec add a crc32c checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
+
+    codec_id = 'crc32c'
+
+    def checksum(self, buf):
+        try:
+            from crc32c import crc32c as crc32c_
+
+            return crc32c_(buf)
+        except ImportError:  # pragma: no cover
+            raise ImportError("crc32c must be installed to use the CRC32C checksum codec.")
+
+    location = 'end'
 
 
 class Adler32(Checksum32):
+    """Codec add a adler32 checksum to the buffer.
+
+    Parameters
+    ----------
+    location : 'start' or 'end'
+        Where to place the checksum in the buffer.
+    """
 
     codec_id = 'adler32'
     checksum = zlib.adler32
+    location = 'start'
 
 
 class JenkinsLookup3(Checksum32):
@@ -55,9 +119,12 @@ class JenkinsLookup3(Checksum32):
     the data portion and compared with the four-byte checksum, raising
     RuntimeError if inconsistent.
 
-    Attributes:
-       initval: initial seed passed to the hash algorithm, default: 0
-       prefix: bytes prepended to the buffer before evaluating the hash, default: None
+    Parameters
+    ----------
+    initval : int
+        initial seed passed to the hash algorithm, default: 0
+    prefix : int
+        bytes prepended to the buffer before evaluating the hash, default: None
     """
 
     checksum = jenkins_lookup3

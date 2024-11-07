@@ -5,21 +5,21 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenArray
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-array not available")
-from numcodecs.tests.common import (check_config, check_repr,
-                                    check_encode_decode_array,
-                                    check_backwards_compatibility,
-                                    assert_array_items_equal)
-
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-array not available") from e
+from numcodecs.tests.common import (
+    assert_array_items_equal,
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
+)
 
 arrays = [
-    np.array([np.array([1, 2, 3]),
-              np.array([4]),
-              np.array([5, 6])] * 300, dtype=object),
-    np.array([np.array([1, 2, 3]),
-              np.array([4]),
-              np.array([5, 6])] * 300, dtype=object).reshape(90, 10),
+    np.array([np.array([1, 2, 3]), np.array([4]), np.array([5, 6])] * 300, dtype=object),
+    np.array([np.array([1, 2, 3]), np.array([4]), np.array([5, 6])] * 300, dtype=object).reshape(
+        90, 10
+    ),
 ]
 
 
@@ -93,7 +93,5 @@ def test_encode_none():
     codec = VLenArray(int)
     enc = codec.encode(a)
     dec = codec.decode(enc)
-    expect = np.array([np.array([1, 3]),
-                       np.array([]),
-                       np.array([4, 7])], dtype=object)
+    expect = np.array([np.array([1, 3]), np.array([]), np.array([4, 7])], dtype=object)
     assert_array_items_equal(expect, dec)

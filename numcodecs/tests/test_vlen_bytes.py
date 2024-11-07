@@ -5,12 +5,16 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenBytes
-except ImportError:  # pragma: no cover
-    raise unittest.SkipTest("vlen-bytes not available")
-from numcodecs.tests.common import (check_config, check_repr, check_encode_decode_array,
-                                    check_backwards_compatibility, greetings,
-                                    assert_array_items_equal)
-
+except ImportError as e:  # pragma: no cover
+    raise unittest.SkipTest("vlen-bytes not available") from e
+from numcodecs.tests.common import (
+    assert_array_items_equal,
+    check_backwards_compatibility,
+    check_config,
+    check_encode_decode_array,
+    check_repr,
+    greetings,
+)
 
 greetings_bytes = [g.encode('utf-8') for g in greetings]
 
@@ -19,8 +23,9 @@ arrays = [
     np.array([b'foo', b'bar', b'baz'] * 300, dtype=object),
     np.array(greetings_bytes * 100, dtype=object),
     np.array([b'foo', b'bar', b'baz'] * 300, dtype=object).reshape(90, 10),
-    np.array(greetings_bytes * 1000, dtype=object).reshape(len(greetings_bytes), 100, 10,
-                                                           order='F'),
+    np.array(greetings_bytes * 1000, dtype=object).reshape(
+        len(greetings_bytes), 100, 10, order='F'
+    ),
 ]
 
 

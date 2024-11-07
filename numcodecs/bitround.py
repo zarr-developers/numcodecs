@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from .abc import Codec
 from .compat import ensure_ndarray_like, ndarray_copy
 
@@ -60,7 +59,8 @@ class BitRound(Codec):
             return a
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
-        b = a.view(a_int_dtype)
+        b = a.copy()
+        b = b.view(a_int_dtype)
         maskbits = bits - self.keepbits
         mask = (all_set >> maskbits) << maskbits
         half_quantum1 = (1 << (maskbits - 1)) - 1
