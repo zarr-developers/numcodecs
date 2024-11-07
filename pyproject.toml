@@ -128,6 +128,10 @@ norecursedirs = [
 ]
 log_cli_level = "INFO"
 xfail_strict = true
+filterwarnings = [
+    "error",
+]
+
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
