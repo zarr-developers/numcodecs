@@ -81,11 +81,13 @@ jobs:
           pyodide venv .venv-pyodide
           source .venv-pyodide/bin/activate
 
-          # Install the built numcodecs WASM package
-          python -m pip install dist/*.whl
-          python -m pip install pytest pytest-cov coverage
+          # Install the built numcodecs WASM wheel and relevant dependencies
+          python -m pip install dist/*.whl[msgpack,crc32c,test,test_extras]
 
           # Change into a different directory before running tests to avoid
           # the test runner picking up the local numcodecs package
           cd docs
-          python -m pytest --pyargs numcodecs
+
+          # Don't use the cache provider plugin, as it doesn't currently work
+          # with Pyodide: https://github.com/pypa/cibuildwheel/issues/1966
+          python -m pytest -p no:cacheprovider --pyargs numcodecs
