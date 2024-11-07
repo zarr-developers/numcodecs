@@ -16,7 +16,7 @@ index fae202e..80606a6 100644
 -
 +#include <unistd.h>
  #include "gzguts.h"
- 
+
  #if defined(_WIN32) && !defined(__BORLANDC__)
 
 diff --git a/c-blosc/internal-complibs/zlib-1.2.13/gzread.c b/c-blosc/internal-complibs/zlib-1.2.13/gzread.c
@@ -30,7 +30,7 @@ index bf4538e..afe6acd 100644
 -
 +#include <unistd.h>
  #include "gzguts.h"
- 
+
  /* Local functions */
 
 
@@ -45,5 +45,5 @@ index aa767fb..a87676f 100644
 -
 +#include <unistd.h>
  #include "gzguts.h"
- 
+
  /* Local functions */

@@ -11,10 +11,10 @@ except ImportError:  # pragma: no cover
 
 
 from numcodecs.tests.common import (
-    is_wasm,
     check_backwards_compatibility,
     check_config,
     check_encode_decode,
+    is_wasm,
 )
 
 codecs = [
@@ -90,11 +90,8 @@ def _decode_worker(enc):
     return data
 
 
-@pytest.mark.skipif(
-    is_wasm,
-    reason="WASM/Pyodide does not support multiprocessing"
-)
-@pytest.mark.parametrize('pool', (Pool, ThreadPool))
+@pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")
+@pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(pool):
     data = np.arange(1000000)
     enc = _encode_worker(data)

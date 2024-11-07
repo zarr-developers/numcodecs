@@ -1,9 +1,9 @@
 import array
 import json as _json
 import os
-from glob import glob
 import platform
 import sys
+from glob import glob
 
 import numpy as np
 import pytest
