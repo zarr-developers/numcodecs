@@ -82,7 +82,8 @@ jobs:
           source .venv-pyodide/bin/activate
 
           # Install the built numcodecs WASM wheel and relevant dependencies
-          python -m pip install dist/*.whl[msgpack,crc32c,test,test_extras]
+          pip install $(ls dist/*.whl)"[msgpack,crc32c,test,test_extras]"
+          # TODO: get zfpy built in Pyodide and install it here
 
           # Change into a different directory before running tests to avoid
           # the test runner picking up the local numcodecs package
