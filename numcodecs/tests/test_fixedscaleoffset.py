@@ -37,7 +37,7 @@ def test_encode_decode():
 
 
 @pytest.mark.parametrize(
-    "offset, scale, expected",
+    ("offset", "scale", "expected"),
     [
         (1000, 10, [0, 6, 11, 17, 22, 28, 33, 39, 44, 50]),
         (1002.5, 10, [-25, -19, -14, -8, -3, 3, 8, 14, 19, 25]),
