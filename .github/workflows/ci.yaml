@@ -83,7 +83,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install "zfpy>=1" "numpy<2"
+          python -m pip install -v ".[zfpy]"
 
       - name: List installed packages
         shell: "bash -l {0}"
