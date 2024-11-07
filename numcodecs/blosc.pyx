@@ -87,6 +87,8 @@ def get_mutex():
             mutex = None
         except ImportError:
             mutex = None
+        except ModuleNotFoundError:
+            mutex = None
         _MUTEX = mutex
         _MUTEX_IS_INIT = True
     return _MUTEX
