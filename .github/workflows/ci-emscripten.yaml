@@ -85,6 +85,9 @@ jobs:
           pip install $(ls dist/*.whl)"[msgpack,crc32c,test,test_extras]"
           # TODO: get zfpy built in Pyodide and install it here
 
+          # For tests in test_zarr3.py
+          pip install zarr
+
           # Change into a different directory before running tests to avoid
           # the test runner picking up the local numcodecs package
           cd docs
