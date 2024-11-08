@@ -58,7 +58,7 @@ def _expect_name_prefix(codec_name: str) -> str:
         raise ValueError(
             f"Expected name to start with '{CODEC_PREFIX}'. Got {codec_name} instead."
         )  # pragma: no cover
-    return codec_name[len(CODEC_PREFIX) :]
+    return codec_name.removeprefix(CODEC_PREFIX)
 
 
 def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
@@ -114,7 +114,7 @@ class _NumcodecsCodec:
         }
 
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-        return input_byte_length  # pragma: no cover
+        raise NotImplementedError  # pragma: no cover
 
 
 class _NumcodecsBytesBytesCodec(_NumcodecsCodec, BytesBytesCodec):
