@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import numcodecs.zarr3
+from numcodecs.tests.common import is_wasm
 
 zarr = pytest.importorskip("zarr")
 
@@ -46,6 +47,7 @@ def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     assert "See :class:`numcodecs." in codec_class.__doc__
 
 
+@pytest.mark.skipif(is_wasm, reason="Threads are not supported in Pyodide/WASM")
 @pytest.mark.parametrize(
     "codec_class",
     [
