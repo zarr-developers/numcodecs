@@ -1,7 +1,11 @@
 import importlib
 import os.path
 import sys
-from multiprocessing import Process
+
+from numcodecs.tests.common import is_wasm
+
+if not is_wasm:  # pragma: no cover
+    from multiprocessing import Process
 
 import pytest
 
