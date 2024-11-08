@@ -55,6 +55,9 @@ def test_backwards_compatibility():
     check_backwards_compatibility(codec.codec_id, arrays, [codec])
 
 
+@pytest.mark.filterwarnings(
+    "ignore:Creating an ndarray from ragged nested sequences .* is deprecated.*"
+)
 @pytest.mark.parametrize(
     ("input_data", "dtype"),
     [
