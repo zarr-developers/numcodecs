@@ -3,7 +3,19 @@ import itertools
 import numpy as np
 import pytest
 
-from numcodecs.checksum32 import CRC32, CRC32C, Adler32
+from numcodecs.checksum32 import CRC32, Adler32
+
+# Try to import CRC32C, skip entire module if not available
+# This is a temporary skip until we update the crc32c package
+# in Pyodide and make a release.
+try:
+    import crc32c  # noqa: F401, I001
+    from numcodecs.checksum32 import CRC32C
+
+    HAS_CRC32C = True
+except ImportError:  # pragma: no cover
+    HAS_CRC32C = False
+
 from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -32,14 +44,22 @@ arrays = [
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
+# Initialize base codecs
 codecs = [
     CRC32(),
     CRC32(location="end"),
-    CRC32C(location="start"),
-    CRC32C(),
     Adler32(),
     Adler32(location="end"),
 ]
+
+# Add CRC32C codecs if available
+if HAS_CRC32C:
+    codecs.extend(
+        [
+            CRC32C(location="start"),
+            CRC32C(),
+        ]
+    )
 
 
 @pytest.mark.parametrize(("codec", "arr"), itertools.product(codecs, arrays))
@@ -85,24 +105,27 @@ def test_err_location():
     with pytest.raises(ValueError):
         CRC32(location="foo")
     with pytest.raises(ValueError):
-        CRC32C(location="foo")
-    with pytest.raises(ValueError):
         Adler32(location="foo")
+    if HAS_CRC32C:
+        with pytest.raises(ValueError):
+            CRC32C(location="foo")
 
 
 def test_repr():
     check_repr("CRC32(location='start')")
-    check_repr("CRC32C(location='start')")
     check_repr("Adler32(location='start')")
     check_repr("CRC32(location='end')")
-    check_repr("CRC32C(location='end')")
     check_repr("Adler32(location='end')")
+    if HAS_CRC32C:
+        check_repr("CRC32C(location='start')")
+        check_repr("CRC32C(location='end')")
 
 
 def test_backwards_compatibility():
     check_backwards_compatibility(CRC32.codec_id, arrays, [CRC32()])
     check_backwards_compatibility(Adler32.codec_id, arrays, [Adler32()])
-    check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
+    if HAS_CRC32C:
+        check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
 
 
 @pytest.mark.parametrize("codec", codecs)
@@ -123,6 +146,7 @@ def test_err_out_too_small(codec):
         codec.decode(codec.encode(arr), out)
 
 
+@pytest.mark.skipif(not HAS_CRC32C, reason="CRC32C not available")
 def test_crc32c_checksum():
     arr = np.arange(0, 64, dtype="uint8")
     buf = CRC32C(location="end").encode(arr)
