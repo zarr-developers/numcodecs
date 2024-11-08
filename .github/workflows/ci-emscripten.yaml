@@ -89,8 +89,11 @@ jobs:
           # TODO: get zfpy built in Pyodide and install it here
 
           # Change into a different directory before running tests to avoid
-          # the test runner picking up the local numcodecs package
+          # the test runner picking up the local numcodecs package. Plus let
+          # pytest inherit its configuration from pyproject.toml.
           cd docs
+          cp ../pyproject.toml .
+
 
           # Don't use the cache provider plugin, as it doesn't currently work
           # with Pyodide: https://github.com/pypa/cibuildwheel/issues/1966
