@@ -82,7 +82,7 @@ jobs:
           source .venv-pyodide/bin/activate
 
           # For tests in test_zarr3.py
-          pip install zarr
+          pip install zarr==3.0.0b1
 
           # Install the built numcodecs WASM wheel and relevant dependencies
           pip install $(ls dist/*.whl)"[msgpack,crc32c,test,test_extras]"
