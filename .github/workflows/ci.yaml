@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-        # macos-12 is an intel runner, macos-14 is a arm64 runner
+        # macos-13 is an intel runner, macos-14 is a arm64 runner
         platform: [ubuntu-latest, windows-latest, macos-13, macos-14]
 
     steps:
@@ -70,6 +70,12 @@ jobs:
             conda activate env
             python -m pip install -v ".[pcodec]"
 
+      - name: Install zarr-python
+        shell: "bash -l {0}"
+        run: |
+          conda activate env
+          # TODO: remove --pre option when zarr v3 is out
+          python -m pip install --pre zarr
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
