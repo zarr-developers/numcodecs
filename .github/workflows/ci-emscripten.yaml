@@ -94,4 +94,4 @@ jobs:
 
           # Don't use the cache provider plugin, as it doesn't currently work
           # with Pyodide: https://github.com/pypa/cibuildwheel/issues/1966
-          python -m pytest -p no:cacheprovider --pyargs numcodecs
+          python -m pytest -p no:cacheprovider -svra --pyargs numcodecs
