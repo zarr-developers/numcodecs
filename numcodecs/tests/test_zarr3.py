@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import numcodecs.zarr3
-
 zarr = pytest.importorskip("zarr")
+
+import numcodecs.zarr3  # noqa: E402
 
 pytestmark = [
     pytest.mark.skipif(zarr.__version__ < "3.0.0", reason="zarr 3.0.0 or later is required"),
