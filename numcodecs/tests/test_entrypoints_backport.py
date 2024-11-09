@@ -6,6 +6,7 @@ from multiprocessing import Process
 import pytest
 
 import numcodecs.registry
+from numcodecs.tests.common import is_wasm
 
 if not importlib.util.find_spec("importlib_metadata").loader:  # pragma: no cover
     pytest.skip(
@@ -28,6 +29,7 @@ def get_entrypoints_with_importlib_metadata_loaded():
     assert cls.codec_id == "test"
 
 
+@pytest.mark.skipif(is_wasm, reason="Threads are not supported in Pyodide/WASM")
 def test_entrypoint_codec_with_importlib_metadata():
     p = Process(target=get_entrypoints_with_importlib_metadata_loaded)
     p.start()

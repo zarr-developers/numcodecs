@@ -1,0 +1,51 @@
+This patch adds missing headers in vendored zlib as done in numcodecs.js. This file
+is attributed to the Pyodide developers and can be viewed at the upstream
+Pyodide repository at the following link;
+
+https://github.com/pyodide/pyodide/blob/d32e376013d8977b66c6aa828042b1fee8047aea/packages/numcodecs/patches/fixzlib.patch
+
+This patch is applied in the c-blosc/internal-complibs/zlib-<ZLIB_VERSION>/ directory
+in the .github/workflows/ci-emscripten.yaml workflow file.
+
+diff --git a/gzlib.c b/gzlib.c
+index fae202e..80606a6 100644
+--- a/gzlib.c
++++ b/gzlib.c
+@@ -2,7 +2,7 @@
+  * Copyright (C) 2004, 2010, 2011, 2012, 2013 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
+-
++#include <unistd.h>
+ #include "gzguts.h"
+
+ #if defined(_WIN32) && !defined(__BORLANDC__)
+
+diff --git a/gzread.c b/gzread.c
+index bf4538e..afe6acd 100644
+--- a/gzread.c
++++ b/gzread.c
+@@ -2,7 +2,7 @@
+  * Copyright (C) 2004, 2005, 2010, 2011, 2012, 2013 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
+-
++#include <unistd.h>
+ #include "gzguts.h"
+
+ /* Local functions */
+
+
+diff --git a/gzwrite.c b/gzwrite.c
+index aa767fb..a87676f 100644
+--- a/gzwrite.c
++++ b/gzwrite.c
+@@ -2,7 +2,7 @@
+  * Copyright (C) 2004, 2005, 2010, 2011, 2012, 2013 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
+-
++#include <unistd.h>
+ #include "gzguts.h"
+
+ /* Local functions */

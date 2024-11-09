@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import numcodecs.zarr3
+from numcodecs.tests.common import is_wasm
 
 zarr = pytest.importorskip("zarr")
 
@@ -46,6 +47,7 @@ def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     assert "See :class:`numcodecs." in codec_class.__doc__
 
 
+@pytest.mark.skipif(is_wasm, reason="Threads are not supported in Pyodide/WASM")
 @pytest.mark.parametrize(
     "codec_class",
     [
@@ -76,6 +78,8 @@ def test_generic_codec_class(store: Store, codec_class: type[numcodecs.zarr3._Nu
     np.testing.assert_array_equal(data, a[:, :])
 
 
+# TODO: undo skips here when we can test async code
+@pytest.mark.skipif(is_wasm, reason="testing async code not yet supported in Pyodide/WASM")
 @pytest.mark.parametrize(
     ("codec_class", "codec_config"),
     [
@@ -114,6 +118,8 @@ def test_generic_filter(
     np.testing.assert_array_equal(data, a[:, :])
 
 
+# TODO: undo skips here when we can test async code
+@pytest.mark.skipif(is_wasm, reason="testing async code not yet supported in Pyodide/WASM")
 def test_generic_filter_bitround(store: Store):
     data = np.linspace(0, 1, 256, dtype="float32").reshape((16, 16))
 
@@ -132,6 +138,8 @@ def test_generic_filter_bitround(store: Store):
     assert np.allclose(data, a[:, :], atol=0.1)
 
 
+# TODO: undo skips here when we can test async code
+@pytest.mark.skipif(is_wasm, reason="testing async code not yet supported in Pyodide/WASM")
 def test_generic_filter_quantize(store: Store):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
@@ -150,6 +158,8 @@ def test_generic_filter_quantize(store: Store):
     assert np.allclose(data, a[:, :], atol=0.001)
 
 
+# TODO: undo skips here when we can test async code
+@pytest.mark.skipif(is_wasm, reason="testing async code not yet supported in Pyodide/WASM")
 def test_generic_filter_packbits(store: Store):
     data = np.zeros((16, 16), dtype="bool")
     data[0:4, :] = True
@@ -179,6 +189,8 @@ def test_generic_filter_packbits(store: Store):
         )
 
 
+# TODO: undo skips here when we can test async code
+@pytest.mark.skipif(is_wasm, reason="testing async code not yet supported in Pyodide/WASM")
 @pytest.mark.parametrize(
     "codec_class",
     [

@@ -19,6 +19,7 @@ from numcodecs.tests.common import (
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
+    is_wasm,
 )
 
 codecs = [
@@ -225,6 +226,7 @@ def _decode_worker(enc):
     return data
 
 
+@pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(use_threads, pool):
     data = np.arange(1000000)
