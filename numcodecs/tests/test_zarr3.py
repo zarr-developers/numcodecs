@@ -1,11 +1,19 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 
-zarr = pytest.importorskip("zarr")
+if not TYPE_CHECKING:
+    zarr = pytest.importorskip("zarr")
+else:
+    import zarr
 
-import numcodecs.zarr3  # noqa: E402
+import zarr.storage
+from zarr.core.common import JSON
+
+import numcodecs.zarr3
 
 pytestmark = [
     pytest.mark.skipif(zarr.__version__ < "3.0.0", reason="zarr 3.0.0 or later is required"),
@@ -17,7 +25,6 @@ pytestmark = [
 
 get_codec_class = zarr.registry.get_codec_class
 Array = zarr.Array
-JSON = zarr.core.common.JSON
 BytesCodec = zarr.codecs.BytesCodec
 Store = zarr.abc.store.Store
 MemoryStore = zarr.storage.MemoryStore
@@ -28,7 +35,7 @@ EXPECTED_WARNING_STR = "Numcodecs codecs are not in the Zarr version 3.*"
 
 
 @pytest.fixture
-def store() -> Store:
+def store() -> StorePath:
     return StorePath(MemoryStore(mode="w"))
 
 
@@ -43,6 +50,8 @@ def test_entry_points(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
 
 @pytest.mark.parametrize("codec_class", ALL_CODECS)
 def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+    if codec_class.__doc__ is None:
+        pytest.skip()
     assert "See :class:`numcodecs." in codec_class.__doc__
 
 
@@ -59,7 +68,7 @@ def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
         numcodecs.zarr3.Shuffle,
     ],
 )
-def test_generic_codec_class(store: Store, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_codec_class(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -92,7 +101,9 @@ def test_generic_codec_class(store: Store, codec_class: type[numcodecs.zarr3._Nu
     ],
 )
 def test_generic_filter(
-    store: Store, codec_class: type[numcodecs.zarr3._NumcodecsCodec], codec_config: dict[str, JSON]
+    store: StorePath,
+    codec_class: type[numcodecs.zarr3._NumcodecsCodec],
+    codec_config: dict[str, JSON],
 ):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
@@ -114,7 +125,7 @@ def test_generic_filter(
     np.testing.assert_array_equal(data, a[:, :])
 
 
-def test_generic_filter_bitround(store: Store):
+def test_generic_filter_bitround(store: StorePath):
     data = np.linspace(0, 1, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -132,7 +143,7 @@ def test_generic_filter_bitround(store: Store):
     assert np.allclose(data, a[:, :], atol=0.1)
 
 
-def test_generic_filter_quantize(store: Store):
+def test_generic_filter_quantize(store: StorePath):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -150,7 +161,7 @@ def test_generic_filter_quantize(store: Store):
     assert np.allclose(data, a[:, :], atol=0.001)
 
 
-def test_generic_filter_packbits(store: Store):
+def test_generic_filter_packbits(store: StorePath):
     data = np.zeros((16, 16), dtype="bool")
     data[0:4, :] = True
 
@@ -189,7 +200,7 @@ def test_generic_filter_packbits(store: Store):
         numcodecs.zarr3.JenkinsLookup3,
     ],
 )
-def test_generic_checksum(store: Store, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_checksum(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -208,7 +219,7 @@ def test_generic_checksum(store: Store, codec_class: type[numcodecs.zarr3._Numco
 
 
 @pytest.mark.parametrize("codec_class", [numcodecs.zarr3.PCodec, numcodecs.zarr3.ZFPY])
-def test_generic_bytes_codec(store: Store, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_bytes_codec(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
     try:
         codec_class()._codec  # noqa: B018
     except ValueError as e:
