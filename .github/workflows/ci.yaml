@@ -72,6 +72,9 @@ jobs:
 
       - name: Install zarr-python
         shell: "bash -l {0}"
+        # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
+        # so we can have some tests of our minimum version of numpy (1.24)
+        if: matrix.python-version != '3.11'
         run: |
           conda activate env
           # TODO: remove --pre option when zarr v3 is out
