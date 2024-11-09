@@ -22,8 +22,10 @@ Fix
 
 Enhancements
 ~~~~~~~~~~~~
-* Add Crc32c checksum codec
+* Add Crc32c checksum codec.
   By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
+* Add codec wrappers for Zarr 3.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`524`
 
 Maintenance
 ~~~~~~~~~~~
