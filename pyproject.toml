@@ -16,7 +16,7 @@ A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
-    "numpy>=1.23",
+    "numpy>=1.24",
 ]
 requires-python = ">=3.11"
 dynamic = [
@@ -75,6 +75,29 @@ crc32c = [
     "crc32c>=2.7",
 ]
 
+[project.entry-points."zarr.codecs"]
+"numcodecs.blosc" = "numcodecs.zarr3:Blosc"
+"numcodecs.lz4" = "numcodecs.zarr3:LZ4"
+"numcodecs.zstd" = "numcodecs.zarr3:Zstd"
+"numcodecs.zlib" = "numcodecs.zarr3:Zlib"
+"numcodecs.gzip" = "numcodecs.zarr3:GZip"
+"numcodecs.bz2" = "numcodecs.zarr3:BZ2"
+"numcodecs.lzma" = "numcodecs.zarr3:LZMA"
+"numcodecs.shuffle" = "numcodecs.zarr3:Shuffle"
+"numcodecs.delta" = "numcodecs.zarr3:Delta"
+"numcodecs.bitround" = "numcodecs.zarr3:BitRound"
+"numcodecs.fixedscaleoffset" = "numcodecs.zarr3:FixedScaleOffset"
+"numcodecs.quantize" = "numcodecs.zarr3:Quantize"
+"numcodecs.packbits" = "numcodecs.zarr3:PackBits"
+"numcodecs.astype" = "numcodecs.zarr3:AsType"
+"numcodecs.crc32" = "numcodecs.zarr3:CRC32"
+"numcodecs.crc32c" = "numcodecs.zarr3:CRC32C"
+"numcodecs.adler32" = "numcodecs.zarr3:Adler32"
+"numcodecs.fletcher32" = "numcodecs.zarr3:Fletcher32"
+"numcodecs.jenkins_lookup3" = "numcodecs.zarr3:JenkinsLookup3"
+"numcodecs.pcodec" = "numcodecs.zarr3:PCodec"
+"numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
+
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
@@ -113,7 +136,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs",
+    "numcodecs/tests",
 ]
 norecursedirs = [
     ".git",
@@ -129,6 +152,10 @@ norecursedirs = [
 ]
 log_cli_level = "INFO"
 xfail_strict = true
+filterwarnings = [
+    "error",
+]
+
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]

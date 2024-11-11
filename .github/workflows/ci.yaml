@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-        # macos-12 is an intel runner, macos-14 is a arm64 runner
-        platform: [ubuntu-latest, windows-latest, macos-12, macos-14]
+        # macos-13 is an intel runner, macos-14 is a arm64 runner
+        platform: [ubuntu-latest, windows-latest, macos-13, macos-14]
 
     steps:
       - name: Checkout source
@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.0.4
+        uses: conda-incubator/setup-miniconda@v3.1.0
         with:
             channels: conda-forge
             miniforge-version: latest
@@ -45,7 +45,7 @@ jobs:
 
       - name: Install clang
         shell: "bash -l {0}"
-        if: matrix.platform == 'macos-12'
+        if: matrix.platform == 'macos-13'
         run: |
           conda activate env
           conda install -y 'clang>=12.0.1,<17'
@@ -70,6 +70,15 @@ jobs:
             conda activate env
             python -m pip install -v ".[pcodec]"
 
+      - name: Install zarr-python
+        shell: "bash -l {0}"
+        # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
+        # so we can have some tests of our minimum version of numpy (1.24)
+        if: matrix.python-version != '3.11'
+        run: |
+          conda activate env
+          # TODO: remove --pre option when zarr v3 is out
+          python -m pip install --pre zarr
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
@@ -77,7 +86,7 @@ jobs:
         shell: "bash -l {0}"
         run: |
           conda activate env
-          python -m pip install "zfpy>=1" "numpy<2"
+          python -m pip install -v ".[zfpy]"
 
       - name: List installed packages
         shell: "bash -l {0}"
