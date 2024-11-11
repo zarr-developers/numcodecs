@@ -281,7 +281,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return replace(chunk_spec, dtype=np.dtype(astype))
+            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[arg-type]
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
@@ -330,7 +330,7 @@ class AsType(_NumcodecsArrayArrayCodec):
         super().__init__(**codec_config)
 
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))
+        return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
         decode_dtype = self.codec_config.get("decode_dtype")
