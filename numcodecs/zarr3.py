@@ -44,6 +44,7 @@ except ImportError:  # pragma: no cover
     raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
 
 from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
+from zarr.abc.metadata import Metadata
 from zarr.core.array_spec import ArraySpec
 from zarr.core.buffer import Buffer, BufferPrototype, NDBuffer
 from zarr.core.buffer.cpu import as_numpy_array_wrapper
@@ -71,7 +72,7 @@ def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
 
 
 @dataclass(frozen=True)
-class _NumcodecsCodec:
+class _NumcodecsCodec(Metadata):
     codec_name: str
     codec_config: dict[str, JSON]
 
