@@ -118,6 +118,11 @@ write_to = "numcodecs/version.py"
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
+[tool.coverage.run]
+omit = [
+    "numcodecs/tests/**",
+]
+
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",

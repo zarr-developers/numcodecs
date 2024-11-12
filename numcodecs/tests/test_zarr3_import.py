@@ -8,6 +8,6 @@ def test_zarr3_import():
 
     try:
         import zarr  # noqa: F401
-    except ImportError:  # pragma: no cover
+    except ImportError:
         with pytest.raises(ImportError, match=ERROR_MESSAGE_MATCH):
             import numcodecs.zarr3  # noqa: F401

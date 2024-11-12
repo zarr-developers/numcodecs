@@ -39,4 +39,4 @@ def test_all_classes_registered():
     )
 
     if missing:
-        raise Exception(f"these codecs are missing: {missing}")  # pragma: no cover
+        raise Exception(f"these codecs are missing: {missing}")

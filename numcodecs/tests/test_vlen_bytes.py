@@ -5,7 +5,7 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenBytes
-except ImportError as e:  # pragma: no cover
+except ImportError as e:
     raise unittest.SkipTest("vlen-bytes not available") from e
 from numcodecs.tests.common import (
     assert_array_items_equal,

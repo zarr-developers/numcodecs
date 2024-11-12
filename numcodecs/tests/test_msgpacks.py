@@ -5,7 +5,7 @@ import pytest
 
 try:
     from numcodecs.msgpacks import MsgPack
-except ImportError as e:  # pragma: no cover
+except ImportError as e:
     raise unittest.SkipTest("msgpack not available") from e
 
 

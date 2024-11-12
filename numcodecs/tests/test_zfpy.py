@@ -4,7 +4,7 @@ import pytest
 try:
     # noinspection PyProtectedMember
     from numcodecs.zfpy import ZFPY, _zfpy
-except ImportError:  # pragma: no cover
+except ImportError:
     pytest.skip("ZFPY not available", allow_module_level=True)
 
 

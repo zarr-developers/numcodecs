@@ -5,7 +5,7 @@ import pytest
 
 try:
     from numcodecs.vlen import VLenUTF8
-except ImportError as e:  # pragma: no cover
+except ImportError as e:
     raise unittest.SkipTest("vlen-utf8 not available") from e
 from numcodecs.tests.common import (
     assert_array_items_equal,

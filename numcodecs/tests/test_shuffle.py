@@ -6,7 +6,7 @@ import pytest
 
 try:
     from numcodecs.shuffle import Shuffle
-except ImportError:  # pragma: no cover
+except ImportError:
     pytest.skip("numcodecs.shuffle not available", allow_module_level=True)
 
 

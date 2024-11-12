@@ -6,7 +6,7 @@ from numcodecs.pcodec import PCodec
 try:
     # initializing codec triggers ImportError
     PCodec()
-except ImportError:  # pragma: no cover
+except ImportError:
     pytest.skip("pcodec not available", allow_module_level=True)
 
 from numcodecs.tests.common import (

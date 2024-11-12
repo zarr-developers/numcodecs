@@ -8,7 +8,7 @@ import pytest
 import numcodecs.registry
 
 importlib_spec = importlib.util.find_spec("importlib_metadata")
-if importlib_spec is None or importlib_spec.loader is None:  # pragma: no cover
+if importlib_spec is None or importlib_spec.loader is None:
     pytest.skip(
         "This test module requires importlib_metadata to be installed",
         allow_module_level=True,
