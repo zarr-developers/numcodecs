@@ -23,6 +23,8 @@ Enhancements
   By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
 * Add codec wrappers for Zarr 3.
   By :user:`Norman Rzepka <normanrz>`, :issue:`524`
+* Added mypy type checking to continuous integration.
+  By :user:`David Stansby <dstansby>`, :issue:`460`.
 
 Fixes
 ~~~~~

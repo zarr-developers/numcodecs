@@ -1,8 +1,10 @@
 import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
+from types import ModuleType
+from typing import Optional
 
-_zfpy = None
+_zfpy: Optional[ModuleType] = None
 
 _zfpy_version: tuple = ()
 with suppress(PackageNotFoundError):
@@ -21,7 +23,7 @@ if _zfpy_version:
         )
     else:
         with suppress(ImportError):
-            import zfpy as _zfpy
+            import zfpy as _zfpy  # type: ignore[no-redef]
 
 if _zfpy:
     import numpy as np
