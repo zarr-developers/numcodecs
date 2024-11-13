@@ -3,7 +3,11 @@ import itertools
 import numpy as np
 import pytest
 
-from numcodecs.checksum32 import CRC32, CRC32C, Adler32
+try:
+    from numcodecs.checksum32 import CRC32, CRC32C, Adler32
+except ImportError:  # pragma: no cover
+    pytest.skip("numcodecs.checksum32 not available", allow_module_level=True)
+
 from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
