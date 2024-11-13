@@ -10,7 +10,7 @@ from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
 if TYPE_CHECKING:
-    from typing_extensions import Buffer
+    from typing_extensions import Buffer  # pragma: no cover
 
 CHECKSUM_LOCATION = Literal['start', 'end']
 

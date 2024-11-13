@@ -8,7 +8,7 @@ import pytest
 if not TYPE_CHECKING:
     zarr = pytest.importorskip("zarr")
 else:
-    import zarr
+    import zarr  # pragma: no cover
 
 import zarr.storage
 from zarr.core.common import JSON
