@@ -1,13 +1,19 @@
 import struct
 import zlib
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Literal
+from contextlib import suppress
+from types import ModuleType
+from typing import TYPE_CHECKING, Literal, Optional
 
 import numpy as np
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
+
+_crc32c: Optional[ModuleType] = None
+with suppress(ImportError):
+    import crc32c as _crc32c  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from typing_extensions import Buffer
@@ -74,28 +80,6 @@ class CRC32(Checksum32):
     codec_id = 'crc32'
     checksum = zlib.crc32
     location = 'start'
-
-
-class CRC32C(Checksum32):
-    """Codec add a crc32c checksum to the buffer.
-
-    Parameters
-    ----------
-    location : 'start' or 'end'
-        Where to place the checksum in the buffer.
-    """
-
-    codec_id = 'crc32c'
-
-    def checksum(self, buf):
-        try:
-            from crc32c import crc32c as crc32c_
-
-            return crc32c_(buf)
-        except ImportError:  # pragma: no cover
-            raise ImportError("crc32c must be installed to use the CRC32C checksum codec.")
-
-    location = 'end'
 
 
 class Adler32(Checksum32):
@@ -168,3 +152,19 @@ class JenkinsLookup3(Checksum32):
             out.view("uint8")[:] = b[:-4]
             return out
         return memoryview(b[:-4])
+
+
+if _crc32c:
+
+    class CRC32C(Checksum32):
+        """Codec add a crc32c checksum to the buffer.
+
+        Parameters
+        ----------
+        location : 'start' or 'end'
+            Where to place the checksum in the buffer.
+        """
+
+        codec_id = 'crc32c'
+        checksum = _crc32c.crc32c  # type: ignore[union-attr]
+        location = 'end'
