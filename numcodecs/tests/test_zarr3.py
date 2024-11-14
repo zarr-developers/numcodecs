@@ -9,7 +9,6 @@ if TYPE_CHECKING:  # pragma: no cover
     import zarr
 else:
     zarr = pytest.importorskip("zarr")
-    import zarr  # pragma: no cover
 
 import zarr.storage
 from zarr.core.common import JSON
