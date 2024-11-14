@@ -88,8 +88,6 @@ class PCodec(Codec):
                     delta_spec = DeltaSpec.auto()
                 case "none":
                     delta_spec = DeltaSpec.none()
-                case "try_consecutive":
-                    delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
                 case "try_lookback":
                     delta_spec = DeltaSpec.try_lookback()
                 case _:
