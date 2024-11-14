@@ -5,9 +5,10 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-if not TYPE_CHECKING:
-    zarr = pytest.importorskip("zarr")
+if TYPE_CHECKING:  # pragma: no cover
+    import zarr
 else:
+    zarr = pytest.importorskip("zarr")
     import zarr  # pragma: no cover
 
 import zarr.storage
