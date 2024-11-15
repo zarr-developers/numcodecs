@@ -28,6 +28,7 @@ codecs = [
     PCodec(delta_encoding_order=2),
     PCodec(delta_spec="try_lookback"),
     PCodec(delta_spec="none"),
+    PCodec(delta_spec="try_consecutive", delta_encoding_order=1),
 ]
 
 

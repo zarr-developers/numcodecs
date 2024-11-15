@@ -74,20 +74,21 @@ class PCodec(Codec):
             case _:
                 raise ValueError(f"mode_spec {self.mode_spec} is not supported")
 
-        if self.delta_encoding_order is not None:
+        if self.delta_encoding_order is not None and self.delta_spec is None:
             # backwards compat for before delta_spec was introduced
-            if self.delta_spec in (None, "try_consecutive"):
-                delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
-            else:
-                raise ValueError(
-                    "delta_encoding_order can only be set for delta_spec='try_consecutive'"
-                )
+            delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
+        elif self.delta_encoding_order and self.delta_spec != "try_consecutive":
+            raise ValueError(
+                "delta_encoding_order can only be set for delta_spec='try_consecutive'"
+            )
         else:
             match self.delta_spec:
                 case "auto" | None:
                     delta_spec = DeltaSpec.auto()
                 case "none":
                     delta_spec = DeltaSpec.none()
+                case "try_consecutive":
+                    delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
                 case "try_lookback":
                     delta_spec = DeltaSpec.try_lookback()
                 case _:
