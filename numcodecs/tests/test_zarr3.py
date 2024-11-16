@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-if not TYPE_CHECKING:
-    zarr = pytest.importorskip("zarr")
-else:
+if TYPE_CHECKING:  # pragma: no cover
     import zarr
+else:
+    zarr = pytest.importorskip("zarr")
 
 import zarr.storage
 from zarr.core.common import JSON
@@ -36,7 +36,7 @@ EXPECTED_WARNING_STR = "Numcodecs codecs are not in the Zarr version 3.*"
 
 @pytest.fixture
 def store() -> StorePath:
-    return StorePath(MemoryStore(mode="w"))
+    return StorePath(MemoryStore(read_only=False))
 
 
 ALL_CODECS = [getattr(numcodecs.zarr3, cls_name) for cls_name in numcodecs.zarr3.__all__]

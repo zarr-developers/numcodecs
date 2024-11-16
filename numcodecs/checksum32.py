@@ -15,7 +15,7 @@ _crc32c: Optional[ModuleType] = None
 with suppress(ImportError):
     import crc32c as _crc32c  # type: ignore[no-redef]
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing_extensions import Buffer
 
 CHECKSUM_LOCATION = Literal['start', 'end']

@@ -31,4 +31,4 @@ repos:
       hooks:
       -   id: mypy
           args: [--config-file, pyproject.toml]
-          additional_dependencies: [numpy, pytest, crc32c, zfpy, 'zarr==3.0.0b1']
+          additional_dependencies: [numpy, pytest, crc32c, zfpy, 'zarr>=3.0.0b2']
