@@ -11,6 +11,12 @@ Release notes
 Unreleased
 ----------
 
+Fix
+~~~
+
+* Add `noexcept` to `_utils` C-equiv functions
+  By :user:`John Kirkham <jakirkham>`, :issue:`641`.
+
 
 .. _release_0.14.0:
 
