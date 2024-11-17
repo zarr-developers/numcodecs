@@ -9,7 +9,7 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing_extensions import Buffer
 
 CHECKSUM_LOCATION = Literal['start', 'end']
