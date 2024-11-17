@@ -11,6 +11,11 @@ Release notes
 Unreleased
 ----------
 
+Fixes
+~~~~~
+* Cleanup ``crc32c`` soft dependency.
+  By :user:`John Kirkham <jakirkham>`, :issue:`637`
+
 
 .. _release_0.14.0:
 

@@ -117,12 +117,16 @@ with suppress(ImportError):
 
     register_codec(MsgPack)
 
-from numcodecs.checksum32 import CRC32, CRC32C, Adler32, JenkinsLookup3
+from numcodecs.checksum32 import CRC32, Adler32, JenkinsLookup3
 
 register_codec(CRC32)
-register_codec(CRC32C)
 register_codec(Adler32)
 register_codec(JenkinsLookup3)
+
+with suppress(ImportError):
+    from numcodecs.checksum32 import CRC32C
+
+    register_codec(CRC32C)
 
 from numcodecs.json import JSON
 
