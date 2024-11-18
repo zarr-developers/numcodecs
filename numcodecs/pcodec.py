@@ -1,10 +1,9 @@
 from typing import Literal, Optional
 
-from numcodecs.abc import Codec
-from numcodecs.compat import ensure_contiguous_ndarray
-
 from pcodec import ChunkConfig, ModeSpec, PagingSpec, standalone
 
+from numcodecs.abc import Codec
+from numcodecs.compat import ensure_contiguous_ndarray
 
 DEFAULT_MAX_PAGE_N = 262144
 
