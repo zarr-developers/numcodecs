@@ -11,6 +11,15 @@ Release notes
 Unreleased
 ----------
 
+Fixes
+~~~~~
+* Cleanup ``crc32c`` soft dependency.
+  By :user:`John Kirkham <jakirkham>`, :issue:`637`
+
+Improvements
+~~~~~~~~~~~~
+* Add `noexcept` to `_utils` C-equiv functions
+  By :user:`John Kirkham <jakirkham>`, :issue:`641`.
 
 .. _release_0.14.0:
 

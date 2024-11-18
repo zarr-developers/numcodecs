@@ -50,7 +50,6 @@ docs = [
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
-    "mock",
 ]
 test = [
     "coverage",
