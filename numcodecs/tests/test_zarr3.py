@@ -50,9 +50,7 @@ def test_entry_points(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
 
 @pytest.mark.parametrize("codec_class", ALL_CODECS)
 def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
-    if codec_class.__doc__ is None:
-        pytest.skip()
-    assert "See :class:`numcodecs." in codec_class.__doc__
+    assert "See :class:`numcodecs." in codec_class.__doc__  # type: ignore[operator]
 
 
 @pytest.mark.parametrize(
