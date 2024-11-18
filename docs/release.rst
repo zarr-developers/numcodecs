@@ -6,14 +6,24 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
+    .. _unreleased:
+
+    Unreleased
+    ----------
+
 .. _unreleased:
 
-Unreleased
-----------
+0.14.1
+------
 
 Fixes
 ~~~~~
-* Cleanup ``crc32c`` soft dependency.
+* Cleanups to the ``crc32c`` soft dependency.
+  Whereas in ``numcodecs`` 0.14.0 a runtime error was raised if
+  the ``CRC32C`` codec used without the ``crc32c`` installed,
+  the ``CRC32C`` codec is no longer defined at import time if
+  ``crc32c`` is not installed. This has been changed to match
+  the behaviour of other optional dependencies/codecs.
   By :user:`John Kirkham <jakirkham>`, :issue:`637`
 
 Improvements
