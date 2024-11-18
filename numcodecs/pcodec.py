@@ -32,7 +32,7 @@ class PCodec(Codec):
         structure of the data (e.g. approximate multiples of 0.1) to improve
         compression ratio, or skip this step and just use the numbers as-is
         (Classic mode).
-    delta_spec : {"auto", "none", "try_consecutive", "try_lookback"} or None
+    delta_spec : {"auto", "none", "try_consecutive", "try_lookback"}
         Configures the delta encoding strategy. By default, uses "auto" which
         will try to infer the best encoding order.
     delta_encoding_order : int or None
@@ -48,7 +48,7 @@ class PCodec(Codec):
         self,
         level: int = 8,
         mode_spec: Literal["auto", "classic"] = "auto",
-        delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] | None = None,
+        delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] = "auto",
         paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
         delta_encoding_order: Optional[int] = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
@@ -74,10 +74,10 @@ class PCodec(Codec):
             case _:
                 raise ValueError(f"mode_spec {self.mode_spec} is not supported")
 
-        if self.delta_encoding_order is not None and self.delta_spec is None:
+        if self.delta_encoding_order is not None and self.delta_spec == "auto":
             # backwards compat for before delta_spec was introduced
             delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
-        elif self.delta_encoding_order and self.delta_spec != "try_consecutive":
+        elif self.delta_encoding_order is not None and self.delta_spec != "try_consecutive":
             raise ValueError(
                 "delta_encoding_order can only be set for delta_spec='try_consecutive'"
             )

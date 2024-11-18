@@ -1,6 +1,6 @@
 {
     "delta_encoding_order": 2,
-    "delta_spec": null,
+    "delta_spec": "auto",
     "equal_pages_up_to": 262144,
     "id": "pcodec",
     "level": 8,
