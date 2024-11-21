@@ -1,9 +1,10 @@
 import itertools
+from contextlib import suppress
 
 import numpy as np
 import pytest
 
-from numcodecs.checksum32 import CRC32, CRC32C, Adler32
+from numcodecs.checksum32 import CRC32, Adler32
 from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -12,6 +13,12 @@ from numcodecs.tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
+
+has_crc32c = False
+with suppress(ImportError):
+    from numcodecs.checksum32 import CRC32C
+
+    has_crc32c = True
 
 # mix of dtypes: integer, float, bool, string
 # mix of shapes: 1D, 2D, 3D
@@ -35,11 +42,16 @@ arrays = [
 codecs = [
     CRC32(),
     CRC32(location="end"),
-    CRC32C(location="start"),
-    CRC32C(),
     Adler32(),
     Adler32(location="end"),
 ]
+if has_crc32c:
+    codecs.extend(
+        [
+            CRC32C(location="start"),
+            CRC32C(),
+        ]
+    )
 
 
 @pytest.mark.parametrize(("codec", "arr"), itertools.product(codecs, arrays))
@@ -85,24 +97,27 @@ def test_err_location():
     with pytest.raises(ValueError):
         CRC32(location="foo")
     with pytest.raises(ValueError):
-        CRC32C(location="foo")
-    with pytest.raises(ValueError):
         Adler32(location="foo")
+    if has_crc32c:
+        with pytest.raises(ValueError):
+            CRC32C(location="foo")
 
 
 def test_repr():
     check_repr("CRC32(location='start')")
-    check_repr("CRC32C(location='start')")
-    check_repr("Adler32(location='start')")
     check_repr("CRC32(location='end')")
-    check_repr("CRC32C(location='end')")
+    check_repr("Adler32(location='start')")
     check_repr("Adler32(location='end')")
+    if has_crc32c:
+        check_repr("CRC32C(location='start')")
+        check_repr("CRC32C(location='end')")
 
 
 def test_backwards_compatibility():
     check_backwards_compatibility(CRC32.codec_id, arrays, [CRC32()])
     check_backwards_compatibility(Adler32.codec_id, arrays, [Adler32()])
-    check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
+    if has_crc32c:
+        check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
 
 
 @pytest.mark.parametrize("codec", codecs)
@@ -123,6 +138,7 @@ def test_err_out_too_small(codec):
         codec.decode(codec.encode(arr), out)
 
 
+@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed")
 def test_crc32c_checksum():
     arr = np.arange(0, 64, dtype="uint8")
     buf = CRC32C(location="end").encode(arr)

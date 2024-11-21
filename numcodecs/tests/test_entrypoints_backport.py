@@ -1,4 +1,4 @@
-import importlib
+import importlib.util
 import os.path
 import sys
 from multiprocessing import Process
@@ -7,7 +7,8 @@ import pytest
 
 import numcodecs.registry
 
-if not importlib.util.find_spec("importlib_metadata").loader:  # pragma: no cover
+importlib_spec = importlib.util.find_spec("importlib_metadata")
+if importlib_spec is None or importlib_spec.loader is None:  # pragma: no cover
     pytest.skip(
         "This test module requires importlib_metadata to be installed",
         allow_module_level=True,

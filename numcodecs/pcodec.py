@@ -1,7 +1,6 @@
 from typing import Literal, Optional
 
-import numcodecs
-import numcodecs.abc
+from numcodecs.abc import Codec
 from numcodecs.compat import ensure_contiguous_ndarray
 
 try:
@@ -13,7 +12,7 @@ except ImportError:  # pragma: no cover
 DEFAULT_MAX_PAGE_N = 262144
 
 
-class PCodec(numcodecs.abc.Codec):
+class PCodec(Codec):
     """
     PCodec (or pco, pronounced "pico") losslessly compresses and decompresses
     numerical sequences with high compression ratio and fast speed.

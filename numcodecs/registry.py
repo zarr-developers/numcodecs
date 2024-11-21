@@ -2,11 +2,13 @@
 applications to dynamically register and look-up codec classes."""
 
 import logging
-from importlib.metadata import entry_points
+from importlib.metadata import EntryPoints, entry_points
+
+from numcodecs.abc import Codec
 
 logger = logging.getLogger("numcodecs")
-codec_registry = {}
-entries = {}
+codec_registry: dict[str, Codec] = {}
+entries: dict[str, "EntryPoints"] = {}
 
 
 def run_entrypoints():
