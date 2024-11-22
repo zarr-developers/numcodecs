@@ -5,12 +5,10 @@
 # cython: language_level=3
 
 
-from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
+from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
-
-from .compat_ext cimport Buffer
-from .compat_ext import Buffer
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
@@ -92,20 +90,26 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     """
 
     cdef:
-        char *source_ptr
-        char *dest_ptr
-        Buffer source_buffer
+        memoryview source_mv
+        const Py_buffer* source_pb
+        const char* source_ptr
         size_t source_size, dest_size, compressed_size
         bytes dest
+        char* dest_ptr
 
     # check level
     if level > MAX_CLEVEL:
         level = MAX_CLEVEL
 
+    # obtain source memoryview
+    source_mv = memoryview(source)
+    source_pb = PyMemoryView_GET_BUFFER(source_mv)
+    if not PyBuffer_IsContiguous(source_pb, b'A'):
+        raise BufferError("`source` must contain contiguous memory")
+
     # setup source buffer
-    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
-    source_size = source_buffer.nbytes
+    source_ptr = <const char*>source_pb.buf
+    source_size = source_pb.len
 
     cctx = ZSTD_createCCtx()
     param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, level)
@@ -120,22 +124,14 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         error = ZSTD_getErrorName(param_set_result)
         raise RuntimeError('Could not set zstd checksum flag: %s' % error)
 
-    try:
+    # setup destination
+    dest_size = ZSTD_compressBound(source_size)
+    dest = PyBytes_FromStringAndSize(NULL, dest_size)
+    dest_ptr = PyBytes_AS_STRING(dest)
 
-        # setup destination
-        dest_size = ZSTD_compressBound(source_size)
-        dest = PyBytes_FromStringAndSize(NULL, dest_size)
-        dest_ptr = PyBytes_AS_STRING(dest)
-
-        # perform compression
-        with nogil:
-            compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
-
-    finally:
-        if cctx:
-            ZSTD_freeCCtx(cctx)
-        # release buffers
-        source_buffer.release()
+    # perform compression
+    with nogil:
+        compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
 
     # check compression was successful
     if ZSTD_isError(compressed_size):
@@ -165,47 +161,51 @@ def decompress(source, dest=None):
 
     """
     cdef:
-        char *source_ptr
-        char *dest_ptr
-        Buffer source_buffer
-        Buffer dest_buffer = None
+        memoryview source_mv
+        const Py_buffer* source_pb
+        char* source_ptr
+        memoryview dest_mv
+        Py_buffer* dest_pb
+        char* dest_ptr
         size_t source_size, dest_size, decompressed_size
+        size_t nbytes, cbytes, blocksize
 
-    # setup source buffer
-    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
-    source_size = source_buffer.nbytes
+    # obtain source memoryview
+    source_mv = memoryview(source)
+    source_pb = PyMemoryView_GET_BUFFER(source_mv)
+    if not PyBuffer_IsContiguous(source_pb, b'A'):
+        raise BufferError("`source` must contain contiguous memory")
 
-    try:
+    # get source pointer
+    source_ptr = <const char*>source_pb.buf
+    source_size = source_pb.len
 
-        # determine uncompressed size
-        dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
-        if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
-            raise RuntimeError('Zstd decompression error: invalid input data')
+    # determine uncompressed size
+    dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
+    if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
+        raise RuntimeError('Zstd decompression error: invalid input data')
 
-        # setup destination buffer
-        if dest is None:
-            # allocate memory
-            dest = PyBytes_FromStringAndSize(NULL, dest_size)
-            dest_ptr = PyBytes_AS_STRING(dest)
-        else:
-            arr = ensure_contiguous_ndarray(dest)
-            dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
-            dest_ptr = dest_buffer.ptr
-            if dest_buffer.nbytes < dest_size:
-                raise ValueError('destination buffer too small; expected at least %s, '
-                                 'got %s' % (dest_size, dest_buffer.nbytes))
+    # setup destination buffer
+    if dest is None:
+        # allocate memory
+        dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
+    else:
+        dest_1d = ensure_contiguous_ndarray(dest)
 
-        # perform decompression
-        with nogil:
-            decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
+    # obtain dest memoryview
+    dest_mv = memoryview(dest_1d)
+    dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
+    dest_ptr = <char*>dest_pb.buf
+    dest_nbytes = dest_pb.len
 
-    finally:
+    # validate output buffer
+    if dest_nbytes < dest_size:
+        raise ValueError('destination buffer too small; expected at least %s, '
+                         'got %s' % (dest_size, dest_nbytes))
 
-        # release buffers
-        source_buffer.release()
-        if dest_buffer is not None:
-            dest_buffer.release()
+    # perform decompression
+    with nogil:
+        decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
 
     # check decompression was successful
     if ZSTD_isError(decompressed_size):

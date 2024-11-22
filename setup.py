@@ -274,25 +274,6 @@ def jenkins_extension():
     return extensions
 
 
-def compat_extension():
-    info('setting up compat extension')
-
-    extra_compile_args = base_compile_args.copy()
-
-    sources = ['numcodecs/compat_ext.pyx']
-
-    # define extension module
-    extensions = [
-        Extension(
-            'numcodecs.compat_ext',
-            sources=sources,
-            extra_compile_args=extra_compile_args,
-        ),
-    ]
-
-    return extensions
-
-
 def shuffle_extension():
     info('setting up shuffle extension')
 
@@ -361,7 +342,6 @@ def run_setup(with_extensions):
             blosc_extension()
             + zstd_extension()
             + lz4_extension()
-            + compat_extension()
             + shuffle_extension()
             + vlen_extension()
             + fletcher_extension()
