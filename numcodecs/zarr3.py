@@ -95,6 +95,7 @@ class _NumcodecsCodec(Metadata):
             "Numcodecs codecs are not in the Zarr version 3 specification and "
             "may not be supported by other zarr implementations.",
             category=UserWarning,
+            stacklevel=2,
         )
 
     @cached_property
