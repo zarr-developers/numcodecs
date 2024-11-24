@@ -41,7 +41,9 @@ try:
     if zarr.__version__ < "3.0.0":  # pragma: no cover
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
 except ImportError as e:  # pragma: no cover
-    raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.") from e
+    raise ImportError(
+        "zarr 3.0.0 or later is required to use the numcodecs zarr integration."
+    ) from e
 
 from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
 from zarr.abc.metadata import Metadata
