@@ -13,6 +13,22 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+* All arguments to the ``PCodec`` constructor except for ``level``
+  are now keyword only, to support the updated API.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+
+Enhancements
+~~~~~~~~~~~~
+* Add support for ``pcodec`` 0.3. This exposes the new ``delta_spec``
+  and ``paging_spec`` arguments, but maintains full backwards
+  compatibility for data written with older package versions.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+
 0.14.1
 ------
 
