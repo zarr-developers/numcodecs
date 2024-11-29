@@ -60,11 +60,11 @@ def test_config():
     check_config(codec)
 
 
-def test_invalid_config_error():
-    for param in ["mode_spec", "delta_spec", "paging_spec"]:
-        codec = PCodec(**{param: "bogus"})
-        with pytest.raises(ValueError):
-            check_encode_decode_array_to_bytes(arrays[0], codec)
+@pytest.mark.parametrize("param", ["mode_spec", "delta_spec", "paging_spec"])
+def test_invalid_config_error(param):
+    codec = PCodec(**{param: "bogus"})
+    with pytest.raises(ValueError):
+        check_encode_decode_array_to_bytes(arrays[0], codec)
 
 
 def test_invalid_delta_encoding_combo():

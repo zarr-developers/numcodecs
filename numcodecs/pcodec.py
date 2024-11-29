@@ -67,7 +67,7 @@ class PCodec(Codec):
 
     def _get_chunk_config(self):
         match self.mode_spec:
-            case "auto" | None:
+            case "auto":
                 mode_spec = ModeSpec.auto()
             case "classic":
                 mode_spec = ModeSpec.classic()
