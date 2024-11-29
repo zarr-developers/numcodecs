@@ -49,7 +49,7 @@ class Pickle(Codec):
             return dec
 
     def get_config(self):
-        return dict(id=self.codec_id, protocol=self.protocol)
+        return {'id': self.codec_id, 'protocol': self.protocol}
 
     def __repr__(self):
         return f'Pickle(protocol={self.protocol})'

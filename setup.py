@@ -40,12 +40,12 @@ if sys.platform == 'darwin':
 
 
 def info(*msg):
-    kwargs = dict(file=sys.stdout)
+    kwargs = {'file': sys.stdout}
     print('[numcodecs]', *msg, **kwargs)
 
 
 def error(*msg):
-    kwargs = dict(file=sys.stderr)
+    kwargs = {'file': sys.stderr}
     print('[numcodecs]', *msg, **kwargs)
 
 
@@ -368,7 +368,7 @@ def run_setup(with_extensions):
             + jenkins_extension()
         )
 
-        cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
+        cmdclass = {'build_ext': ve_build_ext, 'clean': Sclean}
     else:
         ext_modules = []
         cmdclass = {}
