@@ -52,17 +52,17 @@ class JSON(Codec):
             else:
                 separators = ', ', ': '
         separators = tuple(separators)
-        self._encoder_config = dict(
-            skipkeys=skipkeys,
-            ensure_ascii=ensure_ascii,
-            check_circular=check_circular,
-            allow_nan=allow_nan,
-            indent=indent,
-            separators=separators,
-            sort_keys=sort_keys,
-        )
+        self._encoder_config = {
+            'skipkeys': skipkeys,
+            'ensure_ascii': ensure_ascii,
+            'check_circular': check_circular,
+            'allow_nan': allow_nan,
+            'indent': indent,
+            'separators': separators,
+            'sort_keys': sort_keys,
+        }
         self._encoder = _json.JSONEncoder(**self._encoder_config)
-        self._decoder_config = dict(strict=strict)
+        self._decoder_config = {'strict': strict}
         self._decoder = _json.JSONDecoder(**self._decoder_config)
 
     def encode(self, buf):
@@ -89,7 +89,7 @@ class JSON(Codec):
             return dec
 
     def get_config(self):
-        config = dict(id=self.codec_id, encoding=self._text_encoding)
+        config = {'id': self.codec_id, 'encoding': self._text_encoding}
         config.update(self._encoder_config)
         config.update(self._decoder_config)
         return config
