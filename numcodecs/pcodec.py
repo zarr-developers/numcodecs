@@ -31,13 +31,17 @@ class PCodec(Codec):
         Configures whether Pcodec should try to infer the best "mode" or
         structure of the data (e.g. approximate multiples of 0.1) to improve
         compression ratio, or skip this step and just use the numbers as-is
-        (Classic mode).
+        (Classic mode). Note that the "try*" specs are not currently supported.
     delta_spec : {"auto", "none", "try_consecutive", "try_lookback"}
         Configures the delta encoding strategy. By default, uses "auto" which
         will try to infer the best encoding order.
+    paging_spec : {"equal_pages_up_to"}
+        Configures the paging strategy. Only "equal_pages_up_to" is currently
+        supported.
     delta_encoding_order : int or None
         Explicit delta encoding level from 0-7. Only valid if delta_spec is
-        "try_consecutive" or None.
+        "try_consecutive" or "auto" (to support backwards compatibility with
+        older versions of this codec).
     equal_pages_up_to : int
         Divide the chunk into equal pages of up to this many numbers.
     """
@@ -47,6 +51,7 @@ class PCodec(Codec):
     def __init__(
         self,
         level: int = 8,
+        *,
         mode_spec: Literal["auto", "classic"] = "auto",
         delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] = "auto",
         paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
@@ -83,7 +88,7 @@ class PCodec(Codec):
             )
         else:
             match self.delta_spec:
-                case "auto" | None:
+                case "auto":
                     delta_spec = DeltaSpec.auto()
                 case "none":
                     delta_spec = DeltaSpec.none()
@@ -95,7 +100,7 @@ class PCodec(Codec):
                     raise ValueError(f"delta_spec {self.delta_spec} is not supported")
 
         match self.paging_spec:
-            case "equal_pages_up_to" | None:
+            case "equal_pages_up_to":
                 paging_spec = PagingSpec.equal_pages_up_to(self.equal_pages_up_to)
             case _:
                 raise ValueError(f"paging_spec {self.paging_spec} is not supported")
