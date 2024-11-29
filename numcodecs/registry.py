@@ -8,7 +8,7 @@ from numcodecs.abc import Codec
 
 logger = logging.getLogger("numcodecs")
 codec_registry: dict[str, Codec] = {}
-entries: dict[str, "EntryPoints"] = {}
+entries: dict[str, EntryPoints] = {}
 
 
 def run_entrypoints():
