@@ -64,3 +64,35 @@ def test_errors():
         Delta(dtype=object)
     with pytest.raises(ValueError):
         Delta(dtype='i8', astype=object)
+
+
+# overflow tests
+# Note: Before implementing similar test for integer -> integer types, check numpy/numpy#8987.
+oveflow_proned_float_float_pairs = [
+    ('f4', 'f2'),
+    ('f8', 'f4'),
+]
+
+
+def test_oveflow_proned_float_float_encode():
+    for dtype, astype in oveflow_proned_float_float_pairs:
+        codec = Delta(dtype=dtype, astype=astype)
+        arr = np.array([0, np.finfo(astype).max.astype(dtype) * 2], dtype=dtype)
+        with pytest.warns(RuntimeWarning, match=r"overflow encountered"):
+            codec.encode(arr)
+
+
+overflow_proned_integer_float_paris = [
+    ('i4', 'f2'),
+    ('i8', 'f2'),
+    ('u4', 'f2'),
+    ('u8', 'f2'),
+]
+
+
+def test_oveflow_proned_integer_float_encode():
+    for dtype, astype in overflow_proned_integer_float_paris:
+        codec = Delta(dtype=dtype, astype=astype)
+        arr = np.array([0, int(np.rint(np.finfo(astype).max)) * 2], dtype=dtype)
+        with pytest.warns(RuntimeWarning, match=r"overflow encountered"):
+            codec.encode(arr)
