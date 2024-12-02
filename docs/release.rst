@@ -13,6 +13,19 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Fixes
+~~~~~
+* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+
+
+Improvements
+~~~~~~~~~~~~
+
+
 0.14.1
 ------
 
@@ -25,8 +38,6 @@ Fixes
   ``crc32c`` is not installed. This has been changed to match
   the behaviour of other optional dependencies/codecs.
   By :user:`John Kirkham <jakirkham>`, :issue:`637`
-* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
-  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
 
 Improvements
 ~~~~~~~~~~~~
