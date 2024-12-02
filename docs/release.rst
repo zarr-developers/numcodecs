@@ -13,6 +13,19 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Fixes
+~~~~~
+* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+
+
+Improvements
+~~~~~~~~~~~~
+
+
 0.14.1
 ------
 
