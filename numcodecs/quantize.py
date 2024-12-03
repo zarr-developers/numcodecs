@@ -73,9 +73,7 @@ class Quantize(Codec):
         enc = np.around(scale * arr) / scale
 
         # cast dtype
-        enc = enc.astype(self.astype, copy=False)
-
-        return enc
+        return enc.astype(self.astype, copy=False)
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op

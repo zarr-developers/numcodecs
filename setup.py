@@ -111,7 +111,7 @@ def blosc_extension():
     sources = ['numcodecs/blosc.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.blosc',
             sources=sources + blosc_sources,
@@ -121,8 +121,6 @@ def blosc_extension():
             extra_objects=extra_objects,
         ),
     ]
-
-    return extensions
 
 
 def zstd_extension():
@@ -153,7 +151,7 @@ def zstd_extension():
         extra_objects = []
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.zstd',
             sources=sources + zstd_sources,
@@ -163,8 +161,6 @@ def zstd_extension():
             extra_objects=extra_objects,
         ),
     ]
-
-    return extensions
 
 
 def lz4_extension():
@@ -182,7 +178,7 @@ def lz4_extension():
     sources = ['numcodecs/lz4.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.lz4',
             sources=sources + lz4_sources,
@@ -191,8 +187,6 @@ def lz4_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def vlen_extension():
@@ -209,7 +203,7 @@ def vlen_extension():
     sources = ['numcodecs/vlen.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.vlen',
             sources=sources,
@@ -218,8 +212,6 @@ def vlen_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def fletcher_extension():
@@ -235,7 +227,7 @@ def fletcher_extension():
     sources = ['numcodecs/fletcher32.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.fletcher32',
             sources=sources,
@@ -244,8 +236,6 @@ def fletcher_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def jenkins_extension():
@@ -261,7 +251,7 @@ def jenkins_extension():
     sources = ['numcodecs/jenkins.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.jenkins',
             sources=sources,
@@ -270,8 +260,6 @@ def jenkins_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def compat_extension():
@@ -282,15 +270,13 @@ def compat_extension():
     sources = ['numcodecs/compat_ext.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.compat_ext',
             sources=sources,
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def shuffle_extension():
@@ -301,11 +287,9 @@ def shuffle_extension():
     sources = ['numcodecs/_shuffle.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension('numcodecs._shuffle', sources=sources, extra_compile_args=extra_compile_args),
     ]
-
-    return extensions
 
 
 if sys.platform == 'win32':
