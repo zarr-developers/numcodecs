@@ -63,12 +63,6 @@ from numcodecs.lz4 import LZ4
 
 register_codec(LZ4)
 
-# zfpy is an optional external dependency
-with suppress(ImportError):
-    from numcodecs.zfpy import ZFPY
-
-    register_codec(ZFPY)
-
 from numcodecs.astype import AsType
 
 register_codec(AsType)
@@ -109,22 +103,11 @@ from numcodecs.bitround import BitRound
 
 register_codec(BitRound)
 
-# msgpack is an optional external dependency
-with suppress(ImportError):
-    from numcodecs.msgpacks import MsgPack
-
-    register_codec(MsgPack)
-
 from numcodecs.checksum32 import CRC32, Adler32, JenkinsLookup3
 
 register_codec(CRC32)
 register_codec(Adler32)
 register_codec(JenkinsLookup3)
-
-with suppress(ImportError):
-    from numcodecs.checksum32 import CRC32C
-
-    register_codec(CRC32C)
 
 from numcodecs.json import JSON
 
@@ -141,7 +124,22 @@ from numcodecs.fletcher32 import Fletcher32
 
 register_codec(Fletcher32)
 
-# pcodec is an optional external dependency
+# Optional depenedencies
+with suppress(ImportError):
+    from numcodecs.zfpy import ZFPY
+
+    register_codec(ZFPY)
+
+with suppress(ImportError):
+    from numcodecs.msgpacks import MsgPack
+
+    register_codec(MsgPack)
+
+with suppress(ImportError):
+    from numcodecs.checksum32 import CRC32C
+
+    register_codec(CRC32C)
+
 with suppress(ImportError):
     from numcodecs.pcodec import PCodec
 
