@@ -1,3 +1,5 @@
+.. _Zarr 3 codecs:
+
 Zarr 3 codecs
 =============
 .. automodule:: numcodecs.zarr3

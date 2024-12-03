@@ -244,3 +244,24 @@ def test_generic_bytes_codec(store: StorePath, codec_class: type[numcodecs.zarr3
 
     a[:, :] = data.copy()
     np.testing.assert_array_equal(data, a[:, :])
+
+
+def test_delta_astype(store: StorePath):
+    data = np.linspace(0, 10, 256, dtype="i8").reshape((16, 16))
+
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
+        a = Array.create(
+            store / "generic",
+            shape=data.shape,
+            chunk_shape=(16, 16),
+            dtype=data.dtype,
+            fill_value=0,
+            codecs=[
+                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
+                BytesCodec(),
+            ],
+        )
+
+        a[:, :] = data.copy()
+        a = Array.open(store / "generic")
+    np.testing.assert_array_equal(data, a[:, :])
