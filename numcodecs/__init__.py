@@ -49,7 +49,7 @@ try:
     ncores = multiprocessing.cpu_count()
 except OSError:  # pragma: no cover
     ncores = 1
-blosc.init()
+blosc._init()
 blosc.set_nthreads(min(8, ncores))
 atexit.register(blosc.destroy)
 
