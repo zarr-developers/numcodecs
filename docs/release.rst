@@ -24,6 +24,14 @@ Fixes
 
 Improvements
 ~~~~~~~~~~~~
+* If an import error is raised when trying to define a codec that is *not*
+  an optional dependency, it is no longer silently caught. Instead it will
+  be propagated to the user, as this indicates an issue with the installed
+  package.
+
+  Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
+  are still silently caught.
+  By :user:`David Stansby <dstansby>`, :issue:`550`.
 
 
 0.14.1
