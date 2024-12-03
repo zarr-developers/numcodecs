@@ -273,7 +273,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     # check valid cname early
     cname_str = cname.decode('ascii')
     if cname_str not in list_compressors():
-        err_bad_cname(cname_str)
+        _err_bad_cname(cname_str)
 
     # setup source buffer
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
@@ -311,7 +311,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
                 if compressor_set < 0:
                     # shouldn't happen if we checked against list of compressors
                     # already, but just in case
-                    err_bad_cname(cname_str)
+                    _err_bad_cname(cname_str)
 
                 # set blocksize
                 blosc_set_blocksize(blocksize)
@@ -587,7 +587,7 @@ class Blosc(Codec):
     def decode_partial(self, buf, int start, int nitems, out=None):
         '''**Experimental**'''
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return decompress_partial(buf, start, nitems, dest=out)
+        return _decompress_partial(buf, start, nitems, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \
