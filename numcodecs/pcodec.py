@@ -4,7 +4,7 @@ from numcodecs.abc import Codec
 from numcodecs.compat import ensure_contiguous_ndarray
 
 try:
-    from pcodec import ChunkConfig, ModeSpec, PagingSpec, standalone
+    from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 except ImportError:  # pragma: no cover
     standalone = None
 
@@ -27,14 +27,21 @@ class PCodec(Codec):
     level : int
         A compression level from 0-12, where 12 take the longest and compresses
         the most.
-    delta_encoding_order : init or None
-        Either a delta encoding level from 0-7 or None. If set to None, pcodec
-        will try to infer the optimal delta encoding order.
-    mode_spec : {'auto', 'classic'}
+    mode_spec : {"auto", "classic"}
         Configures whether Pcodec should try to infer the best "mode" or
         structure of the data (e.g. approximate multiples of 0.1) to improve
         compression ratio, or skip this step and just use the numbers as-is
-        (Classic mode).
+        (Classic mode). Note that the "try*" specs are not currently supported.
+    delta_spec : {"auto", "none", "try_consecutive", "try_lookback"}
+        Configures the delta encoding strategy. By default, uses "auto" which
+        will try to infer the best encoding order.
+    paging_spec : {"equal_pages_up_to"}
+        Configures the paging strategy. Only "equal_pages_up_to" is currently
+        supported.
+    delta_encoding_order : int or None
+        Explicit delta encoding level from 0-7. Only valid if delta_spec is
+        "try_consecutive" or "auto" (to support backwards compatibility with
+        older versions of this codec).
     equal_pages_up_to : int
         Divide the chunk into equal pages of up to this many numbers.
     """
@@ -44,10 +51,12 @@ class PCodec(Codec):
     def __init__(
         self,
         level: int = 8,
+        *,
+        mode_spec: Literal["auto", "classic"] = "auto",
+        delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] = "auto",
+        paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
         delta_encoding_order: Optional[int] = None,
-        equal_pages_up_to: int = 262144,
-        # TODO one day, add support for the Try* mode specs
-        mode_spec: Literal['auto', 'classic'] = 'auto',
+        equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
     ):
         if standalone is None:  # pragma: no cover
             raise ImportError("pcodec must be installed to use the PCodec codec.")
@@ -55,28 +64,58 @@ class PCodec(Codec):
         # note that we use `level` instead of `compression_level` to
         # match other codecs
         self.level = level
+        self.mode_spec = mode_spec
+        self.delta_spec = delta_spec
+        self.paging_spec = paging_spec
         self.delta_encoding_order = delta_encoding_order
         self.equal_pages_up_to = equal_pages_up_to
-        self.mode_spec = mode_spec
 
-    def encode(self, buf):
-        buf = ensure_contiguous_ndarray(buf)
-
+    def _get_chunk_config(self):
         match self.mode_spec:
-            case 'auto':
+            case "auto":
                 mode_spec = ModeSpec.auto()
-            case 'classic':
+            case "classic":
                 mode_spec = ModeSpec.classic()
             case _:
-                raise ValueError(f"unknown value for mode_spec: {self.mode_spec}")
-        paging_spec = PagingSpec.equal_pages_up_to(self.equal_pages_up_to)
+                raise ValueError(f"mode_spec {self.mode_spec} is not supported")
+
+        if self.delta_encoding_order is not None and self.delta_spec == "auto":
+            # backwards compat for before delta_spec was introduced
+            delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
+        elif self.delta_encoding_order is not None and self.delta_spec != "try_consecutive":
+            raise ValueError(
+                "delta_encoding_order can only be set for delta_spec='try_consecutive'"
+            )
+        else:
+            match self.delta_spec:
+                case "auto":
+                    delta_spec = DeltaSpec.auto()
+                case "none":
+                    delta_spec = DeltaSpec.none()
+                case "try_consecutive":
+                    delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
+                case "try_lookback":
+                    delta_spec = DeltaSpec.try_lookback()
+                case _:
+                    raise ValueError(f"delta_spec {self.delta_spec} is not supported")
+
+        match self.paging_spec:
+            case "equal_pages_up_to":
+                paging_spec = PagingSpec.equal_pages_up_to(self.equal_pages_up_to)
+            case _:
+                raise ValueError(f"paging_spec {self.paging_spec} is not supported")
 
         config = ChunkConfig(
             compression_level=self.level,
-            delta_encoding_order=self.delta_encoding_order,
+            delta_spec=delta_spec,
             mode_spec=mode_spec,
             paging_spec=paging_spec,
         )
+        return config
+
+    def encode(self, buf):
+        buf = ensure_contiguous_ndarray(buf)
+        config = self._get_chunk_config()
         return standalone.simple_compress(buf, config)
 
     def decode(self, buf, out=None):
