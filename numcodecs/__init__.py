@@ -114,7 +114,7 @@ from numcodecs.json import JSON
 register_codec(JSON)
 
 from numcodecs import vlen as vlen
-from numcodecs.vlen import VLenUTF8, VLenBytes, VLenArray
+from numcodecs.vlen import VLenArray, VLenBytes, VLenUTF8
 
 register_codec(VLenUTF8)
 register_codec(VLenBytes)
