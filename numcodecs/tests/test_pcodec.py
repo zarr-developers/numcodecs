@@ -20,8 +20,12 @@ codecs = [
     PCodec(level=1),
     PCodec(level=5),
     PCodec(level=9),
-    PCodec(mode_spec='classic'),
+    PCodec(mode_spec="classic"),
     PCodec(equal_pages_up_to=300),
+    PCodec(delta_encoding_order=2),
+    PCodec(delta_spec="try_lookback"),
+    PCodec(delta_spec="none"),
+    PCodec(delta_spec="try_consecutive", delta_encoding_order=1),
 ]
 
 
@@ -53,15 +57,24 @@ def test_config():
     check_config(codec)
 
 
-def test_invalid_config_error():
-    codec = PCodec(mode_spec='bogus')
+@pytest.mark.parametrize("param", ["mode_spec", "delta_spec", "paging_spec"])
+def test_invalid_config_error(param):
+    codec = PCodec(**{param: "bogus"})
+    with pytest.raises(ValueError):
+        check_encode_decode_array_to_bytes(arrays[0], codec)
+
+
+def test_invalid_delta_encoding_combo():
+    codec = PCodec(delta_encoding_order=2, delta_spec="none")
     with pytest.raises(ValueError):
         check_encode_decode_array_to_bytes(arrays[0], codec)
 
 
 def test_repr():
     check_repr(
-        "PCodec(delta_encoding_order=None, equal_pages_up_to=262144, level=3, mode_spec='auto')"
+        "PCodec(delta_encoding_order=None, delta_spec='auto',"
+        " equal_pages_up_to=262144, level=3, mode_spec='auto',"
+        " paging_spec='equal_pages_up_to')"
     )
 
 

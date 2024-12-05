@@ -13,6 +13,38 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+* All arguments to the ``PCodec`` constructor except for ``level``
+  are now keyword only, to support the updated API.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+
+
+Fixes
+~~~~~
+* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+
+
+Improvements
+~~~~~~~~~~~~
+* Add support for ``pcodec`` 0.3. This exposes the new ``delta_spec``
+  and ``paging_spec`` arguments, but maintains full backwards
+  compatibility for data written with older package versions.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+* If an import error is raised when trying to define a codec that is *not*
+  an optional dependency, it is no longer silently caught. Instead it will
+  be propagated to the user, as this indicates an issue with the installed
+  package.
+
+  Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
+  are still silently caught.
+  By :user:`David Stansby <dstansby>`, :issue:`550`.
+
+
 0.14.1
 ------
 
