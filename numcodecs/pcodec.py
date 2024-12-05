@@ -1,13 +1,9 @@
 from typing import Literal, Optional
 
+from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
+
 from numcodecs.abc import Codec
 from numcodecs.compat import ensure_contiguous_ndarray
-
-try:
-    from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
-except ImportError:  # pragma: no cover
-    standalone = None
-
 
 DEFAULT_MAX_PAGE_N = 262144
 
@@ -58,9 +54,6 @@ class PCodec(Codec):
         delta_encoding_order: Optional[int] = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
     ):
-        if standalone is None:  # pragma: no cover
-            raise ImportError("pcodec must be installed to use the PCodec codec.")
-
         # note that we use `level` instead of `compression_level` to
         # match other codecs
         self.level = level
