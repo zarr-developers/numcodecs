@@ -11,7 +11,7 @@ with suppress(PackageNotFoundError):
 
 if _zfpy_version:
     with suppress(ImportError):
-        import zfpy as _zfpy # type: ignore[no-redef]
+        import zfpy as _zfpy  # type: ignore[no-redef]
 
 if _zfpy:
     import numpy as np
