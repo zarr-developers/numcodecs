@@ -1,4 +1,3 @@
-import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
 from types import ModuleType
