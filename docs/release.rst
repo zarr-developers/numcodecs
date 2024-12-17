@@ -28,6 +28,10 @@ Fixes
 * Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
   By :user:`Norman Rzepka <normanrz>`, :issue:`664`
 
+* Removed Version Check: The previous code included a check for the `NumPy` version 
+  and a warning if the version was incompatible with `zfpy`.
+  This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
+  By :user:`Meher Gajula <me-her>`, :issue:`672`
 
 Improvements
 ~~~~~~~~~~~~
