@@ -38,10 +38,9 @@ jobs:
 
       - name: Install clang
         if: matrix.platform == 'macos-13'
-        run: |
-          conda install -y 'clang>=12.0.1,<17'
+        run: conda install -y 'clang>=12.0.1,<17'
 
-      - name: Show info about conda environment
+      - name: Show conda environment info
         run: |
           conda info
           conda config --show-sources
@@ -55,16 +54,14 @@ jobs:
 
       - name: Install pcodec
         if: matrix.python-version != '3.13'
-        run: |
-          python -m pip install -v ".[pcodec]"
+        run: python -m pip install -v ".[pcodec]"
 
       - name: Install zarr-python
         # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
         # so we can have some tests of our minimum version of numpy (1.24)
         if: matrix.python-version != '3.11'
-        run: |
-          # TODO: remove --pre option when zarr v3 is out
-          python -m pip install --pre zarr>=3.0.0b2
+        # TODO: remove --pre option when zarr v3 is out
+        run: python -m pip install --pre zarr>=3.0.0b2
 
       # This is used to test with zfpy, which does not yet support numpy 2.0
       - name: Install older numpy and zfpy
