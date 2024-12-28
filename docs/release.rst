@@ -43,7 +43,8 @@ Improvements
   Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
-
+* Build aarch64 wheels on linux.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
 
 0.14.1
 ------
@@ -116,12 +117,23 @@ Enhancements
 * Cleaned up the table of contents in the documentation to list codecs by category
   :user:`David Stansby <dstansby>`, :issue:`458`.
 
+Fix
+~~~
+
+
 Maintenance
 ~~~~~~~~~~~
 * Change format() and old string formatting to f-strings.
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`439`.
 * Remove pin on Sphinx
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`552`.
+
+* Restrict the number of wheels built on pull requests.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
+
+* Add an option to build all wheels on pull requests by adding
+  the 'build all wheels' label.
+  By :user:`David Stansby <dstansby>`, :issue:`531`
 
 
 .. _release_0.13.0:

@@ -24,7 +24,9 @@ base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
     pass
-elif os.name == 'posix':
+elif os.name == 'posix' and os.uname()[4] != 'aarch64':
+    # These flags aren't recognised by gcc on aarch64
+    # (at least when we build the aarch64 wheens on GitHub actions)
     if disable_sse2:
         base_compile_args.append('-mno-sse2')
     elif have_sse2:
