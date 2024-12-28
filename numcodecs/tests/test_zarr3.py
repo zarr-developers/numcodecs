@@ -225,7 +225,7 @@ def test_generic_bytes_codec(store: StorePath, codec_class: type[numcodecs.zarr3
             pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
         else:
             raise  # pragma: no cover
-    except ImportError as e:
+    except ImportError as e:  # pragma: no cover
         pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
 
     data = np.arange(0, 256, dtype="float32").reshape((16, 16))
