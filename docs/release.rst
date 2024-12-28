@@ -16,6 +16,21 @@ Release notes
 Unreleased
 ----------
 
+Deprecations
+~~~~~~~~~~~~
+The following ``blosc`` funcitons are deprecated, with no replacement.
+This is because they are not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
+
 Breaking changes
 ~~~~~~~~~~~~~~~~
 * All arguments to the ``PCodec`` constructor except for ``level``

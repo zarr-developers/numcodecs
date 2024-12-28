@@ -13,14 +13,10 @@ name = "numcodecs"
 description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
-readme =  "README.rst"
-dependencies = [
-    "numpy>=1.24",
-]
+readme = "README.rst"
+dependencies = ["numpy>=1.24", "deprecated"]
 requires-python = ">=3.11"
-dynamic = [
-  "version",
-]
+dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -33,9 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
 ]
-maintainers = [
-    { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
-]
+maintainers = [{ name = "Alistair Miles", email = "alimanfoo@googlemail.com" }]
 license = { text = "MIT" }
 
 [project.urls]
@@ -98,14 +92,14 @@ crc32c = [
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
-package-dir = {"" = "."}
+package-dir = { "" = "." }
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
 
 [tool.setuptools.package-data]
 numcodecs = [
     "tests/package_with_entrypoint/__init__.py",
-    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
+    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt",
 ]
 
 [tool.setuptools_scm]
@@ -118,13 +112,25 @@ skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
 [tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "pragma: ${PY_MAJOR_VERSION} no cover",
-]
+exclude_lines = ["pragma: no cover", "pragma: ${PY_MAJOR_VERSION} no cover"]
 
 [tool.repo-review]
-ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
+ignore = [
+    "PY005",
+    "PY007",
+    "PP302",
+    "PP308",
+    "PP309",
+    "GH103",
+    "GH212",
+    "PC111",
+    "PC140",
+    "PC160",
+    "PC170",
+    "PC180",
+    "MY100",
+    "RF103",
+]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
@@ -133,9 +139,7 @@ doctest_optionflags = [
     "ELLIPSIS",
     "IGNORE_EXCEPTION_DETAIL",
 ]
-testpaths = [
-    "numcodecs/tests",
-]
+testpaths = ["numcodecs/tests"]
 norecursedirs = [
     ".git",
     ".github",
@@ -150,17 +154,15 @@ norecursedirs = [
 ]
 log_cli_level = "INFO"
 xfail_strict = true
-filterwarnings = [
-    "error",
-]
+filterwarnings = ["error"]
 
 [tool.cibuildwheel]
-environment = { DISABLE_NUMCODECS_AVX2=1 }
+environment = { DISABLE_NUMCODECS_AVX2 = 1 }
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+environment = { MACOSX_DEPLOYMENT_TARGET = 10.9, DISABLE_NUMCODECS_AVX2 = 1, CFLAGS = "$CFLAGS -Wno-implicit-function-declaration" }
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
-environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
+environment = { DISABLE_NUMCODECS_AVX2 = 1, DISABLE_NUMCODECS_SSE2 = 1 }
 
 [tool.ruff]
 line-length = 100
@@ -189,13 +191,13 @@ ignore = [
     "FURB101",
     "FURB103",
     "PT001",
-    "PT004",  # deprecated
-    "PT005",  # deprecated
+    "PT004",   # deprecated
+    "PT005",   # deprecated
     "PT011",
-	"RUF001",
+    "RUF001",
     "UP007",
-    "UP027",  # deprecated
-    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+    "UP027",   # deprecated
+    "UP038",   # https://github.com/astral-sh/ruff/issues/7871
 ]
 
 [tool.ruff.format]
