@@ -27,6 +27,8 @@ Fixes
 ~~~~~
 * Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
   By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+* Cleanup ``PCodec`` soft dependency.
+  By :user:`John Kirkham <jakirkham>`, :issue:`647`
 
 
 Improvements
