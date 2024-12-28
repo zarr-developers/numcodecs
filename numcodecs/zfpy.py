@@ -1,3 +1,4 @@
+import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
 from types import ModuleType
@@ -10,8 +11,19 @@ with suppress(PackageNotFoundError):
     _zfpy_version = tuple(map(int, version("zfpy").split(".")))
 
 if _zfpy_version:
-    with suppress(ImportError):
-        import zfpy as _zfpy  # type: ignore[no-redef]
+    # Check NumPy version
+    _numpy_version: tuple = tuple(map(int, version("numpy").split('.')))
+    if _numpy_version >= (2, 0, 0) and _zfpy_version < (1, 0, 1):  # pragma: no cover
+        _zfpy_version = ()
+        warnings.warn(
+            "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
+            "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
+            UserWarning,
+            stacklevel=2,
+        )
+    else:
+        with suppress(ImportError):
+            import zfpy as _zfpy  # type: ignore[no-redef]
 
 if _zfpy:
     import numpy as np
