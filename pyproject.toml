@@ -39,13 +39,33 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
-docs = ["sphinx", "sphinx-issues", "pydata-sphinx-theme", "numpydoc"]
-test = ["coverage", "pytest", "pytest-cov"]
-test_extras = ["importlib_metadata"]
-msgpack = ["msgpack"]
-zfpy = ["zfpy>=1.0.0", "numpy<2.0.0"]
-pcodec = ["pcodec>=0.2,<0.3"]
-crc32c = ["crc32c>=2.7"]
+docs = [
+    "sphinx",
+    "sphinx-issues",
+    "pydata-sphinx-theme",
+    "numpydoc",
+]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+]
+test_extras = [
+    "importlib_metadata",
+]
+msgpack = [
+    "msgpack",
+]
+zfpy = [
+    "zfpy>=1.0.0",
+    "numpy<2.0.0",
+]
+pcodec = [
+    "pcodec>=0.3,<0.4",
+]
+crc32c = [
+    "crc32c>=2.7",
+]
 
 [project.entry-points."zarr.codecs"]
 "numcodecs.blosc" = "numcodecs.zarr3:Blosc"

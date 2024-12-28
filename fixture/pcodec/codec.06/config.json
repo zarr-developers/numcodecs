@@ -1,0 +1,9 @@
+{
+    "delta_encoding_order": 2,
+    "delta_spec": "auto",
+    "equal_pages_up_to": 262144,
+    "id": "pcodec",
+    "level": 8,
+    "mode_spec": "auto",
+    "paging_spec": "equal_pages_up_to"
+}
