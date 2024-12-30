@@ -1,11 +1,10 @@
 exclude: ^fixture/  # files with trailing whitespaces on purpose
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autoupdate_schedule: "monthly"
   autofix_commit_msg: "style: pre-commit fixes"
   autofix_prs: false
 default_stages: [pre-commit, pre-push]
-default_language_version:
-  python: python3
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -27,7 +26,7 @@ repos:
     - id: sp-repo-review
 
   -   repo: https://github.com/pre-commit/mirrors-mypy
-      rev: 'v1.14.0'
+      rev: v1.14.0
       hooks:
       -   id: mypy
           args: [--config-file, pyproject.toml]
