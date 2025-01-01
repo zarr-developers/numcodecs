@@ -200,12 +200,12 @@ def test_config_blocksize():
     # explicitly stated
 
     # blocksize not stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 0
 
     # blocksize stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE, blocksize=2**8)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE, "blocksize": 2**8}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 2**8
 
@@ -216,14 +216,12 @@ def test_backwards_compatibility():
 
 def _encode_worker(data):
     compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
-    enc = compressor.encode(data)
-    return enc
+    return compressor.encode(data)
 
 
 def _decode_worker(enc):
     compressor = Blosc()
-    data = compressor.decode(enc)
-    return data
+    return compressor.decode(enc)
 
 
 @pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")

@@ -29,13 +29,14 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class
-    codec_id = None
+    codec_id: Optional[str] = None
     """Codec identifier."""
 
     @abstractmethod
@@ -83,7 +84,7 @@ class Codec(ABC):
         # override in sub-class if need special encoding of config values
 
         # setup config object
-        config = dict(id=self.codec_id)
+        config = {'id': self.codec_id}
 
         # by default, assume all non-private members are configuration
         # parameters - override this in sub-class if not the case

@@ -80,14 +80,12 @@ def test_eq():
 
 def _encode_worker(data):
     compressor = Shuffle()
-    enc = compressor.encode(data)
-    return enc
+    return compressor.encode(data)
 
 
 def _decode_worker(enc):
     compressor = Shuffle()
-    data = compressor.decode(enc)
-    return data
+    return compressor.decode(enc)
 
 
 @pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")

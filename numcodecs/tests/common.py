@@ -9,8 +9,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-# star import needed for repr tests so eval finds names
-from numcodecs import *  # noqa: F403
+from numcodecs import *  # noqa: F403  # for eval to find names in repr tests
 from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
 
@@ -21,9 +20,9 @@ greetings = [
     'Hei maailma!',
     'Xin chào thế giới',
     'Njatjeta Botë!',
-    'Γεια σου κόσμε!',
+    'Γεια σου κόσμε!',  # noqa: RUF001
     'こんにちは世界',
-    '世界，你好！',
+    '世界，你好！',  # noqa: RUF001
     'Helló, világ!',
     'Zdravo svete!',
     'เฮลโลเวิลด์',

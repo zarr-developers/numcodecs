@@ -6,24 +6,85 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
+    .. _unreleased:
+
+    Unreleased
+    ----------
+
 .. _unreleased:
 
 Unreleased
 ----------
 
-Fix
-~~~
+Breaking changes
+~~~~~~~~~~~~~~~~
+* All arguments to the ``PCodec`` constructor except for ``level``
+  are now keyword only, to support the updated API.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+
+
+Fixes
+~~~~~
+* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+
+
+Improvements
+~~~~~~~~~~~~
+* Add support for ``pcodec`` 0.3. This exposes the new ``delta_spec``
+  and ``paging_spec`` arguments, but maintains full backwards
+  compatibility for data written with older package versions.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+* If an import error is raised when trying to define a codec that is *not*
+  an optional dependency, it is no longer silently caught. Instead it will
+  be propagated to the user, as this indicates an issue with the installed
+  package.
+
+  Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
+  are still silently caught.
+  By :user:`David Stansby <dstansby>`, :issue:`550`.
+
+
+0.14.1
+------
+
+Fixes
+~~~~~
+* Cleanups to the ``crc32c`` soft dependency.
+  Whereas in ``numcodecs`` 0.14.0 a runtime error was raised if
+  the ``CRC32C`` codec used without the ``crc32c`` installed,
+  the ``CRC32C`` codec is no longer defined at import time if
+  ``crc32c`` is not installed. This has been changed to match
+  the behaviour of other optional dependencies/codecs.
+  By :user:`John Kirkham <jakirkham>`, :issue:`637`
+
+Improvements
+~~~~~~~~~~~~
+* Add `noexcept` to `_utils` C-equiv functions
+  By :user:`John Kirkham <jakirkham>`, :issue:`641`.
+
+.. _release_0.14.0:
+
+0.14.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+* Add Crc32c checksum codec.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
+* Add codec wrappers for Zarr 3.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`524`
+* Added mypy type checking to continuous integration.
+  By :user:`David Stansby <dstansby>`, :issue:`460`.
+
+Fixes
+~~~~~
 * Fix in-place mutation of input array in `BitRound`.
   By :user:`Sam Levang <slevang>`, :issue:`608`
 * Fix an issue where importing numcodecs would lock the state of `multiprocessing`
   and prevent user code to call `multiprocessing.set_start_method("spawn")`
   subsequently.
   By :user:`Clément Robert <neutrinoceros>` :issue:`522`
-
-Enhancements
-~~~~~~~~~~~~
-* Add Crc32c checksum codec
-  By :user:`Norman Rzepka <normanrz>`, :issue:`613`.
 
 Maintenance
 ~~~~~~~~~~~

@@ -73,9 +73,7 @@ class Quantize(Codec):
         enc = np.around(scale * arr) / scale
 
         # cast dtype
-        enc = enc.astype(self.astype, copy=False)
-
-        return enc
+        return enc.astype(self.astype, copy=False)
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
@@ -85,12 +83,12 @@ class Quantize(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            digits=self.digits,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        return {
+            'id': self.codec_id,
+            'digits': self.digits,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'

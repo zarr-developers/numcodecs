@@ -1,11 +1,14 @@
-import contextlib
+from types import ModuleType
+from typing import Optional
 
-_lzma = None
+_lzma: Optional[ModuleType] = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
-    with contextlib.suppress(ImportError):
-        from backports import lzma as _lzma
+    try:  # noqa: SIM105
+        from backports import lzma as _lzma  # type: ignore[no-redef]
+    except ImportError:
+        pass
 
 
 if _lzma:
