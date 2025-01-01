@@ -15,12 +15,12 @@ env:
   DISABLE_NUMCODECS_AVX2: 1
   DISABLE_NUMCODECS_SSE2: 1
   # Common environment variables for both build and test jobs
-  PYODIDE_VERSION: 0.27.0a2
+  PYODIDE_VERSION: 0.27.0
   # PYTHON_VERSION and EMSCRIPTEN_VERSION are determined by PYODIDE_VERSION.
   # The appropriate versions can be found in the Pyodide repodata.json
   # "info" field, or in Makefile.envs:
   # https://github.com/pyodide/pyodide/blob/main/Makefile.envs#L2
-  PYTHON_VERSION: 3.12.1
+  PYTHON_VERSION: 3.12 # any 3.12.x version works
   EMSCRIPTEN_VERSION: 3.1.58
   NODE_VERSION: 20
 
