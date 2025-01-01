@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-import numcodecs.zarr3
 from numcodecs.tests.common import is_wasm
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -15,6 +14,8 @@ else:
 
 import zarr.storage
 from zarr.core.common import JSON
+
+import numcodecs.zarr3
 
 pytestmark = [
     pytest.mark.skipif(zarr.__version__ < "3.0.0", reason="zarr 3.0.0 or later is required"),

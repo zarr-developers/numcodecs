@@ -39,7 +39,6 @@ arrays = [
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
-# Initialize base codecs
 codecs = [
     CRC32(),
     CRC32(location="end"),
