@@ -70,7 +70,7 @@ pcodec = [
     "pcodec>=0.3,<0.4",
 ]
 crc32c = [
-    "crc32c>=2.7; sys_platform == 'emscripten'",
+    "crc32c>=2.7",
 ]
 
 [project.entry-points."zarr.codecs"]
