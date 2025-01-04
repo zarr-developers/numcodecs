@@ -122,7 +122,9 @@ class _NumcodecsCodec(Metadata):
 
     # Override __repr__ because dynamically constructed classes don't seem to work otherwise
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(codec_name={self.codec_name!r}, codec_config={self.codec_config!r})"
+        codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
+        return f"{self.__class__.__name__}(codec_name={self.codec_name!r}, codec_config={codec_config!r})"
 
 
 class _NumcodecsBytesBytesCodec(_NumcodecsCodec, BytesBytesCodec):

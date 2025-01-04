@@ -27,6 +27,8 @@ Fixes
 ~~~~~
 * Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
   By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+* Fixes issues with the upcoming ``zarr`` 3.0.0 release.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`675`
 
 
 Improvements

@@ -267,3 +267,8 @@ def test_delta_astype(store: StorePath):
         a[:, :] = data.copy()
         a = zarr.open_array(store / "generic", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
+
+
+def test_repr():
+    codec = numcodecs.zarr3.LZ4(level=5)
+    assert repr(codec) == "LZ4(codec_name='numcodecs.lz4', codec_config={'level': 5})"
