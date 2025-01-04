@@ -8,12 +8,13 @@ You can use codecs from :py:mod:`numcodecs` by constructing codecs from :py:mod:
 >>> import zarr
 >>> import numcodecs.zarr3
 >>>
->>> codecs = [zarr.codecs.BytesCodec(), numcodecs.zarr3.BZ2(level=5)]
->>> array = zarr.open(
-...   "data.zarr", mode="w",
-...   shape=(1024, 1024), chunks=(64, 64),
+>>> array = zarr.create_array(
+...   store="data.zarr",
+...   shape=(1024, 1024),
+...   chunks=(64, 64),
 ...   dtype="uint32",
-...   codecs=codecs)
+...   filters=[numcodecs.zarr3.Delta()],
+...   compressors=[numcodecs.zarr3.BZ2(level=5)])
 >>> array[:] = np.arange(*array.shape).astype(array.dtype)
 
 .. note::
@@ -118,6 +119,12 @@ class _NumcodecsCodec(Metadata):
 
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
         raise NotImplementedError  # pragma: no cover
+
+    # Override __repr__ because dynamically constructed classes don't seem to work otherwise
+    def __repr__(self) -> str:
+        codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
+        return f"{self.__class__.__name__}(codec_name={self.codec_name!r}, codec_config={codec_config!r})"
 
 
 class _NumcodecsBytesBytesCodec(_NumcodecsCodec, BytesBytesCodec):
