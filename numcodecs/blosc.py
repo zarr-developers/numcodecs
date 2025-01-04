@@ -170,6 +170,8 @@ def decompress(source, dest: np.ndarray | bytearray | None = None):
     else:
         dest[:] = blosc.decompress(source)
 
+    return None
+
 
 class Blosc(Codec):
     """
@@ -224,5 +226,4 @@ class Blosc(Codec):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = f'{type(self).__name__}(cname={self.cname!r}, clevel={self.clevel!r}, shuffle={_shuffle_repr[self.shuffle + 1]}, blocksize={self.blocksize})'
-        return r
+        return f'{type(self).__name__}(cname={self.cname!r}, clevel={self.clevel!r}, shuffle={_shuffle_repr[self.shuffle + 1]}, blocksize={self.blocksize})'
