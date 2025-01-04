@@ -30,6 +30,10 @@ Fixes
 * Fixes issues with the upcoming ``zarr`` 3.0.0 release.
   By :user:`Norman Rzepka <normanrz>`, :issue:`675`
 
+* Removed Version Check: The previous code included a check for the `NumPy` version
+  and a warning if the version was incompatible with `zfpy`.
+  This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
+  By :user:`Meher Gajula <me-her>`, :issue:`672`
 
 Improvements
 ~~~~~~~~~~~~

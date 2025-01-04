@@ -63,8 +63,7 @@ msgpack = [
     "msgpack",
 ]
 zfpy = [
-    "zfpy>=1.0.0",
-    "numpy<2.0.0",
+    "zfpy>=1.0.0"
 ]
 pcodec = [
     "pcodec>=0.3,<0.4",
