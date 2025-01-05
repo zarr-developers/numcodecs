@@ -2,11 +2,12 @@ import array
 import codecs
 
 import numpy as np
+import numpy.typing as npt
 
-from .ndarray_like import NDArrayLike, is_ndarray_like
+from .ndarray_like import is_ndarray_like
 
 
-def ensure_ndarray_like(buf) -> NDArrayLike:
+def ensure_ndarray_like(buf) -> npt.NDArray:
     """Convenience function to coerce `buf` to ndarray-like array.
 
     Parameters
@@ -38,7 +39,7 @@ def ensure_ndarray_like(buf) -> NDArrayLike:
             mem = memoryview(buf)
             # instantiate array from memoryview, ensures no copy
             buf = np.array(mem, copy=False)
-    return buf
+    return np.asanyarray(buf, copy=False)
 
 
 def ensure_ndarray(buf) -> np.ndarray:
@@ -63,7 +64,7 @@ def ensure_ndarray(buf) -> np.ndarray:
     return np.array(ensure_ndarray_like(buf), copy=False)
 
 
-def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> NDArrayLike:
+def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> npt.ArrayLike:
     """Convenience function to coerce `buf` to ndarray-like array.
     Also ensures that the returned value exports fully contiguous memory,
     and supports the new-style buffer interface. If the optional max_buffer_size is
@@ -174,7 +175,7 @@ def ensure_text(s, encoding="utf-8"):
     return s
 
 
-def ndarray_copy(src, dst) -> NDArrayLike:
+def ndarray_copy(src, dst) -> npt.NDArray:
     """Copy the contents of the array from `src` to `dst`."""
 
     if dst is None:
