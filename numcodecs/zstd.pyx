@@ -258,6 +258,13 @@ class Zstd(Codec):
              self.level)
         return r
 
+    # Override to remove "checksum" if False
+    def get_config(self):
+        config = {'id': self.codec_id, 'level': self.level}
+        if self.checksum:
+            config['checksum'] = True
+        return config
+
     @classmethod
     def default_level(cls):
         """Returns the default compression level of the underlying zstd library."""
