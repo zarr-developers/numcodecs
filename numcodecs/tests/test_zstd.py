@@ -90,3 +90,10 @@ def test_native_functions():
     assert Zstd.default_level() == 3
     assert Zstd.min_level() == -131072
     assert Zstd.max_level() == 22
+
+
+def test_zstd_config():
+    # Testing that checksum is removed from config if False
+    codec = Zstd(level=5, checksum=False)
+    config = codec.get_config()
+    assert config == {"id": "zstd", "level": 5}
