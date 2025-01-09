@@ -272,3 +272,8 @@ def test_delta_astype(store: StorePath):
 def test_repr():
     codec = numcodecs.zarr3.LZ4(level=5)
     assert repr(codec) == "LZ4(codec_name='numcodecs.lz4', codec_config={'level': 5})"
+
+
+def test_to_dict():
+    codec = numcodecs.zarr3.LZ4(level=5)
+    assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}
