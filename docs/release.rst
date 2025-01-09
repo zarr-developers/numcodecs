@@ -48,6 +48,8 @@ Fixes
   and a warning if the version was incompatible with `zfpy`.
   This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
   By :user:`Meher Gajula <me-her>`, :issue:`672`
+* Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`685`
 
 Improvements
 ~~~~~~~~~~~~
