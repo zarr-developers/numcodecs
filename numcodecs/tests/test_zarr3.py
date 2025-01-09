@@ -225,11 +225,11 @@ def test_generic_bytes_codec(
 ):
     try:
         codec_class()._codec  # noqa: B018
-    except ValueError as e:
+    except ValueError as e:  # pragma: no cover
         if "codec not available" in str(e):
             pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
         else:
-            raise  # pragma: no cover
+            raise
     except ImportError as e:  # pragma: no cover
         pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
 
