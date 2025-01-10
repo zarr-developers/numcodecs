@@ -65,9 +65,9 @@ class Quantize(Codec):
         precision = 10.0**-self.digits
         exp = math.log10(precision)
         if exp < 0:
-            exp = int(math.floor(exp))
+            exp = math.floor(exp)
         else:
-            exp = int(math.ceil(exp))
+            exp = math.ceil(exp)
         bits = math.ceil(math.log2(10.0**-exp))
         scale = 2.0**bits
         enc = np.around(scale * arr) / scale
