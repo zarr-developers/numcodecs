@@ -4,10 +4,11 @@ import pytest
 
 import numcodecs
 from numcodecs.registry import get_codec
+from numcodecs.errors import UnknownCodecError
 
 
 def test_registry_errors():
-    with pytest.raises(ValueError):
+    with pytest.raises(UnknownCodecError):
         get_codec({'id': 'foo'})
 
 
