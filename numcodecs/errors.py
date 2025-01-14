@@ -5,7 +5,7 @@ This module defines custom exceptions that are raised in the `numcodecs` codebas
 class UnknownCodecError(Exception):
     """
     An exception that is raised when trying to receive a codec that has not been registered.
-    
+
     Parameters
     ----------
     codec_id : str
