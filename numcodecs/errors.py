@@ -2,6 +2,7 @@
 This module defines custom exceptions that are raised in the `numcodecs` codebase.
 """
 
+
 class UnknownCodecError(Exception):
     """
     An exception that is raised when trying to receive a codec that has not been registered.
