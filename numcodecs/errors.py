@@ -11,6 +11,14 @@ class UnknownCodecError(Exception):
     ----------
     codec_id : str
         Codec identifier.
+
+    Examples
+    ----------
+    >>> import numcodecs
+    >>> numcodecs.get_codec({"codec_id": "unknown"})
+    Traceback (most recent call last):
+        ...
+    UnknownCodecError: codec not available: 'unknown'
     """
 
     def __init__(self, codec_id: str):
