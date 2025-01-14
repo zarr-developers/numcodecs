@@ -63,6 +63,8 @@ Improvements
   Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
+* Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
+  By :user:`Cas Wognum <cwognum>`.
 
 
 0.14.1
