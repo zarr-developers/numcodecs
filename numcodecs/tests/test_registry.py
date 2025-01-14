@@ -3,8 +3,8 @@ import inspect
 import pytest
 
 import numcodecs
-from numcodecs.registry import get_codec
 from numcodecs.errors import UnknownCodecError
+from numcodecs.registry import get_codec
 
 
 def test_registry_errors():
