@@ -11,6 +11,22 @@ Release notes
     Unreleased
     ----------
 
+
+.. _unreleased:
+
+Unreleased
+----------
+
+Improvements
+~~~~~~~~~~~~
+* Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
+  By :user:`Cas Wognum <cwognum>`.
+
+Fixes
+~~~~~
+* Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`685`
+
 .. _release_0.15.0:
 
 0.15.0
@@ -53,8 +69,6 @@ Fixes
   and a warning if the version was incompatible with `zfpy`.
   This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
   By :user:`Meher Gajula <me-her>`, :issue:`672`
-* Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
-  By :user:`Norman Rzepka <normanrz>`, :issue:`685`
 
 Improvements
 ~~~~~~~~~~~~
@@ -70,8 +84,6 @@ Improvements
   Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
-* Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
-  By :user:`Cas Wognum <cwognum>`.
 
 .. _release_0.14.1:
 
