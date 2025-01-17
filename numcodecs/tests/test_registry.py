@@ -8,7 +8,7 @@ from numcodecs.registry import get_codec
 
 
 def test_registry_errors():
-    with pytest.raises(UnknownCodecError):
+    with pytest.raises(UnknownCodecError, match='foo'):
         get_codec({'id': 'foo'})
 
 
