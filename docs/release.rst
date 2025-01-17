@@ -41,6 +41,10 @@ Fixes
 ~~~~~
 * Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
   By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+* Cleanup ``PCodec`` soft dependency.
+  Previously importing ``numcodecs.pcodec`` would work if ``pcodec`` is not installed,
+  but now it will fail to import. This mirrors the behaviour of other optional dependencies.
+  By :user:`John Kirkham <jakirkham>`, :issue:`647`
 * Fixes issues with the upcoming ``zarr`` 3.0.0 release.
   By :user:`Norman Rzepka <normanrz>`, :issue:`675`
 
