@@ -67,7 +67,7 @@ class Delta(Codec):
         if arr.dtype == bool:
             np.not_equal(arr[1:], arr[:-1], out=enc[1:])
         else:
-            np.subtract(arr[1:], arr[:-1], out=enc[1:])
+            np.subtract(arr[1:], arr[:-1], out=enc[1:], casting='unsafe')
 
         return enc
 
