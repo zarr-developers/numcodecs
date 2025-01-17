@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
@@ -51,7 +51,7 @@ class PCodec(Codec):
         mode_spec: Literal["auto", "classic"] = "auto",
         delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] = "auto",
         paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
-        delta_encoding_order: Optional[int] = None,
+        delta_encoding_order: int | None = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
     ):
         # note that we use `level` instead of `compression_level` to
@@ -98,13 +98,12 @@ class PCodec(Codec):
             case _:
                 raise ValueError(f"paging_spec {self.paging_spec} is not supported")
 
-        config = ChunkConfig(
+        return ChunkConfig(
             compression_level=self.level,
             delta_spec=delta_spec,
             mode_spec=mode_spec,
             paging_spec=paging_spec,
         )
-        return config
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)

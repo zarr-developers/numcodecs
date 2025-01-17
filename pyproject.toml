@@ -16,6 +16,7 @@ for use in data storage and communication applications."""
 readme =  "README.rst"
 dependencies = [
     "numpy>=1.24",
+    "deprecated"
 ]
 requires-python = ">=3.11"
 dynamic = [
@@ -63,8 +64,7 @@ msgpack = [
     "msgpack",
 ]
 zfpy = [
-    "zfpy>=1.0.0",
-    "numpy<2.0.0",
+    "zfpy>=1.0.0"
 ]
 pcodec = [
     "pcodec>=0.3,<0.4",
@@ -164,39 +164,68 @@ environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["c-blosc"]
+src = ["numcodecs"]
 
 [tool.ruff.lint]
 extend-select = [
     "B",
     "C4",
+    "EXE",
+    "FA",
     "FLY",
     "FURB",
     "G",
     "I",
+    "ISC",
+    "LOG",
     "PERF",
     "PGH",
     "PIE",
     "PT",
     "PYI",
+    "RET",
     "RSE",
     "RUF",
+    "SIM",
+    "SLOT",
+    "TID",
+    "TRY",
     "UP",
-    # "W",  https://github.com/astral-sh/ruff/issues/13763
 ]
 ignore = [
-    "B028",
-    "B904",
     "FURB101",
     "FURB103",
     "PT001",
-    "PT004",  # deprecated
-    "PT005",  # deprecated
     "PT011",
-	"RUF001",
+    "PT012",
+    "RET505",
+    "RET506",
+    "SIM108",
+    "TRY003",
+    "TRY301",
     "UP007",
-    "UP027",  # deprecated
     "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
 ]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
 quote-style = "preserve"

@@ -22,6 +22,20 @@ Breaking changes
   are now keyword only, to support the updated API.
   By :user:`Sam Levang <slevang>`, :issue:`623`
 
+Deprecations
+~~~~~~~~~~~~
+The following ``blosc`` funcitons are deprecated, with no replacement.
+This is because they are not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
 
 Fixes
 ~~~~~
@@ -31,7 +45,13 @@ Fixes
   Previously importing ``numcodecs.pcodec`` would work if ``pcodec`` is not installed,
   but now it will fail to import. This mirrors the behaviour of other optional dependencies.
   By :user:`John Kirkham <jakirkham>`, :issue:`647`
+* Fixes issues with the upcoming ``zarr`` 3.0.0 release.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`675`
 
+* Removed Version Check: The previous code included a check for the `NumPy` version
+  and a warning if the version was incompatible with `zfpy`.
+  This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
+  By :user:`Meher Gajula <me-her>`, :issue:`672`
 
 Improvements
 ~~~~~~~~~~~~

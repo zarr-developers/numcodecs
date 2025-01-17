@@ -8,12 +8,13 @@ You can use codecs from :py:mod:`numcodecs` by constructing codecs from :py:mod:
 >>> import zarr
 >>> import numcodecs.zarr3
 >>>
->>> codecs = [zarr.codecs.BytesCodec(), numcodecs.zarr3.BZ2(level=5)]
->>> array = zarr.open(
-...   "data.zarr", mode="w",
-...   shape=(1024, 1024), chunks=(64, 64),
+>>> array = zarr.create_array(
+...   store="data.zarr",
+...   shape=(1024, 1024),
+...   chunks=(64, 64),
 ...   dtype="uint32",
-...   codecs=codecs)
+...   filters=[numcodecs.zarr3.Delta()],
+...   compressors=[numcodecs.zarr3.BZ2(level=5)])
 >>> array[:] = np.arange(*array.shape).astype(array.dtype)
 
 .. note::
@@ -40,8 +41,10 @@ try:
 
     if zarr.__version__ < "3.0.0":  # pragma: no cover
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
-except ImportError:  # pragma: no cover
-    raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
+except ImportError as e:  # pragma: no cover
+    raise ImportError(
+        "zarr 3.0.0 or later is required to use the numcodecs zarr integration."
+    ) from e
 
 from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
 from zarr.abc.metadata import Metadata
@@ -95,6 +98,7 @@ class _NumcodecsCodec(Metadata):
             "Numcodecs codecs are not in the Zarr version 3 specification and "
             "may not be supported by other zarr implementations.",
             category=UserWarning,
+            stacklevel=2,
         )
 
     @cached_property
@@ -115,6 +119,12 @@ class _NumcodecsCodec(Metadata):
 
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
         raise NotImplementedError  # pragma: no cover
+
+    # Override __repr__ because dynamically constructed classes don't seem to work otherwise
+    def __repr__(self) -> str:
+        codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
+        return f"{self.__class__.__name__}(codec_name={self.codec_name!r}, codec_config={codec_config!r})"
 
 
 class _NumcodecsBytesBytesCodec(_NumcodecsCodec, BytesBytesCodec):
