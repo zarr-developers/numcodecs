@@ -11,10 +11,10 @@ Release notes
     Unreleased
     ----------
 
-.. _unreleased:
+.. _release_0.15.0:
 
-Unreleased
-----------
+0.15.0
+------
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -36,6 +36,7 @@ This is because they are not intended to be public API.
 In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
 has always been experimental and there is no equivalent in the official
 blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue`619`
 
 Fixes
 ~~~~~
@@ -68,6 +69,7 @@ Improvements
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
 
+.. _release_0.14.1:
 
 0.14.1
 ------
