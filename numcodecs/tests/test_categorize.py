@@ -20,7 +20,7 @@ arrays = [
 arrays_object = [a.astype(object) for a in arrays]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     # unicode dtype
     for arr in arrays:
         codec = Categorize(labels, dtype=arr.dtype)
@@ -32,7 +32,7 @@ def test_encode_decode():
         check_encode_decode_array(arr, codec)
 
 
-def test_encode():
+def test_encode() -> None:
     for dtype in 'U', object:
         arr = np.array(['ƒöõ', 'ßàř', 'ƒöõ', 'ßāẑ', 'ƪùüx'], dtype=dtype)
         # miss off quux
@@ -52,12 +52,12 @@ def test_encode():
         assert arr.dtype == dec.dtype
 
 
-def test_config():
+def test_config() -> None:
     codec = Categorize(labels=labels, dtype='U4')
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     dtype = '<U3'
     astype = '|u1'
     codec = Categorize(labels=['foo', 'bar', 'baz', 'qux'], dtype=dtype, astype=astype)
@@ -73,14 +73,14 @@ def test_repr():
     assert expect == actual
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     codec = Categorize(labels=labels, dtype='<U4', astype='u1')
     check_backwards_compatibility(Categorize.codec_id, arrays, [codec], prefix='U')
     codec = Categorize(labels=labels, dtype=object, astype='u1')
     check_backwards_compatibility(Categorize.codec_id, arrays_object, [codec], prefix='O')
 
 
-def test_errors():
+def test_errors() -> None:
     with pytest.raises(TypeError):
         Categorize(labels=['foo', 'bar'], dtype='S6')
     with pytest.raises(TypeError):

@@ -48,29 +48,29 @@ arrays = [
 
 @pytest.mark.parametrize("arr", arrays)
 @pytest.mark.parametrize("codec", codecs)
-def test_encode_decode(arr, codec):
+def test_encode_decode(arr: np.ndarray, codec: PCodec) -> None:
     check_encode_decode_array_to_bytes(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = PCodec(level=3)
     check_config(codec)
 
 
 @pytest.mark.parametrize("param", ["mode_spec", "delta_spec", "paging_spec"])
-def test_invalid_config_error(param):
+def test_invalid_config_error(param: str) -> None:
     codec = PCodec(**{param: "bogus"})
     with pytest.raises(ValueError):
         check_encode_decode_array_to_bytes(arrays[0], codec)
 
 
-def test_invalid_delta_encoding_combo():
+def test_invalid_delta_encoding_combo() -> None:
     codec = PCodec(delta_encoding_order=2, delta_spec="none")
     with pytest.raises(ValueError):
         check_encode_decode_array_to_bytes(arrays[0], codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr(
         "PCodec(delta_encoding_order=None, delta_spec='auto',"
         " equal_pages_up_to=262144, level=3, mode_spec='auto',"
@@ -78,13 +78,13 @@ def test_repr():
     )
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(PCodec.codec_id, arrays, codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(PCodec())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(PCodec())

@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 
-def test_zarr3_import():
+def test_zarr3_import() -> None:
     ERROR_MESSAGE_MATCH = "zarr 3.0.0 or later.*"
 
     try:

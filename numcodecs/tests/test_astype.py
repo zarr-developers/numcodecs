@@ -20,13 +20,13 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         codec = AsType(encode_dtype=arr.dtype, decode_dtype=arr.dtype)
         check_encode_decode(arr, codec)
 
 
-def test_decode():
+def test_decode() -> None:
     encode_dtype, decode_dtype = '<i4', '<i8'
     codec = AsType(encode_dtype=encode_dtype, decode_dtype=decode_dtype)
     arr = np.arange(10, 20, 1, dtype=encode_dtype)
@@ -36,7 +36,7 @@ def test_decode():
     assert np.dtype(decode_dtype) == actual.dtype
 
 
-def test_encode():
+def test_encode() -> None:
     encode_dtype, decode_dtype = '<i4', '<i8'
     codec = AsType(encode_dtype=encode_dtype, decode_dtype=decode_dtype)
     arr = np.arange(10, 20, 1, dtype=decode_dtype)
@@ -46,17 +46,17 @@ def test_encode():
     assert np.dtype(encode_dtype) == actual.dtype
 
 
-def test_config():
+def test_config() -> None:
     encode_dtype, decode_dtype = '<i4', '<i8'
     codec = AsType(encode_dtype=encode_dtype, decode_dtype=decode_dtype)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("AsType(encode_dtype='<i4', decode_dtype='<i2')")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     # integers
     arrs = [
         np.arange(1000, dtype='<i4'),

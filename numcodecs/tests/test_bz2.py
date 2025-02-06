@@ -40,27 +40,27 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = BZ2(level=3)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("BZ2(level=3)")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(BZ2.codec_id, arrays, codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(BZ2())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(BZ2())

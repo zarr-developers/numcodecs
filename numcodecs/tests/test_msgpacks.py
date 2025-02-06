@@ -36,21 +36,21 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         check_encode_decode_array(arr, MsgPack())
 
 
-def test_config():
+def test_config() -> None:
     check_config(MsgPack())
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("MsgPack(raw=False, use_bin_type=True, use_single_float=False)")
     check_repr("MsgPack(raw=True, use_bin_type=False, use_single_float=True)")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     codec = MsgPack()
     check_backwards_compatibility(codec.codec_id, arrays, [codec])
 
@@ -76,7 +76,7 @@ def test_backwards_compatibility():
         ([{b"key": b"value"}, [b"list", b"of", b"strings"]], object),
     ],
 )
-def test_non_numpy_inputs(input_data, dtype):
+def test_non_numpy_inputs(input_data: list, dtype: str | None) -> None:
     codec = MsgPack()
     # numpy will infer a range of different shapes and dtypes for these inputs.
     # Make sure that round-tripping through encode preserves this.
@@ -86,7 +86,7 @@ def test_non_numpy_inputs(input_data, dtype):
     assert np.array_equal(expect, actual)
 
 
-def test_encode_decode_shape_dtype_preserved():
+def test_encode_decode_shape_dtype_preserved() -> None:
     codec = MsgPack()
     for arr in arrays:
         actual = codec.decode(codec.encode(arr))
@@ -94,7 +94,7 @@ def test_encode_decode_shape_dtype_preserved():
         assert arr.dtype == actual.dtype
 
 
-def test_bytes():
+def test_bytes() -> None:
     # test msgpack behaviour with bytes and str (unicode)
     bytes_arr = np.array([b'foo', b'bar', b'baz'], dtype=object)
     unicode_arr = np.array(['foo', 'bar', 'baz'], dtype=object)

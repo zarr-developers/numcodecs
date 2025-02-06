@@ -7,7 +7,7 @@ import pytest
 from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text
 
 
-def test_ensure_text():
+def test_ensure_text() -> None:
     bufs = [
         b'adsdasdas',
         'adsdasdas',
@@ -19,7 +19,7 @@ def test_ensure_text():
         assert isinstance(b, str)
 
 
-def test_ensure_bytes():
+def test_ensure_bytes() -> None:
     bufs = [
         b'adsdasdas',
         bytes(20),
@@ -31,7 +31,7 @@ def test_ensure_bytes():
         assert isinstance(b, bytes)
 
 
-def test_ensure_contiguous_ndarray_shares_memory():
+def test_ensure_contiguous_ndarray_shares_memory() -> None:
     typed_bufs = [
         ('u', 1, b'adsdasdas'),
         ('u', 1, bytes(20)),
@@ -56,7 +56,7 @@ def test_ensure_contiguous_ndarray_shares_memory():
         assert np.shares_memory(a, memoryview(buf))
 
 
-def test_ensure_bytes_invalid_inputs():
+def test_ensure_bytes_invalid_inputs() -> None:
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
     for e in (a, memoryview(a)):
@@ -67,7 +67,7 @@ def test_ensure_bytes_invalid_inputs():
 @pytest.mark.filterwarnings(
     "ignore:The 'u' type code is deprecated and will be removed in Python 3.16"
 )
-def test_ensure_contiguous_ndarray_invalid_inputs():
+def test_ensure_contiguous_ndarray_invalid_inputs() -> None:
     # object array not allowed
     a = np.array(['Xin chào thế giới'], dtype=object)
     for e in (a, memoryview(a)):
@@ -84,7 +84,7 @@ def test_ensure_contiguous_ndarray_invalid_inputs():
         ensure_contiguous_ndarray(a)
 
 
-def test_ensure_contiguous_ndarray_writeable():
+def test_ensure_contiguous_ndarray_writeable() -> None:
     # check that the writeability of the underlying buffer is preserved
     for writeable in (False, True):
         a = np.arange(100)
@@ -95,7 +95,7 @@ def test_ensure_contiguous_ndarray_writeable():
         assert m.flags.writeable == writeable
 
 
-def test_ensure_contiguous_ndarray_max_buffer_size():
+def test_ensure_contiguous_ndarray_max_buffer_size() -> None:
     for max_buffer_size in (4, 64, 1024):
         ensure_contiguous_ndarray(np.zeros(max_buffer_size - 1, dtype=np.int8), max_buffer_size)
         ensure_contiguous_ndarray(np.zeros(max_buffer_size, dtype=np.int8), max_buffer_size)

@@ -5,14 +5,14 @@ from numcodecs.fletcher32 import Fletcher32
 
 
 @pytest.mark.parametrize("dtype", ["uint8", "int32", "float32"])
-def test_with_data(dtype):
+def test_with_data(dtype: str) -> None:
     data = np.arange(100, dtype=dtype)
     f = Fletcher32()
     arr = np.frombuffer(f.decode(f.encode(data)), dtype=dtype)
     assert (arr == data).all()
 
 
-def test_error():
+def test_error() -> None:
     data = np.arange(100)
     f = Fletcher32()
     enc = f.encode(data)
@@ -23,7 +23,7 @@ def test_error():
     assert "fletcher32 checksum" in str(e.value)
 
 
-def test_known():
+def test_known() -> None:
     data = (
         b'w\x07\x00\x00\x00\x00\x00\x00\x85\xf6\xff\xff\xff\xff\xff\xff'
         b'i\x07\x00\x00\x00\x00\x00\x00\x94\xf6\xff\xff\xff\xff\xff\xff'
@@ -49,7 +49,7 @@ def test_known():
     assert outarr.tolist() == expected
 
 
-def test_out():
+def test_out() -> None:
     data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
     f = Fletcher32()
     result = f.encode(data)

@@ -46,18 +46,18 @@ arrays = [
 
 @pytest.mark.parametrize('array', arrays)
 @pytest.mark.parametrize('codec', codecs)
-def test_encode_decode(array, codec):
+def test_encode_decode(array: np.ndarray, codec: Shuffle) -> None:
     check_encode_decode(array, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = Shuffle()
     check_config(codec)
     codec = Shuffle(elementsize=8)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     expect = "Shuffle(elementsize=0)"
     actual = repr(Shuffle(elementsize=0))
     assert expect == actual
@@ -72,23 +72,23 @@ def test_repr():
     assert expect == actual
 
 
-def test_eq():
+def test_eq() -> None:
     assert Shuffle() == Shuffle()
     assert Shuffle(elementsize=16) != Shuffle()
 
 
-def _encode_worker(data):
+def _encode_worker(data: np.ndarray) -> bytes:
     compressor = Shuffle()
     return compressor.encode(data)
 
 
-def _decode_worker(enc):
+def _decode_worker(enc: bytes) -> np.ndarray:
     compressor = Shuffle()
     return compressor.decode(enc)
 
 
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
-def test_multiprocessing(pool):
+def test_multiprocessing(pool: type[Pool | ThreadPool]) -> None:
     data = np.arange(1000000)
     enc = _encode_worker(data)
 
@@ -109,7 +109,7 @@ def test_multiprocessing(pool):
     pool.join()
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(Shuffle.codec_id, arrays, codecs)
 
 
@@ -128,7 +128,7 @@ def test_backwards_compatibility():
 #             codec.decode(bytearray(0))
 
 
-def test_expected_result():
+def test_expected_result() -> None:
     # If the input is treated as a 2D byte array, with shape (size of element, number of elements),
     # the shuffle is essentially a transpose. This can be made more apparent by using an array of
     # big-endian integers, as below.
@@ -159,7 +159,7 @@ def test_expected_result():
     np.testing.assert_array_equal(np.frombuffer(enc.data, '>u4'), expected)
 
 
-def test_incompatible_elementsize():
+def test_incompatible_elementsize() -> None:
     arr = np.arange(1001, dtype='u1')
     codec = Shuffle(elementsize=4)
     with pytest.raises(ValueError):

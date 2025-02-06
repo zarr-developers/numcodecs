@@ -35,17 +35,17 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode_array(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     for codec in codecs:
         check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     r = (
         "JSON(encoding='utf-8', allow_nan=True, check_circular=True, ensure_ascii=True,\n"
         "     indent=None, separators=(',', ':'), skipkeys=False, sort_keys=True,\n"
@@ -54,7 +54,7 @@ def test_repr():
     check_repr(r)
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(JSON.codec_id, arrays, codecs)
 
 
@@ -76,7 +76,7 @@ def test_backwards_compatibility():
         (0, None),
     ],
 )
-def test_non_numpy_inputs(input_data, dtype):
+def test_non_numpy_inputs(input_data: list | int | dict, dtype: str | None) -> None:
     # numpy will infer a range of different shapes and dtypes for these inputs.
     # Make sure that round-tripping through encode preserves this.
     data = np.array(input_data, dtype=dtype)

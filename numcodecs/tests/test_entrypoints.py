@@ -9,7 +9,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 
 @pytest.fixture
-def set_path():
+def set_path() -> None:
     sys.path.append(here)
     numcodecs.registry.run_entrypoints()
     yield
@@ -19,6 +19,6 @@ def set_path():
 
 
 @pytest.mark.usefixtures("set_path")
-def test_entrypoint_codec():
+def test_entrypoint_codec() -> None:
     cls = numcodecs.registry.get_codec({"id": "test"})
     assert cls.codec_id == "test"

@@ -31,19 +31,19 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode_array(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = Pickle(protocol=-1)
     check_config(codec)
     for codec in codecs:
         check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("Pickle(protocol=-1)")
 
 
@@ -57,5 +57,5 @@ def test_repr():
         "( https://github.com/zarr-developers/numcodecs/issues/271 )"
     ),
 )
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)

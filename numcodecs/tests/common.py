@@ -1,9 +1,14 @@
+from __future__ import annotations
 import array
 import json as _json
 import os
 from glob import glob
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Sequence
 
 import numpy as np
+from numcodecs.abc import Codec
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
@@ -27,7 +32,7 @@ greetings = [
 ]
 
 
-def compare_arrays(arr, res, precision=None):
+def compare_arrays(arr: np.ndarray, res: np.ndarray, precision: int | None = None) -> None:
     # ensure numpy array with matching dtype
     res = ensure_ndarray(res).view(arr.dtype)
 
@@ -47,7 +52,7 @@ def compare_arrays(arr, res, precision=None):
         assert_array_almost_equal(arr, res, decimal=precision)
 
 
-def check_encode_decode(arr, codec, precision=None):
+def check_encode_decode(arr: np.ndarray, codec: Codec, precision: int | None = None) -> None:
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -115,7 +120,7 @@ def check_encode_decode(arr, codec, precision=None):
     compare_arrays(arr, out, precision=precision)
 
 
-def check_encode_decode_partial(arr, codec, precision=None):
+def check_encode_decode_partial(arr: np.ndarray, codec: Codec, precision: int | None = None) -> None:
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -183,7 +188,7 @@ def check_encode_decode_partial(arr, codec, precision=None):
     compare_arrays(compare_arr, out, precision=precision)
 
 
-def assert_array_items_equal(res, arr):
+def assert_array_items_equal(res: np.ndarray, arr: np.ndarray) -> None:
     assert isinstance(res, np.ndarray)
     res = res.reshape(-1, order='A')
     arr = arr.reshape(-1, order='A')
@@ -204,7 +209,7 @@ def assert_array_items_equal(res, arr):
             assert a == r
 
 
-def check_encode_decode_array(arr, codec):
+def check_encode_decode_array(arr: np.ndarray, codec: Codec) -> None:
     enc = codec.encode(arr)
     dec = codec.decode(enc)
     assert_array_items_equal(arr, dec)
@@ -218,7 +223,7 @@ def check_encode_decode_array(arr, codec):
     assert_array_items_equal(arr, dec)
 
 
-def check_encode_decode_array_to_bytes(arr, codec):
+def check_encode_decode_array_to_bytes(arr: np.ndarray, codec: Codec) -> None:
     enc = codec.encode(arr)
     dec = codec.decode(enc)
     assert_array_items_equal(arr, dec)
@@ -228,21 +233,21 @@ def check_encode_decode_array_to_bytes(arr, codec):
     assert_array_items_equal(arr, out)
 
 
-def check_config(codec):
+def check_config(codec: Codec) -> None:
     config = codec.get_config()
     # round-trip through JSON to check serialization
     config = _json.loads(_json.dumps(config))
     assert codec == get_codec(config)
 
 
-def check_repr(stmt):
+def check_repr(stmt: str) -> None:
     # check repr matches instantiation statement
     codec = eval(stmt)
     actual = repr(codec)
     assert stmt == actual
 
 
-def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, prefix=None):
+def check_backwards_compatibility(codec_id: str, arrays: Sequence[np.ndarray], codecs: Sequence[Codec], precision: Sequence[int | None] | None = None, prefix: str | None = None) -> None:
     # setup directory to hold data fixture
     if prefix:
         fixture_dir = os.path.join('fixture', codec_id, prefix)
@@ -312,7 +317,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
                     assert arr_bytes == ensure_bytes(dec)
 
 
-def check_err_decode_object_buffer(compressor):
+def check_err_decode_object_buffer(compressor: Codec) -> None:
     # cannot decode directly into object array, leads to segfaults
     a = np.arange(10)
     enc = compressor.encode(a)
@@ -321,14 +326,14 @@ def check_err_decode_object_buffer(compressor):
         compressor.decode(enc, out=out)
 
 
-def check_err_encode_object_buffer(compressor):
+def check_err_encode_object_buffer(compressor: Codec) -> None:
     # compressors cannot encode object array
     a = np.array(['foo', 'bar', 'baz'], dtype=object)
     with pytest.raises(TypeError):
         compressor.encode(a)
 
 
-def check_max_buffer_size(codec):
+def check_max_buffer_size(codec: Codec) -> None:
     for max_buffer_size in (4, 64, 1024):
         old_max_buffer_size = codec.max_buffer_size
         try:

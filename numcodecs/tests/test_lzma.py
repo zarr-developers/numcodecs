@@ -53,40 +53,40 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = LZMA(preset=1, format=_lzma.FORMAT_XZ, check=_lzma.CHECK_NONE, filters=None)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr('LZMA(format=1, check=0, preset=1, filters=None)')
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(LZMA.codec_id, arrays, codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(LZMA())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(LZMA())
 
 
-def test_err_encode_list():
+def test_err_encode_list() -> None:
     data = ['foo', 'bar', 'baz']
     for codec in codecs:
         with pytest.raises(TypeError):
             codec.encode(data)
 
 
-def test_err_encode_non_contiguous():
+def test_err_encode_non_contiguous() -> None:
     # non-contiguous memory
     arr = np.arange(1000, dtype='i4')[::2]
     for codec in codecs:
