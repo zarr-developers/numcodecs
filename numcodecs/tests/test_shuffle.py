@@ -1,5 +1,6 @@
-from multiprocessing import Pool
-from multiprocessing.pool import ThreadPool
+from __future__ import annotations
+from multiprocessing.pool import ThreadPool, Pool
+from typing import Literal
 
 import numpy as np
 import pytest
@@ -87,14 +88,17 @@ def _decode_worker(enc: bytes) -> np.ndarray:
     return compressor.decode(enc)
 
 
-@pytest.mark.parametrize('pool', [Pool, ThreadPool])
-def test_multiprocessing(pool: type[Pool | ThreadPool]) -> None:
+@pytest.mark.parametrize('pool_type', ['processes', 'threads'])
+def test_multiprocessing(pool_type: Literal['processes', 'threads']) -> None:
     data = np.arange(1000000)
     enc = _encode_worker(data)
 
-    pool = pool(5)
-
-    # test with process pool and thread pool
+    if pool_type == 'processes':
+        pool = Pool(5)
+    elif pool_type == 'threads':
+        pool = ThreadPool(5)
+    else:
+        raise ValueError(f"invalid pool_type: {pool_type}")
 
     # test encoding
     enc_results = pool.map(_encode_worker, [data] * 5)
