@@ -1,5 +1,6 @@
 from __future__ import annotations
-from multiprocessing.pool import ThreadPool, Pool
+
+from multiprocessing.pool import Pool, ThreadPool
 from typing import Literal
 
 import numpy as np

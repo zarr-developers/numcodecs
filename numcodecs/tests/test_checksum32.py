@@ -2,9 +2,9 @@ import itertools
 from contextlib import suppress
 
 import numpy as np
-from numcodecs.abc import Codec
 import pytest
 
+from numcodecs.abc import Codec
 from numcodecs.checksum32 import CRC32, Adler32
 from numcodecs.tests.common import (
     check_backwards_compatibility,

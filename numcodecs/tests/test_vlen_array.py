@@ -40,6 +40,7 @@ def test_encode_decode() -> None:
         for codec in codecs:
             check_encode_decode_array(arr, codec)
 
+
 def test_config() -> None:
     codec = VLenArray('<i8')
     check_config(codec)

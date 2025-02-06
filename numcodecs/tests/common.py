@@ -1,18 +1,20 @@
 from __future__ import annotations
+
 import array
 import json as _json
 import os
 from glob import glob
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from typing import Sequence
+    from collections.abc import Sequence
 
 import numpy as np
-from numcodecs.abc import Codec
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from numcodecs import *  # noqa: F403  # for eval to find names in repr tests
+from numcodecs.abc import Codec
 from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
 
@@ -120,7 +122,9 @@ def check_encode_decode(arr: np.ndarray, codec: Codec, precision: int | None = N
     compare_arrays(arr, out, precision=precision)
 
 
-def check_encode_decode_partial(arr: np.ndarray, codec: Codec, precision: int | None = None) -> None:
+def check_encode_decode_partial(
+    arr: np.ndarray, codec: Codec, precision: int | None = None
+) -> None:
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -247,7 +251,13 @@ def check_repr(stmt: str) -> None:
     assert stmt == actual
 
 
-def check_backwards_compatibility(codec_id: str, arrays: Sequence[np.ndarray], codecs: Sequence[Codec], precision: Sequence[int | None] | None = None, prefix: str | None = None) -> None:
+def check_backwards_compatibility(
+    codec_id: str,
+    arrays: Sequence[np.ndarray],
+    codecs: Sequence[Codec],
+    precision: Sequence[int | None] | None = None,
+    prefix: str | None = None,
+) -> None:
     # setup directory to hold data fixture
     if prefix:
         fixture_dir = os.path.join('fixture', codec_id, prefix)
