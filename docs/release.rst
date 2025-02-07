@@ -11,10 +11,26 @@ Release notes
     Unreleased
     ----------
 
+
 .. _unreleased:
 
 Unreleased
 ----------
+
+Improvements
+~~~~~~~~~~~~
+* Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
+  By :user:`Cas Wognum <cwognum>`.
+
+Fixes
+~~~~~
+* Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`685`
+
+.. _release_0.15.0:
+
+0.15.0
+------
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -36,11 +52,16 @@ This is because they are not intended to be public API.
 In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
 has always been experimental and there is no equivalent in the official
 blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue`619`
 
 Fixes
 ~~~~~
 * Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
   By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+* Cleanup ``PCodec`` soft dependency.
+  Previously importing ``numcodecs.pcodec`` would work if ``pcodec`` is not installed,
+  but now it will fail to import. This mirrors the behaviour of other optional dependencies.
+  By :user:`John Kirkham <jakirkham>`, :issue:`647`
 * Fixes issues with the upcoming ``zarr`` 3.0.0 release.
   By :user:`Norman Rzepka <normanrz>`, :issue:`675`
 
@@ -64,6 +85,7 @@ Improvements
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
 
+.. _release_0.14.1:
 
 0.14.1
 ------

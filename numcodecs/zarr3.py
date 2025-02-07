@@ -112,6 +112,7 @@ class _NumcodecsCodec(Metadata):
 
     def to_dict(self) -> dict[str, JSON]:
         codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
         return {
             "name": self.codec_name,
             "configuration": codec_config,
