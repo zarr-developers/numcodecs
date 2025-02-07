@@ -271,7 +271,7 @@ class Shuffle(_NumcodecsBytesBytesCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
+        if self.codec_config.get("elementsize", None) is None:
             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self  # pragma: no cover
 
@@ -308,7 +308,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype") is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -321,7 +321,7 @@ class Quantize(_NumcodecsArrayArrayCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype") is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
