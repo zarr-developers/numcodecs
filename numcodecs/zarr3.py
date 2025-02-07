@@ -308,7 +308,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if self.codec_config.get("dtype") is None:
+        if self.codec_config.get("dtype", None) is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -321,7 +321,7 @@ class Quantize(_NumcodecsArrayArrayCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if self.codec_config.get("dtype") is None:
+        if self.codec_config.get("dtype", None) is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -356,8 +356,7 @@ class AsType(_NumcodecsArrayArrayCodec):
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
-        decode_dtype = self.codec_config.get("decode_dtype")
-        if str(array_spec.dtype) != decode_dtype:
+        if self.codec_config.get("decode_dtype", None) is None:
             return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 
