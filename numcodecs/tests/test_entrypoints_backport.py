@@ -17,7 +17,7 @@ if importlib_spec is None or importlib_spec.loader is None:  # pragma: no cover
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-def get_entrypoints_with_importlib_metadata_loaded():
+def get_entrypoints_with_importlib_metadata_loaded() -> None:
     # importlib_metadata patches importlib.metadata, which can lead to breaking changes
     # to the APIs of EntryPoint objects used when registering entrypoints. Attempt to
     # isolate those changes to just this test.
@@ -29,7 +29,7 @@ def get_entrypoints_with_importlib_metadata_loaded():
     assert cls.codec_id == "test"
 
 
-def test_entrypoint_codec_with_importlib_metadata():
+def test_entrypoint_codec_with_importlib_metadata() -> None:
     p = Process(target=get_entrypoints_with_importlib_metadata_loaded)
     p.start()
     p.join()

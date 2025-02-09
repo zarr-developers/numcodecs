@@ -30,7 +30,7 @@ codecs = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         precision = int(np.log10(codec.scale))
         check_encode_decode(arr, codec, precision=precision)
@@ -44,7 +44,7 @@ def test_encode_decode():
         (1000, 0.5, [0, 0, 1, 1, 1, 1, 2, 2, 2, 2]),
     ],
 )
-def test_encode(offset: float, scale: float, expected: list[int]):
+def test_encode(offset: float, scale: float, expected: list[int]) -> None:
     dtype = '<f8'
     astype = np.int16
     codec = FixedScaleOffset(scale=scale, offset=offset, dtype=dtype, astype=astype)
@@ -55,22 +55,22 @@ def test_encode(offset: float, scale: float, expected: list[int]):
     assert np.dtype(astype) == actual.dtype
 
 
-def test_config():
+def test_config() -> None:
     codec = FixedScaleOffset(dtype='<f8', astype='<i4', scale=10, offset=100)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     stmt = "FixedScaleOffset(scale=10, offset=100, dtype='<f8', astype='<i4')"
     check_repr(stmt)
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     precision = [int(np.log10(codec.scale)) for codec in codecs]
     check_backwards_compatibility(FixedScaleOffset.codec_id, arrays, codecs, precision=precision)
 
 
-def test_errors():
+def test_errors() -> None:
     with pytest.raises(ValueError):
         FixedScaleOffset(dtype=object, astype='i4', scale=10, offset=100)
     with pytest.raises(ValueError):

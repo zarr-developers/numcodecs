@@ -29,26 +29,26 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         codec = VLenBytes()
         check_encode_decode_array(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = VLenBytes()
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("VLenBytes()")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(VLenBytes.codec_id, arrays, [VLenBytes()])
 
 
-def test_encode_errors():
+def test_encode_errors() -> None:
     codec = VLenBytes()
     with pytest.raises(TypeError):
         codec.encode(1234)
@@ -58,7 +58,7 @@ def test_encode_errors():
         codec.encode(np.ones(10, dtype='i4'))
 
 
-def test_decode_errors():
+def test_decode_errors() -> None:
     codec = VLenBytes()
     with pytest.raises(TypeError):
         codec.decode(1234)
@@ -87,7 +87,7 @@ def test_decode_errors():
 # TODO: fix this test on GitHub actions somehow...
 # See https://github.com/zarr-developers/numcodecs/issues/683
 @pytest.mark.skip("Test is failing on GitHub actions.")
-def test_encode_none():
+def test_encode_none() -> None:
     a = np.array([b'foo', None, b'bar'], dtype=object)
     codec = VLenBytes()
     enc = codec.encode(a)

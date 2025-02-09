@@ -30,12 +30,12 @@ codecs = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec, precision=codec.digits)
 
 
-def test_encode():
+def test_encode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         if arr.flags.f_contiguous:
             order = 'F'
@@ -45,7 +45,7 @@ def test_encode():
         assert_array_almost_equal(arr, enc, decimal=codec.digits)
 
 
-def test_decode():
+def test_decode() -> None:
     # decode is a no-op
     for arr, codec in itertools.product(arrays, codecs):
         enc = codec.encode(arr)
@@ -53,16 +53,16 @@ def test_decode():
         assert_array_equal(enc, dec)
 
 
-def test_config():
+def test_config() -> None:
     for codec in codecs:
         check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("Quantize(digits=2, dtype='<f8', astype='<f2')")
 
 
-def test_errors():
+def test_errors() -> None:
     with pytest.raises(ValueError):
         Quantize(digits=2, dtype='i4')
     with pytest.raises(ValueError):
@@ -71,6 +71,6 @@ def test_errors():
         Quantize(digits=2, dtype='f8', astype=object)
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     precision = [codec.digits for codec in codecs]
     check_backwards_compatibility(Quantize.codec_id, arrays, codecs, precision=precision)

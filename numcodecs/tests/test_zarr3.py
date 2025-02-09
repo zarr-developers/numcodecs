@@ -43,13 +43,13 @@ ALL_CODECS = [getattr(numcodecs.zarr3, cls_name) for cls_name in numcodecs.zarr3
 
 
 @pytest.mark.parametrize("codec_class", ALL_CODECS)
-def test_entry_points(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_entry_points(codec_class: type[numcodecs.zarr3._NumcodecsCodec]) -> None:
     codec_name = codec_class.codec_name
     assert get_codec_class(codec_name) == codec_class
 
 
 @pytest.mark.parametrize("codec_class", ALL_CODECS)
-def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]) -> None:
     assert "See :class:`numcodecs." in codec_class.__doc__  # type: ignore[operator]
 
 
@@ -68,7 +68,7 @@ def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
 )
 def test_generic_compressor(
     store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsBytesBytesCodec]
-):
+) -> None:
     data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -104,7 +104,7 @@ def test_generic_filter(
     store: StorePath,
     codec_class: type[numcodecs.zarr3._NumcodecsArrayArrayCodec],
     codec_config: dict[str, JSON],
-):
+) -> None:
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -124,7 +124,7 @@ def test_generic_filter(
     np.testing.assert_array_equal(data, a[:, :])
 
 
-def test_generic_filter_bitround(store: StorePath):
+def test_generic_filter_bitround(store: StorePath) -> None:
     data = np.linspace(0, 1, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -142,7 +142,7 @@ def test_generic_filter_bitround(store: StorePath):
     assert np.allclose(data, a[:, :], atol=0.1)
 
 
-def test_generic_filter_quantize(store: StorePath):
+def test_generic_filter_quantize(store: StorePath) -> None:
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -160,7 +160,7 @@ def test_generic_filter_quantize(store: StorePath):
     assert np.allclose(data, a[:, :], atol=0.001)
 
 
-def test_generic_filter_packbits(store: StorePath):
+def test_generic_filter_packbits(store: StorePath) -> None:
     data = np.zeros((16, 16), dtype="bool")
     data[0:4, :] = True
 
@@ -201,7 +201,7 @@ def test_generic_filter_packbits(store: StorePath):
 )
 def test_generic_checksum(
     store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsBytesBytesCodec]
-):
+) -> None:
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -222,7 +222,7 @@ def test_generic_checksum(
 @pytest.mark.parametrize("codec_class", [numcodecs.zarr3.PCodec, numcodecs.zarr3.ZFPY])
 def test_generic_bytes_codec(
     store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsArrayBytesCodec]
-):
+) -> None:
     try:
         codec_class()._codec  # noqa: B018
     except ValueError as e:  # pragma: no cover
@@ -249,7 +249,7 @@ def test_generic_bytes_codec(
     np.testing.assert_array_equal(data, a[:, :])
 
 
-def test_delta_astype(store: StorePath):
+def test_delta_astype(store: StorePath) -> None:
     data = np.linspace(0, 10, 256, dtype="i8").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
@@ -269,11 +269,11 @@ def test_delta_astype(store: StorePath):
     np.testing.assert_array_equal(data, a[:, :])
 
 
-def test_repr():
+def test_repr() -> None:
     codec = numcodecs.zarr3.LZ4(level=5)
     assert repr(codec) == "LZ4(codec_name='numcodecs.lz4', codec_config={'level': 5})"
 
 
-def test_to_dict():
+def test_to_dict() -> None:
     codec = numcodecs.zarr3.LZ4(level=5)
     assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}

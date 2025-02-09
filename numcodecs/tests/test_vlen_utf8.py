@@ -24,26 +24,26 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         codec = VLenUTF8()
         check_encode_decode_array(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = VLenUTF8()
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("VLenUTF8()")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(VLenUTF8.codec_id, arrays, [VLenUTF8()])
 
 
-def test_encode_errors():
+def test_encode_errors() -> None:
     codec = VLenUTF8()
     with pytest.raises(TypeError):
         codec.encode(1234)
@@ -53,7 +53,7 @@ def test_encode_errors():
         codec.encode(np.ones(10, dtype='i4'))
 
 
-def test_decode_errors():
+def test_decode_errors() -> None:
     codec = VLenUTF8()
     with pytest.raises(TypeError):
         codec.decode(1234)
@@ -80,7 +80,7 @@ def test_decode_errors():
 
 
 @pytest.mark.parametrize("writable", [True, False])
-def test_encode_utf8(writable):
+def test_encode_utf8(writable: bool) -> None:
     a = np.array(['foo', None, 'bar'], dtype=object)
     if not writable:
         a.setflags(write=False)

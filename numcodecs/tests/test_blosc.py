@@ -58,19 +58,19 @@ arrays = [
 ]
 
 
-def _skip_null(codec):
+def _skip_null(codec: Blosc) -> None:
     if codec is None:
         pytest.skip("codec has been removed")
 
 
 @pytest.fixture(scope='module', params=[True, False, None])
-def use_threads(request):
+def use_threads(request: pytest.FixtureRequest) -> bool:
     return request.param
 
 
 @pytest.mark.parametrize('array', arrays)
 @pytest.mark.parametrize('codec', codecs)
-def test_encode_decode(array, codec):
+def test_encode_decode(array: np.ndarray, codec: Blosc) -> None:
     _skip_null(codec)
     check_encode_decode(array, codec)
 
@@ -83,19 +83,19 @@ def test_encode_decode(array, codec):
         for x in arrays
     ],
 )
-def test_partial_decode(codec, array):
+def test_partial_decode(codec: Blosc, array: np.ndarray) -> None:
     _skip_null(codec)
     check_encode_decode_partial(array, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = Blosc(cname='zstd', clevel=3, shuffle=1)
     check_config(codec)
     codec = Blosc(cname='lz4', clevel=1, shuffle=2, blocksize=2**8)
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     expect = "Blosc(cname='zstd', clevel=3, shuffle=SHUFFLE, blocksize=0)"
     actual = repr(Blosc(cname='zstd', clevel=3, shuffle=Blosc.SHUFFLE, blocksize=0))
     assert expect == actual
@@ -110,14 +110,14 @@ def test_repr():
     assert expect == actual
 
 
-def test_eq():
+def test_eq() -> None:
     assert Blosc() == Blosc()
     assert Blosc(cname='lz4') != Blosc(cname='zstd')
     assert Blosc(clevel=1) != Blosc(clevel=9)
     assert Blosc(cname='lz4') != 'foo'
 
 
-def test_compress_blocksize_default(use_threads):
+def test_compress_blocksize_default(use_threads: bool) -> None:
     arr = np.arange(1000, dtype='i4')
 
     blosc.use_threads = use_threads
@@ -134,7 +134,7 @@ def test_compress_blocksize_default(use_threads):
 
 
 @pytest.mark.parametrize('bs', [2**7, 2**8])
-def test_compress_blocksize(use_threads, bs):
+def test_compress_blocksize(use_threads: bool, bs: int) -> None:
     arr = np.arange(1000, dtype='i4')
 
     blosc.use_threads = use_threads
@@ -144,7 +144,7 @@ def test_compress_blocksize(use_threads, bs):
     assert blocksize == bs
 
 
-def test_compress_complib(use_threads):
+def test_compress_complib(use_threads: bool) -> None:
     arr = np.arange(1000, dtype='i4')
     expected_complibs = {
         'lz4': 'LZ4',
@@ -168,7 +168,7 @@ def test_compress_complib(use_threads):
 
 
 @pytest.mark.parametrize('dtype', ['i1', 'i2', 'i4', 'i8'])
-def test_compress_metainfo(dtype, use_threads):
+def test_compress_metainfo(dtype: str, use_threads: bool) -> None:
     arr = np.arange(1000, dtype=dtype)
     for shuffle in Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE:
         blosc.use_threads = use_threads
@@ -179,7 +179,7 @@ def test_compress_metainfo(dtype, use_threads):
             assert did_shuffle == shuffle
 
 
-def test_compress_autoshuffle(use_threads):
+def test_compress_autoshuffle(use_threads: bool) -> None:
     arr = np.arange(8000)
     for dtype in 'i1', 'i2', 'i4', 'i8', 'f2', 'f4', 'f8', 'bool', 'S10':
         varr = arr.view(dtype)
@@ -194,7 +194,7 @@ def test_compress_autoshuffle(use_threads):
                 assert did_shuffle == Blosc.SHUFFLE
 
 
-def test_config_blocksize():
+def test_config_blocksize() -> None:
     # N.B., we want to be backwards compatible with any config where blocksize is not
     # explicitly stated
 
@@ -209,22 +209,22 @@ def test_config_blocksize():
     assert codec.blocksize == 2**8
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(Blosc.codec_id, arrays, codecs)
 
 
-def _encode_worker(data):
+def _encode_worker(data: np.ndarray) -> bytes:
     compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
     return compressor.encode(data)
 
 
-def _decode_worker(enc):
+def _decode_worker(enc: bytes) -> np.ndarray:
     compressor = Blosc()
     return compressor.decode(enc)
 
 
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
-def test_multiprocessing(use_threads, pool):
+def test_multiprocessing(use_threads: bool, pool: type) -> None:
     data = np.arange(1000000)
     enc = _encode_worker(data)
 
@@ -251,15 +251,15 @@ def test_multiprocessing(use_threads, pool):
         blosc.use_threads = None  # restore default
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(Blosc())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(Blosc())
 
 
-def test_decompression_error_handling():
+def test_decompression_error_handling() -> None:
     for codec in codecs:
         _skip_null(codec)
         with pytest.raises(RuntimeError):
@@ -268,7 +268,7 @@ def test_decompression_error_handling():
             codec.decode(bytearray(0))
 
 
-def test_max_buffer_size():
+def test_max_buffer_size() -> None:
     for codec in codecs:
         _skip_null(codec)
         assert codec.max_buffer_size == 2**31 - 1

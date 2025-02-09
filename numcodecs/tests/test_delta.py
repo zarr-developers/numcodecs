@@ -22,13 +22,13 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         codec = Delta(dtype=arr.dtype)
         check_encode_decode(arr, codec)
 
 
-def test_encode():
+def test_encode() -> None:
     dtype = 'i8'
     astype = 'i4'
     codec = Delta(dtype=dtype, astype=astype)
@@ -39,22 +39,22 @@ def test_encode():
     assert np.dtype(astype) == actual.dtype
 
 
-def test_config():
+def test_config() -> None:
     codec = Delta(dtype='<i4', astype='<i2')
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("Delta(dtype='<i4', astype='<i2')")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     for arr in arrays:
         codec = Delta(dtype=arr.dtype)
         check_backwards_compatibility(Delta.codec_id, [arr], [codec], prefix=str(arr.dtype))
 
 
-def test_errors():
+def test_errors() -> None:
     with pytest.raises(ValueError):
         Delta(dtype=object)
     with pytest.raises(ValueError):

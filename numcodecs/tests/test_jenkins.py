@@ -5,7 +5,7 @@ from numcodecs.checksum32 import JenkinsLookup3
 from numcodecs.jenkins import jenkins_lookup3
 
 
-def test_jenkins_lookup3():
+def test_jenkins_lookup3() -> None:
     h = jenkins_lookup3(b"", 0)
     assert h == 0xDEADBEEF
     h = jenkins_lookup3(b"", 0xDEADBEEF)
@@ -62,7 +62,7 @@ def test_jenkins_lookup3():
     assert h == 0x17770551
 
 
-def test_jenkins_lookup3_codec():
+def test_jenkins_lookup3_codec() -> None:
     s = b"Four score and seven years ago"
     j = JenkinsLookup3()
     result = j.encode(s)
@@ -125,14 +125,14 @@ def test_jenkins_lookup3_codec():
 
 
 @pytest.mark.parametrize("dtype", ["uint8", "int32", "float32"])
-def test_with_data(dtype):
+def test_with_data(dtype: str) -> None:
     data = np.arange(100, dtype=dtype)
     j = JenkinsLookup3()
     arr = np.frombuffer(j.decode(j.encode(data)), dtype=dtype)
     assert (arr == data).all()
 
 
-def test_error():
+def test_error() -> None:
     data = np.arange(100)
     j = JenkinsLookup3()
     enc = j.encode(data)
@@ -143,7 +143,7 @@ def test_error():
     assert "Bob Jenkin's lookup3 checksum" in str(e.value)
 
 
-def test_out():
+def test_out() -> None:
     data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
     j = JenkinsLookup3()
     result = j.encode(data)

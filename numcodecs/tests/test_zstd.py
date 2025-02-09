@@ -52,40 +52,40 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     for codec in codecs:
         check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("Zstd(level=3)")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(Zstd.codec_id, arrays, codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(Zstd())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(Zstd())
 
 
-def test_checksum():
+def test_checksum() -> None:
     data = np.arange(0, 64, dtype="uint8")
     assert len(Zstd(level=0, checksum=False).encode(data)) + 4 == len(
         Zstd(level=0, checksum=True).encode(data)
     )
 
 
-def test_native_functions():
+def test_native_functions() -> None:
     # Note, these assertions might need to be changed for new versions of zstd
     assert Zstd.default_level() == 3
     assert Zstd.min_level() == -131072

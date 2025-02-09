@@ -45,7 +45,7 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         if arr.dtype in (np.int32, np.int64):
             codec = [codecs[-1]]
@@ -55,16 +55,16 @@ def test_encode_decode():
             check_encode_decode_array(arr, code)
 
 
-def test_config():
+def test_config() -> None:
     for codec in codecs:
         check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("ZFPY(mode=4, tolerance=0.001, rate=-1, precision=-1)")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     for code in codecs:
         if code.mode == _zfpy.mode_fixed_rate:
             codec = [code]
@@ -73,22 +73,22 @@ def test_backwards_compatibility():
             check_backwards_compatibility(ZFPY.codec_id, arrays[: len(arrays) - 2], codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(ZFPY())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(ZFPY())
 
 
-def test_err_encode_list():
+def test_err_encode_list() -> None:
     data = ['foo', 'bar', 'baz']
     for codec in codecs:
         with pytest.raises(TypeError):
             codec.encode(data)
 
 
-def test_err_encode_non_contiguous():
+def test_err_encode_non_contiguous() -> None:
     # non-contiguous memory
     arr = np.arange(1000, dtype='i4')[::2]
     for codec in codecs:
@@ -96,7 +96,7 @@ def test_err_encode_non_contiguous():
             codec.encode(arr)
 
 
-def test_err_encode_fortran_array():
+def test_err_encode_fortran_array() -> None:
     # fortran array
     arr = np.asfortranarray(np.random.normal(loc=1000, scale=1, size=(5, 10, 20)))
     for codec in codecs:

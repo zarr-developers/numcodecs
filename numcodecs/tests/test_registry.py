@@ -7,12 +7,12 @@ from numcodecs.errors import UnknownCodecError
 from numcodecs.registry import get_codec
 
 
-def test_registry_errors():
+def test_registry_errors() -> None:
     with pytest.raises(UnknownCodecError, match='foo'):
         get_codec({'id': 'foo'})
 
 
-def test_get_codec_argument():
+def test_get_codec_argument() -> None:
     # Check that get_codec doesn't modify its argument.
     arg = {"id": "json2"}
     before = dict(arg)
@@ -20,7 +20,7 @@ def test_get_codec_argument():
     assert before == arg
 
 
-def test_all_classes_registered():
+def test_all_classes_registered() -> None:
     """
     find all Codec subclasses in this repository and check that they
     have been registered.

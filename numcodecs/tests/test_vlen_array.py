@@ -35,26 +35,26 @@ codecs = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr in arrays:
         for codec in codecs:
             check_encode_decode_array(arr, codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = VLenArray('<i8')
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("VLenArray(dtype='<i8')")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(VLenArray.codec_id, arrays, codecs)
 
 
-def test_encode_errors():
+def test_encode_errors() -> None:
     codec = VLenArray('<i8')
     with pytest.raises(ValueError):
         codec.encode('foo')
@@ -62,7 +62,7 @@ def test_encode_errors():
         codec.encode(['foo', 'bar'])
 
 
-def test_decode_errors():
+def test_decode_errors() -> None:
     codec = VLenArray('<i8')
     with pytest.raises(TypeError):
         codec.decode(1234)
@@ -88,7 +88,7 @@ def test_decode_errors():
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
 
 
-def test_encode_none():
+def test_encode_none() -> None:
     a = np.array([[1, 3], None, [4, 7]], dtype=object)
     codec = VLenArray(int)
     enc = codec.encode(a)

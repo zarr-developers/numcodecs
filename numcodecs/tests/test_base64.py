@@ -37,16 +37,16 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     for arr, codec in itertools.product(arrays, codecs):
         check_encode_decode(arr, codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("Base64()")
 
 
-def test_eq():
+def test_eq() -> None:
     assert Base64() == Base64()
     assert not Base64() != Base64()
     assert Base64() != "foo"
@@ -54,26 +54,26 @@ def test_eq():
     assert not Base64() == "foo"
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(Base64.codec_id, arrays, codecs)
 
 
-def test_err_decode_object_buffer():
+def test_err_decode_object_buffer() -> None:
     check_err_decode_object_buffer(Base64())
 
 
-def test_err_encode_object_buffer():
+def test_err_encode_object_buffer() -> None:
     check_err_encode_object_buffer(Base64())
 
 
-def test_err_encode_list():
+def test_err_encode_list() -> None:
     data = ["foo", "bar", "baz"]
     for codec in codecs:
         with pytest.raises(TypeError):
             codec.encode(data)
 
 
-def test_err_encode_non_contiguous():
+def test_err_encode_non_contiguous() -> None:
     # non-contiguous memory
     arr = np.arange(1000, dtype="i4")[::2]
     for codec in codecs:

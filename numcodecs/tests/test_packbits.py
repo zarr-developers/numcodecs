@@ -16,7 +16,7 @@ arrays = [
 ]
 
 
-def test_encode_decode():
+def test_encode_decode() -> None:
     codec = PackBits()
     for arr in arrays:
         check_encode_decode(arr, codec)
@@ -26,14 +26,14 @@ def test_encode_decode():
         check_encode_decode(arr[:size], codec)
 
 
-def test_config():
+def test_config() -> None:
     codec = PackBits()
     check_config(codec)
 
 
-def test_repr():
+def test_repr() -> None:
     check_repr("PackBits()")
 
 
-def test_backwards_compatibility():
+def test_backwards_compatibility() -> None:
     check_backwards_compatibility(PackBits.codec_id, arrays, [PackBits()])

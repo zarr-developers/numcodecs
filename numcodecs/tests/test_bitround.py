@@ -8,18 +8,18 @@ from numcodecs.bitround import BitRound, max_bits
 
 # TODO: add other dtypes
 @pytest.fixture(params=["float32", "float64"])
-def dtype(request):
+def dtype(request: pytest.FixtureRequest) -> str:
     return request.param
 
 
-def round(data, keepbits):
+def round(data: np.ndarray, keepbits: int) -> np.ndarray:
     codec = BitRound(keepbits=keepbits)
     data = data.copy()  # otherwise overwrites the input
     encoded = codec.encode(data)
     return codec.decode(encoded)
 
 
-def test_round_zero_to_zero(dtype):
+def test_round_zero_to_zero(dtype: str) -> None:
     a = np.zeros((3, 2), dtype=dtype)
     # Don't understand Milan's original test:
     # How is it possible to have negative keepbits?
@@ -29,21 +29,21 @@ def test_round_zero_to_zero(dtype):
         np.testing.assert_equal(a, ar)
 
 
-def test_round_one_to_one(dtype):
+def test_round_one_to_one(dtype: str) -> None:
     a = np.ones((3, 2), dtype=dtype)
     for k in range(max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
-def test_round_minus_one_to_minus_one(dtype):
+def test_round_minus_one_to_minus_one(dtype: str) -> None:
     a = -np.ones((3, 2), dtype=dtype)
     for k in range(max_bits[dtype]):
         ar = round(a, k)
         np.testing.assert_equal(a, ar)
 
 
-def test_no_rounding(dtype):
+def test_no_rounding(dtype: str) -> None:
     a = np.random.random_sample((300, 200)).astype(dtype)
     keepbits = max_bits[dtype]
     ar = round(a, keepbits)
@@ -53,7 +53,7 @@ def test_no_rounding(dtype):
 APPROX_KEEPBITS = {"float32": 11, "float64": 18}
 
 
-def test_approx_equal(dtype):
+def test_approx_equal(dtype: str) -> None:
     a = np.random.random_sample((300, 200)).astype(dtype)
     ar = round(a, APPROX_KEEPBITS[dtype])
     # Mimic julia behavior - https://docs.julialang.org/en/v1/base/math/#Base.isapprox
@@ -64,7 +64,7 @@ def test_approx_equal(dtype):
     np.testing.assert_allclose(a, ar, rtol=rtol)
 
 
-def test_idempotence(dtype):
+def test_idempotence(dtype: str) -> None:
     a = np.random.random_sample((300, 200)).astype(dtype)
     for k in range(20):
         ar = round(a, k)
@@ -72,7 +72,7 @@ def test_idempotence(dtype):
         np.testing.assert_equal(ar, ar2)
 
 
-def test_errors():
+def test_errors() -> None:
     with pytest.raises(ValueError):
         BitRound(keepbits=99).encode(np.array([0], dtype="float32"))
     with pytest.raises(TypeError):
