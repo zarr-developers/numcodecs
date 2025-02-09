@@ -29,14 +29,14 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import ClassVar
 
 
 class Codec(ABC):
     """Codec abstract base class."""
 
     # override in sub-class
-    codec_id: Optional[str] = None
+    codec_id: ClassVar[str]
     """Codec identifier."""
 
     @abstractmethod
@@ -106,14 +106,14 @@ class Codec(ABC):
         # keyword arguments without any special decoding
         return cls(**config)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         # override in sub-class if need special equality comparison
         try:
-            return self.get_config() == other.get_config()
+            return self.get_config() == other.get_config()  # type: ignore[attr-defined]
         except AttributeError:
             return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # override in sub-class if need special representation
 
         # by default, assume all non-private members are configuration
