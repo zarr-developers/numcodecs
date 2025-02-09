@@ -238,3 +238,28 @@ warn_unreachable = false
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+numcodecs = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+crc32c = { features = ["crc32c"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
+msgpack = { features = ["msgpack"], solve-group = "default" }
+pcodec = { features = ["pcodec"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+test-extras = { features = ["test_extras"], solve-group = "default" }
+zfpy = { features = ["zfpy"], solve-group = "default" }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+clang = ">=19.1.7,<20"
+blosc = ">=1.21.6,<2"
+c-compiler = ">=1.9.0,<2"
+cxx-compiler = ">=1.9.0,<2"
