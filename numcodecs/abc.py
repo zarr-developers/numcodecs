@@ -35,7 +35,6 @@ from typing import ClassVar
 class Codec(ABC):
     """Codec abstract base class."""
 
-    # override in sub-class
     codec_id: ClassVar[str]
     """Codec identifier."""
 
@@ -106,14 +105,14 @@ class Codec(ABC):
         # keyword arguments without any special decoding
         return cls(**config)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other):
         # override in sub-class if need special equality comparison
         try:
-            return self.get_config() == other.get_config()  # type: ignore[attr-defined]
+            return self.get_config() == other.get_config()
         except AttributeError:
             return False
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         # override in sub-class if need special representation
 
         # by default, assume all non-private members are configuration
