@@ -260,6 +260,5 @@ zfpy = { features = ["zfpy"], solve-group = "default" }
 
 [tool.pixi.dependencies]
 clang = ">=19.1.7,<20"
-blosc = ">=1.21.6,<2"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
