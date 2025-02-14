@@ -1,5 +1,6 @@
 import gzip as _gzip
 import io
+from typing import ClassVar, Literal
 
 from .abc import Codec
 from .compat import ensure_bytes, ensure_contiguous_ndarray
@@ -15,12 +16,13 @@ class GZip(Codec):
 
     """
 
-    codec_id = 'gzip'
+    codec_id: ClassVar[Literal['gzip']] = 'gzip'
+    level: int
 
     def __init__(self, level=1):
         self.level = level
 
-    def encode(self, buf):
+    def encode(self, buf) -> bytes:
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
 
@@ -31,7 +33,7 @@ class GZip(Codec):
         return compressed.getvalue()
 
     # noinspection PyMethodMayBeStatic
-    def decode(self, buf, out=None):
+    def decode(self, buf, out=None) -> bytes:
         # normalise inputs
         # BytesIO only copies if the data is not of `bytes` type.
         # This allows `bytes` objects to pass through without copying.
