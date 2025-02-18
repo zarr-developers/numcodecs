@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-13 is an intel runner, macos-14 is a arm64 runner
+        # macos-13 is an intel runner, macos-14 is an arm64 runner
         os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
