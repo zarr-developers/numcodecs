@@ -13,8 +13,15 @@ from setuptools.errors import CCompilerError, ExecError, PlatformError
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
 flags = cpu_info.get('flags', [])
-have_sse2 = 'sse2' in flags
-have_avx2 = 'avx2' in flags
+machine = cpuinfo.platform.machine()
+
+# only check for x86 features on x86_64 arch
+have_sse2 = False
+have_avx2 = False
+if machine == 'x86_64':
+    have_sse2 = 'sse2' in flags
+    have_avx2 = 'avx2' in flags
+
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
@@ -24,7 +31,7 @@ base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
     pass
-elif os.name == 'posix':
+elif os.name == 'posix' and machine == 'x86_64':
     if disable_sse2:
         base_compile_args.append('-mno-sse2')
     elif have_sse2:
