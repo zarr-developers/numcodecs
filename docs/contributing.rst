@@ -111,7 +111,7 @@ Creating a branch
 Before you do any new work or submit a pull request, please open an issue on GitHub to
 report the bug or propose the feature you'd like to add.
 
-It's best to create a new, separate branch for each piece of work you want to do. E.g.:
+It's best to create a new, separate branch for each piece of work you want to do. E.g.::
 
     git fetch upstream
     git checkout -b shiny-new-feature upstream/main
