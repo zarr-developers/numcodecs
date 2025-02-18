@@ -68,7 +68,7 @@ class JSON(Codec):
     def encode(self, buf):
         try:
             buf = np.asarray(buf)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             buf = np.asarray(buf, dtype=object)
         items = np.atleast_1d(buf).tolist()
         items.append(buf.dtype.str)

@@ -8,12 +8,13 @@ You can use codecs from :py:mod:`numcodecs` by constructing codecs from :py:mod:
 >>> import zarr
 >>> import numcodecs.zarr3
 >>>
->>> codecs = [zarr.codecs.BytesCodec(), numcodecs.zarr3.BZ2(level=5)]
->>> array = zarr.open(
-...   "data.zarr", mode="w",
-...   shape=(1024, 1024), chunks=(64, 64),
+>>> array = zarr.create_array(
+...   store="data.zarr",
+...   shape=(1024, 1024),
+...   chunks=(64, 64),
 ...   dtype="uint32",
-...   codecs=codecs)
+...   filters=[numcodecs.zarr3.Delta()],
+...   compressors=[numcodecs.zarr3.BZ2(level=5)])
 >>> array[:] = np.arange(*array.shape).astype(array.dtype)
 
 .. note::
@@ -124,6 +125,7 @@ class _NumcodecsCodec(Metadata):
 
     def to_dict(self) -> dict[str, JSON]:
         codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
         return {
             "name": self.codec_name,
             "configuration": codec_config,
@@ -131,6 +133,12 @@ class _NumcodecsCodec(Metadata):
 
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
         raise NotImplementedError  # pragma: no cover
+
+    # Override __repr__ because dynamically constructed classes don't seem to work otherwise
+    def __repr__(self) -> str:
+        codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
+        return f"{self.__class__.__name__}(codec_name={self.codec_name!r}, codec_config={codec_config!r})"
 
 
 class _NumcodecsBytesBytesCodec(_NumcodecsCodec, BytesBytesCodec):
@@ -276,7 +284,7 @@ class Shuffle(_NumcodecsBytesBytesCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
+        if self.codec_config.get("elementsize", None) is None:
             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self  # pragma: no cover
 
@@ -313,7 +321,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype", None) is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -326,7 +334,7 @@ class Quantize(_NumcodecsArrayArrayCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype", None) is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -361,8 +369,7 @@ class AsType(_NumcodecsArrayArrayCodec):
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
-        decode_dtype = self.codec_config.get("decode_dtype")
-        if str(array_spec.dtype) != decode_dtype:
+        if self.codec_config.get("decode_dtype", None) is None:
             return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 

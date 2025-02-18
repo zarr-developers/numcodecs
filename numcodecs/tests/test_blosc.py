@@ -125,12 +125,12 @@ def test_compress_blocksize_default(use_threads):
 
     # default blocksize
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize > 0
 
     # explicit default blocksize
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize > 0
 
 
@@ -141,7 +141,7 @@ def test_compress_blocksize(use_threads, bs):
     blosc.use_threads = use_threads
 
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize == bs
 
 
@@ -175,7 +175,7 @@ def test_compress_metainfo(dtype, use_threads):
         blosc.use_threads = use_threads
         for cname in blosc.list_compressors():
             enc = blosc.compress(arr, cname.encode(), 1, shuffle)
-            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
             assert typesize == arr.dtype.itemsize
             assert did_shuffle == shuffle
 
@@ -187,7 +187,7 @@ def test_compress_autoshuffle(use_threads):
         blosc.use_threads = use_threads
         for cname in blosc.list_compressors():
             enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
-            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
             assert typesize == varr.dtype.itemsize
             if typesize == 1:
                 assert did_shuffle == Blosc.BITSHUFFLE
