@@ -60,7 +60,13 @@ def blosc_extension():
     info('setting up Blosc extension')
 
     extra_compile_args = base_compile_args.copy()
+    extra_link_args = []
     define_macros = []
+
+    # ensure pthread is properly linked on POSIX systems
+    if os.name == 'posix':
+        extra_compile_args.append('-pthread')
+        extra_link_args.append('-pthread')
 
     # setup blosc sources
     blosc_sources = [f for f in glob('c-blosc/blosc/*.c') if 'avx2' not in f and 'sse2' not in f]
@@ -125,6 +131,7 @@ def blosc_extension():
             include_dirs=include_dirs,
             define_macros=define_macros,
             extra_compile_args=extra_compile_args,
+            extra_link_args=extra_link_args,
             extra_objects=extra_objects,
         ),
     ]
