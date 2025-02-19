@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-        # macos-13 is an intel runner, macos-14 is a arm64 runner
-        platform: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        # macos-13 is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
 
     defaults:
       run:
@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0 # required for version resolution
 
       - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.1.0
+        uses: conda-incubator/setup-miniconda@v3.1.1
         with:
           channels: conda-forge
           miniforge-version: latest
@@ -56,8 +56,7 @@ jobs:
         # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
         # so we can have some tests of our minimum version of numpy (1.24)
         if: matrix.python-version != '3.11'
-        # TODO: remove --pre option when zarr v3 is out
-        run: python -m pip install --pre zarr>=3.0.0b2
+        run: python -m pip install zarr>=3
 
       - name: List installed packages
         run: python -m pip list

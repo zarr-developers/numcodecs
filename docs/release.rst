@@ -17,6 +17,12 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+* Add support for the Linux AArch64 architecture.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+
 Improvements
 ~~~~~~~~~~~~
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
@@ -40,7 +46,7 @@ Breaking changes
 
 Deprecations
 ~~~~~~~~~~~~
-The following ``blosc`` funcitons are deprecated, with no replacement.
+The following ``blosc`` functions are deprecated, with no replacement.
 This is because they are not intended to be public API.
 
 - ``numcodecs.blosc.init``
