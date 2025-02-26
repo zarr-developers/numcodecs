@@ -15,7 +15,7 @@ env:
   DISABLE_NUMCODECS_AVX2: 1
   DISABLE_NUMCODECS_SSE2: 1
   # Common environment variables for both build and test jobs
-  PYODIDE_VERSION: 0.27.0
+  PYODIDE_VERSION: 0.27.3
   # PYTHON_VERSION and EMSCRIPTEN_VERSION are determined by PYODIDE_VERSION.
   # The appropriate versions can be found in the Pyodide repodata.json
   # "info" field, or in Makefile.envs:
@@ -85,7 +85,7 @@ jobs:
           pip install zarr==3.0.0b1
 
           # Install the built numcodecs WASM wheel and relevant dependencies
-          pip install $(ls dist/*.whl)"[msgpack,crc32c,test,test_extras]"
+          pip install $(ls dist/*.whl)"[msgpack,crc32c,pcodec,test,test_extras]"
           # TODO: get zfpy built in Pyodide and install it here
 
           # Change into a different directory before running tests to avoid
