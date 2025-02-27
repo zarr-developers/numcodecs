@@ -33,7 +33,7 @@ try:
 
     from numcodecs.tests.common import is_wasm
 
-    if is_wasm:
+    if is_wasm:  # pragma: no cover
         pytest.skip("zarr3 doctests not supported in WASM", allow_module_level=True)
 except (ImportError, ModuleNotFoundError):  # not running tests
     pass
