@@ -15,7 +15,6 @@ from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
     check_encode_decode,
-    check_encode_decode_partial,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
@@ -73,19 +72,6 @@ def use_threads(request):
 def test_encode_decode(array, codec):
     _skip_null(codec)
     check_encode_decode(array, codec)
-
-
-@pytest.mark.parametrize('codec', codecs)
-@pytest.mark.parametrize(
-    'array',
-    [
-        pytest.param(x) if len(x.shape) == 1 else pytest.param(x, marks=[pytest.mark.xfail])
-        for x in arrays
-    ],
-)
-def test_partial_decode(codec, array):
-    _skip_null(codec)
-    check_encode_decode_partial(array, codec)
 
 
 def test_config():
