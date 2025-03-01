@@ -35,7 +35,8 @@ try:
 
     if is_wasm:  # pragma: no cover
         pytest.skip("zarr3 doctests not supported in WASM", allow_module_level=True)
-except (ImportError, ModuleNotFoundError):  # not running tests
+# not running tests
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
     pass
 
 import asyncio
