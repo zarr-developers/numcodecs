@@ -20,7 +20,8 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
-* Add support for the Linux AArch64 architecture.
+* Add support for the Linux AArch64 architecture, and bump the minimum
+macOS deployment target for x86_64 to 10.13.
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
 
 Improvements
