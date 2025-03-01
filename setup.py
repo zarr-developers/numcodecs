@@ -316,15 +316,6 @@ class BuildFailed(Exception):
     pass
 
 
-def get_arch_specific_objects():
-    machine = cpuinfo.platform.machine()
-    if machine == 'x86_64':
-        return [S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")]
-    elif machine == 'aarch64':
-        return [S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*aarch64.S")]
-    return []
-
-
 class ve_build_ext(build_ext):
     # This class allows C extension building to fail.
 
