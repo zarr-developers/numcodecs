@@ -64,7 +64,8 @@ def blosc_extension():
     define_macros = []
 
     # ensure pthread is properly linked on POSIX systems
-    if os.name == 'posix':
+    # and not when compiling to WASM.
+    if os.name == 'posix' and "PYODIDE" not in os.environ:
         extra_compile_args.append('-pthread')
         extra_link_args.append('-pthread')
 
