@@ -280,7 +280,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
     if isinstance(typesize, int):
-        if typesize < 1:
+        if typesize < 1: # pragma: no cover
             raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         itemsize = typesize
     else:
