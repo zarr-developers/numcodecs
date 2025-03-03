@@ -555,6 +555,8 @@ class Blosc(Codec):
     blocksize : int
         The requested size of the compressed blocks.  If 0 (default), an automatic
         blocksize will be used.
+    typesize : int, optional
+        The size in bytes of uncompressed array elements.
 
     See Also
     --------
