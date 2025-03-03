@@ -279,7 +279,9 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
-    if typesize is not None:
+    if isinstance(typesize, int):
+        if typesize < 1:
+            raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         itemsize = typesize
     else:
         itemsize = source_buffer.itemsize
@@ -572,6 +574,8 @@ class Blosc(Codec):
     max_buffer_size = 2**31 - 1
 
     def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS, typesize=None):
+        if isinstance(typesize, int) and typesize < 1:
+            raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         self.cname = cname
         if isinstance(cname, str):
             self._cname_bytes = cname.encode('ascii')

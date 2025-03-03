@@ -285,3 +285,8 @@ def test_typesize_explicit():
     # third byte encodes the `typesize`
     assert encoded_without_itemsize[3] == 1  # inferred from bytes i.e., 1
     assert encoded_with_itemsize[3] == itemsize  # given as a constructor argument
+
+
+def test_typesize_less_than_1():
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
