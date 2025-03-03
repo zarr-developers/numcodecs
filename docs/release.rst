@@ -63,7 +63,10 @@ Improvements
   Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
   are still silently caught.
   By :user:`David Stansby <dstansby>`, :issue:`550`.
-
+* Add ``typesize`` argument to ``Blosc`` to allow for buffers that are passed to ``encode``
+  use that information.  zarr v3 currently has its Blosc codec as bytes-to-bytes but does retain
+  the size information so using it here allows for massive compression ratio gains.
+  By :user:`Ilan Gold <ilan-gold>`
 
 0.14.1
 ------
