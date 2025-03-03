@@ -157,7 +157,9 @@ filterwarnings = [
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
+# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
+environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
@@ -219,8 +221,6 @@ ignore = [
     "Q003",
     "COM812",
     "COM819",
-    "ISC001",
-    "ISC002",
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
@@ -237,3 +237,6 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 # TODO: set options below to true
 strict = false
 warn_unreachable = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true

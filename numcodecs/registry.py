@@ -5,6 +5,7 @@ import logging
 from importlib.metadata import EntryPoints, entry_points
 
 from numcodecs.abc import Codec
+from numcodecs.errors import UnknownCodecError
 
 logger = logging.getLogger("numcodecs")
 codec_registry: dict[str, Codec] = {}
@@ -50,7 +51,7 @@ def get_codec(config):
         register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
-    raise ValueError(f'codec not available: {codec_id!r}')
+    raise UnknownCodecError(f"{codec_id!r}")
 
 
 def register_codec(cls, codec_id=None):

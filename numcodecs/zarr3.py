@@ -112,6 +112,7 @@ class _NumcodecsCodec(Metadata):
 
     def to_dict(self) -> dict[str, JSON]:
         codec_config = self.codec_config.copy()
+        codec_config.pop("id", None)
         return {
             "name": self.codec_name,
             "configuration": codec_config,
@@ -270,7 +271,7 @@ class Shuffle(_NumcodecsBytesBytesCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if array_spec.dtype.itemsize != self.codec_config.get("elementsize"):
+        if self.codec_config.get("elementsize", None) is None:
             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self  # pragma: no cover
 
@@ -307,7 +308,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec):
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype", None) is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -320,7 +321,7 @@ class Quantize(_NumcodecsArrayArrayCodec):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if str(array_spec.dtype) != self.codec_config.get("dtype"):
+        if self.codec_config.get("dtype", None) is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -355,8 +356,7 @@ class AsType(_NumcodecsArrayArrayCodec):
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
-        decode_dtype = self.codec_config.get("decode_dtype")
-        if str(array_spec.dtype) != decode_dtype:
+        if self.codec_config.get("decode_dtype", None) is None:
             return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 

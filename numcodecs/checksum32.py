@@ -13,7 +13,7 @@ from .jenkins import jenkins_lookup3
 
 _crc32c: Optional[ModuleType] = None
 with suppress(ImportError):
-    import crc32c as _crc32c  # type: ignore[no-redef]
+    import crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing_extensions import Buffer
