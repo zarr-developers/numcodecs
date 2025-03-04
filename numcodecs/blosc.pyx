@@ -235,7 +235,7 @@ def _err_bad_cname(cname):
 err_bad_cname = deprecated(_err_bad_cname)
 
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
-             int blocksize=AUTOBLOCKS):
+             int blocksize=AUTOBLOCKS, typesize=None):
     """Compress data.
 
     Parameters
@@ -279,7 +279,12 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
     source_ptr = source_buffer.ptr
     nbytes = source_buffer.nbytes
-    itemsize = source_buffer.itemsize
+    if isinstance(typesize, int):
+        if typesize < 1:
+            raise ValueError(f"Cannot use typesize {typesize} less than 1.")
+        itemsize = typesize
+    else:
+        itemsize = source_buffer.itemsize
 
     # determine shuffle
     if shuffle == AUTOSHUFFLE:
@@ -552,6 +557,8 @@ class Blosc(Codec):
     blocksize : int
         The requested size of the compressed blocks.  If 0 (default), an automatic
         blocksize will be used.
+    typesize : int, optional
+        The size in bytes of uncompressed array elements.
 
     See Also
     --------
@@ -566,7 +573,9 @@ class Blosc(Codec):
     AUTOSHUFFLE = AUTOSHUFFLE
     max_buffer_size = 2**31 - 1
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
+    def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS, typesize=None):
+        if isinstance(typesize, int) and typesize < 1:
+            raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         self.cname = cname
         if isinstance(cname, str):
             self._cname_bytes = cname.encode('ascii')
@@ -575,10 +584,11 @@ class Blosc(Codec):
         self.clevel = clevel
         self.shuffle = shuffle
         self.blocksize = blocksize
+        self.typesize = typesize
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize)
+        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize, self.typesize)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)

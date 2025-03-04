@@ -273,3 +273,26 @@ def test_max_buffer_size():
         _skip_null(codec)
         assert codec.max_buffer_size == 2**31 - 1
         check_max_buffer_size(codec)
+
+
+def test_typesize_explicit():
+    arr = np.arange(100).astype("int64")
+    itemsize = arr.itemsize
+    codec_no_type_size = Blosc(shuffle=Blosc.SHUFFLE)
+    codec_itemsize = Blosc(shuffle=Blosc.SHUFFLE, typesize=itemsize)
+    encoded_without_itemsize = codec_no_type_size.encode(arr.tobytes())
+    encoded_with_itemsize = codec_itemsize.encode(arr.tobytes())
+    # third byte encodes the `typesize`
+    assert encoded_without_itemsize[3] == 1  # inferred from bytes i.e., 1
+    assert encoded_with_itemsize[3] == itemsize  # given as a constructor argument
+
+
+def test_typesize_less_than_1():
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
+    compressor = Blosc(shuffle=Blosc.SHUFFLE)
+    # not really something that should be done in practice, but good for testing.
+    compressor.typesize = 0
+    arr = np.arange(100)
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        compressor.encode(arr.tobytes())
