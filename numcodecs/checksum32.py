@@ -1,11 +1,12 @@
+import abc
 import struct
 import zlib
-from collections.abc import Callable
 from contextlib import suppress
 from types import ModuleType
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import Literal, Optional
 
 import numpy as np
+from typing_extensions import Buffer
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
@@ -15,15 +16,11 @@ _crc32c: Optional[ModuleType] = None
 with suppress(ImportError):
     import crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
 
-if TYPE_CHECKING:  # pragma: no cover
-    from typing_extensions import Buffer
-
 CHECKSUM_LOCATION = Literal['start', 'end']
 
 
-class Checksum32(Codec):
+class Checksum32(Codec, abc.ABC):
     # override in sub-class
-    checksum: Callable[["Buffer", int], int] | None = None
     location: CHECKSUM_LOCATION = 'start'
 
     def __init__(self, location: CHECKSUM_LOCATION | None = None):
@@ -67,6 +64,10 @@ class Checksum32(Codec):
             )
         return ndarray_copy(payload_view, out)
 
+    @staticmethod
+    @abc.abstractmethod
+    def checksum(data: Buffer, value: int) -> int: ...
+
 
 class CRC32(Checksum32):
     """Codec add a crc32 checksum to the buffer.
@@ -78,8 +79,14 @@ class CRC32(Checksum32):
     """
 
     codec_id = 'crc32'
-    checksum = zlib.crc32
     location = 'start'
+
+    @staticmethod
+    def checksum(data: Buffer, value: int = 0) -> int:
+        """
+        Thin wrapper around ``zlib.crc32``.
+        """
+        return zlib.crc32(data, value)
 
 
 class Adler32(Checksum32):
@@ -92,8 +99,14 @@ class Adler32(Checksum32):
     """
 
     codec_id = 'adler32'
-    checksum = zlib.adler32
     location = 'start'
+
+    @staticmethod
+    def checksum(data: Buffer, value: int = 1) -> int:
+        """
+        Thin wrapper around ``zlib.adler32``.
+        """
+        return zlib.adler32(data, value)
 
 
 class JenkinsLookup3(Checksum32):
