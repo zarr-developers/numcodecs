@@ -1,15 +1,15 @@
 import os
 import sys
-from glob import glob
-
-import cpuinfo
-from Cython.Distutils.build_ext import new_build_ext as build_ext
-from setuptools import Extension, setup
-from setuptools.errors import CCompilerError, ExecError, PlatformError
 from distutils import ccompiler
 from distutils.command.clean import clean
 from distutils.sysconfig import customize_compiler
+from glob import glob
+
+import cpuinfo
 import pkgconfig
+from Cython.Distutils.build_ext import new_build_ext as build_ext
+from setuptools import Extension, setup
+from setuptools.errors import CCompilerError, ExecError, PlatformError
 
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
@@ -472,14 +472,14 @@ class ve_build_ext(build_ext):
             build_ext.run(self)
         except PlatformError as e:
             error(e)
-            raise BuildFailed()
+            raise BuildFailed
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
         except ext_errors as e:
             error(e)
-            raise BuildFailed()
+            raise BuildFailed
 
 
 class Sclean(clean):
