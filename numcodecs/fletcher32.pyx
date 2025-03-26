@@ -63,15 +63,15 @@ class Fletcher32(Codec):
     def encode(self, buf):
         """Return buffer plus 4-byte fletcher checksum"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
-        cdef const uint8_t[::1] b_ptr = buf
-        val = _fletcher32(b_ptr)
+        cdef const uint8_t[::1] b_mv = buf
+        val = _fletcher32(b_mv)
         return buf.tobytes() + struct.pack("<I", val)
 
     def decode(self, buf, out=None):
         """Check fletcher checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
-        cdef const uint8_t[::1] b_ptr = b[:-4]
-        val = _fletcher32(b_ptr)
+        cdef const uint8_t[::1] b_mv = b[:-4]
+        val = _fletcher32(b_mv)
         found = b[-4:].view("<u4")[0]
         if val != found:
             raise RuntimeError(
