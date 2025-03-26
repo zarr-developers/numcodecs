@@ -306,40 +306,44 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         raise ValueError('invalid shuffle argument; expected -1, 0, 1 or 2, found %r' %
                          shuffle)
 
-    # setup destination
-    dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
-    dest_ptr = PyBytes_AS_STRING(dest)
+    try:
 
-    # perform compression
-    if _get_use_threads():
-        # allow blosc to use threads internally
+        # setup destination
+        dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
+        dest_ptr = PyBytes_AS_STRING(dest)
 
-        # N.B., we are using blosc's global context, and so we need to use a lock
-        # to ensure no-one else can modify the global context while we're setting it
-        # up and using it.
-        with get_mutex():
+        # perform compression
+        if _get_use_threads():
+            # allow blosc to use threads internally
 
-            # set compressor
-            compressor_set = blosc_set_compressor(cname)
-            if compressor_set < 0:
-                # shouldn't happen if we checked against list of compressors
-                # already, but just in case
-                _err_bad_cname(cname_str)
+            # N.B., we are using blosc's global context, and so we need to use a lock
+            # to ensure no-one else can modify the global context while we're setting it
+            # up and using it.
+            with get_mutex():
 
-            # set blocksize
-            blosc_set_blocksize(blocksize)
+                # set compressor
+                compressor_set = blosc_set_compressor(cname)
+                if compressor_set < 0:
+                    # shouldn't happen if we checked against list of compressors
+                    # already, but just in case
+                    _err_bad_cname(cname_str)
 
-            # perform compression
+                # set blocksize
+                blosc_set_blocksize(blocksize)
+
+                # perform compression
+                with nogil:
+                    cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
+
+        else:
             with nogil:
-                cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                        dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
+                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
+                                            cname, blocksize, 1)
 
-    else:
-        with nogil:
-            cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                        dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
-                                        cname, blocksize, 1)
-
+    finally:
+        pass
 
     # check compression was successful
     if cbytes <= 0:
@@ -403,19 +407,23 @@ def decompress(source, dest=None):
     dest_ptr = <char*>dest_pb.buf
     dest_nbytes = dest_pb.len
 
-    # guard condition
-    if dest_nbytes < nbytes:
-        raise ValueError('destination buffer too small; expected at least %s, '
-                         'got %s' % (nbytes, dest_nbytes))
+    try:
 
-    # perform decompression
-    if _get_use_threads():
-        # allow blosc to use threads internally
-        with nogil:
-            ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
-    else:
-        with nogil:
-            ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+        # guard condition
+        if dest_nbytes < nbytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (nbytes, dest_nbytes))
+
+        # perform decompression
+        if _get_use_threads():
+            # allow blosc to use threads internally
+            with nogil:
+                ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
+        else:
+            with nogil:
+                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+    finally:
+        pass
 
     # handle errors
     if ret <= 0:
@@ -490,10 +498,13 @@ def _decompress_partial(source, start, nitems, dest=None):
     dest_nbytes = dest_pb.len
 
     # try decompression
-    if dest_nbytes < nitems_bytes:
-        raise ValueError('destination buffer too small; expected at least %s, '
-                         'got %s' % (nitems_bytes, dest_nbytes))
-    ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
+    try:
+        if dest_nbytes < nitems_bytes:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (nitems_bytes, dest_nbytes))
+        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
+    finally:
+        pass
 
     # ret refers to the number of bytes returned from blosc_getitem.
     if ret <= 0:

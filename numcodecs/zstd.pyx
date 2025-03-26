@@ -186,32 +186,37 @@ def decompress(source, dest=None):
     source_ptr = <const char*>source_pb.buf
     source_size = source_pb.len
 
-    # determine uncompressed size
-    dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
-    if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
-        raise RuntimeError('Zstd decompression error: invalid input data')
+    try:
 
-    # setup destination buffer
-    if dest is None:
-        # allocate memory
-        dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
-    else:
-        dest_1d = ensure_contiguous_ndarray(dest)
+        # determine uncompressed size
+        dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
+        if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_UNKNOWN or dest_size == ZSTD_CONTENTSIZE_ERROR:
+            raise RuntimeError('Zstd decompression error: invalid input data')
 
-    # obtain dest memoryview
-    dest_mv = memoryview(dest_1d)
-    dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
-    dest_ptr = <char*>dest_pb.buf
-    dest_nbytes = dest_pb.len
+        # setup destination buffer
+        if dest is None:
+            # allocate memory
+            dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
+        else:
+            dest_1d = ensure_contiguous_ndarray(dest)
 
-    # validate output buffer
-    if dest_nbytes < dest_size:
-        raise ValueError('destination buffer too small; expected at least %s, '
-                         'got %s' % (dest_size, dest_nbytes))
+        # obtain dest memoryview
+        dest_mv = memoryview(dest_1d)
+        dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
+        dest_ptr = <char*>dest_pb.buf
+        dest_nbytes = dest_pb.len
 
-    # perform decompression
-    with nogil:
-        decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
+        # validate output buffer
+        if dest_nbytes < dest_size:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (dest_size, dest_nbytes))
+
+        # perform decompression
+        with nogil:
+            decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
+
+    finally:
+        pass
 
     # check decompression was successful
     if ZSTD_isError(decompressed_size):
