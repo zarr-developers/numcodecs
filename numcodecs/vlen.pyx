@@ -12,6 +12,10 @@ import numpy as np
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray
 from cpython.buffer cimport PyBuffer_IsContiguous
+from cpython.bytearray cimport (
+    PyByteArray_AS_STRING,
+    PyByteArray_FromStringAndSize,
+)
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_GET_SIZE,
@@ -19,17 +23,14 @@ from cpython.bytes cimport (
     PyBytes_FromStringAndSize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
-from cpython.unicode cimport PyUnicode_AsUTF8String
+from cpython.unicode cimport (
+    PyUnicode_AsUTF8String,
+    PyUnicode_Check,
+    PyUnicode_FromStringAndSize,
+)
 from libc.stdint cimport uint8_t
 from libc.string cimport memcpy
 from ._utils cimport store_le32, load_le32
-
-
-cdef extern from "Python.h":
-    bytearray PyByteArray_FromStringAndSize(char *v, Py_ssize_t l)
-    char* PyByteArray_AS_STRING(object string)
-    object PyUnicode_FromStringAndSize(const char *u, Py_ssize_t size)
-    int PyUnicode_Check(object text)
 
 
 # 4 bytes to store number of items
