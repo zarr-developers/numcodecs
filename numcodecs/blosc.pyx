@@ -288,11 +288,6 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     source_ptr = <const char*>source_pb.buf
     nbytes = source_pb.len
 
-    # setup source buffer
-    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
-    nbytes = source_buffer.nbytes
-
     # validate typesize
     if isinstance(typesize, int):
         if typesize < 1:
