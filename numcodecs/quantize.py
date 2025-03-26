@@ -65,17 +65,15 @@ class Quantize(Codec):
         precision = 10.0**-self.digits
         exp = math.log10(precision)
         if exp < 0:
-            exp = int(math.floor(exp))
+            exp = math.floor(exp)
         else:
-            exp = int(math.ceil(exp))
+            exp = math.ceil(exp)
         bits = math.ceil(math.log2(10.0**-exp))
         scale = 2.0**bits
         enc = np.around(scale * arr) / scale
 
         # cast dtype
-        enc = enc.astype(self.astype, copy=False)
-
-        return enc
+        return enc.astype(self.astype, copy=False)
 
     def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
@@ -85,12 +83,12 @@ class Quantize(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            digits=self.digits,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        return {
+            'id': self.codec_id,
+            'digits': self.digits,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'

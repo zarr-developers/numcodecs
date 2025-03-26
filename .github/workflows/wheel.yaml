@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-13 is an intel runner, macos-14 is a arm64 runner
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        # macos-13 is an intel runner, macos-14 is an arm64 runner
+        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-*"
@@ -26,7 +26,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.21.3
+      - uses: pypa/cibuildwheel@v2.23.0
 
       - uses: actions/upload-artifact@v4
         with:

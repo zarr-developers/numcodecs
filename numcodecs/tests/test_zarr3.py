@@ -66,17 +66,19 @@ def test_docstring(codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
         numcodecs.zarr3.Shuffle,
     ],
 )
-def test_generic_codec_class(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_compressor(
+    store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsBytesBytesCodec]
+):
     data = np.arange(0, 256, dtype="uint16").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[BytesCodec(), codec_class()],
+            compressors=[codec_class()],
         )
 
     a[:, :] = data.copy()
@@ -89,7 +91,7 @@ def test_generic_codec_class(store: StorePath, codec_class: type[numcodecs.zarr3
         (numcodecs.zarr3.Delta, {"dtype": "float32"}),
         (numcodecs.zarr3.FixedScaleOffset, {"offset": 0, "scale": 25.5}),
         (numcodecs.zarr3.FixedScaleOffset, {"offset": 0, "scale": 51, "astype": "uint16"}),
-        (numcodecs.zarr3.AsType, {"encode_dtype": "float32", "decode_dtype": "float64"}),
+        (numcodecs.zarr3.AsType, {"encode_dtype": "float32", "decode_dtype": "float32"}),
     ],
     ids=[
         "delta",
@@ -100,26 +102,25 @@ def test_generic_codec_class(store: StorePath, codec_class: type[numcodecs.zarr3
 )
 def test_generic_filter(
     store: StorePath,
-    codec_class: type[numcodecs.zarr3._NumcodecsCodec],
+    codec_class: type[numcodecs.zarr3._NumcodecsArrayArrayCodec],
     codec_config: dict[str, JSON],
 ):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[
+            filters=[
                 codec_class(**codec_config),
-                BytesCodec(),
             ],
         )
 
         a[:, :] = data.copy()
-        a = Array.open(store / "generic")
+        a = zarr.open_array(store / "generic", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
 
@@ -127,17 +128,17 @@ def test_generic_filter_bitround(store: StorePath):
     data = np.linspace(0, 1, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic_bitround",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[numcodecs.zarr3.BitRound(keepbits=3), BytesCodec()],
+            filters=[numcodecs.zarr3.BitRound(keepbits=3)],
         )
 
         a[:, :] = data.copy()
-        a = Array.open(store / "generic_bitround")
+        a = zarr.open_array(store / "generic_bitround", mode="r")
     assert np.allclose(data, a[:, :], atol=0.1)
 
 
@@ -145,17 +146,17 @@ def test_generic_filter_quantize(store: StorePath):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic_quantize",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[numcodecs.zarr3.Quantize(digits=3), BytesCodec()],
+            filters=[numcodecs.zarr3.Quantize(digits=3)],
         )
 
         a[:, :] = data.copy()
-        a = Array.open(store / "generic_quantize")
+        a = zarr.open_array(store / "generic_quantize", mode="r")
     assert np.allclose(data, a[:, :], atol=0.001)
 
 
@@ -164,27 +165,27 @@ def test_generic_filter_packbits(store: StorePath):
     data[0:4, :] = True
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic_packbits",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[numcodecs.zarr3.PackBits(), BytesCodec()],
+            filters=[numcodecs.zarr3.PackBits()],
         )
 
         a[:, :] = data.copy()
-        a = Array.open(store / "generic_packbits")
+        a = zarr.open_array(store / "generic_packbits", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
     with pytest.raises(ValueError, match=".*requires bool dtype.*"):
-        Array.create(
+        zarr.create_array(
             store / "generic_packbits_err",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype="uint32",
             fill_value=0,
-            codecs=[numcodecs.zarr3.PackBits(), BytesCodec()],
+            filters=[numcodecs.zarr3.PackBits()],
         )
 
 
@@ -198,49 +199,81 @@ def test_generic_filter_packbits(store: StorePath):
         numcodecs.zarr3.JenkinsLookup3,
     ],
 )
-def test_generic_checksum(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_checksum(
+    store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsBytesBytesCodec]
+):
     data = np.linspace(0, 10, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic_checksum",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[BytesCodec(), codec_class()],
+            compressors=[codec_class()],
         )
 
         a[:, :] = data.copy()
-        a = Array.open(store / "generic_checksum")
+        a = zarr.open_array(store / "generic_checksum", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
 
 @pytest.mark.parametrize("codec_class", [numcodecs.zarr3.PCodec, numcodecs.zarr3.ZFPY])
-def test_generic_bytes_codec(store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsCodec]):
+def test_generic_bytes_codec(
+    store: StorePath, codec_class: type[numcodecs.zarr3._NumcodecsArrayBytesCodec]
+):
     try:
         codec_class()._codec  # noqa: B018
-    except ValueError as e:
+    except ValueError as e:  # pragma: no cover
         if "codec not available" in str(e):
             pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
         else:
-            raise  # pragma: no cover
-    except ImportError as e:
+            raise
+    except ImportError as e:  # pragma: no cover
         pytest.xfail(f"{codec_class.codec_name} is not available: {e}")
 
     data = np.arange(0, 256, dtype="float32").reshape((16, 16))
 
     with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
-        a = Array.create(
+        a = zarr.create_array(
             store / "generic",
             shape=data.shape,
-            chunk_shape=(16, 16),
+            chunks=(16, 16),
             dtype=data.dtype,
             fill_value=0,
-            codecs=[
-                codec_class(),
-            ],
+            serializer=codec_class(),
         )
 
     a[:, :] = data.copy()
     np.testing.assert_array_equal(data, a[:, :])
+
+
+def test_delta_astype(store: StorePath):
+    data = np.linspace(0, 10, 256, dtype="i8").reshape((16, 16))
+
+    with pytest.warns(UserWarning, match=EXPECTED_WARNING_STR):
+        a = zarr.create_array(
+            store / "generic",
+            shape=data.shape,
+            chunks=(16, 16),
+            dtype=data.dtype,
+            fill_value=0,
+            filters=[
+                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
+            ],
+        )
+
+        a[:, :] = data.copy()
+        a = zarr.open_array(store / "generic", mode="r")
+    np.testing.assert_array_equal(data, a[:, :])
+
+
+def test_repr():
+    codec = numcodecs.zarr3.LZ4(level=5)
+    assert repr(codec) == "LZ4(codec_name='numcodecs.lz4', codec_config={'level': 5})"
+
+
+def test_to_dict():
+    codec = numcodecs.zarr3.LZ4(level=5)
+    assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}

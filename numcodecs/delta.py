@@ -63,12 +63,7 @@ class Delta(Codec):
         enc[0] = arr[0]
 
         # compute differences
-        # using np.subtract for in-place operations
-        if arr.dtype == bool:
-            np.not_equal(arr[1:], arr[:-1], out=enc[1:])
-        else:
-            np.subtract(arr[1:], arr[:-1], out=enc[1:])
-
+        enc[1:] = np.diff(arr)
         return enc
 
     def decode(self, buf, out=None):
@@ -85,13 +80,11 @@ class Delta(Codec):
         np.cumsum(enc, out=dec)
 
         # handle output
-        out = ndarray_copy(dec, out)
-
-        return out
+        return ndarray_copy(dec, out)
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(id=self.codec_id, dtype=self.dtype.str, astype=self.astype.str)
+        return {'id': self.codec_id, 'dtype': self.dtype.str, 'astype': self.astype.str}
 
     def __repr__(self):
         r = f'{type(self).__name__}(dtype={self.dtype.str!r}'

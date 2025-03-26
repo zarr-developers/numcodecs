@@ -13,8 +13,15 @@ from setuptools.errors import CCompilerError, ExecError, PlatformError
 # determine CPU support for SSE2 and AVX2
 cpu_info = cpuinfo.get_cpu_info()
 flags = cpu_info.get('flags', [])
-have_sse2 = 'sse2' in flags
-have_avx2 = 'avx2' in flags
+machine = cpuinfo.platform.machine()
+
+# only check for x86 features on x86_64 arch
+have_sse2 = False
+have_avx2 = False
+if machine == 'x86_64':
+    have_sse2 = 'sse2' in flags
+    have_avx2 = 'avx2' in flags
+
 disable_sse2 = 'DISABLE_NUMCODECS_SSE2' in os.environ
 disable_avx2 = 'DISABLE_NUMCODECS_AVX2' in os.environ
 
@@ -24,7 +31,7 @@ base_compile_args = []
 if have_cflags:
     # respect compiler options set by user
     pass
-elif os.name == 'posix':
+elif os.name == 'posix' and machine == 'x86_64':
     if disable_sse2:
         base_compile_args.append('-mno-sse2')
     elif have_sse2:
@@ -40,12 +47,12 @@ if sys.platform == 'darwin':
 
 
 def info(*msg):
-    kwargs = dict(file=sys.stdout)
+    kwargs = {'file': sys.stdout}
     print('[numcodecs]', *msg, **kwargs)
 
 
 def error(*msg):
-    kwargs = dict(file=sys.stderr)
+    kwargs = {'file': sys.stderr}
     print('[numcodecs]', *msg, **kwargs)
 
 
@@ -53,7 +60,13 @@ def blosc_extension():
     info('setting up Blosc extension')
 
     extra_compile_args = base_compile_args.copy()
+    extra_link_args = []
     define_macros = []
+
+    # ensure pthread is properly linked on POSIX systems
+    if os.name == 'posix':
+        extra_compile_args.append('-pthread')
+        extra_link_args.append('-pthread')
 
     # setup blosc sources
     blosc_sources = [f for f in glob('c-blosc/blosc/*.c') if 'avx2' not in f and 'sse2' not in f]
@@ -111,18 +124,17 @@ def blosc_extension():
     sources = ['numcodecs/blosc.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.blosc',
             sources=sources + blosc_sources,
             include_dirs=include_dirs,
             define_macros=define_macros,
             extra_compile_args=extra_compile_args,
+            extra_link_args=extra_link_args,
             extra_objects=extra_objects,
         ),
     ]
-
-    return extensions
 
 
 def zstd_extension():
@@ -153,7 +165,7 @@ def zstd_extension():
         extra_objects = []
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.zstd',
             sources=sources + zstd_sources,
@@ -163,8 +175,6 @@ def zstd_extension():
             extra_objects=extra_objects,
         ),
     ]
-
-    return extensions
 
 
 def lz4_extension():
@@ -182,7 +192,7 @@ def lz4_extension():
     sources = ['numcodecs/lz4.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.lz4',
             sources=sources + lz4_sources,
@@ -191,8 +201,6 @@ def lz4_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def vlen_extension():
@@ -209,7 +217,7 @@ def vlen_extension():
     sources = ['numcodecs/vlen.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.vlen',
             sources=sources,
@@ -218,8 +226,6 @@ def vlen_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def fletcher_extension():
@@ -235,7 +241,7 @@ def fletcher_extension():
     sources = ['numcodecs/fletcher32.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.fletcher32',
             sources=sources,
@@ -244,8 +250,6 @@ def fletcher_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def jenkins_extension():
@@ -261,7 +265,7 @@ def jenkins_extension():
     sources = ['numcodecs/jenkins.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension(
             'numcodecs.jenkins',
             sources=sources,
@@ -270,8 +274,6 @@ def jenkins_extension():
             extra_compile_args=extra_compile_args,
         ),
     ]
-
-    return extensions
 
 
 def shuffle_extension():
@@ -282,11 +284,9 @@ def shuffle_extension():
     sources = ['numcodecs/_shuffle.pyx']
 
     # define extension module
-    extensions = [
+    return [
         Extension('numcodecs._shuffle', sources=sources, extra_compile_args=extra_compile_args),
     ]
-
-    return extensions
 
 
 if sys.platform == 'win32':
@@ -304,8 +304,10 @@ class ve_build_ext(build_ext):
 
     def run(self):
         try:
-            if cpuinfo.platform.machine() == 'x86_64':
-                S_files = glob('c-blosc/internal-complibs/zstd*/decompress/*amd64.S')
+            machine = cpuinfo.platform.machine()
+            if machine in ('x86_64', 'aarch64'):
+                pattern = '*amd64.S' if machine == 'x86_64' else '*aarch64.S'
+                S_files = glob(f'c-blosc/internal-complibs/zstd*/decompress/{pattern}')
                 compiler = ccompiler.new_compiler()
                 customize_compiler(compiler)
                 compiler.src_extensions.append('.S')
@@ -348,7 +350,7 @@ def run_setup(with_extensions):
             + jenkins_extension()
         )
 
-        cmdclass = dict(build_ext=ve_build_ext, clean=Sclean)
+        cmdclass = {'build_ext': ve_build_ext, 'clean': Sclean}
     else:
         ext_modules = []
         cmdclass = {}

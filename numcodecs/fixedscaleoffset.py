@@ -94,9 +94,7 @@ class FixedScaleOffset(Codec):
         enc = np.around(enc)
 
         # convert dtype
-        enc = enc.astype(self.astype, copy=False)
-
-        return enc
+        return enc.astype(self.astype, copy=False)
 
     def decode(self, buf, out=None):
         # interpret buffer as numpy array
@@ -116,13 +114,13 @@ class FixedScaleOffset(Codec):
 
     def get_config(self):
         # override to handle encoding dtypes
-        return dict(
-            id=self.codec_id,
-            scale=self.scale,
-            offset=self.offset,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
+        return {
+            'id': self.codec_id,
+            'scale': self.scale,
+            'offset': self.offset,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         r = f'{type(self).__name__}(scale={self.scale}, offset={self.offset}, dtype={self.dtype.str!r}'
