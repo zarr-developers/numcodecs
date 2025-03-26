@@ -105,6 +105,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         with nogil:
             compressed_size = LZ4_compress_fast(source_ptr, dest_start, source_size, dest_size,
                                                 acceleration)
+
     finally:
         pass
 

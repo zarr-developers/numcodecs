@@ -429,6 +429,7 @@ def decompress(source, dest=None):
         else:
             with nogil:
                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+
     finally:
         pass
 
