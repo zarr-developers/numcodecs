@@ -117,6 +117,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
     compressed_size += sizeof(uint32_t)
     dest_objptr = <PyObject*>dest
     _PyBytes_Resize(&dest_objptr, compressed_size)
+    dest = <bytes>dest_objptr
 
     return dest
 

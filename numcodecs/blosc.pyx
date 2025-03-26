@@ -358,6 +358,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     # resize after compression
     dest_objptr = <PyObject*>dest
     _PyBytes_Resize(&dest_objptr, cbytes)
+    dest = <bytes>dest_objptr
 
     return dest
 

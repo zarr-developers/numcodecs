@@ -153,6 +153,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     # resize after compression
     dest_objptr = <PyObject*>dest
     _PyBytes_Resize(&dest_objptr, compressed_size)
+    dest = <bytes>dest_objptr
 
     return dest
 
