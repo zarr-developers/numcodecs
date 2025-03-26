@@ -177,7 +177,7 @@ def decompress(source, dest=None):
     cdef:
         memoryview source_mv
         const Py_buffer* source_pb
-        char* source_ptr
+        const char* source_ptr
         memoryview dest_mv
         Py_buffer* dest_pb
         char* dest_ptr
