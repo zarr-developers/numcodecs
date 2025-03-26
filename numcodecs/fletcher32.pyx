@@ -2,12 +2,15 @@
 # cython: overflowcheck=False
 # cython: cdivision=True
 
-from numcodecs.abc import Codec
-from numcodecs.compat import ensure_contiguous_ndarray
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t
 
+from cpython.bytes cimport PyBytes_FromStringAndSize
+
 from ._utils cimport store_le32, load_le32
+
+from numcodecs.abc import Codec
+from numcodecs.compat import ensure_contiguous_ndarray
 
 
 cdef uint32_t _fletcher32(const uint8_t[::1] _data):
