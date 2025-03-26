@@ -37,6 +37,8 @@ Fixes
 ~~~~~
 * Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
   By :user:`Norman Rzepka <normanrz>`, :issue:`685`
+* Preallocate output buffers and resize directly as needed.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
 
 Maintenance
 ~~~~~~~~~~~
