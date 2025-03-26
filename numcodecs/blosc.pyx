@@ -469,9 +469,9 @@ def _decompress_partial(source, start, nitems, dest=None):
         int encoding_size
         int nitems_bytes
         int start_bytes
-        const char* source_ptr
         memoryview source_mv
         const Py_buffer* source_pb
+        const char* source_ptr
         memoryview dest_mv
         Py_buffer* dest_pb
         char* dest_ptr
