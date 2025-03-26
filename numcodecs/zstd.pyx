@@ -124,14 +124,20 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         error = ZSTD_getErrorName(param_set_result)
         raise RuntimeError('Could not set zstd checksum flag: %s' % error)
 
-    # setup destination
-    dest_size = ZSTD_compressBound(source_size)
-    dest = PyBytes_FromStringAndSize(NULL, dest_size)
-    dest_ptr = PyBytes_AS_STRING(dest)
+    try:
 
-    # perform compression
-    with nogil:
-        compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
+        # setup destination
+        dest_size = ZSTD_compressBound(source_size)
+        dest = PyBytes_FromStringAndSize(NULL, dest_size)
+        dest_ptr = PyBytes_AS_STRING(dest)
+
+        # perform compression
+        with nogil:
+            compressed_size = ZSTD_compress2(cctx, dest_ptr, dest_size, source_ptr, source_size)
+
+    finally:
+        if cctx:
+            ZSTD_freeCCtx(cctx)
 
     # check compression was successful
     if ZSTD_isError(compressed_size):
