@@ -5,10 +5,11 @@
 # cython: language_level=3
 
 
+from libc.stdint cimport uint8_t, uint32_t
+
 from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
-from libc.stdint cimport uint8_t, uint32_t
 
 from ._utils cimport store_le32, load_le32
 from .compat import ensure_contiguous_ndarray
