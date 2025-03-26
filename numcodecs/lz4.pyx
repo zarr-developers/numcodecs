@@ -8,8 +8,13 @@
 from libc.stdint cimport uint8_t, uint32_t
 
 from cpython.buffer cimport PyBuffer_IsContiguous
-from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from cpython.bytes cimport (
+    PyBytes_AS_STRING,
+    PyBytes_FromStringAndSize,
+    _PyBytes_Resize,
+)
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
+from cpython.object cimport PyObject
 
 from ._utils cimport store_le32, load_le32
 from .compat import ensure_contiguous_ndarray
@@ -69,6 +74,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         const Py_buffer* source_pb
         const char* source_ptr
         bytes dest
+        PyObject* dest_objptr
         char* dest_ptr
         char* dest_start
         int source_size, dest_size, compressed_size
@@ -108,7 +114,8 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
 
     # resize after compression
     compressed_size += sizeof(uint32_t)
-    dest = dest[:compressed_size]
+    dest_objptr = <PyObject*>dest
+    _PyBytes_Resize(&dest_objptr, compressed_size)
 
     return dest
 

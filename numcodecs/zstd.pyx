@@ -6,8 +6,13 @@
 
 
 from cpython.buffer cimport PyBuffer_IsContiguous
-from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from cpython.bytes cimport (
+    PyBytes_AS_STRING,
+    PyBytes_FromStringAndSize,
+    _PyBytes_Resize,
+)
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
+from cpython.object cimport PyObject
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
@@ -95,6 +100,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         const char* source_ptr
         size_t source_size, dest_size, compressed_size
         bytes dest
+        PyObject* dest_objptr
         char* dest_ptr
 
     # check level
@@ -145,7 +151,8 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         raise RuntimeError('Zstd compression error: %s' % error)
 
     # resize after compression
-    dest = dest[:compressed_size]
+    dest_objptr = <PyObject*>dest
+    _PyBytes_Resize(&dest_objptr, compressed_size)
 
     return dest
 

@@ -10,8 +10,13 @@ from deprecated import deprecated
 
 
 from cpython.buffer cimport PyBuffer_IsContiguous
-from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from cpython.bytes cimport (
+    PyBytes_AS_STRING,
+    PyBytes_FromStringAndSize,
+    _PyBytes_Resize,
+)
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
+from cpython.object cimport PyObject
 
 
 from .compat import ensure_contiguous_ndarray
@@ -271,6 +276,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         size_t nbytes, itemsize
         int cbytes
         bytes dest
+        PyObject* dest_objptr
         char* dest_ptr
 
     # check valid cname early
@@ -350,7 +356,8 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         raise RuntimeError('error during blosc compression: %d' % cbytes)
 
     # resize after compression
-    dest = dest[:cbytes]
+    dest_objptr = <PyObject*>dest
+    _PyBytes_Resize(&dest_objptr, cbytes)
 
     return dest
 
