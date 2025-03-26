@@ -82,6 +82,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
     if not PyBuffer_IsContiguous(source_pb, b'A'):
         raise BufferError("`source` must contain contiguous memory")
 
+    # extract metadata
     source_ptr = <const char*>source_pb.buf
     source_size = source_pb.len
 
