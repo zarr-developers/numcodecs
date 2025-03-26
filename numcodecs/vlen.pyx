@@ -428,6 +428,9 @@ class VLenArray(Codec):
             const Py_buffer* buf_pb
             const char* data
             const char* data_end
+            object v
+            memoryview v_mv
+            Py_buffer* v_pb
             Py_ssize_t i, l, n_items, data_length
 
         # obtain memoryview
@@ -465,7 +468,14 @@ class VLenArray(Codec):
             data += 4
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = np.frombuffer(data[:l], dtype=self.dtype)
+
+            # Create & fill array value
+            v = np.empty((l,), dtype="uint8").view(self.dtype)
+            v_mv = memoryview(v)
+            v_pb = PyMemoryView_GET_BUFFER(v_mv)
+            memcpy(v_pb.buf, data, l)
+
+            out[i] = v
             data += l
 
         return out
