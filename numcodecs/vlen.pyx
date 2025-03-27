@@ -413,8 +413,8 @@ class VLenArray(Codec):
 
             value_mv = memoryview(normed_values[i])
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
-
             encv = <const char*>value_pb.buf
+
             memcpy(data, encv, l)
             data += l
 
