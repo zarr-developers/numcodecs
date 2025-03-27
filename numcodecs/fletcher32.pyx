@@ -84,6 +84,7 @@ class Fletcher32(Codec):
         """Check fletcher checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         cdef const uint8_t[::1] b_mv = b
+
         val = _fletcher32(b_mv[:-4])
         found = load_le32(&b_mv[-4])
         if val != found:
