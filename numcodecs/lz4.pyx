@@ -13,18 +13,11 @@ from cpython.bytes cimport (
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
-from .compat_ext cimport ensure_continguous_memoryview
+from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
 from ._utils cimport store_le32, load_le32
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
-
-
-cdef extern from *:
-    """
-    #define PyBytes_RESIZE(b, n) _PyBytes_Resize(&b, n)
-    """
-    int PyBytes_RESIZE(object b, Py_ssize_t n) except -1
 
 
 cdef extern from "lz4.h":
