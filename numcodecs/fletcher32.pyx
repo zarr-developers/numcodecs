@@ -4,6 +4,7 @@
 
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t
+from libc.string cimport memcpy
 
 from cpython.bytes cimport PyBytes_FromStringAndSize
 
@@ -68,15 +69,15 @@ class Fletcher32(Codec):
         """Return buffer plus 4-byte fletcher checksum"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         cdef const uint8_t[::1] b_mv = buf
+        cdef uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
         cdef Py_ssize_t out_len = b_len + 4
         cdef bytes out = PyBytes_FromStringAndSize(NULL, out_len)
         cdef uint8_t* out_ptr = <uint8_t*>out
-        cdef uint8_t[::1] out_mv = (<uint8_t[:(out_len + 1):1]>out_ptr)[:out_len]
 
-        out_mv[:-4] = b_mv
-        store_le32(&out_mv[-4], _fletcher32(b_mv))
+        memcpy(out_ptr, b_ptr, b_len)
+        store_le32(out_ptr + b_len, _fletcher32(b_mv))
 
         return out
 
@@ -84,6 +85,8 @@ class Fletcher32(Codec):
         """Check fletcher checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         cdef const uint8_t[::1] b_mv = b
+        cdef uint8_t* b_ptr = &b_mv[0]
+        cdef Py_ssize_t b_len = len(b_mv)
 
         val = _fletcher32(b_mv[:-4])
         found = load_le32(&b_mv[-4])
@@ -95,8 +98,10 @@ class Fletcher32(Codec):
             )
 
         cdef uint8_t[::1] out_mv
+        cdef uint8_t* out_ptr
         if out is not None:
             out_mv = ensure_contiguous_ndarray(out).view("uint8")
-            out_mv[:] = b_mv[:-4]
+            out_ptr = &out_mv[0]
+            memcpy(out_ptr, b_ptr, b_len - 4)
             return out
         return memoryview(b[:-4])
