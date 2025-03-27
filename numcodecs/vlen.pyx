@@ -30,6 +30,7 @@ from cpython.unicode cimport (
 
 from numpy cimport ndarray
 
+from .compat_ext cimport ensure_continguous_memoryview
 from ._utils cimport store_le32, load_le32
 
 import numpy as np
@@ -416,7 +417,7 @@ class VLenArray(Codec):
             store_le32(<uint8_t*>data, l)
             data += 4
 
-            value_mv = memoryview(normed_values[i])
+            value_mv = ensure_continguous_memoryview(normed_values[i])
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
             encv = <const char*>value_pb.buf
 
