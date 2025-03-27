@@ -103,5 +103,6 @@ class Fletcher32(Codec):
             out_mv = ensure_contiguous_ndarray(out).view("uint8")
             out_ptr = &out_mv[0]
             memcpy(out_ptr, b_ptr, b_len - 4)
-            return out
-        return memoryview(b[:-4])
+        else:
+            out = b_mv[:-4]
+        return out
