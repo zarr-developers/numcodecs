@@ -7,10 +7,7 @@
 
 from libc.stdint cimport uint8_t, uint32_t
 
-from cpython.bytes cimport (
-    PyBytes_AS_STRING,
-    PyBytes_FromStringAndSize,
-)
+from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
 from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
