@@ -90,6 +90,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
     source_size = source_pb.len
 
     try:
+
         # setup destination
         dest_size = LZ4_compressBound(source_size)
         dest = PyBytes_FromStringAndSize(NULL, dest_size + sizeof(uint32_t))
