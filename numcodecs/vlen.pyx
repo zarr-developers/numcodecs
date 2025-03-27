@@ -5,12 +5,11 @@
 # cython: language_level=3
 
 
-import cython
 cimport cython
-from numpy cimport ndarray
-import numpy as np
-from .abc import Codec
-from .compat import ensure_contiguous_ndarray
+
+from libc.stdint cimport uint8_t
+from libc.string cimport memcpy
+
 from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytearray cimport (
     PyByteArray_AS_STRING,
@@ -28,9 +27,15 @@ from cpython.unicode cimport (
     PyUnicode_Check,
     PyUnicode_FromStringAndSize,
 )
-from libc.stdint cimport uint8_t
-from libc.string cimport memcpy
+
+from numpy cimport ndarray
+
 from ._utils cimport store_le32, load_le32
+
+import numpy as np
+
+from .abc import Codec
+from .compat import ensure_contiguous_ndarray
 
 
 # 4 bytes to store number of items
