@@ -9,13 +9,18 @@ from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_FromStringAndSize,
-    _PyBytes_Resize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
-from cpython.object cimport PyObject
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
+
+
+cdef extern from *:
+    """
+    #define PyBytes_RESIZE(b, n) _PyBytes_Resize(&b, n)
+    """
+    int PyBytes_RESIZE(object b, Py_ssize_t n) except -1
 
 
 cdef extern from "zstd.h":
@@ -100,7 +105,6 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         const char* source_ptr
         size_t source_size, dest_size, compressed_size
         bytes dest
-        PyObject* dest_objptr
         char* dest_ptr
 
     # check level
@@ -151,9 +155,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         raise RuntimeError('Zstd compression error: %s' % error)
 
     # resize after compression
-    dest_objptr = <PyObject*>dest
-    _PyBytes_Resize(&dest_objptr, compressed_size)
-    dest = <bytes>dest_objptr
+    PyBytes_RESIZE(dest, compressed_size)
 
     return dest
 

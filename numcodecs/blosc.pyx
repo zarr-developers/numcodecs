@@ -13,14 +13,19 @@ from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_FromStringAndSize,
-    _PyBytes_Resize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
-from cpython.object cimport PyObject
 
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
+
+
+cdef extern from *:
+    """
+    #define PyBytes_RESIZE(b, n) _PyBytes_Resize(&b, n)
+    """
+    int PyBytes_RESIZE(object b, Py_ssize_t n) except -1
 
 
 cdef extern from "blosc.h":
@@ -276,7 +281,6 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         size_t nbytes, itemsize
         int cbytes
         bytes dest
-        PyObject* dest_objptr
         char* dest_ptr
 
     # check valid cname early
@@ -356,9 +360,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         raise RuntimeError('error during blosc compression: %d' % cbytes)
 
     # resize after compression
-    dest_objptr = <PyObject*>dest
-    _PyBytes_Resize(&dest_objptr, cbytes)
-    dest = <bytes>dest_objptr
+    PyBytes_RESIZE(dest, cbytes)
 
     return dest
 
