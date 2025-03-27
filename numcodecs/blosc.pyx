@@ -9,13 +9,13 @@ import os
 from deprecated import deprecated
 
 
-from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_FromStringAndSize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
+from .compat_ext cimport ensure_continguous_memoryview
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
@@ -168,10 +168,8 @@ def _cbuffer_sizes(source):
         size_t nbytes, cbytes, blocksize
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # determine buffer size
     blosc_cbuffer_sizes(source_pb.buf, &nbytes, &cbytes, &blocksize)
@@ -187,10 +185,8 @@ def cbuffer_complib(source):
         const Py_buffer* source_pb
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # determine buffer size
     complib = blosc_cbuffer_complib(source_pb.buf)
@@ -219,10 +215,8 @@ def _cbuffer_metainfo(source):
         int flags
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # determine buffer size
     blosc_cbuffer_metainfo(source_pb.buf, &typesize, &flags)
@@ -289,10 +283,8 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         _err_bad_cname(cname_str)
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # extract metadata
     source_ptr = <const char*>source_pb.buf
@@ -393,10 +385,8 @@ def decompress(source, dest=None):
         size_t nbytes, cbytes, blocksize
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # get source pointer
     source_ptr = <const char*>source_pb.buf
@@ -480,10 +470,8 @@ def _decompress_partial(source, start, nitems, dest=None):
         size_t dest_nbytes
 
     # obtain source memoryview
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b"A"):
-        raise BufferError("`source` must contain contiguous memory")
 
     # setup source pointer
     source_ptr = <const char*>source_pb.buf

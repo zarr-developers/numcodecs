@@ -7,14 +7,15 @@
 
 from libc.stdint cimport uint8_t, uint32_t
 
-from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_FromStringAndSize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
+from .compat_ext cimport ensure_continguous_memoryview
 from ._utils cimport store_le32, load_le32
+
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
@@ -88,10 +89,8 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         acceleration = DEFAULT_ACCELERATION
 
     # setup source buffer
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # extract metadata
     source_ptr = <const char*>source_pb.buf
@@ -151,10 +150,8 @@ def decompress(source, dest=None):
         int source_size, dest_size, decompressed_size
 
     # setup source buffer
-    source_mv = memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
-    if not PyBuffer_IsContiguous(source_pb, b'A'):
-        raise BufferError("`source` must contain contiguous memory")
 
     # extract source metadata
     source_ptr = <const char*>source_pb.buf
