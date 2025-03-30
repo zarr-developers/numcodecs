@@ -14,6 +14,13 @@ from numcodecs.abc import Codec
 from numcodecs.compat import ensure_contiguous_ndarray
 
 
+cdef extern from *:
+    """
+    const Py_ssize_t FOOTER_LENGTH = sizeof(uint32_t);
+    """
+    const Py_ssize_t FOOTER_LENGTH
+
+
 cdef uint32_t _fletcher32(const uint8_t[::1] _data):
     # converted from
     # https://github.com/Unidata/netcdf-c/blob/main/plugins/H5checksum.c#L109
@@ -66,13 +73,13 @@ class Fletcher32(Codec):
     codec_id = "fletcher32"
 
     def encode(self, buf):
-        """Return buffer plus 4-byte fletcher checksum"""
+        """Return buffer plus a footer with the fletcher checksum (4-bytes)"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         cdef const uint8_t[::1] b_mv = buf
         cdef uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
-        cdef Py_ssize_t out_len = b_len + 4
+        cdef Py_ssize_t out_len = b_len + FOOTER_LENGTH
         cdef bytes out = PyBytes_FromStringAndSize(NULL, out_len)
         cdef uint8_t* out_ptr = <uint8_t*>out
 
@@ -88,8 +95,8 @@ class Fletcher32(Codec):
         cdef uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
-        val = _fletcher32(b_mv[:-4])
-        found = load_le32(&b_mv[-4])
+        val = _fletcher32(b_mv[:-FOOTER_LENGTH])
+        found = load_le32(&b_mv[-FOOTER_LENGTH])
         if val != found:
             raise RuntimeError(
                 f"The fletcher32 checksum of the data ({val}) did not"
@@ -102,7 +109,7 @@ class Fletcher32(Codec):
         if out is not None:
             out_mv = ensure_contiguous_ndarray(out).view("uint8")
             out_ptr = &out_mv[0]
-            memcpy(out_ptr, b_ptr, b_len - 4)
+            memcpy(out_ptr, b_ptr, b_len - FOOTER_LENGTH)
         else:
-            out = b_mv[:-4]
+            out = b_mv[:-FOOTER_LENGTH]
         return out
