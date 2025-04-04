@@ -20,8 +20,12 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+* Add official support for Emscripten (Pyodide) builds. These builds have
+  existed upstream/in-tree in Pyodide, and are now tested here more extensively.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`.
+
 * Add support for the Linux AArch64 architecture, and bump the minimum
-macOS deployment target for x86_64 to 10.13.
+  macOS deployment target for x86_64 to 10.13.
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
 
 Improvements
