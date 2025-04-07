@@ -28,11 +28,22 @@ Improvements
 ~~~~~~~~~~~~
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
   By :user:`Cas Wognum <cwognum>`.
+* Add ``typesize`` argument to ``Blosc`` to allow for buffers that are passed to ``encode``
+  use that information.  zarr v3 currently has its Blosc codec as bytes-to-bytes but does retain
+  the size information so using it here allows for massive compression ratio gains.
+  By :user:`Ilan Gold <ilan-gold>`
 
 Fixes
 ~~~~~
 * Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
   By :user:`Norman Rzepka <normanrz>`, :issue:`685`
+* Preallocate output buffers and resize directly as needed.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
+
+Maintenance
+~~~~~~~~~~~
+* Replace internal ``Buffer`` usage with ``memoryview``\ s.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
 
 .. _release_0.15.0:
 
