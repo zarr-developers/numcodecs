@@ -51,7 +51,7 @@ except OSError:  # pragma: no cover
     ncores = 1
 blosc._init()
 blosc.set_nthreads(min(8, ncores))
-atexit.register(blosc.destroy)
+atexit.register(blosc._destroy)
 
 from numcodecs import zstd as zstd
 from numcodecs.zstd import Zstd

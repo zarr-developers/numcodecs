@@ -6,7 +6,6 @@
 import threading
 import multiprocessing
 import os
-from deprecated import deprecated
 
 
 from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
@@ -44,7 +43,6 @@ cdef extern from "blosc.h":
                        void* src, void* dest, size_t destsize) nogil
     int blosc_decompress(void *src, void *dest, size_t destsize) nogil
     int blosc_getitem(void* src, int start, int nitems, void* dest)
-    int blosc_compname_to_compcode(const char* compname)
     int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                            const void* src, void* dest, size_t destsize,
                            const char* compressor, size_t blocksize,
@@ -99,26 +97,10 @@ def _init():
     """Initialize the Blosc library environment."""
     blosc_init()
 
-init = deprecated(_init)
-
 
 def _destroy():
     """Destroy the Blosc library environment."""
     blosc_destroy()
-
-
-destroy = deprecated(_destroy)
-
-
-def _compname_to_compcode(cname):
-    """Return the compressor code associated with the compressor name. If the compressor
-    name is not recognized, or there is not support for it in this build, -1 is returned
-    instead."""
-    if isinstance(cname, str):
-        cname = cname.encode('ascii')
-    return blosc_compname_to_compcode(cname)
-
-compname_to_compcode = deprecated(_compname_to_compcode)
 
 
 def list_compressors():
@@ -166,7 +148,6 @@ def _cbuffer_sizes(source):
 
     return nbytes, cbytes, blocksize
 
-cbuffer_sizes = deprecated(_cbuffer_sizes)
 
 def cbuffer_complib(source):
     """Return the name of the compression library used to compress `source`."""
@@ -222,13 +203,10 @@ def _cbuffer_metainfo(source):
 
     return typesize, shuffle, memcpyed
 
-cbuffer_metainfo = deprecated(_cbuffer_metainfo)
-
 def _err_bad_cname(cname):
     raise ValueError('bad compressor or compressor not supported: %r; expected one of '
                      '%s' % (cname, list_compressors()))
 
-err_bad_cname = deprecated(_err_bad_cname)
 
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
              int blocksize=AUTOBLOCKS, typesize=None):
@@ -423,86 +401,6 @@ def decompress(source, dest=None):
     return dest
 
 
-def _decompress_partial(source, start, nitems, dest=None):
-    """**Experimental**
-    Decompress data of only a part of a buffer.
-
-    Parameters
-    ----------
-    source : bytes-like
-        Compressed data, including blosc header. Can be any object supporting the buffer
-        protocol.
-    start: int,
-        Offset in item where we want to start decoding
-    nitems: int
-        Number of items we want to decode
-    dest : array-like, optional
-        Object to decompress into.
-
-
-    Returns
-    -------
-    dest : bytes
-        Object containing decompressed data.
-
-    """
-    cdef:
-        int ret
-        int encoding_size
-        int nitems_bytes
-        int start_bytes
-        memoryview source_mv
-        const Py_buffer* source_pb
-        const char* source_ptr
-        memoryview dest_mv
-        Py_buffer* dest_pb
-        char* dest_ptr
-        size_t dest_nbytes
-
-    # obtain source memoryview
-    source_mv = ensure_continguous_memoryview(source)
-    source_pb = PyMemoryView_GET_BUFFER(source_mv)
-
-    # setup source pointer
-    source_ptr = <const char*>source_pb.buf
-
-    # get encoding size from source buffer header
-    encoding_size = source[3]
-
-    # convert variables to handle type and encoding sizes
-    nitems_bytes = nitems * encoding_size
-    start_bytes = (start * encoding_size)
-
-    # setup destination buffer
-    if dest is None:
-        # allocate memory
-        dest_1d = dest = PyBytes_FromStringAndSize(NULL, nitems_bytes)
-    else:
-        dest_1d = ensure_contiguous_ndarray(dest)
-
-    # obtain dest memoryview
-    dest_mv = memoryview(dest_1d)
-    dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
-    dest_ptr = <char*>dest_pb.buf
-    dest_nbytes = dest_pb.len
-
-    # try decompression
-    try:
-        if dest_nbytes < nitems_bytes:
-            raise ValueError('destination buffer too small; expected at least %s, '
-                             'got %s' % (nitems_bytes, dest_nbytes))
-        ret = blosc_getitem(source_ptr, start, nitems, dest_ptr)
-    finally:
-        pass
-
-    # ret refers to the number of bytes returned from blosc_getitem.
-    if ret <= 0:
-        raise RuntimeError('error during blosc partial decompression: %d', ret)
-
-    return dest
-
-decompress_partial = deprecated(_decompress_partial)
-
 # set the value of this variable to True or False to override the
 # default adaptive behaviour
 use_threads = None
@@ -600,11 +498,6 @@ class Blosc(Codec):
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
         return decompress(buf, out)
-
-    def decode_partial(self, buf, int start, int nitems, out=None):
-        '''**Experimental**'''
-        buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return _decompress_partial(buf, start, nitems, dest=out)
 
     def __repr__(self):
         r = '%s(cname=%r, clevel=%r, shuffle=%s, blocksize=%s)' % \

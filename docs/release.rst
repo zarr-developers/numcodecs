@@ -20,9 +20,29 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
-* Add support for the Linux AArch64 architecture, and bump the minimum
+* Add support for the Linux aarch64 architecture, and bump the minimum
 macOS deployment target for x86_64 to 10.13.
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+
+Removals
+~~~~~~~~
+
+The following ``blosc`` funcitons are removed, with no replacement.
+This is because they were not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is removed as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue:`712`
+
+0.15.1
+------
 
 Improvements
 ~~~~~~~~~~~~
@@ -70,7 +90,7 @@ This is because they are not intended to be public API.
 In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
 has always been experimental and there is no equivalent in the official
 blsoc Python package.
-By :user:`David Stansby <dstansby>`, :issue`619`
+By :user:`David Stansby <dstansby>`, :issue:`619`
 
 Fixes
 ~~~~~
