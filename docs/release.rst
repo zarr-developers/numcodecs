@@ -28,6 +28,9 @@ Enhancements
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
 * Preallocate output buffers and resize directly as needed.
   By :user:`John Kirkham <jakirkham>`, :issue:`656`
+* ``Checksum32`` is now an abstract base clase, with ``checksum()`` as an abstract method.
+  This helps ensure that any subclasses implement the ``checksum()`` method.
+  :issue:`711`
 
 Removals
 ~~~~~~~~
