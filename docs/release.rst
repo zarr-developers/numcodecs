@@ -14,6 +14,25 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Enhancements
+~~~~~~~~~~~~
+
+Improvements
+~~~~~~~~~~~~
+
+* In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`723`
+
+Fixes
+~~~~~
+
+Maintenance
+~~~~~~~~~~~
+
+
 0.16.0
 ------
 
