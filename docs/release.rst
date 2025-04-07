@@ -14,6 +14,25 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Enhancements
+~~~~~~~~~~~~
+
+Improvements
+~~~~~~~~~~~~
+
+Fixes
+~~~~~
+
+* Update ``license*`` metadata and include third-party licenses.
+  By :user:`John Kirkham <jakirkham>`, :issue:`729`
+
+Maintenance
+~~~~~~~~~~~
+
+
 0.16.0
 ------
 
