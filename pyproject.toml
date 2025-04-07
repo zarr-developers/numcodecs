@@ -35,6 +35,9 @@ maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
 license = "MIT"
+license-files = [
+    "LICENSE.txt",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
@@ -94,7 +97,6 @@ crc32c = [
 "numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
