@@ -7,7 +7,7 @@
 
 cimport cython
 
-from libc.stdint cimport uint8_t
+from libc.stdint cimport uint8_t, uint32_t
 from libc.string cimport memcpy
 
 from cpython.buffer cimport PyBuffer_IsContiguous
@@ -39,8 +39,12 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray
 
 
-# 4 bytes to store number of items
-cdef Py_ssize_t HEADER_LENGTH = 4
+# Define header size used to store number of items that follow.
+cdef extern from *:
+    """
+    const Py_ssize_t HEADER_LENGTH = sizeof(uint32_t);
+    """
+    const Py_ssize_t HEADER_LENGTH
 
 
 def check_out_param(out, n_items):
@@ -116,7 +120,7 @@ class VLenUTF8(Codec):
             b = PyUnicode_AsUTF8String(u)
             l = PyBytes_GET_SIZE(b)
             encoded_values[i] = b
-            data_length += l + 4  # 4 bytes to store item length
+            data_length += l + HEADER_LENGTH
             encoded_lengths[i] = l
 
         # setup output
@@ -132,7 +136,7 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             l = encoded_lengths[i]
             store_le32(<uint8_t*>data, l)
-            data += 4
+            data += HEADER_LENGTH
             encv = PyBytes_AS_STRING(encoded_values[i])
             memcpy(data, encv, l)
             data += l
@@ -178,10 +182,10 @@ class VLenUTF8(Codec):
         # https://github.com/cython/cython/issues/1608
         data += HEADER_LENGTH
         for i in range(n_items):
-            if data + 4 > data_end:
+            if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             l = load_le32(<uint8_t*>data)
-            data += 4
+            data += HEADER_LENGTH
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             out[i] = PyUnicode_FromStringAndSize(data, l)
@@ -247,7 +251,7 @@ class VLenBytes(Codec):
             elif not PyBytes_Check(b):
                 raise TypeError('expected byte string, found %r' % b)
             l = PyBytes_GET_SIZE(b)
-            data_length += l + 4  # 4 bytes to store item length
+            data_length += l + HEADER_LENGTH
             lengths[i] = l
 
         # setup output
@@ -263,7 +267,7 @@ class VLenBytes(Codec):
         for i in range(n_items):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
-            data += 4
+            data += HEADER_LENGTH
             encv = PyBytes_AS_STRING(values[i])
             memcpy(data, encv, l)
             data += l
@@ -309,10 +313,10 @@ class VLenBytes(Codec):
         # https://github.com/cython/cython/issues/1608
         data += HEADER_LENGTH
         for i in range(n_items):
-            if data + 4 > data_end:
+            if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             l = load_le32(<uint8_t*>data)
-            data += 4
+            data += HEADER_LENGTH
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             out[i] = PyBytes_FromStringAndSize(data, l)
@@ -399,7 +403,7 @@ class VLenArray(Codec):
                 raise ValueError('only 1-dimensional arrays are supported')
             l = v.nbytes
             normed_values[i] = v
-            data_length += l + 4  # 4 bytes to store item length
+            data_length += l + HEADER_LENGTH
             lengths[i] = l
 
         # setup output
@@ -415,7 +419,7 @@ class VLenArray(Codec):
         for i in range(n_items):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
-            data += 4
+            data += HEADER_LENGTH
 
             value_mv = ensure_continguous_memoryview(normed_values[i])
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
@@ -468,10 +472,10 @@ class VLenArray(Codec):
         # https://github.com/cython/cython/issues/1608
         data += HEADER_LENGTH
         for i in range(n_items):
-            if data + 4 > data_end:
+            if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
             l = load_le32(<uint8_t*>data)
-            data += 4
+            data += HEADER_LENGTH
             if data + l > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
 
