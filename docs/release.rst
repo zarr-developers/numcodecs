@@ -23,6 +23,9 @@ Enhancements
 Improvements
 ~~~~~~~~~~~~
 
+* In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`723`
+
 Fixes
 ~~~~~
 
