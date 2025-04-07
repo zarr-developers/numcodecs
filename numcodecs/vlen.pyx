@@ -264,9 +264,10 @@ class VLenBytes(Codec):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
             data += 4
-            encv = PyBytes_AS_STRING(values[i])
-            memcpy(data, encv, l)
-            data += l
+            if l > 0:
+                encv = PyBytes_AS_STRING(values[i])
+                memcpy(data, encv, l)
+                data += l
 
         return out
 
