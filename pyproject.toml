@@ -34,7 +34,7 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = { text = "MIT" }
+license = "MIT"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
