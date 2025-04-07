@@ -76,7 +76,7 @@ class Fletcher32(Codec):
         """Return buffer plus a footer with the fletcher checksum (4-bytes)"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         cdef const uint8_t[::1] b_mv = buf
-        cdef uint8_t* b_ptr = &b_mv[0]
+        cdef const uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
         cdef Py_ssize_t out_len = b_len + FOOTER_LENGTH
@@ -92,7 +92,7 @@ class Fletcher32(Codec):
         """Check fletcher checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         cdef const uint8_t[::1] b_mv = b
-        cdef uint8_t* b_ptr = &b_mv[0]
+        cdef const uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
         val = _fletcher32(b_mv[:-FOOTER_LENGTH])
