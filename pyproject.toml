@@ -37,6 +37,8 @@ maintainers = [
 license = "MIT"
 license-files = [
     "LICENSE.txt",
+    "c-blosc/LICENSE.txt",
+    "c-blosc/LICENSES/*",
 ]
 
 [project.urls]
