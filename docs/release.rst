@@ -14,6 +14,25 @@ Release notes
 
 .. _unreleased:
 
+Unreleased
+----------
+
+Enhancements
+~~~~~~~~~~~~
+
+Improvements
+~~~~~~~~~~~~
+
+Fixes
+~~~~~
+
+* Fix ``const`` discard warnings in ``fletcher32``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`728`
+
+Maintenance
+~~~~~~~~~~~
+
+
 0.16.0
 ------
 
