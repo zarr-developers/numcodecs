@@ -32,6 +32,9 @@ Fixes
 * Fix ``const`` discard warnings in ``fletcher32``.
   By :user:`John Kirkham <jakirkham>`, :issue:`728`
 
+* Add ``#ifdef`` guard around ``PyBytes_RESIZE``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`731`
+
 Maintenance
 ~~~~~~~~~~~
 
