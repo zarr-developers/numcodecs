@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=64",
+    "setuptools>=77",
     "setuptools-scm[toml]>=6.2",
     "Cython",
     "py-cpuinfo",
@@ -24,7 +24,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Operating System :: Unix",
@@ -34,7 +33,12 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = [
+    "LICENSE.txt",
+    "c-blosc/LICENSE.txt",
+    "c-blosc/LICENSES/*",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
@@ -94,7 +98,6 @@ crc32c = [
 "numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
