@@ -227,6 +227,7 @@ class VLenBytes(Codec):
         cdef:
             Py_ssize_t i, l, n_items, data_length, total_length
             object[:] values
+            object[:] normed_values
             int[:] lengths
             char* encv
             object b
@@ -240,6 +241,7 @@ class VLenBytes(Codec):
         n_items = values.shape[0]
 
         # setup intermediates
+        normed_values = np.empty(n_items, dtype=object)
         lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to find lengths
@@ -250,6 +252,7 @@ class VLenBytes(Codec):
                 b = b''
             elif not PyBytes_Check(b):
                 raise TypeError('expected byte string, found %r' % b)
+            normed_values[i] = b
             l = PyBytes_GET_SIZE(b)
             data_length += l + HEADER_LENGTH
             lengths[i] = l
@@ -268,7 +271,7 @@ class VLenBytes(Codec):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
-            encv = PyBytes_AS_STRING(values[i])
+            encv = PyBytes_AS_STRING(normed_values[i])
             memcpy(data, encv, l)
             data += l
 
