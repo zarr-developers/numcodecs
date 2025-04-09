@@ -35,6 +35,9 @@ Fixes
 * Update ``license*`` metadata and include third-party licenses.
   By :user:`John Kirkham <jakirkham>`, :issue:`729`
 
+* Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`732`
+
 Maintenance
 ~~~~~~~~~~~
 
