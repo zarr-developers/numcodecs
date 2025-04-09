@@ -1,4 +1,3 @@
-import sys
 import unittest
 
 import numpy as np
@@ -85,9 +84,6 @@ def test_decode_errors():
         codec.decode(enc, out=np.zeros(10, dtype='i4'))
 
 
-# TODO: fix this test on GitHub actions somehow...
-# See https://github.com/zarr-developers/numcodecs/issues/683
-@pytest.mark.skipif(sys.platform == "darwin", reason="Test is failing on macOS on GitHub actions.")
 def test_encode_none():
     a = np.array([b'foo', None, b'bar'], dtype=object)
     codec = VLenBytes()
