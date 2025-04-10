@@ -17,7 +17,6 @@ contribute code, please `raise an issue on GitHub
 
 """
 
-import atexit
 import multiprocessing
 from contextlib import suppress
 
