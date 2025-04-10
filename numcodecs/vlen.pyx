@@ -114,9 +114,9 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             u = input_values[i]
             if u is None or u == 0:  # treat these as missing value, normalize
-                u = ''
+                u = ""
             elif not PyUnicode_Check(u):
-                raise TypeError('expected unicode string, found %r' % u)
+                raise TypeError("expected unicode string, found %r" % u)
             b = PyUnicode_AsUTF8String(u)
             l = PyBytes_GET_SIZE(b)
             encoded_values[i] = b
@@ -249,9 +249,9 @@ class VLenBytes(Codec):
         for i in range(n_items):
             b = values[i]
             if b is None or b == 0:  # treat these as missing value, normalize
-                b = b''
+                b = b""
             elif not PyBytes_Check(b):
-                raise TypeError('expected byte string, found %r' % b)
+                raise TypeError("expected byte string, found %r" % b)
             normed_values[i] = b
             l = PyBytes_GET_SIZE(b)
             data_length += l + HEADER_LENGTH
@@ -403,7 +403,7 @@ class VLenArray(Codec):
             else:
                 v = np.ascontiguousarray(v, self.dtype)
             if v.ndim != 1:
-                raise ValueError('only 1-dimensional arrays are supported')
+                raise ValueError("only 1-dimensional arrays are supported")
             l = v.nbytes
             normed_values[i] = v
             data_length += l + HEADER_LENGTH
