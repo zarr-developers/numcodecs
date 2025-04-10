@@ -10,20 +10,10 @@ cimport cython
 from libc.stdint cimport uint8_t, uint32_t
 from libc.string cimport memcpy
 
-from cpython.bytearray cimport (
-    PyByteArray_AS_STRING,
-    PyByteArray_FromStringAndSize,
-)
-from cpython.bytes cimport (
-    PyBytes_AS_STRING,
-    PyBytes_GET_SIZE,
-    PyBytes_FromStringAndSize,
-)
+from cpython.bytearray cimport PyByteArray_FromStringAndSize
+from cpython.bytes cimport PyBytes_FromStringAndSize
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
-from cpython.unicode cimport (
-    PyUnicode_AsUTF8String,
-    PyUnicode_FromStringAndSize,
-)
+from cpython.unicode cimport PyUnicode_FromStringAndSize
 
 from numpy cimport ndarray
 
@@ -113,8 +103,8 @@ class VLenUTF8(Codec):
             o = input_values[i]
             # replace missing value and coerce to typed data
             u = "" if o is None or o == 0 else o
-            b = PyUnicode_AsUTF8String(u)
-            l = PyBytes_GET_SIZE(b)
+            b = u.encode("utf-8")
+            l = len(b)
             encoded_values[i] = b
             data_length += l + HEADER_LENGTH
             encoded_lengths[i] = l
@@ -124,7 +114,7 @@ class VLenUTF8(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        data = PyByteArray_AS_STRING(out)
+        data = out
         store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
@@ -133,7 +123,8 @@ class VLenUTF8(Codec):
             l = encoded_lengths[i]
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
-            encv = PyBytes_AS_STRING(encoded_values[i])
+            b = encoded_values[i]
+            encv = b
             memcpy(data, encv, l)
             data += l
 
@@ -246,7 +237,7 @@ class VLenBytes(Codec):
             # replace missing value and coerce to typed data
             b = b"" if o is None or o == 0 else o
             normed_values[i] = b
-            l = PyBytes_GET_SIZE(b)
+            l = len(b)
             data_length += l + HEADER_LENGTH
             lengths[i] = l
 
@@ -255,7 +246,7 @@ class VLenBytes(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        data = PyByteArray_AS_STRING(out)
+        data = out
         store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
@@ -264,7 +255,8 @@ class VLenBytes(Codec):
             l = lengths[i]
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
-            encv = PyBytes_AS_STRING(normed_values[i])
+            b = normed_values[i]
+            encv = b
             memcpy(data, encv, l)
             data += l
 
@@ -407,7 +399,7 @@ class VLenArray(Codec):
         out = PyByteArray_FromStringAndSize(NULL, total_length)
 
         # write header
-        data = PyByteArray_AS_STRING(out)
+        data = out
         store_le32(<uint8_t*>data, n_items)
 
         # second iteration, store data
