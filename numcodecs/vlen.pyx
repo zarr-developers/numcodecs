@@ -17,13 +17,11 @@ from cpython.bytearray cimport (
 from cpython.bytes cimport (
     PyBytes_AS_STRING,
     PyBytes_GET_SIZE,
-    PyBytes_Check,
     PyBytes_FromStringAndSize,
 )
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 from cpython.unicode cimport (
     PyUnicode_AsUTF8String,
-    PyUnicode_Check,
     PyUnicode_FromStringAndSize,
 )
 
@@ -96,7 +94,8 @@ class VLenUTF8(Codec):
             bytes b
             bytearray out
             char* data
-            object u
+            object o
+            unicode u
 
         # normalise input
         input_values = np.asarray(buf, dtype=object).reshape(-1, order='A')
@@ -111,11 +110,11 @@ class VLenUTF8(Codec):
         # first iteration to convert to bytes
         data_length = 0
         for i in range(n_items):
-            u = input_values[i]
-            if u is None or u == 0:  # treat these as missing value, normalize
+            o = input_values[i]
+            if o is None or o == 0:  # treat these as missing value, normalize
                 u = ""
-            elif not PyUnicode_Check(u):
-                raise TypeError("expected unicode string, found %r" % u)
+            else:
+                u = o
             b = PyUnicode_AsUTF8String(u)
             l = PyBytes_GET_SIZE(b)
             encoded_values[i] = b
@@ -227,7 +226,8 @@ class VLenBytes(Codec):
             object[:] normed_values
             int[:] lengths
             char* encv
-            object b
+            object o
+            bytes b
             bytearray out
             char* data
 
@@ -244,11 +244,11 @@ class VLenBytes(Codec):
         # first iteration to find lengths
         data_length = 0
         for i in range(n_items):
-            b = values[i]
-            if b is None or b == 0:  # treat these as missing value, normalize
+            o = values[i]
+            if o is None or o == 0:  # treat these as missing value, normalize
                 b = b""
-            elif not PyBytes_Check(b):
-                raise TypeError("expected byte string, found %r" % b)
+            else:
+                b = o
             normed_values[i] = b
             l = PyBytes_GET_SIZE(b)
             data_length += l + HEADER_LENGTH
@@ -377,7 +377,7 @@ class VLenArray(Codec):
             char* data
             memoryview value_mv
             const Py_buffer* value_pb
-            object v
+            object o
 
         # normalise input
         values = np.asarray(buf, dtype=object).reshape(-1, order='A')
@@ -392,15 +392,20 @@ class VLenArray(Codec):
         # first iteration to convert to bytes
         data_length = 0
         for i in range(n_items):
-            v = values[i]
-            if v is None:
-                v = np.array([], dtype=self.dtype)
+            o = values[i]
+            if o is None:
+                value_mv = ensure_continguous_memoryview(
+                    np.array([], dtype=self.dtype)
+                )
             else:
-                v = np.ascontiguousarray(v, self.dtype)
-            if v.ndim != 1:
+                value_mv = ensure_continguous_memoryview(
+                    np.ascontiguousarray(o, self.dtype)
+                )
+            value_pb = PyMemoryView_GET_BUFFER(value_mv)
+            if value_pb.ndim != 1:
                 raise ValueError("only 1-dimensional arrays are supported")
-            l = v.nbytes
-            normed_values[i] = v
+            l = value_pb.len
+            normed_values[i] = value_mv
             data_length += l + HEADER_LENGTH
             lengths[i] = l
 
@@ -419,7 +424,7 @@ class VLenArray(Codec):
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
 
-            value_mv = ensure_continguous_memoryview(normed_values[i])
+            value_mv = normed_values[i]
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
             encv = <const char*>value_pb.buf
 
