@@ -10,7 +10,6 @@ cimport cython
 from libc.stdint cimport uint8_t, uint32_t
 from libc.string cimport memcpy
 
-from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.bytearray cimport (
     PyByteArray_AS_STRING,
     PyByteArray_FromStringAndSize,
@@ -155,12 +154,10 @@ class VLenUTF8(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = memoryview(buf)
+        buf_mv = ensure_continguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks
-        if not PyBuffer_IsContiguous(buf_pb, b'A'):
-            raise BufferError("`buf` must contain contiguous memory")
         if buf_pb.len < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
@@ -289,12 +286,10 @@ class VLenBytes(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = memoryview(buf)
+        buf_mv = ensure_continguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks
-        if not PyBuffer_IsContiguous(buf_pb, b'A'):
-            raise BufferError("`buf` must contain contiguous memory")
         if buf_pb.len < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
@@ -448,12 +443,10 @@ class VLenArray(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = memoryview(buf)
+        buf_mv = ensure_continguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks
-        if not PyBuffer_IsContiguous(buf_pb, b'A'):
-            raise BufferError("`buf` must contain contiguous memory")
         if buf_pb.len < HEADER_LENGTH:
             raise ValueError('corrupt buffer, missing or truncated header')
 
