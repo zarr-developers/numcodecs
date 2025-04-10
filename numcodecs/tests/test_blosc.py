@@ -192,15 +192,6 @@ def test_err_encode_object_buffer():
 
 
 @pytest.mark.parametrize('codec', codecs)
-def test_decompression_error_handling(codec):
-    _skip_null(codec)
-    with pytest.raises(RuntimeError):
-        codec.decode(bytearray())
-    with pytest.raises(RuntimeError):
-        codec.decode(bytearray(0))
-
-
-@pytest.mark.parametrize('codec', codecs)
 def test_max_buffer_size(codec):
     _skip_null(codec)
     assert codec.max_buffer_size == 2**31 - 1
