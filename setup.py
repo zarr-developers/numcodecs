@@ -14,13 +14,8 @@ if sys.version_info >= (3, 10):
 else:
     from distutils import sysconfig
 
-# We can't use sys.platform in a cross-compiling situation
-# as here it may be set to the host not target platform
-is_emscripten = (
-    sysconfig.get_config_var("SOABI")
-    and sysconfig.get_config_var("SOABI").find("emscripten") != -1
-)
-
+# sys.platform is not trustworthy in a cross-compiling environment
+is_emscripten = sysconfig.get_config_var("SOABI") and "emscripten" in sysconfig.get_config_var("SOABI")
 
 if not is_emscripten:
     import cpuinfo
