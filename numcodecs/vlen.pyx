@@ -76,7 +76,7 @@ class VLenUTF8(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
             ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
@@ -103,10 +103,10 @@ class VLenUTF8(Codec):
             # replace missing value and coerce to typed data
             u = "" if o is None or o == 0 else o
             b = u.encode("utf-8")
-            l = len(b)
+            L = len(b)
             encoded_values[i] = b
-            data_length += l + HEADER_LENGTH
-            encoded_lengths[i] = l
+            data_length += L + HEADER_LENGTH
+            encoded_lengths[i] = L
 
         # setup output
         out = PyByteArray_FromStringAndSize(NULL, data_length)
@@ -118,12 +118,12 @@ class VLenUTF8(Codec):
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
-            l = encoded_lengths[i]
-            store_le32(<uint8_t*>data, l)
+            L = encoded_lengths[i]
+            store_le32(<uint8_t*>data, L)
             data += HEADER_LENGTH
             b = encoded_values[i]
-            memcpy(data, <const char*>b, l)
-            data += l
+            memcpy(data, <const char*>b, L)
+            data += L
 
         return out
 
@@ -135,7 +135,7 @@ class VLenUTF8(Codec):
             const Py_buffer* buf_pb
             const char* data
             const char* data_end
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
@@ -166,12 +166,12 @@ class VLenUTF8(Codec):
         for i in range(n_items):
             if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(<uint8_t*>data)
+            L = load_le32(<uint8_t*>data)
             data += HEADER_LENGTH
-            if data + l > data_end:
+            if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyUnicode_FromStringAndSize(data, l)
-            data += l
+            out[i] = PyUnicode_FromStringAndSize(data, L)
+            data += L
 
         return out
 
@@ -207,7 +207,7 @@ class VLenBytes(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
             object[:] values
             object[:] normed_values
             int[:] lengths
@@ -233,9 +233,9 @@ class VLenBytes(Codec):
             # replace missing value and coerce to typed data
             b = b"" if o is None or o == 0 else o
             normed_values[i] = b
-            l = len(b)
-            data_length += l + HEADER_LENGTH
-            lengths[i] = l
+            L = len(b)
+            data_length += HEADER_LENGTH + L
+            lengths[i] = L
 
         # setup output
         out = PyByteArray_FromStringAndSize(NULL, data_length)
@@ -247,12 +247,12 @@ class VLenBytes(Codec):
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
-            l = lengths[i]
-            store_le32(<uint8_t*>data, l)
+            L = lengths[i]
+            store_le32(<uint8_t*>data, L)
             data += HEADER_LENGTH
             b = normed_values[i]
-            memcpy(data, <const char*>b, l)
-            data += l
+            memcpy(data, <const char*>b, L)
+            data += L
 
         return out
 
@@ -264,7 +264,7 @@ class VLenBytes(Codec):
             const Py_buffer* buf_pb
             const char* data
             const char* data_end
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
@@ -295,12 +295,12 @@ class VLenBytes(Codec):
         for i in range(n_items):
             if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(<uint8_t*>data)
+            L = load_le32(<uint8_t*>data)
             data += HEADER_LENGTH
-            if data + l > data_end:
+            if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyBytes_FromStringAndSize(data, l)
-            data += l
+            out[i] = PyBytes_FromStringAndSize(data, L)
+            data += L
 
         return out
 
@@ -349,7 +349,7 @@ class VLenArray(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
             object[:] values
             object[:] normed_values
             int[:] lengths
@@ -382,10 +382,10 @@ class VLenArray(Codec):
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
             if value_pb.ndim != 1:
                 raise ValueError("only 1-dimensional arrays are supported")
-            l = value_pb.len
+            L = value_pb.len
             normed_values[i] = value_mv
-            data_length += l + HEADER_LENGTH
-            lengths[i] = l
+            data_length += HEADER_LENGTH + L
+            lengths[i] = L
 
         # setup output
         out = PyByteArray_FromStringAndSize(NULL, data_length)
@@ -397,15 +397,15 @@ class VLenArray(Codec):
         # second iteration, store data
         data += HEADER_LENGTH
         for i in range(n_items):
-            l = lengths[i]
-            store_le32(<uint8_t*>data, l)
+            L = lengths[i]
+            store_le32(<uint8_t*>data, L)
             data += HEADER_LENGTH
 
             value_mv = normed_values[i]
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
 
-            memcpy(data, value_pb.buf, l)
-            data += l
+            memcpy(data, value_pb.buf, L)
+            data += L
 
         return out
 
@@ -420,7 +420,7 @@ class VLenArray(Codec):
             object v
             memoryview v_mv
             Py_buffer* v_pb
-            Py_ssize_t i, l, n_items, data_length
+            Py_ssize_t i, L, n_items, data_length
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
@@ -451,18 +451,18 @@ class VLenArray(Codec):
         for i in range(n_items):
             if data + HEADER_LENGTH > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            l = load_le32(<uint8_t*>data)
+            L = load_le32(<uint8_t*>data)
             data += HEADER_LENGTH
-            if data + l > data_end:
+            if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
 
             # Create & fill array value
-            v = np.empty((l,), dtype="uint8").view(self.dtype)
+            v = np.empty((L,), dtype="uint8").view(self.dtype)
             v_mv = memoryview(v)
             v_pb = PyMemoryView_GET_BUFFER(v_mv)
-            memcpy(v_pb.buf, data, l)
+            memcpy(v_pb.buf, data, L)
 
             out[i] = v
-            data += l
+            data += L
 
         return out
