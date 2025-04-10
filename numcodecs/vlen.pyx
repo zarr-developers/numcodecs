@@ -80,7 +80,7 @@ class VLenUTF8(Codec):
             ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
-            char* encv
+            const char* encv
             bytes b
             bytearray out
             char* data
@@ -214,7 +214,7 @@ class VLenBytes(Codec):
             object[:] values
             object[:] normed_values
             int[:] lengths
-            char* encv
+            const char* encv
             object o
             bytes b
             bytearray out
