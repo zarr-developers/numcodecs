@@ -383,8 +383,6 @@ def run_setup(with_extensions):
         ext_modules = []
         cmdclass = {}
 
-    print(f"base compile args: {base_compile_args}")
-
     setup(
         ext_modules=ext_modules,
         cmdclass=cmdclass,
