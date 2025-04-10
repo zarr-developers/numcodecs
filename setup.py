@@ -9,23 +9,27 @@ from Cython.Distutils.build_ext import new_build_ext as build_ext
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 
-if sys.version_info >= (3, 10): # noqa: UP036
+if sys.version_info >= (3, 10):  # noqa: UP036
     import sysconfig
 else:
     from distutils import sysconfig
 
+
 # sys.platform is not trustworthy in a cross-compiling environment
-is_emscripten = sysconfig.get_config_var("SOABI") and "emscripten" in sysconfig.get_config_var("SOABI")
+is_emscripten = sysconfig.get_config_var("SOABI") and "emscripten" in sysconfig.get_config_var(
+    "SOABI"
+)
 
 if not is_emscripten:
     import cpuinfo
+
     # determine CPU support for SSE2 and AVX2
     cpu_info = cpuinfo.get_cpu_info()
     flags = cpu_info.get('flags', [])
     machine = cpuinfo.platform.machine()
 else:
     flags = []
-    machine ="emscripten-wasm32"
+    machine = "emscripten-wasm32"
 # only check for x86 features on x86_64 arch
 have_sse2 = False
 have_avx2 = False
