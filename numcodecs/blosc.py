@@ -95,7 +95,14 @@ def _check_buffer_size(buf, max_buffer_size):
         raise ValueError(msg)
 
 
-def compress(source, cname: str, clevel: int, shuffle: int = SHUFFLE, blocksize=AUTOBLOCKS):
+def compress(
+    source,
+    cname: str,
+    clevel: int,
+    shuffle: int = SHUFFLE,
+    blocksize=AUTOBLOCKS,
+    typesize: int = 8,
+):
     """
     Compress data.
 
@@ -127,19 +134,28 @@ def compress(source, cname: str, clevel: int, shuffle: int = SHUFFLE, blocksize=
             shuffle = BITSHUFFLE
         else:
             shuffle = SHUFFLE
+
     blosc.set_blocksize(blocksize)
     if isinstance(source, np.ndarray):
+        print('hi')
+        if typesize is None:
+            typesize = source.dtype.itemsize
         _check_not_object_array(source)
         result = blosc.compress_ptr(
             source.ctypes.data,
             source.size,
-            source.dtype.itemsize,
+            typesize,
             cname=cname,
             clevel=clevel,
             shuffle=shuffle,
         )
     else:
-        result = blosc.compress(source, cname=cname, clevel=clevel, shuffle=shuffle)
+        if typesize is None:
+            # Same default as blosc
+            typesize = 8
+        result = blosc.compress(
+            source, cname=cname, clevel=clevel, shuffle=shuffle, typesize=typesize
+        )
     blosc.set_blocksize(AUTOBLOCKS)
     return result
 
@@ -169,6 +185,8 @@ def decompress(source, dest: np.ndarray | bytearray | None = None):
         blosc.decompress_ptr(source, dest.ctypes.data)
     else:
         dest[:] = blosc.decompress(source)
+
+    return None
 
 
 class Blosc(Codec):
@@ -203,7 +221,16 @@ class Blosc(Codec):
     AUTOSHUFFLE = AUTOSHUFFLE
     max_buffer_size = 2**31 - 1
 
-    def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS):
+    def __init__(
+        self,
+        cname='lz4',
+        clevel=5,
+        shuffle=SHUFFLE,
+        blocksize=AUTOBLOCKS,
+        typesize: int | None = None,
+    ):
+        if isinstance(typesize, int) and typesize < 1:
+            raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         self.cname = cname
         if isinstance(cname, str):
             self._cname_bytes = cname.encode('ascii')
@@ -212,11 +239,17 @@ class Blosc(Codec):
         self.clevel = clevel
         self.shuffle = shuffle
         self.blocksize = blocksize
+        self.typesize = typesize
 
     def encode(self, buf):
         _check_buffer_size(buf, self.max_buffer_size)
         return compress(
-            buf, self.cname, clevel=self.clevel, shuffle=self.shuffle, blocksize=self.blocksize
+            buf,
+            self.cname,
+            clevel=self.clevel,
+            shuffle=self.shuffle,
+            blocksize=self.blocksize,
+            typesize=self.typesize,
         )
 
     def decode(self, buf, out=None):
@@ -224,5 +257,4 @@ class Blosc(Codec):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = f'{type(self).__name__}(cname={self.cname!r}, clevel={self.clevel!r}, shuffle={_shuffle_repr[self.shuffle + 1]}, blocksize={self.blocksize})'
-        return r
+        return f'{type(self).__name__}(cname={self.cname!r}, clevel={self.clevel!r}, shuffle={_shuffle_repr[self.shuffle + 1]}, blocksize={self.blocksize})'
