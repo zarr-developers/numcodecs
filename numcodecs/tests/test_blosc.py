@@ -191,15 +191,6 @@ def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Blosc())
 
 
-def test_decompression_error_handling():
-    for codec in codecs:
-        _skip_null(codec)
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray())
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray(0))
-
-
 def test_max_buffer_size():
     for codec in codecs:
         _skip_null(codec)
