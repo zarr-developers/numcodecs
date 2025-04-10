@@ -80,7 +80,6 @@ class VLenUTF8(Codec):
             ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
-            const char* encv
             bytes b
             bytearray out
             char* data
@@ -124,8 +123,7 @@ class VLenUTF8(Codec):
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
             b = encoded_values[i]
-            encv = b
-            memcpy(data, encv, l)
+            memcpy(data, <const char*>b, l)
             data += l
 
         return out
@@ -214,7 +212,6 @@ class VLenBytes(Codec):
             object[:] values
             object[:] normed_values
             int[:] lengths
-            const char* encv
             object o
             bytes b
             bytearray out
@@ -256,8 +253,7 @@ class VLenBytes(Codec):
             store_le32(<uint8_t*>data, l)
             data += HEADER_LENGTH
             b = normed_values[i]
-            encv = b
-            memcpy(data, encv, l)
+            memcpy(data, <const char*>b, l)
             data += l
 
         return out
@@ -359,7 +355,6 @@ class VLenArray(Codec):
             object[:] values
             object[:] normed_values
             int[:] lengths
-            const char* encv
             bytes b
             bytearray out
             char* data
@@ -411,9 +406,8 @@ class VLenArray(Codec):
 
             value_mv = normed_values[i]
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
-            encv = <const char*>value_pb.buf
 
-            memcpy(data, encv, l)
+            memcpy(data, value_pb.buf, l)
             data += l
 
         return out
