@@ -9,7 +9,7 @@ from Cython.Distutils.build_ext import new_build_ext as build_ext
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 
-if sys.version_info >= (3, 10): # noqa UP036
+if sys.version_info >= (3, 10): # noqa: UP036
     import sysconfig
 else:
     from distutils import sysconfig
