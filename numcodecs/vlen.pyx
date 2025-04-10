@@ -111,10 +111,8 @@ class VLenUTF8(Codec):
         data_length = 0
         for i in range(n_items):
             o = input_values[i]
-            if o is None or o == 0:  # treat these as missing value, normalize
-                u = ""
-            else:
-                u = o
+            # replace missing value and coerce to typed data
+            u = "" if o is None or o == 0 else o
             b = PyUnicode_AsUTF8String(u)
             l = PyBytes_GET_SIZE(b)
             encoded_values[i] = b
@@ -245,10 +243,8 @@ class VLenBytes(Codec):
         data_length = 0
         for i in range(n_items):
             o = values[i]
-            if o is None or o == 0:  # treat these as missing value, normalize
-                b = b""
-            else:
-                b = o
+            # replace missing value and coerce to typed data
+            b = b"" if o is None or o == 0 else o
             normed_values[i] = b
             l = PyBytes_GET_SIZE(b)
             data_length += l + HEADER_LENGTH
@@ -393,14 +389,11 @@ class VLenArray(Codec):
         data_length = 0
         for i in range(n_items):
             o = values[i]
-            if o is None:
-                value_mv = ensure_continguous_memoryview(
-                    np.array([], dtype=self.dtype)
-                )
-            else:
-                value_mv = ensure_continguous_memoryview(
-                    np.ascontiguousarray(o, self.dtype)
-                )
+            # replace missing value and coerce to typed data
+            value_mv = ensure_continguous_memoryview(
+                np.array([], dtype=self.dtype) if o is None
+                else np.ascontiguousarray(o, self.dtype)
+            )
             value_pb = PyMemoryView_GET_BUFFER(value_mv)
             if value_pb.ndim != 1:
                 raise ValueError("only 1-dimensional arrays are supported")
