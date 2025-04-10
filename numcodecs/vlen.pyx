@@ -76,7 +76,7 @@ class VLenUTF8(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length, total_length
+            Py_ssize_t i, l, n_items, data_length
             ndarray[object, ndim=1] input_values
             object[:] encoded_values
             int[:] encoded_lengths
@@ -97,7 +97,7 @@ class VLenUTF8(Codec):
         encoded_lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to convert to bytes
-        data_length = 0
+        data_length = HEADER_LENGTH
         for i in range(n_items):
             o = input_values[i]
             # replace missing value and coerce to typed data
@@ -109,8 +109,7 @@ class VLenUTF8(Codec):
             encoded_lengths[i] = l
 
         # setup output
-        total_length = HEADER_LENGTH + data_length
-        out = PyByteArray_FromStringAndSize(NULL, total_length)
+        out = PyByteArray_FromStringAndSize(NULL, data_length)
 
         # write header
         data = out
@@ -208,7 +207,7 @@ class VLenBytes(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length, total_length
+            Py_ssize_t i, l, n_items, data_length
             object[:] values
             object[:] normed_values
             int[:] lengths
@@ -228,7 +227,7 @@ class VLenBytes(Codec):
         lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to find lengths
-        data_length = 0
+        data_length = HEADER_LENGTH
         for i in range(n_items):
             o = values[i]
             # replace missing value and coerce to typed data
@@ -239,8 +238,7 @@ class VLenBytes(Codec):
             lengths[i] = l
 
         # setup output
-        total_length = HEADER_LENGTH + data_length
-        out = PyByteArray_FromStringAndSize(NULL, total_length)
+        out = PyByteArray_FromStringAndSize(NULL, data_length)
 
         # write header
         data = out
@@ -351,7 +349,7 @@ class VLenArray(Codec):
     @cython.boundscheck(False)
     def encode(self, buf):
         cdef:
-            Py_ssize_t i, l, n_items, data_length, total_length
+            Py_ssize_t i, l, n_items, data_length
             object[:] values
             object[:] normed_values
             int[:] lengths
@@ -373,7 +371,7 @@ class VLenArray(Codec):
         lengths = np.empty(n_items, dtype=np.intc)
 
         # first iteration to convert to bytes
-        data_length = 0
+        data_length = HEADER_LENGTH
         for i in range(n_items):
             o = values[i]
             # replace missing value and coerce to typed data
@@ -390,8 +388,7 @@ class VLenArray(Codec):
             lengths[i] = l
 
         # setup output
-        total_length = HEADER_LENGTH + data_length
-        out = PyByteArray_FromStringAndSize(NULL, total_length)
+        out = PyByteArray_FromStringAndSize(NULL, data_length)
 
         # write header
         data = out
