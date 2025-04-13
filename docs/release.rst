@@ -38,7 +38,7 @@ Fixes
 * Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
   By :user:`John Kirkham <jakirkham>`, :issue:`732`
 
-* Remove ``typesize`` from :func:`Blosc.get_config` output
+* Remove ``typesize`` from ``Blosc.get_config`` output
   By :user:`Ilan Gold <ilan-gold>`
 
 Maintenance
