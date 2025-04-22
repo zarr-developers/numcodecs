@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
+from zarr.abc.codec import ArrayArrayCodec, ArrayBytesCodec, BytesBytesCodec
+from zarr.core.array import CompressorsLike, FiltersLike, SerializerLike
 
 if TYPE_CHECKING:  # pragma: no cover
     import zarr
@@ -317,17 +319,25 @@ def test_cast_numcodecs_to_v3(store: Store, codec_v2, expected_v3_cls) -> None:
     assert result_v3.__class__ == expected_v3_cls
     assert result_v3.codec_config == codec_v2.get_config()
 
-    from zarr.core.array import CompressorsLike, FiltersLike, SerializerLike
-
-    codec_args: FiltersLike | SerializerLike | CompressorsLike
-
-    if issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsArrayArrayCodec):
-        codec_args = {"filters": [result_v3]}
-    elif issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsArrayBytesCodec):
-        codec_args = {"serializer": result_v3}
-    elif issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsBytesBytesCodec):
-        codec_args = {"compressors": [result_v3]}
+    filters: FiltersLike = "auto"
+    serializer: SerializerLike = "auto"
+    compressors: CompressorsLike = "auto"
+    if isinstance(result_v3, ArrayArrayCodec):
+        filters = [result_v3]
+    elif isinstance(result_v3, ArrayBytesCodec):
+        serializer = result_v3
+    elif isinstance(result_v3, BytesBytesCodec):
+        compressors = [result_v3]
     else:
-        raise TypeError(f"unsupported type: {expected_v3_cls}")
+        raise TypeError(f"unsupported type: {result_v3.__class__}")
 
-    zarr.create_array(store, shape=(64,), chunks=(64,), dtype=np.bool, fill_value=0, **codec_args)
+    zarr.create_array(
+        store,
+        shape=(64,),
+        chunks=(64,),
+        dtype=np.bool,
+        fill_value=0,
+        filters=filters,
+        compressors=compressors,
+        serializer=serializer,
+    )
