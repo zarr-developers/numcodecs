@@ -260,7 +260,7 @@ def test_delta_astype(store: StorePath):
             dtype=data.dtype,
             fill_value=0,
             filters=[
-                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
+                numcodecs.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
             ],
         )
 
@@ -277,3 +277,49 @@ def test_repr():
 def test_to_dict():
     codec = numcodecs.zarr3.LZ4(level=5)
     assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}
+
+@pytest.mark.parametrize(("codec_v2", "expected_v3_cls"),[
+    (numcodecs.BZ2(), numcodecs.zarr3.BZ2),
+    (numcodecs.CRC32(), numcodecs.zarr3.CRC32),
+    (numcodecs.CRC32C(), numcodecs.zarr3.CRC32C),
+    (numcodecs.LZ4(), numcodecs.zarr3.LZ4),
+    (numcodecs.LZMA(), numcodecs.zarr3.LZMA),
+    (numcodecs.ZFPY(), numcodecs.zarr3.ZFPY),
+    (numcodecs.Adler32(), numcodecs.zarr3.Adler32),
+    (numcodecs.AsType(encode_dtype=np.float64,decode_dtype=np.float32), numcodecs.zarr3.AsType),
+    (numcodecs.BitRound(keepbits=10), numcodecs.zarr3.BitRound),
+    (numcodecs.Blosc(), numcodecs.zarr3.Blosc),
+    (numcodecs.Delta(dtype=np.float64), numcodecs.zarr3.Delta),
+    (numcodecs.FixedScaleOffset(offset=1000, scale=10, dtype='f8', astype='u1'), numcodecs.zarr3.FixedScaleOffset),
+    (numcodecs.Fletcher32(), numcodecs.zarr3.Fletcher32),
+    (numcodecs.GZip(), numcodecs.zarr3.GZip),
+    (numcodecs.JenkinsLookup3(), numcodecs.zarr3.JenkinsLookup3),
+    (numcodecs.PCodec(), numcodecs.zarr3.PCodec),
+    (numcodecs.PackBits(), numcodecs.zarr3.PackBits),
+    (numcodecs.Quantize(digits=1, dtype='f8'), numcodecs.zarr3.Quantize),
+    (numcodecs.Shuffle(), numcodecs.zarr3.Shuffle),
+    (numcodecs.Zlib(), numcodecs.zarr3.Zlib),
+    (numcodecs.Zstd(), numcodecs.zarr3.Zstd),
+])
+def test_cast_numcodecs_to_v3(store: Store, codec_v2, expected_v3_cls) -> None:
+    result_v3 = numcodecs.zarr3.to_zarr3(codec_v2)
+
+    assert result_v3.__class__ == expected_v3_cls
+    assert result_v3.codec_config == codec_v2.get_config()
+
+    if issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsArrayArrayCodec):
+        codec_args = {"filters": [result_v3]}
+    elif issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsArrayBytesCodec):
+        codec_args = {"serializer": result_v3}
+    elif issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsBytesBytesCodec):
+        codec_args = {"compressors": [result_v3]}
+    else:
+        raise TypeError(f"unsupported type: {expected_v3_cls}")
+    zarr.create_array(
+        store,
+        shape=(64,),
+        chunks=(64,),
+        dtype=np.bool,
+        fill_value=0,
+        **codec_args
+    )

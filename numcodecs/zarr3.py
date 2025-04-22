@@ -399,3 +399,18 @@ __all__ = [
     "Zlib",
     "Zstd",
 ]
+
+def to_zarr3(codec: numcodecs.abc.Codec) -> _NumcodecsBytesBytesCodec | _NumcodecsArrayBytesCodec | _NumcodecsArrayArrayCodec:
+    """Convert a numcodecs codec to its zarr3-compatible equivalent."""
+    codec_name = codec.__class__.__name__
+    zarr3_module = numcodecs.zarr3
+
+    if not hasattr(zarr3_module, codec_name):
+        raise ValueError(f"No Zarr3 wrapper found for codec: {codec_name}")
+
+    zarr3_codec_class = getattr(zarr3_module, codec_name)
+
+    config = codec.get_config()
+    config.pop("id", None)
+
+    return zarr3_codec_class(**config)
