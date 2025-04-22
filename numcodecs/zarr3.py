@@ -400,7 +400,10 @@ __all__ = [
     "Zstd",
 ]
 
-def to_zarr3(codec: numcodecs.abc.Codec) -> _NumcodecsBytesBytesCodec | _NumcodecsArrayBytesCodec | _NumcodecsArrayArrayCodec:
+
+def to_zarr3(
+    codec: numcodecs.abc.Codec,
+) -> _NumcodecsBytesBytesCodec | _NumcodecsArrayBytesCodec | _NumcodecsArrayArrayCodec:
     """Convert a numcodecs codec to its zarr3-compatible equivalent."""
     codec_name = codec.__class__.__name__
     zarr3_module = numcodecs.zarr3
