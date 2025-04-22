@@ -317,9 +317,9 @@ def test_cast_numcodecs_to_v3(store: Store, codec_v2, expected_v3_cls) -> None:
     assert result_v3.__class__ == expected_v3_cls
     assert result_v3.codec_config == codec_v2.get_config()
 
-    from zarr.abc.codec import Codec
+    from zarr.core.array import CompressorsLike, FiltersLike, SerializerLike
 
-    codec_args: dict[str, Codec]
+    codec_args: FiltersLike | SerializerLike | CompressorsLike
 
     if issubclass(expected_v3_cls, numcodecs.zarr3._NumcodecsArrayArrayCodec):
         codec_args = {"filters": [result_v3]}
