@@ -260,7 +260,7 @@ def test_delta_astype(store: StorePath):
             dtype=data.dtype,
             fill_value=0,
             filters=[
-                numcodecs.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
+                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
             ],
         )
 
