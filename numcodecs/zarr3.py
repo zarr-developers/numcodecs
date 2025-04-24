@@ -267,17 +267,11 @@ class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
     pass
 
 
-@_add_docstring_wrapper("numcodecs.shuffle.Shuffle")
-class Shuffle(_NumcodecsBytesBytesCodec):
-    codec_name = f"{CODEC_PREFIX}shuffle"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if self.codec_config.get("elementsize", None) is None:
-            return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
-        return self  # pragma: no cover
+         if self.codec_config.get("elementsize", None) is None:
+             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
+         return self  # pragma: no cover
 
 
 # array-to-array codecs ("filters")
