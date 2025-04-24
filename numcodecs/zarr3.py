@@ -360,8 +360,13 @@ class JenkinsLookup3(_NumcodecsChecksumCodec, codec_name="jenkins_lookup3"):
 
 
 # array-to-bytes codecs
-PCodec = _add_docstring(_make_array_bytes_codec("pcodec", "PCodec"), "numcodecs.pcodec.PCodec")
-ZFPY = _add_docstring(_make_array_bytes_codec("zfpy", "ZFPY"), "numcodecs.zfpy.ZFPY")
+class PCodec(_NumcodecsArrayBytesCodec, codec_name="pcodec"):
+    pass
+
+
+class ZFPY(_NumcodecsArrayBytesCodec, codec_name="zfpy"):
+    pass
+
 
 __all__ = [
     "BZ2",
