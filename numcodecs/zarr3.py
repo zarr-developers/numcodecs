@@ -193,53 +193,6 @@ class _NumcodecsArrayBytesCodec(_NumcodecsCodec, ArrayBytesCodec):
         return chunk_spec.prototype.buffer.from_bytes(out)
 
 
-T = TypeVar("T", bound=_NumcodecsCodec)
-
-
-def _add_docstring(cls: type[T], ref_class_name: str) -> type[T]:
-    cls.__doc__ = textwrap.dedent(
-        f"""
-        See :class:`{ref_class_name}` for more details and parameters.
-        """
-    )
-    return cls
-
-
-def _add_docstring_wrapper(ref_class_name: str) -> partial:
-    return partial(_add_docstring, ref_class_name=ref_class_name)
-
-
-def _make_array_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsArrayBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
-
-
-def _make_checksum_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytesBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _ChecksumCodec(_NumcodecsBytesBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-        def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-            return input_byte_length + 4  # pragma: no cover
-
-    _ChecksumCodec.__name__ = cls_name
-    return _ChecksumCodec
-
-
 # bytes-to-bytes codecs
 class Blosc(_NumcodecsBytesBytesCodec, codec_name="blosc"):
     pass
