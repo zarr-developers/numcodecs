@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pickle
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -277,3 +278,31 @@ def test_repr():
 def test_to_dict():
     codec = numcodecs.zarr3.LZ4(level=5)
     assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}
+
+
+@pytest.mark.parametrize(
+    "codec_cls",
+    [
+        numcodecs.zarr3.Blosc,
+        numcodecs.zarr3.LZ4,
+        numcodecs.zarr3.Zstd,
+        numcodecs.zarr3.Zlib,
+        numcodecs.zarr3.GZip,
+        numcodecs.zarr3.BZ2,
+        numcodecs.zarr3.LZMA,
+        numcodecs.zarr3.Shuffle,
+    ],
+)
+def test_codecs_pickleable(codec_cls):
+    codec = codec_cls()
+
+    expected = codec
+
+    p = pickle.dumps(codec)
+    actual = pickle.loads(p)
+    assert actual == expected
+
+    print(codec)
+    print(codec.codec_name)
+    print(codec.__doc__)
+    #assert False
