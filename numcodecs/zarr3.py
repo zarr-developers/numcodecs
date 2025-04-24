@@ -321,13 +321,7 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
-@_add_docstring_wrapper("numcodecs.astype.AsType")
-class AsType(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}astype"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
