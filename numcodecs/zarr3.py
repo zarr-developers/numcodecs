@@ -207,20 +207,6 @@ def _add_docstring_wrapper(ref_class_name: str) -> partial:
     return partial(_add_docstring, ref_class_name=ref_class_name)
 
 
-def _make_array_array_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayArrayCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsArrayArrayCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
-
-
 def _make_array_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayBytesCodec]:
     # rename for class scope
     _codec_name = CODEC_PREFIX + codec_name
@@ -308,9 +294,8 @@ class Delta(_NumcodecsArrayArrayCodec):
         return chunk_spec
 
 
-BitRound = _add_docstring(
-    _make_array_array_codec("bitround", "BitRound"), "numcodecs.bitround.BitRound"
-)
+class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
+    pass
 
 
 @_add_docstring_wrapper("numcodecs.fixedscaleoffset.FixedScaleOffset")
