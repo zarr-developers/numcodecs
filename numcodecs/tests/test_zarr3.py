@@ -299,6 +299,11 @@ def test_to_dict():
         numcodecs.zarr3.Quantize,
         numcodecs.zarr3.PackBits,
         numcodecs.zarr3.AsType,
+        numcodecs.zarr3.CRC32,
+        numcodecs.zarr3.CRC32C,
+        numcodecs.zarr3.Adler32,
+        numcodecs.zarr3.Fletcher32,
+        numcodecs.zarr3.JenkinsLookup3,
     ],
 )
 def test_codecs_pickleable(codec_cls):

@@ -84,8 +84,10 @@ class _NumcodecsCodec(Metadata):
         """To be used only when creating the actual public-facing codec class."""
         super().__init_subclass__(**kwargs)
         if codec_name is not None:
-            cls_name = f"{CODEC_PREFIX}{codec_name}.{cls.__name__}"
-            cls.codec_name = f"{CODEC_PREFIX}{codec_name}"
+            namespace = codec_name
+
+            cls_name = f"{CODEC_PREFIX}{namespace}.{cls.__name__}"
+            cls.codec_name = f"{CODEC_PREFIX}{namespace}"
             cls.__doc__ = f"""
             See :class:`{cls_name}` for more details and parameters.
             """
@@ -332,15 +334,30 @@ class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
 
 
 # bytes-to-bytes checksum codecs
-CRC32 = _add_docstring(_make_checksum_codec("crc32", "CRC32"), "numcodecs.checksum32.CRC32")
-CRC32C = _add_docstring(_make_checksum_codec("crc32c", "CRC32C"), "numcodecs.checksum32.CRC32C")
-Adler32 = _add_docstring(_make_checksum_codec("adler32", "Adler32"), "numcodecs.checksum32.Adler32")
-Fletcher32 = _add_docstring(
-    _make_checksum_codec("fletcher32", "Fletcher32"), "numcodecs.fletcher32.Fletcher32"
-)
-JenkinsLookup3 = _add_docstring(
-    _make_checksum_codec("jenkins_lookup3", "JenkinsLookup3"), "numcodecs.checksum32.JenkinsLookup3"
-)
+class _NumcodecsChecksumCodec(_NumcodecsBytesBytesCodec):
+    def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
+        return input_byte_length + 4  # pragma: no cover
+
+
+class CRC32(_NumcodecsChecksumCodec, codec_name="crc32"):
+    pass
+
+
+class CRC32C(_NumcodecsChecksumCodec, codec_name="crc32c"):
+    pass
+
+
+class Adler32(_NumcodecsChecksumCodec, codec_name="adler32"):
+    pass
+
+
+class Fletcher32(_NumcodecsChecksumCodec, codec_name="fletcher32"):
+    pass
+
+
+class JenkinsLookup3(_NumcodecsChecksumCodec, codec_name="jenkins_lookup3"):
+    pass
+
 
 # array-to-bytes codecs
 PCodec = _add_docstring(_make_array_bytes_codec("pcodec", "PCodec"), "numcodecs.pcodec.PCodec")
