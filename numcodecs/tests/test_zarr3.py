@@ -3,9 +3,10 @@ from __future__ import annotations
 import pickle
 from typing import TYPE_CHECKING
 
-import numcodecs.bitround
 import numpy as np
 import pytest
+
+import numcodecs.bitround
 
 if TYPE_CHECKING:  # pragma: no cover
     import zarr

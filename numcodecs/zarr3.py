@@ -223,9 +223,9 @@ class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
 
 class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-         if self.codec_config.get("elementsize", None) is None:
-             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
-         return self  # pragma: no cover
+        if self.codec_config.get("elementsize", None) is None:
+            return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
+        return self  # pragma: no cover
 
 
 # array-to-array codecs ("filters")
