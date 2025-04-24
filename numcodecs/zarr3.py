@@ -75,11 +75,6 @@ def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
     return {"id": id, **parsed_configuration}
 
 
-def snake_case(codec_name: str) -> str:
-    # TODO the Jenkins codec is a special case because it inserts an _
-    return codec_name.lower()
-
-
 @dataclass(frozen=True)
 class _NumcodecsCodec(Metadata):
     codec_name: str
