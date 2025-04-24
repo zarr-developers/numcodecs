@@ -74,10 +74,23 @@ def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
     return {"id": id, **parsed_configuration}
 
 
+def snake_case(codec_name: str) -> str:
+    # TODO the Jenkins codec is a special case because it inserts an _
+    return codec_name.lower()
+
+
 @dataclass(frozen=True)
 class _NumcodecsCodec(Metadata):
     codec_name: str
     codec_config: dict[str, JSON]
+
+    def __init_subclass__(cls, *, codec_name: str | None = None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if codec_name is not None:
+            cls.codec_name = CODEC_PREFIX + codec_name
+            cls.__doc__ = f"""
+            See :class:`{snake_case(cls.codec_name)}.{codec_name}` for more details and parameters.
+            """
 
     def __init__(self, **codec_config: JSON) -> None:
         if not self.codec_name:
@@ -260,11 +273,8 @@ Zstd = _add_docstring(_make_bytes_bytes_codec("zstd", "Zstd"), "numcodecs.zstd.Z
 
 
 #Zlib = _add_docstring(_make_bytes_bytes_codec("zlib", "Zlib"), "numcodecs.zlib.Zlib")
-class Zlib(_NumcodecsBytesBytesCodec):
-    codec_name = CODEC_PREFIX + "zlib"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
+class Zlib(_NumcodecsBytesBytesCodec, codec_name="Zlib"):
+    pass
 
 
 GZip = _add_docstring(_make_bytes_bytes_codec("gzip", "GZip"), "numcodecs.gzip.GZip")
