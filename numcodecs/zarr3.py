@@ -286,13 +286,7 @@ class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
     pass
 
 
-@_add_docstring_wrapper("numcodecs.fixedscaleoffset.FixedScaleOffset")
-class FixedScaleOffset(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}fixedscaleoffset"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
             return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
