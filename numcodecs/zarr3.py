@@ -298,10 +298,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset")
         return self
 
 
-@_add_docstring_wrapper("numcodecs.quantize.Quantize")
-class Quantize(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}quantize"
-
+class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
     def __init__(self, **codec_config: JSON) -> None:
         super().__init__(**codec_config)
 

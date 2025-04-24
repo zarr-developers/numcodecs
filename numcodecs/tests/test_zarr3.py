@@ -281,6 +281,7 @@ def test_to_dict():
     assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}
 
 
+# TODO replace this explicit list of parametrizations by somehow importing all from numcodecs.zarr3
 @pytest.mark.parametrize(
     "codec_cls",
     [
@@ -295,6 +296,7 @@ def test_to_dict():
         numcodecs.zarr3.BitRound,
         numcodecs.zarr3.Delta,
         numcodecs.zarr3.FixedScaleOffset,
+        numcodecs.zarr3.Quantize,
     ],
 )
 def test_codecs_pickleable(codec_cls):
