@@ -293,6 +293,7 @@ def test_to_dict():
         numcodecs.zarr3.LZMA,
         numcodecs.zarr3.Shuffle,
         numcodecs.zarr3.BitRound,
+        numcodecs.zarr3.Delta,
     ],
 )
 def test_codecs_pickleable(codec_cls):

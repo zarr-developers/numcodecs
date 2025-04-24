@@ -275,13 +275,7 @@ class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
 
 
 # array-to-array codecs ("filters")
-@_add_docstring_wrapper("numcodecs.delta.Delta")
-class Delta(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}delta"
-
-    def __init__(self, **codec_config: dict[str, JSON]) -> None:
-        super().__init__(**codec_config)
-
+class Delta(_NumcodecsArrayArrayCodec, codec_name="delta"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
             return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
