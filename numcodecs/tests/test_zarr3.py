@@ -3,6 +3,7 @@ from __future__ import annotations
 import pickle
 from typing import TYPE_CHECKING
 
+import numcodecs.bitround
 import numpy as np
 import pytest
 
@@ -291,6 +292,7 @@ def test_to_dict():
         numcodecs.zarr3.BZ2,
         numcodecs.zarr3.LZMA,
         numcodecs.zarr3.Shuffle,
+        numcodecs.zarr3.BitRound,
     ],
 )
 def test_codecs_pickleable(codec_cls):
@@ -301,8 +303,3 @@ def test_codecs_pickleable(codec_cls):
     p = pickle.dumps(codec)
     actual = pickle.loads(p)
     assert actual == expected
-
-    print(codec)
-    print(codec.codec_name)
-    print(codec.__doc__)
-    #assert False
