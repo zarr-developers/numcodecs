@@ -80,11 +80,11 @@ class _NumcodecsCodec(Metadata):
     codec_name: str
     codec_config: dict[str, JSON]
 
-    def __init_subclass__(cls, *, namespace: str | None = None, codec_name: str | None = None, **kwargs):
+    def __init_subclass__(cls, *, codec_name: str | None = None, **kwargs):
         """To be used only when creating the actual public-facing codec class."""
         super().__init_subclass__(**kwargs)
-        if namespace is not None and codec_name is not None:
-            cls_name = f"{CODEC_PREFIX}{namespace}.{codec_name}"
+        if codec_name is not None:
+            cls_name = f"{CODEC_PREFIX}{codec_name}.{cls.__name__}"
             cls.codec_name = f"{CODEC_PREFIX}{codec_name}"
             cls.__doc__ = f"""
             See :class:`{cls_name}` for more details and parameters.
@@ -253,31 +253,31 @@ def _make_checksum_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytes
 
 
 # bytes-to-bytes codecs
-class Blosc(_NumcodecsBytesBytesCodec, namespace="blosc", codec_name="Blosc"):
+class Blosc(_NumcodecsBytesBytesCodec, codec_name="blosc"):
     pass
 
 
-class LZ4(_NumcodecsBytesBytesCodec, namespace="lz4", codec_name="LZ4"):
+class LZ4(_NumcodecsBytesBytesCodec, codec_name="lz4"):
     pass
 
 
-class Zstd(_NumcodecsBytesBytesCodec, namespace="zstd", codec_name="Zstd"):
+class Zstd(_NumcodecsBytesBytesCodec, codec_name="zstd"):
     pass
 
 
-class Zlib(_NumcodecsBytesBytesCodec, namespace="zlib", codec_name="Zlib"):
+class Zlib(_NumcodecsBytesBytesCodec, codec_name="zlib"):
     pass
 
 
-class GZip(_NumcodecsBytesBytesCodec, namespace="gzip", codec_name="GZip"):
+class GZip(_NumcodecsBytesBytesCodec, codec_name="gzip"):
     pass
 
 
-class BZ2(_NumcodecsBytesBytesCodec, namespace="bz2", codec_name="BZ2"):
+class BZ2(_NumcodecsBytesBytesCodec, codec_name="bz2"):
     pass
 
 
-class LZMA(_NumcodecsBytesBytesCodec, namespace="lzma",codec_name="LZMA"):
+class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
     pass
 
 
