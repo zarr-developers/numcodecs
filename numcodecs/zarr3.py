@@ -31,6 +31,7 @@ from dataclasses import dataclass, replace
 from functools import cached_property, partial
 from typing import Any, Self, TypeVar
 from warnings import warn
+import textwrap
 
 import numpy as np
 
@@ -84,12 +85,14 @@ class _NumcodecsCodec(Metadata):
     codec_name: str
     codec_config: dict[str, JSON]
 
-    def __init_subclass__(cls, *, codec_name: str | None = None, **kwargs):
+    def __init_subclass__(cls, *, namespace: str | None = None, codec_name: str | None = None, **kwargs):
+        """To be used only when creating the actual public-facing codec class."""
         super().__init_subclass__(**kwargs)
-        if codec_name is not None:
-            cls.codec_name = CODEC_PREFIX + codec_name
+        if namespace is not None and codec_name is not None:
+            cls_name = f"{CODEC_PREFIX}{namespace}.{codec_name}"
+            cls.codec_name = f"{CODEC_PREFIX}{codec_name}"
             cls.__doc__ = f"""
-            See :class:`{snake_case(cls.codec_name)}.{codec_name}` for more details and parameters.
+            See :class:`{cls_name}` for more details and parameters.
             """
 
     def __init__(self, **codec_config: JSON) -> None:
@@ -197,28 +200,16 @@ T = TypeVar("T", bound=_NumcodecsCodec)
 
 
 def _add_docstring(cls: type[T], ref_class_name: str) -> type[T]:
-    cls.__doc__ = f"""
+    cls.__doc__ = textwrap.dedent(
+        f"""
         See :class:`{ref_class_name}` for more details and parameters.
         """
+    )
     return cls
 
 
 def _add_docstring_wrapper(ref_class_name: str) -> partial:
     return partial(_add_docstring, ref_class_name=ref_class_name)
-
-
-def _make_bytes_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytesBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsBytesBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
 
 
 def _make_array_array_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayArrayCodec]:
@@ -267,19 +258,32 @@ def _make_checksum_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytes
 
 
 # bytes-to-bytes codecs
-Blosc = _add_docstring(_make_bytes_bytes_codec("blosc", "Blosc"), "numcodecs.blosc.Blosc")
-LZ4 = _add_docstring(_make_bytes_bytes_codec("lz4", "LZ4"), "numcodecs.lz4.LZ4")
-Zstd = _add_docstring(_make_bytes_bytes_codec("zstd", "Zstd"), "numcodecs.zstd.Zstd")
-
-
-#Zlib = _add_docstring(_make_bytes_bytes_codec("zlib", "Zlib"), "numcodecs.zlib.Zlib")
-class Zlib(_NumcodecsBytesBytesCodec, codec_name="Zlib"):
+class Blosc(_NumcodecsBytesBytesCodec, namespace="blosc", codec_name="Blosc"):
     pass
 
 
-GZip = _add_docstring(_make_bytes_bytes_codec("gzip", "GZip"), "numcodecs.gzip.GZip")
-BZ2 = _add_docstring(_make_bytes_bytes_codec("bz2", "BZ2"), "numcodecs.bz2.BZ2")
-LZMA = _add_docstring(_make_bytes_bytes_codec("lzma", "LZMA"), "numcodecs.lzma.LZMA")
+class LZ4(_NumcodecsBytesBytesCodec, namespace="lz4", codec_name="LZ4"):
+    pass
+
+
+class Zstd(_NumcodecsBytesBytesCodec, namespace="zstd", codec_name="Zstd"):
+    pass
+
+
+class Zlib(_NumcodecsBytesBytesCodec, namespace="zlib", codec_name="Zlib"):
+    pass
+
+
+class GZip(_NumcodecsBytesBytesCodec, namespace="gzip", codec_name="GZip"):
+    pass
+
+
+class BZ2(_NumcodecsBytesBytesCodec, namespace="bz2", codec_name="BZ2"):
+    pass
+
+
+class LZMA(_NumcodecsBytesBytesCodec, namespace="lzma",codec_name="LZMA"):
+    pass
 
 
 @_add_docstring_wrapper("numcodecs.shuffle.Shuffle")
