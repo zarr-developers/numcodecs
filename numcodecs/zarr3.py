@@ -308,13 +308,7 @@ class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
         return self
 
 
-@_add_docstring_wrapper("numcodecs.packbits.PackBits")
-class PackBits(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}packbits"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(
             chunk_spec,

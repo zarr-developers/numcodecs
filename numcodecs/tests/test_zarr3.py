@@ -297,6 +297,7 @@ def test_to_dict():
         numcodecs.zarr3.Delta,
         numcodecs.zarr3.FixedScaleOffset,
         numcodecs.zarr3.Quantize,
+        numcodecs.zarr3.PackBits,
     ],
 )
 def test_codecs_pickleable(codec_cls):
