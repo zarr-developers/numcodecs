@@ -489,11 +489,11 @@ class Blosc(Codec):
         self.clevel = clevel
         self.shuffle = shuffle
         self.blocksize = blocksize
-        self.typesize = typesize
+        self._typesize = typesize
 
     def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
-        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize, self.typesize)
+        return compress(buf, self._cname_bytes, self.clevel, self.shuffle, self.blocksize, self._typesize)
 
     def decode(self, buf, out=None):
         buf = ensure_contiguous_ndarray(buf, self.max_buffer_size)
