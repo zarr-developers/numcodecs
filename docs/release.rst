@@ -11,7 +11,6 @@ Release notes
     Unreleased
     ----------
 
-
 .. _unreleased:
 
 Unreleased
@@ -19,6 +18,9 @@ Unreleased
 
 Enhancements
 ~~~~~~~~~~~~
+
+* implement ``to_zarr3`` in ``numcodecs.zarr3`` to enable conversion of a codec to its zarr3-compatible equivalent.
+  By :user:`Hannes Spitz <brokkoli71>`
 
 Improvements
 ~~~~~~~~~~~~
@@ -63,7 +65,7 @@ Enhancements
 Removals
 ~~~~~~~~
 
-The following ``blosc`` funcitons are removed, with no replacement.
+The following ``blosc`` functions are removed, with no replacement.
 This is because they were not intended to be public API.
 
 - ``numcodecs.blosc.init``
