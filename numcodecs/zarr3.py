@@ -223,7 +223,7 @@ class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
 
 class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if self.codec_config.get("elementsize", None) is None:
+        if self.codec_config.get("elementsize") is None:
             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self  # pragma: no cover
 
@@ -247,7 +247,7 @@ class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset")
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if self.codec_config.get("dtype", None) is None:
+        if self.codec_config.get("dtype") is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -257,7 +257,7 @@ class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if self.codec_config.get("dtype", None) is None:
+        if self.codec_config.get("dtype") is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
@@ -280,7 +280,7 @@ class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
-        if self.codec_config.get("decode_dtype", None) is None:
+        if self.codec_config.get("decode_dtype") is None:
             return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 
