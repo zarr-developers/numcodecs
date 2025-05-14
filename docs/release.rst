@@ -17,6 +17,77 @@ Release notes
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+Improvements
+~~~~~~~~~~~~
+
+* In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`723`
+
+Fixes
+~~~~~
+
+* Fix ``const`` discard warnings in ``fletcher32``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`728`
+
+* Update ``license*`` metadata and include third-party licenses.
+  By :user:`John Kirkham <jakirkham>`, :issue:`729`
+
+* Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`732`
+
+Maintenance
+~~~~~~~~~~~
+
+
+0.16.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+
+* Add ``typesize`` argument to ``Blosc`` to allow for buffers that are passed to ``encode``
+  use that information.  zarr v3 currently has its Blosc codec as bytes-to-bytes but does retain
+  the size information so using it here allows for massive compression ratio gains.
+  By :user:`Ilan Gold <ilan-gold>`
+* Add support for the Linux aarch64 architecture,
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+* Preallocate output buffers and resize directly as needed.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
+* ``Checksum32`` is now an abstract base clase, with ``checksum()`` as an abstract method.
+  This helps ensure that any subclasses implement the ``checksum()`` method.
+  :issue:`711`
+
+Removals
+~~~~~~~~
+
+The following ``blosc`` funcitons are removed, with no replacement.
+This is because they were not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is removed as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue:`712`
+
+Maintenance
+~~~~~~~~~~~
+* Replace internal ``Buffer`` usage with ``memoryview``\ s.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
+* Bump the minimum macOS deployment target for x86_64 to 10.13.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+
+
+0.15.1
+------
+
 Improvements
 ~~~~~~~~~~~~
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
@@ -40,7 +111,7 @@ Breaking changes
 
 Deprecations
 ~~~~~~~~~~~~
-The following ``blosc`` funcitons are deprecated, with no replacement.
+The following ``blosc`` functions are deprecated, with no replacement.
 This is because they are not intended to be public API.
 
 - ``numcodecs.blosc.init``
@@ -52,7 +123,7 @@ This is because they are not intended to be public API.
 In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
 has always been experimental and there is no equivalent in the official
 blsoc Python package.
-By :user:`David Stansby <dstansby>`, :issue`619`
+By :user:`David Stansby <dstansby>`, :issue:`619`
 
 Fixes
 ~~~~~

@@ -5,12 +5,11 @@
 # cython: language_level=3
 
 
-from cpython.buffer cimport PyBUF_ANY_CONTIGUOUS, PyBUF_WRITEABLE
-from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
+from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
+from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
 
-from .compat_ext cimport Buffer
-from .compat_ext import Buffer
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
@@ -92,20 +91,24 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     """
 
     cdef:
-        char *source_ptr
-        char *dest_ptr
-        Buffer source_buffer
+        memoryview source_mv
+        const Py_buffer* source_pb
+        const char* source_ptr
         size_t source_size, dest_size, compressed_size
         bytes dest
+        char* dest_ptr
 
     # check level
     if level > MAX_CLEVEL:
         level = MAX_CLEVEL
 
+    # obtain source memoryview
+    source_mv = ensure_continguous_memoryview(source)
+    source_pb = PyMemoryView_GET_BUFFER(source_mv)
+
     # setup source buffer
-    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
-    source_size = source_buffer.nbytes
+    source_ptr = <const char*>source_pb.buf
+    source_size = source_pb.len
 
     cctx = ZSTD_createCCtx()
     param_set_result = ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, level)
@@ -134,8 +137,6 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
     finally:
         if cctx:
             ZSTD_freeCCtx(cctx)
-        # release buffers
-        source_buffer.release()
 
     # check compression was successful
     if ZSTD_isError(compressed_size):
@@ -143,7 +144,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         raise RuntimeError('Zstd compression error: %s' % error)
 
     # resize after compression
-    dest = dest[:compressed_size]
+    PyBytes_RESIZE(dest, compressed_size)
 
     return dest
 
@@ -165,16 +166,22 @@ def decompress(source, dest=None):
 
     """
     cdef:
-        char *source_ptr
-        char *dest_ptr
-        Buffer source_buffer
-        Buffer dest_buffer = None
+        memoryview source_mv
+        const Py_buffer* source_pb
+        const char* source_ptr
+        memoryview dest_mv
+        Py_buffer* dest_pb
+        char* dest_ptr
         size_t source_size, dest_size, decompressed_size
+        size_t nbytes, cbytes, blocksize
 
-    # setup source buffer
-    source_buffer = Buffer(source, PyBUF_ANY_CONTIGUOUS)
-    source_ptr = source_buffer.ptr
-    source_size = source_buffer.nbytes
+    # obtain source memoryview
+    source_mv = ensure_continguous_memoryview(source)
+    source_pb = PyMemoryView_GET_BUFFER(source_mv)
+
+    # get source pointer
+    source_ptr = <const char*>source_pb.buf
+    source_size = source_pb.len
 
     try:
 
@@ -186,26 +193,27 @@ def decompress(source, dest=None):
         # setup destination buffer
         if dest is None:
             # allocate memory
-            dest = PyBytes_FromStringAndSize(NULL, dest_size)
-            dest_ptr = PyBytes_AS_STRING(dest)
+            dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
         else:
-            arr = ensure_contiguous_ndarray(dest)
-            dest_buffer = Buffer(arr, PyBUF_ANY_CONTIGUOUS | PyBUF_WRITEABLE)
-            dest_ptr = dest_buffer.ptr
-            if dest_buffer.nbytes < dest_size:
-                raise ValueError('destination buffer too small; expected at least %s, '
-                                 'got %s' % (dest_size, dest_buffer.nbytes))
+            dest_1d = ensure_contiguous_ndarray(dest)
+
+        # obtain dest memoryview
+        dest_mv = memoryview(dest_1d)
+        dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
+        dest_ptr = <char*>dest_pb.buf
+        dest_nbytes = dest_pb.len
+
+        # validate output buffer
+        if dest_nbytes < dest_size:
+            raise ValueError('destination buffer too small; expected at least %s, '
+                             'got %s' % (dest_size, dest_nbytes))
 
         # perform decompression
         with nogil:
             decompressed_size = ZSTD_decompress(dest_ptr, dest_size, source_ptr, source_size)
 
     finally:
-
-        # release buffers
-        source_buffer.release()
-        if dest_buffer is not None:
-            dest_buffer.release()
+        pass
 
     # check decompression was successful
     if ZSTD_isError(decompressed_size):

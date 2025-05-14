@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=64",
+    "setuptools>=77",
     "setuptools-scm[toml]>=6.2",
     "Cython",
     "py-cpuinfo",
@@ -13,11 +13,8 @@ name = "numcodecs"
 description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
-readme =  "README.rst"
-dependencies = [
-    "numpy>=1.24",
-    "deprecated"
-]
+readme = "README.rst"
+dependencies = ["numpy>=1.24", "typing_extensions"]
 requires-python = ">=3.11"
 dynamic = [
   "version",
@@ -27,7 +24,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Operating System :: Unix",
@@ -37,7 +33,12 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = [
+    "LICENSE.txt",
+    "c-blosc/LICENSE.txt",
+    "c-blosc/LICENSES/*",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
@@ -97,7 +98,6 @@ crc32c = [
 "numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
@@ -157,7 +157,9 @@ filterwarnings = [
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
+# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
+environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }

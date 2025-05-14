@@ -15,7 +15,6 @@ from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
     check_encode_decode,
-    check_encode_decode_partial,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
@@ -73,19 +72,6 @@ def use_threads(request):
 def test_encode_decode(array, codec):
     _skip_null(codec)
     check_encode_decode(array, codec)
-
-
-@pytest.mark.parametrize('codec', codecs)
-@pytest.mark.parametrize(
-    'array',
-    [
-        pytest.param(x) if len(x.shape) == 1 else pytest.param(x, marks=[pytest.mark.xfail])
-        for x in arrays
-    ],
-)
-def test_partial_decode(codec, array):
-    _skip_null(codec)
-    check_encode_decode_partial(array, codec)
 
 
 def test_config():
@@ -259,17 +245,40 @@ def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Blosc())
 
 
-def test_decompression_error_handling():
-    for codec in codecs:
-        _skip_null(codec)
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray())
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray(0))
+@pytest.mark.parametrize('codec', codecs)
+def test_decompression_error_handling(codec):
+    _skip_null(codec)
+    with pytest.raises(RuntimeError):
+        codec.decode(bytearray())
+    with pytest.raises(RuntimeError):
+        codec.decode(bytearray(0))
 
 
-def test_max_buffer_size():
-    for codec in codecs:
-        _skip_null(codec)
-        assert codec.max_buffer_size == 2**31 - 1
-        check_max_buffer_size(codec)
+@pytest.mark.parametrize('codec', codecs)
+def test_max_buffer_size(codec):
+    _skip_null(codec)
+    assert codec.max_buffer_size == 2**31 - 1
+    check_max_buffer_size(codec)
+
+
+def test_typesize_explicit():
+    arr = np.arange(100).astype("int64")
+    itemsize = arr.itemsize
+    codec_no_type_size = Blosc(shuffle=Blosc.SHUFFLE)
+    codec_itemsize = Blosc(shuffle=Blosc.SHUFFLE, typesize=itemsize)
+    encoded_without_itemsize = codec_no_type_size.encode(arr.tobytes())
+    encoded_with_itemsize = codec_itemsize.encode(arr.tobytes())
+    # third byte encodes the `typesize`
+    assert encoded_without_itemsize[3] == 1  # inferred from bytes i.e., 1
+    assert encoded_with_itemsize[3] == itemsize  # given as a constructor argument
+
+
+def test_typesize_less_than_1():
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
+    compressor = Blosc(shuffle=Blosc.SHUFFLE)
+    # not really something that should be done in practice, but good for testing.
+    compressor.typesize = 0
+    arr = np.arange(100)
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        compressor.encode(arr.tobytes())
