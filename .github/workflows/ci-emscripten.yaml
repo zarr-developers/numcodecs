@@ -68,7 +68,10 @@ jobs:
         run: python -m pip install pyodide-build
 
       - name: Build numcodecs for Pyodide/WASM
-        run: pyodide build
+        run: |
+          # Pin to a specific version of Pyodide to ensure reliability
+          pyodide xbuildenv install ${{ env.PYODIDE_VERSION }}
+          pyodide build
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -77,9 +80,6 @@ jobs:
 
       - name: Set up Pyodide virtual environment and test numcodecs for Pyodide
         run: |
-          # Pin to a specific version of Pyodide to ensure reliability
-          pyodide xbuildenv install ${{ env.PYODIDE_VERSION }}
-
           # Set up Pyodide virtual environment and activate it
           pyodide venv .venv-pyodide
           source .venv-pyodide/bin/activate
