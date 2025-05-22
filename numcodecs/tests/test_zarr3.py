@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import pickle
 from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
 
+import numcodecs.bitround
 from numcodecs.tests.common import is_wasm
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -273,7 +275,7 @@ def test_delta_astype(store: StorePath):
             dtype=data.dtype,
             fill_value=0,
             filters=[
-                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),  # type: ignore[arg-type]
+                numcodecs.zarr3.Delta(dtype="i8", astype="i2"),
             ],
         )
 
@@ -290,3 +292,39 @@ def test_repr():
 def test_to_dict():
     codec = numcodecs.zarr3.LZ4(level=5)
     assert codec.to_dict() == {"name": "numcodecs.lz4", "configuration": {"level": 5}}
+
+
+@pytest.mark.parametrize(
+    "codec_cls",
+    [
+        numcodecs.zarr3.Blosc,
+        numcodecs.zarr3.LZ4,
+        numcodecs.zarr3.Zstd,
+        numcodecs.zarr3.Zlib,
+        numcodecs.zarr3.GZip,
+        numcodecs.zarr3.BZ2,
+        numcodecs.zarr3.LZMA,
+        numcodecs.zarr3.Shuffle,
+        numcodecs.zarr3.BitRound,
+        numcodecs.zarr3.Delta,
+        numcodecs.zarr3.FixedScaleOffset,
+        numcodecs.zarr3.Quantize,
+        numcodecs.zarr3.PackBits,
+        numcodecs.zarr3.AsType,
+        numcodecs.zarr3.CRC32,
+        numcodecs.zarr3.CRC32C,
+        numcodecs.zarr3.Adler32,
+        numcodecs.zarr3.Fletcher32,
+        numcodecs.zarr3.JenkinsLookup3,
+        numcodecs.zarr3.PCodec,
+        numcodecs.zarr3.ZFPY,
+    ],
+)
+def test_codecs_pickleable(codec_cls):
+    codec = codec_cls()
+
+    expected = codec
+
+    p = pickle.dumps(codec)
+    actual = pickle.loads(p)
+    assert actual == expected

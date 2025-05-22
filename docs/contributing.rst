@@ -202,12 +202,11 @@ contributors.
 Merging pull requests
 ~~~~~~~~~~~~~~~~~~~~~
 
-Pull requests submitted by an external contributor should be reviewed and approved by at least
-one core developers before being merged. Ideally, pull requests submitted by a core developer
-should be reviewed and approved by at least one other core developers before being merged.
+Pull requests should be reviewed and approved by at least one core developer
+(other than the pull request author) before being merged.
 
-Pull requests should not be merged until all CI checks have passed (GitHub Actions,
-CodeCov) against code that has had the latest main merged in.
+Pull requests should not be merged until all CI checks have passed against code
+that has had the latest main merged in.
 
 Compatibility and versioning policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,6 +275,10 @@ When to make a minor release is at the discretion of the core developers. There 
 hard-and-fast rules, e.g., it is fine to make a minor release to make a single new
 feature available; equally, it is fine to make a minor release that includes a number of
 changes.
+
+When making a minor release, open an issue stating your intention so other developers
+know that a release is planned. At least a week's notice should be given for other
+developers to be aware of and possibly add to the contents of the release.
 
 Major releases obviously need to be given careful consideration, and should be done as
 infrequently as possible, as they will break existing code and/or affect data

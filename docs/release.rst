@@ -29,6 +29,8 @@ Improvements
 
 * In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
   By :user:`John Kirkham <jakirkham>`, :issue:`723`
+* All codecs are now pickleable.
+  By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
 
 Fixes
 ~~~~~
@@ -41,6 +43,9 @@ Fixes
 
 * Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
   By :user:`John Kirkham <jakirkham>`, :issue:`732`
+
+* Remove ``typesize`` from ``Blosc.get_config`` output
+  By :user:`Ilan Gold <ilan-gold>`
 
 Maintenance
 ~~~~~~~~~~~
