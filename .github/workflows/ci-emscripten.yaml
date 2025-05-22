@@ -88,8 +88,8 @@ jobs:
           pip install zarr==3.0.0b1
 
           # Install the built numcodecs WASM wheel and relevant dependencies
-          pip install $(ls dist/*.whl)"[msgpack,crc32c,pcodec,test,test_extras]"
-          # TODO: get zfpy built in Pyodide and install it here
+          pip install $(ls dist/*.whl)"[msgpack,crc32c,pcodec,zfpy,test,test_extras]"
+
 
           # Change into a different directory before running tests to avoid
           # the test runner picking up the local numcodecs package
