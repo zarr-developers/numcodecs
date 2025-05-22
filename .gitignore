@@ -106,5 +106,3 @@ numcodecs/version.py
 # Cython generated
 numcodecs/*.c
 
-# Pyodide builds
-/.pyodide-xbuildenv-*
