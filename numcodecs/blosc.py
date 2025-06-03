@@ -1,23 +1,3 @@
-"""
-An attempt at replacing bundled versin of blosc with
-the blosc-python package, which provides pre-build wheels.
-
-List of functions to deprecate:
-[
-'destroy',
-'init',
-'compname_to_compcode',
-'cbuffer_sizes',
-'cbuffer_metainfo',
-'err_bad_cname',
-'decompress_partial'
-]
-
-List of behaviour to deprecate:
-- Passing cname as bytes
-
-"""
-
 import numpy as np
 
 import blosc
