@@ -277,7 +277,6 @@ class Sclean(clean):
 def run_setup(with_extensions):
     if with_extensions:
         ext_modules = (
-            # blosc_extension()
             zstd_extension()
             + lz4_extension()
             + compat_extension()
