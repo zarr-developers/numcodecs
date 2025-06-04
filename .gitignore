@@ -49,6 +49,7 @@ coverage.xml
 *,cover
 .hypothesis/
 cover/
+.pytest_cache/
 
 # Cython annotation files
 numcodecs/*.html
@@ -104,3 +105,4 @@ numcodecs/version.py
 
 # Cython generated
 numcodecs/*.c
+
