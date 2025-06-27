@@ -47,8 +47,8 @@ arrays = [
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[ns]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
-    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
-    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, dtype='i8').view('M8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, dtype='i8').view('m8[m]'),
 ]
 
 
@@ -93,15 +93,23 @@ def test_native_functions():
 
 
 def test_streaming_decompression():
+    # Test input frames with unknown frame content size
     codec = Zstd()
-    # Bytes from streaming compression
+
+    # Encode bytes directly that were the result of streaming compression
     bytes_val = bytes(bytearray([
         40, 181, 47, 253, 0, 88, 97, 0, 0, 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33,
     ]))
     dec = codec.decode(bytes_val)
     assert dec == b'Hello World!'
 
-    bytes2 = bytes(bytearray([
+    # Two consecutive frames given as input
+    bytes2 = bytes(bytearray(bytes_val * 2))
+    dec2 = codec.decode(bytes2)
+    assert dec2 == b'Hello World!Hello World!'
+
+    # Single long frame that decompresses to a large output
+    bytes3 = bytes(bytearray([
         40, 181, 47, 253, 0, 88, 36, 2, 0, 164, 3, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
         83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
         109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 1, 0, 58, 252, 223, 115, 5, 5, 76, 0, 0, 8,
@@ -112,5 +120,10 @@ def test_streaming_decompression():
         255, 57, 16, 2, 76, 0, 0, 8, 85, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 77, 1, 0, 252, 255, 57, 16, 2, 77, 0, 0, 8,
         69, 1, 0, 252, 127, 29, 8, 1,
     ]))
-    dec2 = codec.decode(bytes2)
-    assert dec2 == b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
+    dec3 = codec.decode(bytes3)
+    assert dec3 == b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
+
+    # Garbage input results in an error
+    bytes4 = bytes(bytearray([0, 0, 0, 0, 0, 0, 0, 0]))
+    with pytest.raises(RuntimeError, match='Zstd decompression error: invalid input data'):
+        codec.decode(bytes4)
