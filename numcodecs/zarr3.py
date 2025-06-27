@@ -28,8 +28,8 @@ from __future__ import annotations
 import asyncio
 import math
 from dataclasses import dataclass, replace
-from functools import cached_property, partial
-from typing import Any, Self, TypeVar
+from functools import cached_property
+from typing import Any, Self
 from warnings import warn
 
 import numpy as np
@@ -78,6 +78,18 @@ def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
 class _NumcodecsCodec(Metadata):
     codec_name: str
     codec_config: dict[str, JSON]
+
+    def __init_subclass__(cls, *, codec_name: str | None = None, **kwargs):
+        """To be used only when creating the actual public-facing codec class."""
+        super().__init_subclass__(**kwargs)
+        if codec_name is not None:
+            namespace = codec_name
+
+            cls_name = f"{CODEC_PREFIX}{namespace}.{cls.__name__}"
+            cls.codec_name = f"{CODEC_PREFIX}{namespace}"
+            cls.__doc__ = f"""
+            See :class:`{cls_name}` for more details and parameters.
+            """
 
     def __init__(self, **codec_config: JSON) -> None:
         if not self.codec_name:
@@ -180,159 +192,77 @@ class _NumcodecsArrayBytesCodec(_NumcodecsCodec, ArrayBytesCodec):
         return chunk_spec.prototype.buffer.from_bytes(out)
 
 
-T = TypeVar("T", bound=_NumcodecsCodec)
-
-
-def _add_docstring(cls: type[T], ref_class_name: str) -> type[T]:
-    cls.__doc__ = f"""
-        See :class:`{ref_class_name}` for more details and parameters.
-        """
-    return cls
-
-
-def _add_docstring_wrapper(ref_class_name: str) -> partial:
-    return partial(_add_docstring, ref_class_name=ref_class_name)
-
-
-def _make_bytes_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytesBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsBytesBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
-
-
-def _make_array_array_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayArrayCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsArrayArrayCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
-
-
-def _make_array_bytes_codec(codec_name: str, cls_name: str) -> type[_NumcodecsArrayBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _Codec(_NumcodecsArrayBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-    _Codec.__name__ = cls_name
-    return _Codec
-
-
-def _make_checksum_codec(codec_name: str, cls_name: str) -> type[_NumcodecsBytesBytesCodec]:
-    # rename for class scope
-    _codec_name = CODEC_PREFIX + codec_name
-
-    class _ChecksumCodec(_NumcodecsBytesBytesCodec):
-        codec_name = _codec_name
-
-        def __init__(self, **codec_config: JSON) -> None:
-            super().__init__(**codec_config)
-
-        def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-            return input_byte_length + 4  # pragma: no cover
-
-    _ChecksumCodec.__name__ = cls_name
-    return _ChecksumCodec
-
-
 # bytes-to-bytes codecs
-Blosc = _add_docstring(_make_bytes_bytes_codec("blosc", "Blosc"), "numcodecs.blosc.Blosc")
-LZ4 = _add_docstring(_make_bytes_bytes_codec("lz4", "LZ4"), "numcodecs.lz4.LZ4")
-Zstd = _add_docstring(_make_bytes_bytes_codec("zstd", "Zstd"), "numcodecs.zstd.Zstd")
-Zlib = _add_docstring(_make_bytes_bytes_codec("zlib", "Zlib"), "numcodecs.zlib.Zlib")
-GZip = _add_docstring(_make_bytes_bytes_codec("gzip", "GZip"), "numcodecs.gzip.GZip")
-BZ2 = _add_docstring(_make_bytes_bytes_codec("bz2", "BZ2"), "numcodecs.bz2.BZ2")
-LZMA = _add_docstring(_make_bytes_bytes_codec("lzma", "LZMA"), "numcodecs.lzma.LZMA")
+class Blosc(_NumcodecsBytesBytesCodec, codec_name="blosc"):
+    pass
 
 
-@_add_docstring_wrapper("numcodecs.shuffle.Shuffle")
-class Shuffle(_NumcodecsBytesBytesCodec):
-    codec_name = f"{CODEC_PREFIX}shuffle"
+class LZ4(_NumcodecsBytesBytesCodec, codec_name="lz4"):
+    pass
 
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
 
+class Zstd(_NumcodecsBytesBytesCodec, codec_name="zstd"):
+    pass
+
+
+class Zlib(_NumcodecsBytesBytesCodec, codec_name="zlib"):
+    pass
+
+
+class GZip(_NumcodecsBytesBytesCodec, codec_name="gzip"):
+    pass
+
+
+class BZ2(_NumcodecsBytesBytesCodec, codec_name="bz2"):
+    pass
+
+
+class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
+    pass
+
+
+class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
-        if self.codec_config.get("elementsize", None) is None:
+        if self.codec_config.get("elementsize") is None:
             return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
         return self  # pragma: no cover
 
 
 # array-to-array codecs ("filters")
-@_add_docstring_wrapper("numcodecs.delta.Delta")
-class Delta(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}delta"
-
-    def __init__(self, **codec_config: dict[str, JSON]) -> None:
-        super().__init__(**codec_config)
-
+class Delta(_NumcodecsArrayArrayCodec, codec_name="delta"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[arg-type]
+            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
         return chunk_spec
 
 
-BitRound = _add_docstring(
-    _make_array_array_codec("bitround", "BitRound"), "numcodecs.bitround.BitRound"
-)
+class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
+    pass
 
 
-@_add_docstring_wrapper("numcodecs.fixedscaleoffset.FixedScaleOffset")
-class FixedScaleOffset(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}fixedscaleoffset"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[arg-type]
+            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
-        if self.codec_config.get("dtype", None) is None:
+        if self.codec_config.get("dtype") is None:
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
 
-@_add_docstring_wrapper("numcodecs.quantize.Quantize")
-class Quantize(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}quantize"
-
+class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
     def __init__(self, **codec_config: JSON) -> None:
         super().__init__(**codec_config)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
-        if self.codec_config.get("dtype", None) is None:
+        if self.codec_config.get("dtype") is None:
             return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
         return self
 
 
-@_add_docstring_wrapper("numcodecs.packbits.PackBits")
-class PackBits(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}packbits"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(
             chunk_spec,
@@ -345,36 +275,50 @@ class PackBits(_NumcodecsArrayArrayCodec):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
-@_add_docstring_wrapper("numcodecs.astype.AsType")
-class AsType(_NumcodecsArrayArrayCodec):
-    codec_name = f"{CODEC_PREFIX}astype"
-
-    def __init__(self, **codec_config: JSON) -> None:
-        super().__init__(**codec_config)
-
+class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
-        if self.codec_config.get("decode_dtype", None) is None:
+        if self.codec_config.get("decode_dtype") is None:
             return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
         return self
 
 
 # bytes-to-bytes checksum codecs
-CRC32 = _add_docstring(_make_checksum_codec("crc32", "CRC32"), "numcodecs.checksum32.CRC32")
-CRC32C = _add_docstring(_make_checksum_codec("crc32c", "CRC32C"), "numcodecs.checksum32.CRC32C")
-Adler32 = _add_docstring(_make_checksum_codec("adler32", "Adler32"), "numcodecs.checksum32.Adler32")
-Fletcher32 = _add_docstring(
-    _make_checksum_codec("fletcher32", "Fletcher32"), "numcodecs.fletcher32.Fletcher32"
-)
-JenkinsLookup3 = _add_docstring(
-    _make_checksum_codec("jenkins_lookup3", "JenkinsLookup3"), "numcodecs.checksum32.JenkinsLookup3"
-)
+class _NumcodecsChecksumCodec(_NumcodecsBytesBytesCodec):
+    def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
+        return input_byte_length + 4  # pragma: no cover
+
+
+class CRC32(_NumcodecsChecksumCodec, codec_name="crc32"):
+    pass
+
+
+class CRC32C(_NumcodecsChecksumCodec, codec_name="crc32c"):
+    pass
+
+
+class Adler32(_NumcodecsChecksumCodec, codec_name="adler32"):
+    pass
+
+
+class Fletcher32(_NumcodecsChecksumCodec, codec_name="fletcher32"):
+    pass
+
+
+class JenkinsLookup3(_NumcodecsChecksumCodec, codec_name="jenkins_lookup3"):
+    pass
+
 
 # array-to-bytes codecs
-PCodec = _add_docstring(_make_array_bytes_codec("pcodec", "PCodec"), "numcodecs.pcodec.PCodec")
-ZFPY = _add_docstring(_make_array_bytes_codec("zfpy", "ZFPY"), "numcodecs.zfpy.ZFPY")
+class PCodec(_NumcodecsArrayBytesCodec, codec_name="pcodec"):
+    pass
+
+
+class ZFPY(_NumcodecsArrayBytesCodec, codec_name="zfpy"):
+    pass
+
 
 __all__ = [
     "BZ2",
