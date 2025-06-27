@@ -8,8 +8,6 @@
 from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
-from .compat_ext cimport Buffer
-from .compat_ext import Buffer
 from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
 
 from .compat import ensure_contiguous_ndarray
@@ -222,7 +220,7 @@ def decompress(source, dest=None):
             raise RuntimeError('Zstd decompression error: invalid input data')
 
         if dest_size == ZSTD_CONTENTSIZE_UNKNOWN and dest is None:
-            return stream_decompress(source_buffer)
+            return stream_decompress(source_pb)
 
         # setup destination buffer
         if dest is None:
@@ -230,14 +228,15 @@ def decompress(source, dest=None):
             dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
         else:
             dest_1d = ensure_contiguous_ndarray(dest)
-            if dest_size == ZSTD_CONTENTSIZE_UNKNOWN:
-                dest_size = dest_buffer.nbytes
 
         # obtain dest memoryview
         dest_mv = memoryview(dest_1d)
         dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
         dest_ptr = <char*>dest_pb.buf
         dest_nbytes = dest_pb.len
+
+        if dest_size == ZSTD_CONTENTSIZE_UNKNOWN:
+            dest_size = dest_nbytes
 
         # validate output buffer
         if dest_nbytes < dest_size:
@@ -261,12 +260,12 @@ def decompress(source, dest=None):
 
     return dest
 
-cdef stream_decompress(Buffer source_buffer):
+cdef stream_decompress(const Py_buffer* source_pb):
     """Decompress data of unknown size
 
         Parameters
         ----------
-        source : Buffer
+        source : Py_buffer
             Compressed data buffer
 
         Returns
@@ -276,10 +275,9 @@ cdef stream_decompress(Buffer source_buffer):
     """
 
     cdef:
-        char *source_ptr
+        const char *source_ptr
         void *dest_ptr
         void *new_dst
-        Buffer dest_buffer = None
         size_t source_size, dest_size, decompressed_size
         size_t DEST_GROWTH_SIZE, status
         ZSTD_inBuffer input
@@ -290,8 +288,8 @@ cdef stream_decompress(Buffer source_buffer):
     # one completely block in all circumstances
     DEST_GROWTH_SIZE = ZSTD_DStreamOutSize();
 
-    source_ptr = source_buffer.ptr
-    source_size = source_buffer.nbytes
+    source_ptr = <const char*>source_pb.buf
+    source_size = source_pb.len
 
     # unknown content size, guess it is twice the size as the source
     dest_size = source_size * 2
