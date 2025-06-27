@@ -182,7 +182,9 @@ def decompress(source, dest=None):
         Compressed data. Can be any object supporting the buffer protocol.
     dest : array-like, optional
         Object to decompress into. If the content size is unknown, the
-        length of dest must match the decompressed size.
+        length of dest must match the decompressed size. If the content size
+        is unknown and dest is not provided, streaming decompression will be
+        used.
 
     Returns
     -------
