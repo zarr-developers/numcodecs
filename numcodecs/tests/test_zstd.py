@@ -97,9 +97,7 @@ def test_streaming_decompression():
     codec = Zstd()
 
     # Encode bytes directly that were the result of streaming compression
-    bytes_val = bytes(bytearray([
-        40, 181, 47, 253, 0, 88, 97, 0, 0, 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33,
-    ]))
+    bytes_val = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'
     dec = codec.decode(bytes_val)
     assert dec == b'Hello World!'
 
@@ -109,17 +107,7 @@ def test_streaming_decompression():
     assert dec2 == b'Hello World!Hello World!'
 
     # Single long frame that decompresses to a large output
-    bytes3 = bytes(bytearray([
-        40, 181, 47, 253, 0, 88, 36, 2, 0, 164, 3, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-        83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
-        109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 1, 0, 58, 252, 223, 115, 5, 5, 76, 0, 0, 8,
-        115, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 107, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 99, 1, 0, 252, 255, 57,
-        16, 2, 76, 0, 0, 8, 91, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 83, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 75, 1,
-        0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 67, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 117, 1, 0, 252, 255, 57, 16, 2, 76,
-        0, 0, 8, 109, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 101, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 93, 1, 0, 252,
-        255, 57, 16, 2, 76, 0, 0, 8, 85, 1, 0, 252, 255, 57, 16, 2, 76, 0, 0, 8, 77, 1, 0, 252, 255, 57, 16, 2, 77, 0, 0, 8,
-        69, 1, 0, 252, 127, 29, 8, 1,
-    ]))
+    bytes3 = b'(\xb5/\xfd\x00X$\x02\x00\xa4\x03ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz\x01\x00:\xfc\xdfs\x05\x05L\x00\x00\x08s\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08k\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08c\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08[\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08S\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08K\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08C\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08u\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08m\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08e\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08]\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08U\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08M\x01\x00\xfc\xff9\x10\x02M\x00\x00\x08E\x01\x00\xfc\x7f\x1d\x08\x01'
     dec3 = codec.decode(bytes3)
     assert dec3 == b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
 
