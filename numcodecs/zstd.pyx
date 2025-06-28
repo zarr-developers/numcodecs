@@ -203,6 +203,7 @@ def decompress(source, dest=None):
         char* dest_ptr
         size_t source_size, dest_size, decompressed_size
         size_t nbytes, cbytes, blocksize
+        size_t dest_nbytes
 
     # obtain source memoryview
     source_mv = ensure_continguous_memoryview(source)
@@ -298,7 +299,7 @@ cdef stream_decompress(const Py_buffer* source_pb):
         # minimum dest_size is DEST_GROWTH_SIZE
         dest_size = DEST_GROWTH_SIZE
 
-    dest_ptr = malloc(dest_size)
+    dest_ptr = <char *>malloc(dest_size)
     zds = ZSTD_createDStream()
 
     try:
