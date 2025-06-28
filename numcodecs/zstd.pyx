@@ -359,7 +359,7 @@ cdef stream_decompress(const Py_buffer* source_pb):
 
     return dest
 
-cdef findTotalContentSize(const void* source_ptr, size_t source_size):
+cdef findTotalContentSize(const char* source_ptr, size_t source_size):
     cdef:
         unsigned long long frame_content_size = 0
         unsigned long long total_content_size = 0
