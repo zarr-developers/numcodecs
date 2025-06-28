@@ -68,10 +68,12 @@ cdef extern from "zstd.h":
     size_t ZSTD_freeDStream(ZSTD_DStream* zds) nogil
     size_t ZSTD_initDStream(ZSTD_DStream* zds) nogil
 
-    cdef long ZSTD_CONTENTSIZE_UNKNOWN
-    cdef long ZSTD_CONTENTSIZE_ERROR
+    cdef unsigned long long ZSTD_CONTENTSIZE_UNKNOWN
+    cdef unsigned long long ZSTD_CONTENTSIZE_ERROR
+
     unsigned long long ZSTD_getFrameContentSize(const void* src,
                                                 size_t srcSize) nogil
+    size_t ZSTD_findFrameCompressedSize(const void* src, size_t srcSize) nogil
 
     int ZSTD_minCLevel() nogil
     int ZSTD_maxCLevel() nogil
@@ -216,7 +218,11 @@ def decompress(source, dest=None):
     try:
 
         # determine uncompressed size
-        dest_size = ZSTD_getFrameContentSize(source_ptr, source_size)
+        try:
+            dest_size = findTotalContentSize(source_ptr, source_size)
+        except RuntimeError:
+            raise RuntimeError('Zstd decompression error: invalid input data')
+
         if dest_size == 0 or dest_size == ZSTD_CONTENTSIZE_ERROR:
             raise RuntimeError('Zstd decompression error: invalid input data')
 
@@ -352,6 +358,33 @@ cdef stream_decompress(const Py_buffer* source_pb):
         free(output.dst)
 
     return dest
+
+cdef findTotalContentSize(const void* source_ptr, size_t source_size):
+    cdef:
+        unsigned long long frame_content_size = 0
+        unsigned long long total_content_size = 0
+        size_t frame_compressed_size = 0
+        size_t offset = 0
+
+    while offset < source_size:
+        frame_compressed_size = ZSTD_findFrameCompressedSize(source_ptr + offset, source_size - offset);
+
+        if ZSTD_isError(frame_compressed_size):
+            error = ZSTD_getErrorName(frame_compressed_size)
+            raise RuntimeError('Could not set determine zstd frame size: %s' % error)
+
+        frame_content_size = ZSTD_getFrameContentSize(source_ptr + offset, frame_compressed_size);
+
+        if frame_content_size == ZSTD_CONTENTSIZE_ERROR:
+            return ZSTD_CONTENTSIZE_ERROR
+
+        if frame_content_size == ZSTD_CONTENTSIZE_UNKNOWN:
+            return ZSTD_CONTENTSIZE_UNKNOWN
+
+        total_content_size += frame_content_size
+        offset += frame_compressed_size
+
+    return total_content_size
 
 class Zstd(Codec):
     """Codec providing compression using Zstandard.
