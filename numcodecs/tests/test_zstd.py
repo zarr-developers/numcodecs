@@ -161,10 +161,10 @@ def test_multi_frame():
 
     hello_world = codec.encode(b"Hello world!")
     assert codec.decode(hello_world) == b"Hello world!"
-    assert codec.decode(hello_world*2) == b"Hello world!Hello world!"
+    assert codec.decode(hello_world * 2) == b"Hello world!Hello world!"
 
     hola = codec.encode(b"Hola ")
     mundo = codec.encode(b"Mundo!")
     assert codec.decode(hola) == b"Hola "
     assert codec.decode(mundo) == b"Mundo!"
-    assert codec.decode(hola+mundo) == b"Hola Mundo!"
+    assert codec.decode(hola + mundo) == b"Hola Mundo!"
