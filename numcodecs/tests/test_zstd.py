@@ -1,7 +1,7 @@
 import itertools
+import subprocess
 
 import numpy as np
-import subprocess
 import pytest
 
 try:
@@ -99,6 +99,8 @@ def test_streaming_decompression():
 
     # If the zstd command line interface is available, check the bytes
     cli = zstd_cli_available()
+    if cli:
+        view_zstd_streaming_bytes()
 
     # Encode bytes directly that were the result of streaming compression
     bytes_val = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'

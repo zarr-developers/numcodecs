@@ -1,6 +1,8 @@
-import pytest
-import numpy as np
+# Check Zstd against pyzstd package
 from typing import TYPE_CHECKING
+
+import numpy as np
+import pytest
 
 try:
     from numcodecs.zstd import Zstd
@@ -16,7 +18,7 @@ test_data = [
     b"Hello World!",
     np.arange(113).tobytes(),
     np.arange(10, 15).tobytes(),
-    np.random.randint(3, 50, size=(53,)).tobytes(),
+    np.random.randint(3, 50, size=(53,), dtype=np.uint16).tobytes(),
 ]
 
 
@@ -29,9 +31,14 @@ def test_pyzstd_simple(input):
 
 @pytest.mark.xfail
 @pytest.mark.parametrize("input", test_data)
-def test_pyzstd_simple_multiple_frames(input):
+def test_pyzstd_simple_multiple_frames_decode(input):
     z = Zstd()
     assert z.decode(pyzstd.compress(input) * 2) == input * 2
+
+
+@pytest.mark.parametrize("input", test_data)
+def test_pyzstd_simple_multiple_frames_encode(input):
+    z = Zstd()
     assert pyzstd.decompress(z.encode(input) * 2) == input * 2
 
 
