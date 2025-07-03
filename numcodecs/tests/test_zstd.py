@@ -1,6 +1,7 @@
 import itertools
 
 import numpy as np
+import subprocess
 import pytest
 
 try:
@@ -96,22 +97,66 @@ def test_streaming_decompression():
     # Test input frames with unknown frame content size
     codec = Zstd()
 
+    # If the zstd command line interface is available, check the bytes
+    cli = zstd_cli_available()
+
     # Encode bytes directly that were the result of streaming compression
     bytes_val = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'
     dec = codec.decode(bytes_val)
-    assert dec == b'Hello World!'
+    dec_expected = b'Hello World!'
+    assert dec == dec_expected
+    if cli:
+        assert bytes_val == generate_zstd_streaming_bytes(dec_expected)
+        assert dec_expected == generate_zstd_streaming_bytes(bytes_val, decompress=True)
 
     # Two consecutive frames given as input
     bytes2 = bytes(bytearray(bytes_val * 2))
     dec2 = codec.decode(bytes2)
-    assert dec2 == b'Hello World!Hello World!'
+    dec2_expected = b'Hello World!Hello World!'
+    assert dec2 == dec2_expected
+    if cli:
+        assert dec2_expected == generate_zstd_streaming_bytes(bytes2, decompress=True)
 
     # Single long frame that decompresses to a large output
     bytes3 = b'(\xb5/\xfd\x00X$\x02\x00\xa4\x03ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz\x01\x00:\xfc\xdfs\x05\x05L\x00\x00\x08s\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08k\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08c\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08[\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08S\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08K\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08C\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08u\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08m\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08e\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08]\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08U\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08M\x01\x00\xfc\xff9\x10\x02M\x00\x00\x08E\x01\x00\xfc\x7f\x1d\x08\x01'
     dec3 = codec.decode(bytes3)
-    assert dec3 == b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
+    dec3_expected = b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
+    assert dec3 == dec3_expected
+    if cli:
+        assert bytes3 == generate_zstd_streaming_bytes(dec3_expected)
+        assert dec3_expected == generate_zstd_streaming_bytes(bytes3, decompress=True)
 
     # Garbage input results in an error
     bytes4 = bytes(bytearray([0, 0, 0, 0, 0, 0, 0, 0]))
     with pytest.raises(RuntimeError, match='Zstd decompression error: invalid input data'):
         codec.decode(bytes4)
+
+def generate_zstd_streaming_bytes(input: bytes, *, decompress: bool =False) -> bytes:
+    """
+    Use the zstd command line interface to compress or decompress bytes in streaming mode.
+    """
+    if decompress:
+        args = ["-d"]
+    else:
+        args = []
+
+    p = subprocess.run(
+            ["zstd", "--no-check", *args],
+            input=input,
+            capture_output=True
+    )
+    return p.stdout
+
+def view_zstd_streaming_bytes():
+    bytes_val = generate_zstd_streaming_bytes(b"Hello world!")
+    print(f"    bytes_val = {bytes_val}")
+
+    bytes3 = generate_zstd_streaming_bytes(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz" * 1024 * 32)
+    print(f"    bytes3 = {bytes3}")
+
+def zstd_cli_available() -> bool:
+    return not subprocess.run(
+        ["zstd", "-V"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    ).returncode
