@@ -57,6 +57,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "pyzstd"
 ]
 test_extras = [
     "importlib_metadata",
