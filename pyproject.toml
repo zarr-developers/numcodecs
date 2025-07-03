@@ -33,7 +33,7 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = "MIT"
+license = {text = "MIT License"}
 license-files = [
     "LICENSE.txt",
     "c-blosc/LICENSE.txt",
