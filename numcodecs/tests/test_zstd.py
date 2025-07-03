@@ -47,8 +47,8 @@ arrays = [
     np.random.randint(0, 2**25, size=1000, dtype='u8').view('m8[m]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[ns]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
-    np.random.randint(-(2**63), -(2**63) + 20, dtype='i8').view('M8[m]'),
-    np.random.randint(-(2**63), -(2**63) + 20, dtype='i8').view('m8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
+    np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
 ]
 
 
