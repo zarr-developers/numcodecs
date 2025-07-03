@@ -131,7 +131,8 @@ def test_streaming_decompression():
     with pytest.raises(RuntimeError, match='Zstd decompression error: invalid input data'):
         codec.decode(bytes4)
 
-def generate_zstd_streaming_bytes(input: bytes, *, decompress: bool =False) -> bytes:
+
+def generate_zstd_streaming_bytes(input: bytes, *, decompress: bool = False) -> bytes:
     """
     Use the zstd command line interface to compress or decompress bytes in streaming mode.
     """
@@ -140,23 +141,21 @@ def generate_zstd_streaming_bytes(input: bytes, *, decompress: bool =False) -> b
     else:
         args = []
 
-    p = subprocess.run(
-            ["zstd", "--no-check", *args],
-            input=input,
-            capture_output=True
-    )
+    p = subprocess.run(["zstd", "--no-check", *args], input=input, capture_output=True)
     return p.stdout
+
 
 def view_zstd_streaming_bytes():
     bytes_val = generate_zstd_streaming_bytes(b"Hello world!")
     print(f"    bytes_val = {bytes_val}")
 
-    bytes3 = generate_zstd_streaming_bytes(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz" * 1024 * 32)
+    bytes3 = generate_zstd_streaming_bytes(
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz" * 1024 * 32
+    )
     print(f"    bytes3 = {bytes3}")
+
 
 def zstd_cli_available() -> bool:
     return not subprocess.run(
-        ["zstd", "-V"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
+        ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     ).returncode
