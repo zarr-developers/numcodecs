@@ -4,12 +4,6 @@ import subprocess
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.zstd import Zstd
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.zstd not available", allow_module_level=True)
-
-
 from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -18,6 +12,7 @@ from numcodecs.tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
+from numcodecs.zstd import Zstd
 
 codecs = [
     Zstd(),

@@ -1,18 +1,10 @@
 # Check Zstd against pyzstd package
-from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
+import pyzstd
 
-try:
-    from numcodecs.zstd import Zstd
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.zstd not available", allow_module_level=True)
-
-if TYPE_CHECKING:  # pragma: no cover
-    import pyzstd
-else:
-    pyzstd = pytest.importorskip("pyzstd")
+from numcodecs.zstd import Zstd
 
 test_data = [
     b"Hello World!",
