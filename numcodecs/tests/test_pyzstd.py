@@ -38,6 +38,7 @@ def test_pyzstd_simple_multiple_frames_encode(input):
 def test_pyzstd_streaming(input):
     pyzstd_c = pyzstd.ZstdCompressor()
     pyzstd_d = pyzstd.ZstdDecompressor()
+    pyzstd_e = pyzstd.EndlessZstdDecompressor()
     z = Zstd()
 
     d_bytes = input
@@ -47,6 +48,11 @@ def test_pyzstd_streaming(input):
     assert pyzstd_d.decompress(z.encode(d_bytes)) == d_bytes
 
     # Test multiple streaming frames
-    assert z.decode(c_bytes * 2) == d_bytes * 2
-    assert z.decode(c_bytes * 3) == d_bytes * 3
-    assert z.decode(c_bytes * 99) == d_bytes * 99
+    assert z.decode(c_bytes * 2) == pyzstd_e.decompress(c_bytes * 2)
+    assert z.decode(c_bytes * 3) == pyzstd_e.decompress(c_bytes * 3)
+    assert z.decode(c_bytes * 4) == pyzstd_e.decompress(c_bytes * 4)
+    assert z.decode(c_bytes * 5) == pyzstd_e.decompress(c_bytes * 5)
+    assert z.decode(c_bytes * 7) == pyzstd_e.decompress(c_bytes * 7)
+    assert z.decode(c_bytes * 11) == pyzstd_e.decompress(c_bytes * 11)
+    assert z.decode(c_bytes * 13) == pyzstd_e.decompress(c_bytes * 13)
+    assert z.decode(c_bytes * 99) == pyzstd_e.decompress(c_bytes * 99)
