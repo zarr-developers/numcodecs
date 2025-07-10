@@ -16,6 +16,10 @@ test_data = [
 
 @pytest.mark.parametrize("input", test_data)
 def test_pyzstd_simple(input):
+    """
+    Test if Zstd.[decode, encode] can perform the inverse operation to
+    pyzstd.[compress, decompress] in the simple case.
+    """
     z = Zstd()
     assert z.decode(pyzstd.compress(input)) == input
     assert pyzstd.decompress(z.encode(input)) == input
@@ -24,18 +28,33 @@ def test_pyzstd_simple(input):
 @pytest.mark.xfail
 @pytest.mark.parametrize("input", test_data)
 def test_pyzstd_simple_multiple_frames_decode(input):
+    """
+    Test decompression of two concatenated frames of known sizes
+
+    numcodecs.zstd.Zstd currently fails because it only assesses the size of the
+    first frame. Rather, it should keep iterating through all the frames until
+    the end of the input buffer.
+    """
     z = Zstd()
+    assert pyzstd.decompress(pyzstd.compress(input) * 2) == input * 2
     assert z.decode(pyzstd.compress(input) * 2) == input * 2
 
 
 @pytest.mark.parametrize("input", test_data)
 def test_pyzstd_simple_multiple_frames_encode(input):
+    """
+    Test if pyzstd can decompress two concatenated frames from Zstd.encode
+    """
     z = Zstd()
     assert pyzstd.decompress(z.encode(input) * 2) == input * 2
 
 
 @pytest.mark.parametrize("input", test_data)
 def test_pyzstd_streaming(input):
+    """
+    Test if Zstd can decode a single frame and concatenated frames in streaming
+    mode where the decompressed size is not recorded in the frame header.
+    """
     pyzstd_c = pyzstd.ZstdCompressor()
     pyzstd_d = pyzstd.ZstdDecompressor()
     pyzstd_e = pyzstd.EndlessZstdDecompressor()
