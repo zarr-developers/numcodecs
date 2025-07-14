@@ -87,6 +87,7 @@ def test_native_functions():
     assert Zstd.min_level() == -131072
     assert Zstd.max_level() == 22
 
+
 def test_streaming_decompression():
     # Test input frames with unknown frame content size
     codec = Zstd()
@@ -155,6 +156,7 @@ def zstd_cli_available() -> bool:
     return not subprocess.run(
         ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     ).returncode
+
 
 def test_multi_frame():
     codec = Zstd()
