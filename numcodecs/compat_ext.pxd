@@ -1,12 +1,13 @@
 # cython: language_level=3
 
 
-cdef class Buffer:
-    cdef:
-        char *ptr
-        Py_buffer buffer
-        size_t nbytes
-        size_t itemsize
-        bint acquired
+cdef extern from *:
+    """
+    #ifndef PyBytes_RESIZE
+    #define PyBytes_RESIZE(b, n) _PyBytes_Resize(&b, n)
+    #endif
+    """
+    int PyBytes_RESIZE(object b, Py_ssize_t n) except -1
 
-    cpdef release(self)
+
+cpdef memoryview ensure_continguous_memoryview(obj)

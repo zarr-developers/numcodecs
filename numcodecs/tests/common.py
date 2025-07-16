@@ -7,8 +7,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-# star import needed for repr tests so eval finds names
-from numcodecs import *  # noqa: F403
+from numcodecs import *  # noqa: F403  # for eval to find names in repr tests
 from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
 
@@ -19,9 +18,9 @@ greetings = [
     'Hei maailma!',
     'Xin chào thế giới',
     'Njatjeta Botë!',
-    'Γεια σου κόσμε!',
+    'Γεια σου κόσμε!',  # noqa: RUF001
     'こんにちは世界',
-    '世界，你好！',
+    '世界，你好！',  # noqa: RUF001
     'Helló, világ!',
     'Zdravo svete!',
     'เฮลโลเวิลด์',
@@ -116,74 +115,6 @@ def check_encode_decode(arr, codec, precision=None):
     compare_arrays(arr, out, precision=precision)
 
 
-def check_encode_decode_partial(arr, codec, precision=None):
-    # N.B., watch out here with blosc compressor, if the itemsize of
-    # the source buffer is different then the results of encoding
-    # (i.e., compression) may be different. Hence we *do not* require that
-    # the results of encoding be identical for all possible inputs, rather
-    # we just require that the results of the encode/decode round-trip can
-    # be compared to the original array.
-
-    itemsize = arr.itemsize
-    start, nitems = 5, 10
-    compare_arr = arr[start : start + nitems]
-    # test encoding of numpy array
-    enc = codec.encode(arr)
-    dec = codec.decode_partial(enc, start, nitems)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # out = np.empty_like(compare_arr)
-    out = np.empty_like(compare_arr)
-    print(len(out))
-
-    # test partial decode of encoded bytes
-    buf = arr.tobytes(order='A')
-    enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test partial decode of encoded bytearray
-    buf = bytearray(arr.tobytes(order='A'))
-    enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test partial decode of encoded array.array
-    buf = array.array('b', arr.tobytes(order='A'))
-    enc = codec.encode(buf)
-    dec = codec.decode_partial(enc, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # # decoding should support any object exporting the buffer protocol,
-
-    # # setup
-    enc_bytes = ensure_bytes(enc)
-
-    # test decoding of raw bytes into numpy array
-    dec = codec.decode_partial(enc_bytes, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test partial decoding of bytearray
-    dec = codec.decode_partial(bytearray(enc_bytes), start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test partial decoding of array.array
-    buf = array.array('b', enc_bytes)
-    dec = codec.decode_partial(buf, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test decoding of numpy array into numpy array
-    buf = np.frombuffer(enc_bytes, dtype='u1')
-    dec = codec.decode_partial(buf, start * itemsize, nitems * itemsize, out=out)
-    compare_arrays(compare_arr, dec, precision=precision)
-
-    # test decoding directly into bytearray
-    out = bytearray(compare_arr.nbytes)
-    codec.decode_partial(enc_bytes, start * itemsize, nitems * itemsize, out=out)
-    # noinspection PyTypeChecker
-    compare_arrays(compare_arr, out, precision=precision)
-
-
 def assert_array_items_equal(res, arr):
     assert isinstance(res, np.ndarray)
     res = res.reshape(-1, order='A')
@@ -271,7 +202,7 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
 
         for j, codec in enumerate(codecs):
             if codec is None:
-                pytest.skip("codec has been removed")
+                continue
 
             # setup a directory to hold encoded data
             codec_dir = os.path.join(fixture_dir, f'codec.{j:02d}')

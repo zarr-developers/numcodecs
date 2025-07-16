@@ -80,18 +80,15 @@ class Categorize(Codec):
             dec[enc == (i + 1)] = label
 
         # handle output
-        dec = ndarray_copy(dec, out)
-
-        return dec
+        return ndarray_copy(dec, out)
 
     def get_config(self):
-        config = dict(
-            id=self.codec_id,
-            labels=self.labels,
-            dtype=self.dtype.str,
-            astype=self.astype.str,
-        )
-        return config
+        return {
+            'id': self.codec_id,
+            'labels': self.labels,
+            'dtype': self.dtype.str,
+            'astype': self.astype.str,
+        }
 
     def __repr__(self):
         # make sure labels part is not too long

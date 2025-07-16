@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=64",
+    "setuptools>=77",
     "setuptools-scm[toml]>=6.2",
     "Cython",
     "py-cpuinfo",
@@ -14,10 +14,8 @@ name = "numcodecs"
 description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
-readme =  "README.rst"
-dependencies = [
-    "numpy>=1.24",
-]
+readme = "README.rst"
+dependencies = ["numpy>=1.24", "typing_extensions"]
 requires-python = ">=3.11"
 dynamic = [
   "version",
@@ -27,7 +25,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Operating System :: Unix",
@@ -37,7 +34,12 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = [
+    "LICENSE.txt",
+    "c-blosc/LICENSE.txt",
+    "c-blosc/LICENSES/*",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/zarr-developers/numcodecs/issues"
@@ -56,6 +58,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "pyzstd"
 ]
 test_extras = [
     "importlib_metadata",
@@ -64,11 +67,10 @@ msgpack = [
     "msgpack",
 ]
 zfpy = [
-    "zfpy>=1.0.0",
-    "numpy<2.0.0",
+    "zfpy>=1.0.0"
 ]
 pcodec = [
-    "pcodec>=0.2,<0.3",
+    "pcodec>=0.3,<0.4",
 ]
 crc32c = [
     "crc32c>=2.7",
@@ -98,7 +100,6 @@ crc32c = [
 "numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
 zip-safe = false
@@ -158,45 +159,75 @@ filterwarnings = [
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
+# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
+environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["c-blosc"]
+src = ["numcodecs"]
 
 [tool.ruff.lint]
 extend-select = [
     "B",
+    "C4",
+    "EXE",
+    "FA",
     "FLY",
     "FURB",
     "G",
     "I",
+    "ISC",
+    "LOG",
     "PERF",
     "PGH",
     "PIE",
     "PT",
     "PYI",
+    "RET",
     "RSE",
     "RUF",
+    "SIM",
+    "SLOT",
+    "TID",
+    "TRY",
     "UP",
-    # "W",  https://github.com/astral-sh/ruff/issues/13763
 ]
 ignore = [
-    "B028",
-    "B904",
     "FURB101",
     "FURB103",
     "PT001",
-    "PT004",  # deprecated
-    "PT005",  # deprecated
     "PT011",
-	"RUF001",
+    "PT012",
+    "RET505",
+    "RET506",
+    "SIM108",
+    "TRY003",
+    "TRY301",
     "UP007",
-    "UP027",  # deprecated
     "UP038",  # https://github.com/astral-sh/ruff/issues/7871
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
 ]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
 quote-style = "preserve"
@@ -208,3 +239,6 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 # TODO: set options below to true
 strict = false
 warn_unreachable = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true

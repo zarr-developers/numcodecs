@@ -6,14 +6,176 @@ Release notes
     # to document your changes. On releases it will be
     # re-indented so that it does not show up in the notes.
 
+    .. _unreleased:
+
+    Unreleased
+    ----------
+
+
 .. _unreleased:
 
 Unreleased
 ----------
 
+Enhancements
+~~~~~~~~~~~~
+
+Improvements
+~~~~~~~~~~~~
+
+* In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`723`
+* All codecs are now pickleable.
+  By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
+
 Fixes
 ~~~~~
-* Cleanup ``crc32c`` soft dependency.
+
+* Fix ``const`` discard warnings in ``fletcher32``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`728`
+
+* Update ``license*`` metadata and include third-party licenses.
+  By :user:`John Kirkham <jakirkham>`, :issue:`729`
+
+* Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
+  By :user:`John Kirkham <jakirkham>`, :issue:`732`
+
+* Remove ``typesize`` from ``Blosc.get_config`` output
+  By :user:`Ilan Gold <ilan-gold>`
+
+Maintenance
+~~~~~~~~~~~
+
+
+0.16.0
+------
+
+Enhancements
+~~~~~~~~~~~~
+
+* Add ``typesize`` argument to ``Blosc`` to allow for buffers that are passed to ``encode``
+  use that information.  zarr v3 currently has its Blosc codec as bytes-to-bytes but does retain
+  the size information so using it here allows for massive compression ratio gains.
+  By :user:`Ilan Gold <ilan-gold>`
+* Add support for the Linux aarch64 architecture,
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+* Preallocate output buffers and resize directly as needed.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
+* ``Checksum32`` is now an abstract base clase, with ``checksum()`` as an abstract method.
+  This helps ensure that any subclasses implement the ``checksum()`` method.
+  :issue:`711`
+
+Removals
+~~~~~~~~
+
+The following ``blosc`` funcitons are removed, with no replacement.
+This is because they were not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is removed as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue:`712`
+
+Maintenance
+~~~~~~~~~~~
+* Replace internal ``Buffer`` usage with ``memoryview``\ s.
+  By :user:`John Kirkham <jakirkham>`, :issue:`656`
+* Bump the minimum macOS deployment target for x86_64 to 10.13.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
+
+
+0.15.1
+------
+
+Improvements
+~~~~~~~~~~~~
+* Add streaming decompression for ZSTD (:issue:`699`)
+  By :user:`Mark Kittisopikul <mkitti>`.
+* Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
+  By :user:`Cas Wognum <cwognum>`.
+
+Fixes
+~~~~~
+* Remove redundant ``id`` from codec metadata serialization in Zarr3 codecs.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`685`
+
+.. _release_0.15.0:
+
+0.15.0
+------
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+* All arguments to the ``PCodec`` constructor except for ``level``
+  are now keyword only, to support the updated API.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+
+Deprecations
+~~~~~~~~~~~~
+The following ``blosc`` functions are deprecated, with no replacement.
+This is because they are not intended to be public API.
+
+- ``numcodecs.blosc.init``
+- ``numcodecs.blosc.destroy``
+- ``numcodecs.blosc.compname_to_compcode``
+- ``numcodecs.blosc.cbuffer_sizes``
+- ``numcodecs.blosc.cbuffer_metainfo``
+
+In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
+has always been experimental and there is no equivalent in the official
+blsoc Python package.
+By :user:`David Stansby <dstansby>`, :issue:`619`
+
+Fixes
+~~~~~
+* Fixes issue with ``Delta`` Zarr 3 codec not working with ``astype``.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`664`
+* Cleanup ``PCodec`` soft dependency.
+  Previously importing ``numcodecs.pcodec`` would work if ``pcodec`` is not installed,
+  but now it will fail to import. This mirrors the behaviour of other optional dependencies.
+  By :user:`John Kirkham <jakirkham>`, :issue:`647`
+* Fixes issues with the upcoming ``zarr`` 3.0.0 release.
+  By :user:`Norman Rzepka <normanrz>`, :issue:`675`
+
+* Removed Version Check: The previous code included a check for the `NumPy` version
+  and a warning if the version was incompatible with `zfpy`.
+  This check has been removed because `zfpy` now supports the newer versions of `NumPy`.
+  By :user:`Meher Gajula <me-her>`, :issue:`672`
+
+Improvements
+~~~~~~~~~~~~
+* Add support for ``pcodec`` 0.3. This exposes the new ``delta_spec``
+  and ``paging_spec`` arguments, but maintains full backwards
+  compatibility for data written with older package versions.
+  By :user:`Sam Levang <slevang>`, :issue:`623`
+* If an import error is raised when trying to define a codec that is *not*
+  an optional dependency, it is no longer silently caught. Instead it will
+  be propagated to the user, as this indicates an issue with the installed
+  package.
+
+  Import errors caused by optional dependencies (ZFPY, MsgPack, CRC32C, and PCodec)
+  are still silently caught.
+  By :user:`David Stansby <dstansby>`, :issue:`550`.
+
+.. _release_0.14.1:
+
+0.14.1
+------
+
+Fixes
+~~~~~
+* Cleanups to the ``crc32c`` soft dependency.
+  Whereas in ``numcodecs`` 0.14.0 a runtime error was raised if
+  the ``CRC32C`` codec used without the ``crc32c`` installed,
+  the ``CRC32C`` codec is no longer defined at import time if
+  ``crc32c`` is not installed. This has been changed to match
+  the behaviour of other optional dependencies/codecs.
   By :user:`John Kirkham <jakirkham>`, :issue:`637`
 
 Improvements

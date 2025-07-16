@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Optional, Protocol, runtime_checkable
+from typing import Any, ClassVar, Protocol, runtime_checkable
 
 
 class _CachedProtocolMeta(Protocol.__class__):  # type: ignore[name-defined]
@@ -53,7 +53,7 @@ class NDArrayLike(Protocol, metaclass=_CachedProtocolMeta):
 
     def __setitem__(self, key, value): ...  # pragma: no cover
 
-    def tobytes(self, order: Optional[str] = ...) -> bytes: ...  # pragma: no cover
+    def tobytes(self, order: str | None = ...) -> bytes: ...  # pragma: no cover
 
     def reshape(self, *shape: int, order: str = ...) -> "NDArrayLike": ...  # pragma: no cover
 

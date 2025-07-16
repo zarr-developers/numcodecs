@@ -15,7 +15,6 @@ from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
     check_encode_decode,
-    check_encode_decode_partial,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
@@ -75,19 +74,6 @@ def test_encode_decode(array, codec):
     check_encode_decode(array, codec)
 
 
-@pytest.mark.parametrize('codec', codecs)
-@pytest.mark.parametrize(
-    'array',
-    [
-        pytest.param(x) if len(x.shape) == 1 else pytest.param(x, marks=[pytest.mark.xfail])
-        for x in arrays
-    ],
-)
-def test_partial_decode(codec, array):
-    _skip_null(codec)
-    check_encode_decode_partial(array, codec)
-
-
 def test_config():
     codec = Blosc(cname='zstd', clevel=3, shuffle=1)
     check_config(codec)
@@ -124,12 +110,12 @@ def test_compress_blocksize_default(use_threads):
 
     # default blocksize
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize > 0
 
     # explicit default blocksize
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize > 0
 
 
@@ -140,7 +126,7 @@ def test_compress_blocksize(use_threads, bs):
     blosc.use_threads = use_threads
 
     enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
-    _, _, blocksize = blosc.cbuffer_sizes(enc)
+    _, _, blocksize = blosc._cbuffer_sizes(enc)
     assert blocksize == bs
 
 
@@ -174,7 +160,7 @@ def test_compress_metainfo(dtype, use_threads):
         blosc.use_threads = use_threads
         for cname in blosc.list_compressors():
             enc = blosc.compress(arr, cname.encode(), 1, shuffle)
-            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
             assert typesize == arr.dtype.itemsize
             assert did_shuffle == shuffle
 
@@ -186,7 +172,7 @@ def test_compress_autoshuffle(use_threads):
         blosc.use_threads = use_threads
         for cname in blosc.list_compressors():
             enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
-            typesize, did_shuffle, _ = blosc.cbuffer_metainfo(enc)
+            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
             assert typesize == varr.dtype.itemsize
             if typesize == 1:
                 assert did_shuffle == Blosc.BITSHUFFLE
@@ -199,12 +185,12 @@ def test_config_blocksize():
     # explicitly stated
 
     # blocksize not stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 0
 
     # blocksize stated
-    config = dict(cname='lz4', clevel=1, shuffle=Blosc.SHUFFLE, blocksize=2**8)
+    config = {"cname": 'lz4', "clevel": 1, "shuffle": Blosc.SHUFFLE, "blocksize": 2**8}
     codec = Blosc.from_config(config)
     assert codec.blocksize == 2**8
 
@@ -215,14 +201,12 @@ def test_backwards_compatibility():
 
 def _encode_worker(data):
     compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
-    enc = compressor.encode(data)
-    return enc
+    return compressor.encode(data)
 
 
 def _decode_worker(enc):
     compressor = Blosc()
-    data = compressor.decode(enc)
-    return data
+    return compressor.decode(enc)
 
 
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
@@ -261,17 +245,46 @@ def test_err_encode_object_buffer():
     check_err_encode_object_buffer(Blosc())
 
 
-def test_decompression_error_handling():
-    for codec in codecs:
-        _skip_null(codec)
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray())
-        with pytest.raises(RuntimeError):
-            codec.decode(bytearray(0))
+@pytest.mark.parametrize('codec', codecs)
+def test_decompression_error_handling(codec):
+    _skip_null(codec)
+    with pytest.raises(RuntimeError):
+        codec.decode(bytearray())
+    with pytest.raises(RuntimeError):
+        codec.decode(bytearray(0))
 
 
-def test_max_buffer_size():
-    for codec in codecs:
-        _skip_null(codec)
-        assert codec.max_buffer_size == 2**31 - 1
-        check_max_buffer_size(codec)
+@pytest.mark.parametrize('codec', codecs)
+def test_max_buffer_size(codec):
+    _skip_null(codec)
+    assert codec.max_buffer_size == 2**31 - 1
+    check_max_buffer_size(codec)
+
+
+def test_typesize_explicit():
+    arr = np.arange(100).astype("int64")
+    itemsize = arr.itemsize
+    codec_no_type_size = Blosc(shuffle=Blosc.SHUFFLE)
+    codec_itemsize = Blosc(shuffle=Blosc.SHUFFLE, typesize=itemsize)
+    encoded_without_itemsize = codec_no_type_size.encode(arr.tobytes())
+    encoded_with_itemsize = codec_itemsize.encode(arr.tobytes())
+    # third byte encodes the `typesize`
+    assert encoded_without_itemsize[3] == 1  # inferred from bytes i.e., 1
+    assert encoded_with_itemsize[3] == itemsize  # given as a constructor argument
+
+
+def test_typesize_less_than_1():
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
+    compressor = Blosc(shuffle=Blosc.SHUFFLE)
+    # not really something that should be done in practice, but good for testing.
+    compressor._typesize = 0
+    arr = np.arange(100)
+    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+        compressor.encode(arr.tobytes())
+
+
+def test_config_no_typesize():
+    codec = Blosc(shuffle=Blosc.SHUFFLE, typesize=5)
+    config = codec.get_config()
+    assert "typesize" not in config
