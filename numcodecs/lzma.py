@@ -1,11 +1,10 @@
 from types import ModuleType
-from typing import Optional
 
-_lzma: Optional[ModuleType] = None
+_lzma: ModuleType | None = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
-    try:
+    try:  # noqa: SIM105
         from backports import lzma as _lzma  # type: ignore[no-redef]
     except ImportError:
         pass

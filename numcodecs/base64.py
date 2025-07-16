@@ -13,8 +13,7 @@ class Base64(Codec):
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
         # do compression
-        compressed = _base64.standard_b64encode(buf)
-        return compressed
+        return _base64.standard_b64encode(buf)
 
     def decode(self, buf, out=None):
         # normalise inputs

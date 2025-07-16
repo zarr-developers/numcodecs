@@ -29,7 +29,7 @@ codecs = [
     LZMA(preset=1),
     LZMA(preset=5),
     LZMA(preset=9),
-    LZMA(format=_lzma.FORMAT_RAW, filters=[dict(id=_lzma.FILTER_LZMA2, preset=1)]),
+    LZMA(format=_lzma.FORMAT_RAW, filters=[{"id": _lzma.FILTER_LZMA2, "preset": 1}]),
 ]
 
 
