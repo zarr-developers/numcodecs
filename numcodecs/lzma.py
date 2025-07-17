@@ -1,7 +1,6 @@
 from types import ModuleType
-from typing import Optional
 
-_lzma: Optional[ModuleType] = None
+_lzma: ModuleType | None = None
 try:
     import lzma as _lzma
 except ImportError:  # pragma: no cover
