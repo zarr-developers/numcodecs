@@ -255,7 +255,7 @@ crc32c = { features = ["crc32c"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 msgpack = { features = ["msgpack"], solve-group = "default" }
 pcodec = { features = ["pcodec"], solve-group = "default" }
-test = { features = ["test"], solve-group = "default" }
+test = { features = ["test", "crc32c", "msgpack", "pcodec", "zfpy"], solve-group = "default" }
 test-extras = { features = ["test_extras"], solve-group = "default" }
 zfpy = { features = ["zfpy"], solve-group = "default" }
 
