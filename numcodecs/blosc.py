@@ -200,14 +200,7 @@ class Blosc(Codec):
     AUTOSHUFFLE = AUTOSHUFFLE
     max_buffer_size = 2**31 - 1
 
-    def __init__(
-        self,
-        cname='lz4',
-        clevel=5,
-        shuffle=SHUFFLE,
-        blocksize=AUTOBLOCKS,
-        typesize: int | None = None,
-    ):
+    def __init__(self, cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=AUTOBLOCKS, typesize=None):
         if isinstance(typesize, int) and typesize < 1:
             raise ValueError(f"Cannot use typesize {typesize} less than 1.")
         self.cname = cname
@@ -218,7 +211,7 @@ class Blosc(Codec):
         self.clevel = clevel
         self.shuffle = shuffle
         self.blocksize = blocksize
-        self.typesize = typesize
+        self._typesize = typesize
 
     def encode(self, buf):
         _check_buffer_size(buf, self.max_buffer_size)
@@ -228,7 +221,7 @@ class Blosc(Codec):
             clevel=self.clevel,
             shuffle=self.shuffle,
             blocksize=self.blocksize,
-            typesize=self.typesize,
+            typesize=self._typesize,
         )
 
     def decode(self, buf, out=None):
