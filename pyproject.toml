@@ -33,7 +33,7 @@ classifiers = [
 maintainers = [
     { name = "Alistair Miles", email = "alimanfoo@googlemail.com" },
 ]
-license = {text = "MIT License"}
+license = "MIT"
 license-files = [
     "LICENSE.txt",
     "c-blosc/LICENSE.txt",
@@ -57,6 +57,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "pyzstd"
 ]
 test_extras = [
     "importlib_metadata",
