@@ -360,6 +360,19 @@ cdef stream_decompress(const Py_buffer* source_pb):
     return dest
 
 cdef unsigned long long findTotalContentSize(const char* source_ptr, size_t source_size):
+    """Find the total uncompressed content size of all frames in the source buffer
+
+    Parameters
+    ----------
+    source_ptr : Pointer to the beginning of the buffer
+    source_size : Size of the buffer containing the frame sizes to sum
+
+    Returns
+    -------
+    total_content_size: Sum of the content size of all frames within the source buffer
+        If any of the frame sizes is unknown, return ZSTD_CONTENTSIZE_UNKNOWN.
+        If any of the frames causes ZSTD_getFrameContentSize to error, return ZSTD_CONTENTSIZE_ERROR.
+    """
     cdef:
         unsigned long long frame_content_size = 0
         unsigned long long total_content_size = 0
