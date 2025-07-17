@@ -60,12 +60,12 @@ def from_zarr_dtype(dtype: Any) -> np.dtype:
     """
     Get a numpy data type from an array spec, depending on the zarr version.
     """
-    if version('zarr') >= Version("3.1.0"):
+    if Version(version('zarr')) >= Version("3.1.0"):
         return dtype.to_native_dtype()
     return dtype
 
 def to_zarr_dtype(dtype: np.dtype) -> Any:
-    if version('zarr') >= Version("3.1.0"):
+    if Version(version('zarr')) >= Version("3.1.0"):
         from zarr.dtype import parse_data_type
         return parse_data_type(dtype)
     return dtype
