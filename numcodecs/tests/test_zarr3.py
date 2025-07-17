@@ -122,8 +122,8 @@ def test_generic_filter(
             ],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
 
@@ -140,8 +140,8 @@ def test_generic_filter_bitround(store: StorePath):
             filters=[numcodecs.zarr3.BitRound(keepbits=3)],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic_bitround", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic_bitround", mode="r")
     assert np.allclose(data, a[:, :], atol=0.1)
 
 
@@ -158,8 +158,8 @@ def test_generic_filter_quantize(store: StorePath):
             filters=[numcodecs.zarr3.Quantize(digits=3)],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic_quantize", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic_quantize", mode="r")
     assert np.allclose(data, a[:, :], atol=0.001)
 
 
@@ -177,8 +177,8 @@ def test_generic_filter_packbits(store: StorePath):
             filters=[numcodecs.zarr3.PackBits()],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic_packbits", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic_packbits", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
     with pytest.raises(ValueError, match=".*requires bool dtype.*"):
@@ -217,8 +217,8 @@ def test_generic_checksum(
             compressors=[codec_class()],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic_checksum", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic_checksum", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
 
@@ -267,8 +267,8 @@ def test_delta_astype(store: StorePath):
             ],
         )
 
-        a[:, :] = data.copy()
-        a = zarr.open_array(store / "generic", mode="r")
+    a[:, :] = data.copy()
+    a = zarr.open_array(store / "generic", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
 
