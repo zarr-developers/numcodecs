@@ -25,6 +25,20 @@ You can use codecs from :py:mod:`numcodecs` by constructing codecs from :py:mod:
 
 from __future__ import annotations
 
+# Short workaround for skipping the doctest above in a WASM environment
+# compiled via Emscripten where threads are not available, and accessing
+# the pytest config has no effect and ignoring warnings does not work.
+try:
+    import pytest
+
+    from numcodecs.tests.common import is_wasm
+
+    if is_wasm:  # pragma: no cover
+        pytest.skip("zarr3 doctests not supported in WASM", allow_module_level=True)
+# not running tests
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
+    pass
+
 import asyncio
 import math
 from dataclasses import dataclass, replace

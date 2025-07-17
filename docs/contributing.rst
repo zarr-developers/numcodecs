@@ -144,12 +144,11 @@ docstrings. The simplest way to run the unit tests is to invoke::
 
     $ pytest -v
 
-NumCodecs currently supports Python 6-3.9, so the above command must
+NumCodecs currently supports Python 3.8 and later, so the above command must
 succeed before code can be accepted into the main code base.
 
-All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
-integration services for every pull request. Tests must pass under both services before
-code can be accepted.
+All tests are automatically run via continuous integration services for every pull request
+provided by GitHub Actions. Tests must pass under both services before code can be accepted.
 
 Code standards
 ~~~~~~~~~~~~~~
@@ -163,11 +162,11 @@ Conformance can be checked by running::
 Test coverage
 ~~~~~~~~~~~~~
 
-NumCodecs maintains 100% test coverage under the latest Python stable release (currently
-Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running ``pytest -v`` will automatically run the test suite with coverage
-and produce a coverage report. This should be 100% before code can be accepted into the
-main code base.
+NumCodecs maintains 100% test coverage under the latest Python stable release.
+Both unit tests and docstring doctests are included when computing coverage. Running
+``pytest -v`` will automatically run the test suite with coverage and produce a
+coverage report. This should be 100% before code can be accepted into the main
+code base.
 
 When submitting a pull request, coverage will also be collected across all supported
 Python versions via the Codecov service, and will be reported back within the pull
@@ -179,7 +178,7 @@ Documentation
 Docstrings for user-facing classes and functions should follow the `numpydoc
 <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
 including sections for Parameters and Examples. All examples will be run as doctests
-under Python 3.9.
+under a stable version of Python.
 
 NumCodecs uses Sphinx for documentation, hosted on readthedocs.org. Documentation is
 written in the RestructuredText markup language (.rst files) in the ``docs`` folder.

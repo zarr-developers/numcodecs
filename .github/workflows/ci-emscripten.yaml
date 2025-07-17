@@ -1,0 +1,99 @@
+# Attributed to NumPy https://github.com/numpy/numpy/pull/25894
+# https://github.com/numpy/numpy/blob/d2d2c25fa81b47810f5cbd85ea6485eb3a3ffec3/.github/workflows/emscripten.yml
+#
+
+name: Pyodide CI
+
+on:
+  # TODO: refine after this is ready to merge
+  [push, pull_request, workflow_dispatch]
+
+env:
+  FORCE_COLOR: 3
+  # Disable instructions: AVX2 and SSE2 because Emscripten-specific SIMD
+  # support has not been implemented yet
+  DISABLE_NUMCODECS_AVX2: 1
+  DISABLE_NUMCODECS_SSE2: 1
+  # Common environment variables for both build and test jobs
+  PYODIDE_VERSION: 0.27.6
+  # PYTHON_VERSION and EMSCRIPTEN_VERSION are determined by PYODIDE_VERSION.
+  # The appropriate versions can be found in the Pyodide repodata.json
+  # "info" field, or in Makefile.envs:
+  # https://github.com/pyodide/pyodide/blob/main/Makefile.envs#L2
+  PYTHON_VERSION: 3.12 # any 3.12.x version works
+  EMSCRIPTEN_VERSION: 3.1.58
+  NODE_VERSION: 22
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read  # to fetch code (actions/checkout)
+
+jobs:
+  build-wasm-emscripten:
+    name: Build numcodecs Pyodide distribution
+    runs-on: ubuntu-22.04
+    # To enable this workflow on a fork, comment out:
+    # FIXME: uncomment after this is ready to merge
+    # if: github.repository == 'zarr-developers/numcodecs'
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          # https://github.com/actions/checkout/issues/2041 isn't released yet
+          # fetch-tags: true # required for version resolution
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up Emscripten toolchain
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
+          actions-cache-folder: emsdk-cache
+
+      - name: Apply necessary patch(es)
+        run: |
+          patch -p1 < tools/ci/patches/0001-disable-multiprocessing-and-pthreads.patch
+          patch -p1 < tools/ci/patches/0002-add-missing-unistd-headers.patch -d c-blosc/internal-complibs/zlib-*/
+
+      - name: Install pyodide-build
+        run: python -m pip install pyodide-build
+
+      - name: Build numcodecs for Pyodide/WASM
+        run: |
+          # Pin to a specific version of Pyodide to ensure reliability
+          pyodide xbuildenv install ${{ env.PYODIDE_VERSION }}
+          pyodide build
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Set up Pyodide virtual environment and test numcodecs for Pyodide
+        run: |
+          # Set up Pyodide virtual environment and activate it
+          pyodide venv .venv-pyodide
+          source .venv-pyodide/bin/activate
+
+          # Install the built numcodecs WASM wheel and relevant dependencies
+          pip install $(ls dist/*.whl)"[msgpack,crc32c,pcodec,zfpy,test,test_extras]"
+
+          # Install Zarr v3
+          pip install zarr>=3
+
+          # Change into a different directory before running tests to avoid
+          # the test runner picking up the local numcodecs package
+          cd docs
+
+          # Don't use the cache provider plugin, as it doesn't currently work
+          # with Pyodide: https://github.com/pypa/cibuildwheel/issues/1966
+          python -m pytest -p no:cacheprovider -svra --pyargs numcodecs

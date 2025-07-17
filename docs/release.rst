@@ -20,6 +20,10 @@ Unreleased
 Enhancements
 ~~~~~~~~~~~~
 
+* Add official support for Emscripten (Pyodide) builds. These builds have
+  existed upstream/in-tree in Pyodide, and are now tested here more extensively.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`.
+
 Improvements
 ~~~~~~~~~~~~
 
