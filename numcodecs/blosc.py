@@ -117,7 +117,6 @@ def compress(
 
     blosc.set_blocksize(blocksize)
     if isinstance(source, np.ndarray):
-        print('hi')
         if typesize is None:
             typesize = source.dtype.itemsize
         _check_not_object_array(source)
