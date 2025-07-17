@@ -17,7 +17,6 @@ contribute code, please `raise an issue on GitHub
 
 """
 
-import atexit
 import multiprocessing
 from contextlib import suppress
 
@@ -49,9 +48,7 @@ try:
     ncores = multiprocessing.cpu_count()
 except OSError:  # pragma: no cover
     ncores = 1
-blosc._init()
 blosc.set_nthreads(min(8, ncores))
-atexit.register(blosc._destroy)
 
 from numcodecs import zstd as zstd
 from numcodecs.zstd import Zstd
