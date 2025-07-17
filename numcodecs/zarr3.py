@@ -29,16 +29,17 @@ import asyncio
 import math
 from dataclasses import dataclass, replace
 from functools import cached_property
+from importlib.metadata import version
 from typing import Any, Self
 from warnings import warn
 
 import numpy as np
 from packaging.version import Version
-from importlib.metadata import version
+
 import numcodecs
 
 try:
-    import zarr
+    import zarr  # noqa: F401
 
     if Version(version('zarr')) < Version("3.0.0"):  # pragma: no cover
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
@@ -56,6 +57,7 @@ from zarr.core.common import JSON, parse_named_configuration, product
 
 CODEC_PREFIX = "numcodecs."
 
+
 def from_zarr_dtype(dtype: Any) -> np.dtype:
     """
     Get a numpy data type from an array spec, depending on the zarr version.
@@ -64,11 +66,14 @@ def from_zarr_dtype(dtype: Any) -> np.dtype:
         return dtype.to_native_dtype()
     return dtype
 
+
 def to_zarr_dtype(dtype: np.dtype) -> Any:
     if Version(version('zarr')) >= Version("3.1.0"):
         from zarr.dtype import parse_data_type
-        return parse_data_type(dtype)
+
+        return parse_data_type(dtype, zarr_format=3)
     return dtype
+
 
 def _expect_name_prefix(codec_name: str) -> str:
     if not codec_name.startswith(CODEC_PREFIX):
@@ -247,8 +252,8 @@ class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
 class Delta(_NumcodecsArrayArrayCodec, codec_name="delta"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            dtype = to_zarr_dtype(np.dtype(astype))
-            return replace(chunk_spec, dtype=dtype)  # type: ignore[call-overload]
+            dtype = to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
 
@@ -259,8 +264,8 @@ class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
 class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            dtype = to_zarr_dtype(np.dtype(astype))
-            return replace(chunk_spec, dtype=dtype)  # type: ignore[call-overload]
+            dtype = to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
@@ -286,10 +291,10 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
         return replace(
             chunk_spec,
             shape=(1 + math.ceil(product(chunk_spec.shape) / 8),),
-            dtype=np.dtype("uint8"),
+            dtype=to_zarr_dtype(np.dtype("uint8")),
         )
 
-    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:
+    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:  # type: ignore[override]
         _dtype = from_zarr_dtype(dtype)
         if _dtype != np.dtype("bool"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
@@ -297,8 +302,8 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
 
 class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        dtype = to_zarr_dtype(np.dtype(self.codec_config["encode_dtype"]))
-        return replace(chunk_spec, dtype=dtype)  # type: ignore[arg-type]
+        dtype = to_zarr_dtype(np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
+        return replace(chunk_spec, dtype=dtype)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
         if self.codec_config.get("decode_dtype") is None:
