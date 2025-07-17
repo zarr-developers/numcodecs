@@ -170,3 +170,20 @@ def test_multi_frame():
     assert codec.decode(hola) == b"Hola "
     assert codec.decode(mundo) == b"Mundo!"
     assert codec.decode(hola + mundo) == b"Hola Mundo!"
+
+    bytes_val = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'
+    dec = codec.decode(bytes_val)
+    dec_expected = b'Hello World!'
+    assert dec == dec_expected
+    cli = zstd_cli_available()
+    if cli:
+        assert bytes_val == generate_zstd_streaming_bytes(dec_expected)
+        assert dec_expected == generate_zstd_streaming_bytes(bytes_val, decompress=True)
+
+    # Concatenate frames of known sizes and unknown sizes
+    # unknown size frame at the end
+    assert codec.decode(hola + mundo + bytes_val) == b"Hola Mundo!Hello World!"
+    # unknown size frame at the beginning
+    assert codec.decode(bytes_val + hola + mundo) == b"Hello World!Hola Mundo!"
+    # unknown size frame in the middle
+    assert codec.decode(hola + bytes_val + mundo) == b"Hola Hello World!Mundo!"
