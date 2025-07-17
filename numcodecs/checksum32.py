@@ -3,7 +3,7 @@ import struct
 import zlib
 from contextlib import suppress
 from types import ModuleType
-from typing import Literal, Optional
+from typing import Literal
 
 import numpy as np
 from typing_extensions import Buffer
@@ -12,7 +12,7 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
-_crc32c: Optional[ModuleType] = None
+_crc32c: ModuleType | None = None
 with suppress(ImportError):
     import crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
 

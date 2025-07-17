@@ -2,9 +2,8 @@ import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
 from types import ModuleType
-from typing import Optional
 
-_zfpy: Optional[ModuleType] = None
+_zfpy: ModuleType | None = None
 
 _zfpy_version: tuple = ()
 with suppress(PackageNotFoundError):
