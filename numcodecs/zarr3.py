@@ -58,7 +58,7 @@ from zarr.core.common import JSON, parse_named_configuration, product
 CODEC_PREFIX = "numcodecs."
 
 
-def from_zarr_dtype(dtype: Any) -> np.dtype:
+def _from_zarr_dtype(dtype: Any) -> np.dtype:
     """
     Get a numpy data type from an array spec, depending on the zarr version.
     """
@@ -67,7 +67,7 @@ def from_zarr_dtype(dtype: Any) -> np.dtype:
     return dtype  # pragma: no cover
 
 
-def to_zarr_dtype(dtype: np.dtype) -> Any:
+def _to_zarr_dtype(dtype: np.dtype) -> Any:
     if Version(version('zarr')) >= Version("3.1.0"):
         from zarr.dtype import parse_data_type
 
@@ -243,7 +243,7 @@ class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
 class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
         if self.codec_config.get("elementsize") is None:
-            dtype = from_zarr_dtype(array_spec.dtype)
+            dtype = _from_zarr_dtype(array_spec.dtype)
             return Shuffle(**{**self.codec_config, "elementsize": dtype.itemsize})
         return self  # pragma: no cover
 
@@ -252,7 +252,7 @@ class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
 class Delta(_NumcodecsArrayArrayCodec, codec_name="delta"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            dtype = to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            dtype = _to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
             return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
@@ -264,13 +264,13 @@ class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
 class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            dtype = to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            dtype = _to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
             return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
         if self.codec_config.get("dtype") is None:
-            dtype = from_zarr_dtype(array_spec.dtype)
+            dtype = _from_zarr_dtype(array_spec.dtype)
             return FixedScaleOffset(**{**self.codec_config, "dtype": str(dtype)})
         return self
 
@@ -281,7 +281,7 @@ class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
         if self.codec_config.get("dtype") is None:
-            dtype = from_zarr_dtype(array_spec.dtype)
+            dtype = _from_zarr_dtype(array_spec.dtype)
             return Quantize(**{**self.codec_config, "dtype": str(dtype)})
         return self
 
@@ -291,24 +291,24 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
         return replace(
             chunk_spec,
             shape=(1 + math.ceil(product(chunk_spec.shape) / 8),),
-            dtype=to_zarr_dtype(np.dtype("uint8")),
+            dtype=_to_zarr_dtype(np.dtype("uint8")),
         )
 
     def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:
-        _dtype = from_zarr_dtype(dtype)
+        _dtype = _from_zarr_dtype(dtype)
         if _dtype != np.dtype("bool"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
 class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        dtype = to_zarr_dtype(np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
+        dtype = _to_zarr_dtype(np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
         return replace(chunk_spec, dtype=dtype)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
         if self.codec_config.get("decode_dtype") is None:
             # TODO: remove these coverage exemptions the correct way, i.e. with tests
-            dtype = from_zarr_dtype(array_spec.dtype)  # pragma: no cover
+            dtype = _from_zarr_dtype(array_spec.dtype)  # pragma: no cover
             return AsType(**{**self.codec_config, "decode_dtype": str(dtype)})  # pragma: no cover
         return self
 

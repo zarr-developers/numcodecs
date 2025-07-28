@@ -244,7 +244,7 @@ warn_unused_configs = true
 
 [tool.pixi.project]
 channels = ["conda-forge"]
-platforms = ["linux-64"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
 clang = ">=19.1.7,<20"
