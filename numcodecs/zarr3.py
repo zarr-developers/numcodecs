@@ -58,7 +58,7 @@ from zarr.core.common import JSON, parse_named_configuration, product
 CODEC_PREFIX = "numcodecs."
 
 
-def from_zarr_dtype(dtype: Any) -> np.dtype:
+def _from_zarr_dtype(dtype: Any) -> np.dtype:
     """
     Get a numpy data type from an array spec, depending on the zarr version.
     """
@@ -67,7 +67,7 @@ def from_zarr_dtype(dtype: Any) -> np.dtype:
     return dtype  # pragma: no cover
 
 
-def to_zarr_dtype(dtype: np.dtype) -> Any:
+def _to_zarr_dtype(dtype: np.dtype) -> Any:
     if Version(version('zarr')) >= Version("3.1.0"):
         from zarr.dtype import parse_data_type
 
