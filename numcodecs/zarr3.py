@@ -30,7 +30,7 @@ import math
 from dataclasses import dataclass, replace
 from functools import cached_property
 from importlib.metadata import version
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 from warnings import warn
 
 import numpy as np
@@ -54,7 +54,9 @@ from zarr.core.array_spec import ArraySpec
 from zarr.core.buffer import Buffer, BufferPrototype, NDBuffer
 from zarr.core.buffer.cpu import as_numpy_array_wrapper
 from zarr.core.common import JSON, parse_named_configuration, product
-from zarr.dtype import ZDType
+
+if TYPE_CHECKING:
+    from zarr.dtype import ZDType
 
 CODEC_PREFIX = "numcodecs."
 
@@ -295,7 +297,7 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
             dtype=_to_zarr_dtype(np.dtype("uint8")),
         )
 
-    def validate(self, *, shape: tuple[int, ...], dtype: ZDType[Any, Any], **_kwargs) -> None:
+    def validate(self, *, shape: tuple[int, ...], dtype: "ZDType[Any, Any]", **_kwargs) -> None:  # noqa: UP037
         _dtype = _from_zarr_dtype(dtype)
         if _dtype != np.dtype("bool"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
