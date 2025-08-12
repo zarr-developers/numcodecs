@@ -294,7 +294,9 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
             dtype=_to_zarr_dtype(np.dtype("uint8")),
         )
 
-    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:
+    # todo: remove this type: ignore when this class can be defined w.r.t.
+    # a single zarr dtype API
+    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:  # type: ignore[override]
         _dtype = _from_zarr_dtype(dtype)
         if _dtype != np.dtype("bool"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
