@@ -250,7 +250,7 @@ platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
-hatch = '*'
+hatch = '1.14.1'
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
