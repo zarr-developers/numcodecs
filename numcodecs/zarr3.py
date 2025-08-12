@@ -41,9 +41,9 @@ import numcodecs
 try:
     import zarr  # noqa: F401
 
-    if Version(version('zarr')) < Version("3.0.0"):  # pragma: no cover
+    if Version(version('zarr')) < Version("3.0.0"):
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
-except ImportError as e:  # pragma: no cover
+except ImportError as e:
     raise ImportError(
         "zarr 3.0.0 or later is required to use the numcodecs zarr integration."
     ) from e
@@ -67,7 +67,7 @@ def _from_zarr_dtype(dtype: Any) -> np.dtype:
     """
     if Version(version('zarr')) >= Version("3.1.0"):
         return dtype.to_native_dtype()
-    return dtype  # pragma: no cover
+    return dtype
 
 
 def _to_zarr_dtype(dtype: np.dtype) -> Any:
@@ -75,14 +75,12 @@ def _to_zarr_dtype(dtype: np.dtype) -> Any:
         from zarr.dtype import parse_data_type
 
         return parse_data_type(dtype, zarr_format=3)
-    return dtype  # pragma: no cover
+    return dtype
 
 
 def _expect_name_prefix(codec_name: str) -> str:
     if not codec_name.startswith(CODEC_PREFIX):
-        raise ValueError(
-            f"Expected name to start with '{CODEC_PREFIX}'. Got {codec_name} instead."
-        )  # pragma: no cover
+        raise ValueError(f"Expected name to start with '{CODEC_PREFIX}'. Got {codec_name} instead.")
     return codec_name.removeprefix(CODEC_PREFIX)
 
 
@@ -91,7 +89,7 @@ def _parse_codec_configuration(data: dict[str, JSON]) -> dict[str, JSON]:
     if not parsed_name.startswith(CODEC_PREFIX):
         raise ValueError(
             f"Expected name to start with '{CODEC_PREFIX}'. Got {parsed_name} instead."
-        )  # pragma: no cover
+        )
     id = _expect_name_prefix(parsed_name)
     return {"id": id, **parsed_configuration}
 
@@ -117,7 +115,7 @@ class _NumcodecsCodec(Metadata):
         if not self.codec_name:
             raise ValueError(
                 "The codec name needs to be supplied through the `codec_name` attribute."
-            )  # pragma: no cover
+            )
         unprefixed_codec_name = _expect_name_prefix(self.codec_name)
 
         if "id" not in codec_config:
@@ -125,7 +123,7 @@ class _NumcodecsCodec(Metadata):
         elif codec_config["id"] != unprefixed_codec_name:
             raise ValueError(
                 f"Codec id does not match {unprefixed_codec_name}. Got: {codec_config['id']}."
-            )  # pragma: no cover
+            )
 
         object.__setattr__(self, "codec_config", codec_config)
         warn(
@@ -310,16 +308,15 @@ class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
         if self.codec_config.get("decode_dtype") is None:
-            # TODO: remove these coverage exemptions the correct way, i.e. with tests
-            dtype = _from_zarr_dtype(array_spec.dtype)  # pragma: no cover
-            return AsType(**{**self.codec_config, "decode_dtype": str(dtype)})  # pragma: no cover
+            dtype = _from_zarr_dtype(array_spec.dtype)
+            return AsType(**{**self.codec_config, "decode_dtype": str(dtype)})
         return self
 
 
 # bytes-to-bytes checksum codecs
 class _NumcodecsChecksumCodec(_NumcodecsBytesBytesCodec):
     def compute_encoded_size(self, input_byte_length: int, chunk_spec: ArraySpec) -> int:
-        return input_byte_length + 4  # pragma: no cover
+        return input_byte_length + 4
 
 
 class CRC32(_NumcodecsChecksumCodec, codec_name="crc32"):
