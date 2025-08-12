@@ -107,3 +107,4 @@ numcodecs/*.c
 # pixi environments
 .pixi/*
 *.egg-info
+pixi.lock
