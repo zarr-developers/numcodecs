@@ -91,7 +91,7 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.14
         with:
           pixi-version: v0.49.0
-          cache: true
+          cache: false
 
       - name: List deps
         shell: "bash -l {0}"
