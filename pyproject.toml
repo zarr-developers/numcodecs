@@ -265,4 +265,5 @@ features = ["test"]
 
 
 [tool.hatch.envs.test.scripts]
+list-deps = "pip list"
 test-zarr = "pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"

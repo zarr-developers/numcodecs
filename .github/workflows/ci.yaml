@@ -93,6 +93,10 @@ jobs:
           pixi-version: v0.49.0
           cache: true
 
+      - name: List deps
+        shell: "bash -l {0}"
+        run: pixi run -e default hatch run test:list-deps
+
       - name: Run tests
         shell: "bash -l {0}"
         run: pixi run -e default hatch run test:test-zarr
