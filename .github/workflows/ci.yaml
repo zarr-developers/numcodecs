@@ -1,6 +1,11 @@
 name: Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +19,8 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
         # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        platform:
+          [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
 
     defaults:
       run:
