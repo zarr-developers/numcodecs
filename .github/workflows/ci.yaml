@@ -71,7 +71,7 @@ jobs:
 
       - name: Run tests
         shell: "bash -l {0}"
-        run: pytest -v numcodecs/tests
+        run: pytest -v --pyargs numcodecs.tests
 
       - uses: codecov/codecov-action@v5
         with:
