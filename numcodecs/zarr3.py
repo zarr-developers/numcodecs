@@ -29,17 +29,19 @@ import asyncio
 import math
 from dataclasses import dataclass, replace
 from functools import cached_property
+from importlib.metadata import version
 from typing import Any, Self
 from warnings import warn
 
 import numpy as np
+from packaging.version import Version
 
 import numcodecs
 
 try:
-    import zarr
+    import zarr  # noqa: F401
 
-    if zarr.__version__ < "3.0.0":  # pragma: no cover
+    if Version(version('zarr')) < Version("3.0.0"):  # pragma: no cover
         raise ImportError("zarr 3.0.0 or later is required to use the numcodecs zarr integration.")
 except ImportError as e:  # pragma: no cover
     raise ImportError(
@@ -54,6 +56,23 @@ from zarr.core.buffer.cpu import as_numpy_array_wrapper
 from zarr.core.common import JSON, parse_named_configuration, product
 
 CODEC_PREFIX = "numcodecs."
+
+
+def _from_zarr_dtype(dtype: Any) -> np.dtype:
+    """
+    Get a numpy data type from an array spec, depending on the zarr version.
+    """
+    if Version(version('zarr')) >= Version("3.1.0"):
+        return dtype.to_native_dtype()
+    return dtype  # pragma: no cover
+
+
+def _to_zarr_dtype(dtype: np.dtype) -> Any:
+    if Version(version('zarr')) >= Version("3.1.0"):
+        from zarr.dtype import parse_data_type
+
+        return parse_data_type(dtype, zarr_format=3)
+    return dtype  # pragma: no cover
 
 
 def _expect_name_prefix(codec_name: str) -> str:
@@ -224,7 +243,8 @@ class LZMA(_NumcodecsBytesBytesCodec, codec_name="lzma"):
 class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Shuffle:
         if self.codec_config.get("elementsize") is None:
-            return Shuffle(**{**self.codec_config, "elementsize": array_spec.dtype.itemsize})
+            dtype = _from_zarr_dtype(array_spec.dtype)
+            return Shuffle(**{**self.codec_config, "elementsize": dtype.itemsize})
         return self  # pragma: no cover
 
 
@@ -232,7 +252,8 @@ class Shuffle(_NumcodecsBytesBytesCodec, codec_name="shuffle"):
 class Delta(_NumcodecsArrayArrayCodec, codec_name="delta"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
+            dtype = _to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
 
@@ -243,12 +264,14 @@ class BitRound(_NumcodecsArrayArrayCodec, codec_name="bitround"):
 class FixedScaleOffset(_NumcodecsArrayArrayCodec, codec_name="fixedscaleoffset"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
         if astype := self.codec_config.get("astype"):
-            return replace(chunk_spec, dtype=np.dtype(astype))  # type: ignore[call-overload]
+            dtype = _to_zarr_dtype(np.dtype(astype))  # type: ignore[call-overload]
+            return replace(chunk_spec, dtype=dtype)
         return chunk_spec
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> FixedScaleOffset:
         if self.codec_config.get("dtype") is None:
-            return FixedScaleOffset(**{**self.codec_config, "dtype": str(array_spec.dtype)})
+            dtype = _from_zarr_dtype(array_spec.dtype)
+            return FixedScaleOffset(**{**self.codec_config, "dtype": str(dtype)})
         return self
 
 
@@ -258,7 +281,8 @@ class Quantize(_NumcodecsArrayArrayCodec, codec_name="quantize"):
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> Quantize:
         if self.codec_config.get("dtype") is None:
-            return Quantize(**{**self.codec_config, "dtype": str(array_spec.dtype)})
+            dtype = _from_zarr_dtype(array_spec.dtype)
+            return Quantize(**{**self.codec_config, "dtype": str(dtype)})
         return self
 
 
@@ -267,21 +291,27 @@ class PackBits(_NumcodecsArrayArrayCodec, codec_name="packbits"):
         return replace(
             chunk_spec,
             shape=(1 + math.ceil(product(chunk_spec.shape) / 8),),
-            dtype=np.dtype("uint8"),
+            dtype=_to_zarr_dtype(np.dtype("uint8")),
         )
 
-    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:
-        if dtype != np.dtype("bool"):
+    # todo: remove this type: ignore when this class can be defined w.r.t.
+    # a single zarr dtype API
+    def validate(self, *, dtype: np.dtype[Any], **_kwargs) -> None:  # type: ignore[override]
+        _dtype = _from_zarr_dtype(dtype)
+        if _dtype != np.dtype("bool"):
             raise ValueError(f"Packbits filter requires bool dtype. Got {dtype}.")
 
 
 class AsType(_NumcodecsArrayArrayCodec, codec_name="astype"):
     def resolve_metadata(self, chunk_spec: ArraySpec) -> ArraySpec:
-        return replace(chunk_spec, dtype=np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
+        dtype = _to_zarr_dtype(np.dtype(self.codec_config["encode_dtype"]))  # type: ignore[arg-type]
+        return replace(chunk_spec, dtype=dtype)
 
     def evolve_from_array_spec(self, array_spec: ArraySpec) -> AsType:
         if self.codec_config.get("decode_dtype") is None:
-            return AsType(**{**self.codec_config, "decode_dtype": str(array_spec.dtype)})
+            # TODO: remove these coverage exemptions the correct way, i.e. with tests
+            dtype = _from_zarr_dtype(array_spec.dtype)  # pragma: no cover
+            return AsType(**{**self.codec_config, "decode_dtype": str(dtype)})  # pragma: no cover
         return self
 
 
