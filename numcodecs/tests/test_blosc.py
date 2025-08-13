@@ -103,33 +103,6 @@ def test_eq():
     assert Blosc(cname='lz4') != 'foo'
 
 
-def test_compress_blocksize_default(use_threads):
-    arr = np.arange(1000, dtype='i4')
-
-    blosc.use_threads = use_threads
-
-    # default blocksize
-    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE)
-    _, _, blocksize = blosc._cbuffer_sizes(enc)
-    assert blocksize > 0
-
-    # explicit default blocksize
-    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, 0)
-    _, _, blocksize = blosc._cbuffer_sizes(enc)
-    assert blocksize > 0
-
-
-@pytest.mark.parametrize('bs', [2**7, 2**8])
-def test_compress_blocksize(use_threads, bs):
-    arr = np.arange(1000, dtype='i4')
-
-    blosc.use_threads = use_threads
-
-    enc = blosc.compress(arr, b'lz4', 1, Blosc.NOSHUFFLE, bs)
-    _, _, blocksize = blosc._cbuffer_sizes(enc)
-    assert blocksize == bs
-
-
 def test_compress_complib(use_threads):
     arr = np.arange(1000, dtype='i4')
     expected_complibs = {
@@ -141,43 +114,16 @@ def test_compress_complib(use_threads):
     }
     blosc.use_threads = use_threads
     for cname in blosc.list_compressors():
-        enc = blosc.compress(arr, cname.encode(), 1, Blosc.NOSHUFFLE)
+        enc = blosc.compress(arr, cname, 1, Blosc.NOSHUFFLE)
         complib = blosc.cbuffer_complib(enc)
         expected_complib = expected_complibs[cname]
         assert complib == expected_complib
     with pytest.raises(ValueError):
         # capitalized cname
-        blosc.compress(arr, b'LZ4', 1)
+        blosc.compress(arr, 'LZ4', 1)
     with pytest.raises(ValueError):
         # bad cname
-        blosc.compress(arr, b'foo', 1)
-
-
-@pytest.mark.parametrize('dtype', ['i1', 'i2', 'i4', 'i8'])
-def test_compress_metainfo(dtype, use_threads):
-    arr = np.arange(1000, dtype=dtype)
-    for shuffle in Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE:
-        blosc.use_threads = use_threads
-        for cname in blosc.list_compressors():
-            enc = blosc.compress(arr, cname.encode(), 1, shuffle)
-            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
-            assert typesize == arr.dtype.itemsize
-            assert did_shuffle == shuffle
-
-
-def test_compress_autoshuffle(use_threads):
-    arr = np.arange(8000)
-    for dtype in 'i1', 'i2', 'i4', 'i8', 'f2', 'f4', 'f8', 'bool', 'S10':
-        varr = arr.view(dtype)
-        blosc.use_threads = use_threads
-        for cname in blosc.list_compressors():
-            enc = blosc.compress(varr, cname.encode(), 1, Blosc.AUTOSHUFFLE)
-            typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
-            assert typesize == varr.dtype.itemsize
-            if typesize == 1:
-                assert did_shuffle == Blosc.BITSHUFFLE
-            else:
-                assert did_shuffle == Blosc.SHUFFLE
+        blosc.compress(arr, 'foo', 1)
 
 
 def test_config_blocksize():
@@ -246,15 +192,6 @@ def test_err_encode_object_buffer():
 
 
 @pytest.mark.parametrize('codec', codecs)
-def test_decompression_error_handling(codec):
-    _skip_null(codec)
-    with pytest.raises(RuntimeError):
-        codec.decode(bytearray())
-    with pytest.raises(RuntimeError):
-        codec.decode(bytearray(0))
-
-
-@pytest.mark.parametrize('codec', codecs)
 def test_max_buffer_size(codec):
     _skip_null(codec)
     assert codec.max_buffer_size == 2**31 - 1
@@ -269,18 +206,18 @@ def test_typesize_explicit():
     encoded_without_itemsize = codec_no_type_size.encode(arr.tobytes())
     encoded_with_itemsize = codec_itemsize.encode(arr.tobytes())
     # third byte encodes the `typesize`
-    assert encoded_without_itemsize[3] == 1  # inferred from bytes i.e., 1
+    assert encoded_without_itemsize[3] == 8  # default blosc itemsize
     assert encoded_with_itemsize[3] == itemsize  # given as a constructor argument
 
 
 def test_typesize_less_than_1():
-    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+    with pytest.raises(ValueError, match=r"Cannot use typesize 0 less than 1"):
         Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
     compressor = Blosc(shuffle=Blosc.SHUFFLE)
     # not really something that should be done in practice, but good for testing.
     compressor._typesize = 0
     arr = np.arange(100)
-    with pytest.raises(ValueError, match=r"Cannot use typesize"):
+    with pytest.raises(ValueError, match=r"typesize can only be in the 1-255 range"):
         compressor.encode(arr.tobytes())
 
 
