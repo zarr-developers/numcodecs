@@ -223,6 +223,8 @@ def decompress(source, dest=None):
             return stream_decompress(source_pb)
         elif content_size == ZSTD_CONTENTSIZE_UNKNOWN:
             # dest is not None
+            # set dest_size based on dest
+            pass
         elif content_size == ZSTD_CONTENTSIZE_ERROR or content_size == 0:
             raise RuntimeError('Zstd decompression error: invalid input data')
         elif content_size > (<unsigned long long>SIZE_MAX):
