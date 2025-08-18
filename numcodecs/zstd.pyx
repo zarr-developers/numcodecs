@@ -386,7 +386,7 @@ class Zstd(Codec):
         return decompress(buf, out)
 
     def __repr__(self):
-        r = '%s(level=%r)' % 
+        r = '%s(level=%r)' % \
             (type(self).__name__,
              self.level)
         return r
