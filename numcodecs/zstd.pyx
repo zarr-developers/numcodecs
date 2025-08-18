@@ -15,6 +15,9 @@ from .abc import Codec
 
 from libc.stdlib cimport malloc, realloc, free
 
+cdef extern from "stdint.h":
+    cdef size_t SIZE_MAX
+
 cdef extern from "zstd.h":
 
     unsigned ZSTD_versionNumber() nogil
@@ -129,7 +132,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         level = MAX_CLEVEL
 
     # obtain source memoryview
-    source_mv = ensure_contiguous_memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # setup source buffer
@@ -206,7 +209,7 @@ def decompress(source, dest=None):
         unsigned long long content_size
 
     # obtain source memoryview
-    source_mv = ensure_contiguous_memoryview(source)
+    source_mv = ensure_continguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # get source pointer
@@ -218,6 +221,8 @@ def decompress(source, dest=None):
         content_size = ZSTD_getFrameContentSize(source_ptr, source_size)
         if content_size == ZSTD_CONTENTSIZE_UNKNOWN and dest is None:
             return stream_decompress(source_pb)
+        elif content_size == ZSTD_CONTENTSIZE_UNKNOWN:
+            # dest is not None
         elif content_size == ZSTD_CONTENTSIZE_ERROR or content_size == 0:
             raise RuntimeError('Zstd decompression error: invalid input data')
         elif content_size > (<unsigned long long>SIZE_MAX):
@@ -227,6 +232,7 @@ def decompress(source, dest=None):
 
         # setup destination buffer
         if dest is None:
+            # allocate memory
             dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
         else:
             dest_1d = ensure_contiguous_ndarray(dest)
@@ -236,6 +242,9 @@ def decompress(source, dest=None):
         dest_pb = PyMemoryView_GET_BUFFER(dest_mv)
         dest_ptr = <char*>dest_pb.buf
         dest_nbytes = dest_pb.len
+
+        if content_size == ZSTD_CONTENTSIZE_UNKNOWN:
+            dest_size = dest_nbytes
 
         # validate output buffer
         if dest_nbytes < dest_size:
