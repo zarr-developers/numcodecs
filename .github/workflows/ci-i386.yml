@@ -41,6 +41,7 @@ jobs:
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
+          uv venv
           uv pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
         shell: alpine.sh {0}
 
