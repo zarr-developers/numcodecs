@@ -35,12 +35,14 @@ jobs:
             uv
             meson
             pkgconf
+            py3-numpy
+            py3-numpy-dev
 
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
           uv venv
-          uv pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
+          uv pip install -v -e .[test,test_extras,msgpack,crc32c]
         shell: alpine.sh {0}
 
 
