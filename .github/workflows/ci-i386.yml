@@ -32,6 +32,8 @@ jobs:
             py3-pip
             py3-pytest
             uv
+            meson
+            pkgconf
 
       - name: Install numcodecs
         run: |
