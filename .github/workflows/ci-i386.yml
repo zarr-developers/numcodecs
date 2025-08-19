@@ -28,6 +28,7 @@ jobs:
           packages: >
             build-base
             python3
+            python3-dev
             git
             py3-pip
             py3-pytest
