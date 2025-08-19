@@ -38,6 +38,7 @@ jobs:
             py3-numpy-dev
             py3-pip
             py3-pytest
+            rust
 
       - name: Install numcodecs
         run: |
