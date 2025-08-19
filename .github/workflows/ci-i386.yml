@@ -29,7 +29,7 @@ jobs:
       - name: Setup Alpine Linux environment
         uses: jirutka/setup-alpine@v1.2.0
         with:
-          arch: i386
+          arch: x86
 
       - name: Install numcodecs
         run: |
