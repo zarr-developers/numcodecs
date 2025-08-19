@@ -39,6 +39,8 @@ jobs:
             py3-pip
             py3-pytest
             rust
+            maturin
+            py3-maturin
 
       - name: Install numcodecs
         run: |
