@@ -21,11 +21,6 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
 
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-        with:
-          version: 'latest'
-
       - name: Setup Alpine Linux environment
         uses: jirutka/setup-alpine@v1.2.0
         with:
