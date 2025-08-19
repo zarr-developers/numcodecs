@@ -27,17 +27,17 @@ jobs:
           arch: x86
           packages: >
             build-base
-            python3
-            python3-dev
             git
-            py3-pip
-            py3-pytest
-            uv
             meson
             pkgconf
+            uv
+            zstd
+            python3
+            python3-dev
             py3-numpy
             py3-numpy-dev
-            zstd
+            py3-pip
+            py3-pytest
 
       - name: Install numcodecs
         run: |
