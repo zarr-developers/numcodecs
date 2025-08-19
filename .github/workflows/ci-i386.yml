@@ -37,13 +37,6 @@ jobs:
             py3-pip
             py3-pytest
 
-      - name: Clone and Checkout Current Branch
-        run: |
-          git clone https://github.com/${{ github.repository }}.git ${{ github.workspace }}
-          cd ${{ github.workspace }}
-          git checkout ${{ github.ref }}
-        shell: alpine.sh {0}
-
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
