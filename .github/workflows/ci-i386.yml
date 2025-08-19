@@ -26,6 +26,11 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Setup Alpine Linux environment
+        uses: jirutka/setup-alpine@v1.2.0
+        with:
+          arch: i386
+
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
