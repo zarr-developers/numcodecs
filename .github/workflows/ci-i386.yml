@@ -37,6 +37,7 @@ jobs:
             pkgconf
             py3-numpy
             py3-numpy-dev
+            zstd
 
       - name: Install numcodecs
         run: |
