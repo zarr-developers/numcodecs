@@ -9,7 +9,7 @@ concurrency:
 jobs:
   build-i386:
     runs-on: ubuntu-latest
-    container: i386/python:3.11
+    container: i386/debian
 
     defaults:
       run:
