@@ -42,6 +42,21 @@ jobs:
             maturin
             py3-maturin
             cargo
+            cmake
+
+      - name: Install zfp
+        run: |
+          PYTHON_INCLUDE=$(python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
+          PYTHON_LIB=$(python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
+          git clone https://github.com/LLNL/zfp
+          cd zfp
+          mkdir build;
+          cd build;
+          cmake .. -DBUILD_ZFPY=ON -DBUILD_TESTING=OFF -DPYTHON_LIBRARY=$PYTHON_LIB -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE;
+          make;
+          cd ..;
+          cp build/lib*/libzfp* /usr/local/lib;
+        shell: alpine.sh {0}
 
       - name: Install numcodecs
         run: |
