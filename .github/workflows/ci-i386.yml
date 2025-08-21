@@ -43,11 +43,13 @@ jobs:
             py3-maturin
             cargo
             cmake
+            cython
 
       - name: Install zfp
         run: |
-          PYTHON_INCLUDE=$(python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
-          PYTHON_LIB=$(python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
+          uv venv
+          PYTHON_INCLUDE=$(uv run python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
+          PYTHON_LIB=$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
           git clone https://github.com/LLNL/zfp
           cd zfp
           mkdir build;
