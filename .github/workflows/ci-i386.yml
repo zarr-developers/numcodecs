@@ -51,14 +51,11 @@ jobs:
           PYTHON_INCLUDE=$(uv run python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
           PYTHON_LIB=$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
           git clone https://github.com/LLNL/zfp
-          cd zfp
-          mkdir build;
-          cd build;
-          uv run cmake .. -DBUILD_ZFPY=ON -DBUILD_TESTING=OFF -DPYTHON_LIBRARY=$PYTHON_LIB -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE;
-          uv run make;
-          cd ..;
-          cp build/lib*/libzfp* /usr/local/lib;
-          cd ..
+          mkdir zfp/build;;
+          uv run cmake zfp -B zfp/build -DBUILD_ZFPY=ON -DBUILD_TESTING=OFF -DPYTHON_LIBRARY=$PYTHON_LIB -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE;
+          uv run make -C zfp/build;
+          cp zfp/build/lib*/libzfp* /usr/local/lib;
+          cp zfp/build/lib*/libzfp* /usr/local/lib64;
           uv add "zfpy @ ./zfp"
         shell: alpine.sh {0}
 
