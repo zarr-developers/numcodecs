@@ -41,6 +41,7 @@ jobs:
             rust
             maturin
             py3-maturin
+            cargo
 
       - name: Install numcodecs
         run: |
