@@ -58,7 +58,8 @@ jobs:
           uv run make;
           cd ..;
           cp build/lib*/libzfp* /usr/local/lib;
-          uv add "zfpy @ git+https://github.com/LLNL/zfp"
+          cd ..
+          uv add "zfpy @ ./zfp"
         shell: alpine.sh {0}
 
       - name: Install numcodecs
