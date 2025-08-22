@@ -45,6 +45,7 @@ jobs:
             cmake
             cython
             sed
+            sudo
 
       - name: Install zfp
         run: |
