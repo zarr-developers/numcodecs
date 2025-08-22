@@ -40,6 +40,8 @@ jobs:
             zstd
             python3
             python3-dev
+            py3-numpy
+            py3-numpy-dev
             py3-pip
             py3-pytest
 
