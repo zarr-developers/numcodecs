@@ -244,24 +244,26 @@ warn_unused_configs = true
 
 [tool.pixi.project]
 channels = ["conda-forge"]
-platforms = ["linux-64"]
-
-[tool.pixi.pypi-dependencies]
-numcodecs = { path = ".", editable = true }
-
-[tool.pixi.environments]
-default = { solve-group = "default" }
-crc32c = { features = ["crc32c"], solve-group = "default" }
-docs = { features = ["docs"], solve-group = "default" }
-msgpack = { features = ["msgpack"], solve-group = "default" }
-pcodec = { features = ["pcodec"], solve-group = "default" }
-test = { features = ["test", "crc32c", "msgpack", "pcodec", "zfpy"], solve-group = "default" }
-test-extras = { features = ["test_extras"], solve-group = "default" }
-zfpy = { features = ["zfpy"], solve-group = "default" }
-
-[tool.pixi.tasks]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
+hatch = '==1.14.1'
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.11"]
+zarr = ["3.0.10", "3.1.0"]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "zarr=={matrix:zarr}"
+]
+numpy="==2.2"
+features = ["test"]
+
+
+[tool.hatch.envs.test.scripts]
+list-deps = "pip list"
+test-zarr = "pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"

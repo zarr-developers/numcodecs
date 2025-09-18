@@ -1,0 +1,64 @@
+name: Tests on i386
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-i386:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+
+      - name: Setup Alpine Linux environment
+        uses: jirutka/setup-alpine@v1.2.0
+        with:
+          arch: x86
+          packages: >
+            build-base
+            python3
+            python3-dev
+            git
+            py3-pip
+            py3-pytest
+            uv
+            meson
+            pkgconf
+            py3-numpy
+            py3-numpy-dev
+            zstd
+
+      - name: Install numcodecs
+        run: |
+          export DISABLE_NUMCODECS_AVX2=""
+          uv venv
+          uv pip install -v -e .[test,test_extras,msgpack,crc32c]
+        shell: alpine.sh {0}
+
+
+      - name: Install zarr-python
+        # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
+        # so we can have some tests of our minimum version of numpy (1.24)
+        if: matrix.python-version != '3.11'
+        run: uv add zarr>=3
+        shell: alpine.sh {0}
+
+
+      - name: List installed packages
+        run: uv pip list
+        shell: alpine.sh {0}
+
+      - name: Run tests
+        run: uv run pytest -v
+        shell: alpine.sh {0}

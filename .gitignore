@@ -105,5 +105,6 @@ numcodecs/version.py
 # Cython generated
 numcodecs/*.c
 # pixi environments
-.pixi
+.pixi/*
 *.egg-info
+pixi.lock
