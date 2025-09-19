@@ -244,13 +244,17 @@ warn_unused_configs = true
 
 [tool.pixi.project]
 channels = ["conda-forge"]
-platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 hatch = '==1.14.1'
+pip = ">=25.2,<26"
+setuptools = ">=80.9.0,<81"
+cython = ">=3.1.4,<4"
+numpy = ">=2.3.3,<3"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
