@@ -37,7 +37,7 @@ try:
 
     zarr_version = version('zarr')
     if Version(zarr_version) < Version("3.1.3"):  # pragma: no cover
-        msg = f"zarr 3.1.3 or later is required to use the numcodecs zarr integration. Got {zarr_version}."
+        msg = f"Zarr 3.1.3 or later is required to use the numcodecs zarr integration. Got {zarr_version}."
         raise ImportError(msg)
 except ImportError as e:  # pragma: no cover
     msg = "zarr could not be imported. Zarr 3.1.3 or later is required to use the numcodecs zarr integration."
