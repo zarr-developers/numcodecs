@@ -257,10 +257,11 @@ allow-direct-references = true
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
+zarr = ["3.1.2", "3.1.3"]
 
 [tool.hatch.envs.test]
 dependencies = [
-    "zarr @ git+https://github.com/d-v-b/zarr-python.git@b6b2260a953e38bd4e432508b2063c5beda11703"
+    "zarr=={matrix:zarr}"
 ]
 numpy="==2.2"
 features = ["test"]
