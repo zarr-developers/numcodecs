@@ -57,6 +57,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "pyzstd"
 ]
 test_extras = [
     "importlib_metadata",
@@ -240,3 +241,29 @@ warn_unreachable = false
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+[tool.pixi.dependencies]
+clang = ">=19.1.7,<20"
+c-compiler = ">=1.9.0,<2"
+cxx-compiler = ">=1.9.0,<2"
+hatch = '==1.14.1'
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.11"]
+zarr = ["3.0.10", "3.1.0"]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "zarr=={matrix:zarr}"
+]
+numpy="==2.2"
+features = ["test"]
+
+
+[tool.hatch.envs.test.scripts]
+list-deps = "pip list"
+test-zarr = "pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"

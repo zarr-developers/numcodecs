@@ -95,6 +95,8 @@ Maintenance
 
 Improvements
 ~~~~~~~~~~~~
+* Add streaming decompression for ZSTD (:issue:`699`)
+  By :user:`Mark Kittisopikul <mkitti>`.
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
   By :user:`Cas Wognum <cwognum>`.
 
