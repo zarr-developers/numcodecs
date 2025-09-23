@@ -259,8 +259,8 @@ zarr = ["3.1.2", "3.1.3"]
 [tool.hatch.envs.test]
 dependencies = [
     "zarr=={matrix:zarr}",
+    "numpy==2.2"
 ]
-numpy="==2.2"
 features = ["test"]
 
 
