@@ -252,18 +252,15 @@ c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 hatch = '==1.14.1'
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
 zarr = ["3.1.2", "3.1.3"]
 
 [tool.hatch.envs.test]
 dependencies = [
-    "zarr=={matrix:zarr}"
+    "zarr=={matrix:zarr}",
+    "numpy==2.2"
 ]
-numpy="==2.2"
 features = ["test"]
 
 
