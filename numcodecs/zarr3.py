@@ -17,7 +17,6 @@ def __getattr__(name: str) -> Any:
     """
     Emit a warning when someone imports from this module
     """
-    print(name)
     if name in __all__:
         msg = (
             "The numcodecs.zarr3 module is deprecated and will be removed in a future release of numcodecs. "
