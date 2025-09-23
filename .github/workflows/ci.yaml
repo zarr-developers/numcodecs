@@ -88,7 +88,7 @@ jobs:
           fetch-depth: 0 # required for version resolution
 
       - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.8.14
+        uses: prefix-dev/setup-pixi@v0.9.0
         with:
           pixi-version: v0.49.0
           cache: false
