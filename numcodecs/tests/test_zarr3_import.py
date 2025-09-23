@@ -4,7 +4,7 @@ import pytest
 
 
 def test_zarr3_import():
-    ERROR_MESSAGE_MATCH = "zarr 3.0.0 or later.*"
+    ERROR_MESSAGE_MATCH = "zarr 3.1.3 or later.*"
 
     try:
         import zarr  # noqa: F401
