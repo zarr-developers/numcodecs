@@ -256,6 +256,9 @@ setuptools = ">=80.9.0,<81"
 cython = ">=3.1.4,<4"
 numpy = ">=2.3.3,<3"
 
+[tool.pixi.pypi-dependencies]
+numcodecs = { path = ".", editable = true }
+
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
 zarr = ["3.0.10", "3.1.0"]
