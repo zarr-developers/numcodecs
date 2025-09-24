@@ -97,7 +97,7 @@ jobs:
 
       - name: List installed packages
         shell: "bash -l {0}"
-        run: pixi run list-deps{{matrix.zarr-version}}
+        run: pixi run list-deps-${{matrix.zarr-version}}
 
       - name: Run tests with Zarr ${{ matrix.zarr-version }}
         shell: "bash -l {0}"
