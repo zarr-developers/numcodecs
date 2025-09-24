@@ -75,6 +75,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        zarr-version: ["312", "313"]
 
     defaults:
       run:
@@ -93,10 +95,10 @@ jobs:
           pixi-version: v0.49.0
           cache: false
 
-      - name: List deps
+      - name: List installed packages
         shell: "bash -l {0}"
-        run: pixi run -e default hatch run test:list-deps
+        run: pixi run list-deps{{matrix.zarr-version}}
 
-      - name: Run tests
+      - name: Run tests with Zarr ${{ matrix.zarr-version }}
         shell: "bash -l {0}"
-        run: pixi run -e default hatch run test:test-zarr
+        run: pixi run test-zarr-${{ matrix.zarr-version }}
