@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0 # required for version resolution
 
       - name: Setup Alpine Linux environment
-        uses: jirutka/setup-alpine@v1.2.0
+        uses: jirutka/setup-alpine@v1.3.0
         with:
           arch: x86
           packages: >
