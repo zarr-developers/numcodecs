@@ -46,15 +46,6 @@ jobs:
           uv pip install -v -e .[test,test_extras,msgpack,crc32c]
         shell: alpine.sh {0}
 
-
-      - name: Install zarr-python
-        # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
-        # so we can have some tests of our minimum version of numpy (1.24)
-        if: matrix.python-version != '3.11'
-        run: uv add zarr>=3
-        shell: alpine.sh {0}
-
-
       - name: List installed packages
         run: uv pip list
         shell: alpine.sh {0}
