@@ -7,14 +7,14 @@ ci:
 default_stages: [pre-commit, pre-push]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     - id: trailing-whitespace
     - id: check-yaml
     - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.12
+    rev: v0.12.11
     hooks:
     - id: ruff
       args: ["--fix", "--show-fixes"]
@@ -26,7 +26,7 @@ repos:
     - id: sp-repo-review
 
   -   repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.16.0
+      rev: v1.17.1
       hooks:
       -   id: mypy
           args: [--config-file, pyproject.toml]
