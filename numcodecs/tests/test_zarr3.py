@@ -181,7 +181,7 @@ def test_generic_filter_packbits(store: StorePath):
     a = zarr.open_array(store / "generic_packbits", mode="r")
     np.testing.assert_array_equal(data, a[:, :])
 
-    with pytest.raises(ValueError, match=".*requires bool dtype.*"):
+    with pytest.raises(ValueError, match=r".*requires bool dtype.*"):
         zarr.create_array(
             store / "generic_packbits_err",
             shape=data.shape,
