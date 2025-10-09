@@ -72,7 +72,7 @@ pcodec = [
     "pcodec>=0.3,<0.4",
 ]
 crc32c = [
-    "crc32c>=2.7",
+    "google-crc32c>=1.5",
 ]
 
 [project.entry-points."zarr.codecs"]
