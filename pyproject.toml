@@ -61,6 +61,7 @@ test = [
 ]
 test_extras = [
     "importlib_metadata",
+    "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
 msgpack = [
     "msgpack",
