@@ -23,7 +23,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
-      CIBW_BUILD: "cp311-* cp312-* cp313-*"
+      CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"
       CIBW_SKIP: "pp* *-musllinux_* *win32 *_i686 *_s390x"
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
