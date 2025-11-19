@@ -14,7 +14,7 @@ from .jenkins import jenkins_lookup3
 
 _crc32c: ModuleType | None = None
 with suppress(ImportError):
-    import crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
+    import google_crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
 
 CHECKSUM_LOCATION = Literal['start', 'end']
 
@@ -179,5 +179,11 @@ if _crc32c:
         """
 
         codec_id = 'crc32c'
-        checksum = _crc32c.crc32c  # type: ignore[union-attr]
         location = 'end'
+
+        @staticmethod
+        def checksum(data: Buffer, value: int = 0) -> int:
+            if value == 0:
+                return _crc32c.value(data)  # type: ignore[union-attr]
+            else:
+                return _crc32c.extend(value, data)  # type: ignore[union-attr]
