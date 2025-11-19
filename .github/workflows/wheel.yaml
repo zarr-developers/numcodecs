@@ -1,6 +1,12 @@
 name: Wheels
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    # Run at 2:00 AM UTC daily
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual trigger
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,16 +23,17 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
-      CIBW_BUILD: "cp311-* cp312-* cp313-*"
-      CIBW_SKIP: "pp* *-musllinux_* *win32 *_i686 *_s390x"
+      CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"
+      CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+          fetch-depth: 0  # required for version resolution for nightly wheels
 
-      - uses: pypa/cibuildwheel@v2.23.2
+      - uses: pypa/cibuildwheel@v3.1.0
 
       - uses: actions/upload-artifact@v4
         with:
@@ -40,6 +47,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         name: Install Python
@@ -61,11 +69,11 @@ jobs:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: sdist
           path: dist
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           pattern: wheels-*
           path: dist
@@ -81,11 +89,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: sdist
           path: dist
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           pattern: wheels-*
           path: dist
@@ -96,3 +104,20 @@ jobs:
           user: __token__
           password: ${{ secrets.pypi_password }}
           # To test: repository_url: https://test.pypi.org/legacy/
+
+  upload_nightly:
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+
+      - name: Upload to scientific-python nightly channel
+        uses: scientific-python/upload-nightly-action@b36e8c0c10dbcfd2e05bf95f17ef8c14fd708dbf
+        with:
+          artifacts_path: dist
+          anaconda_nightly_upload_token: ${{ secrets.ANACONDA_NIGHTLY_UPLOAD_TOKEN }}
