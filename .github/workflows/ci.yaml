@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         # macos-13 is an intel runner, macos-14 is an arm64 runner
         platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
 
