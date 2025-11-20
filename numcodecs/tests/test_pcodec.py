@@ -9,7 +9,7 @@ except ImportError:  # pragma: no cover
 from numcodecs.tests.common import (
     check_backwards_compatibility,
     check_config,
-    check_encode_decode_array_to_bytes,
+    check_encode_decode_array,
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_repr,
@@ -49,7 +49,7 @@ arrays = [
 @pytest.mark.parametrize("arr", arrays)
 @pytest.mark.parametrize("codec", codecs)
 def test_encode_decode(arr, codec):
-    check_encode_decode_array_to_bytes(arr, codec)
+    check_encode_decode_array(arr, codec)
 
 
 def test_config():
@@ -61,13 +61,13 @@ def test_config():
 def test_invalid_config_error(param):
     codec = PCodec(**{param: "bogus"})
     with pytest.raises(ValueError):
-        check_encode_decode_array_to_bytes(arrays[0], codec)
+        check_encode_decode_array(arrays[0], codec)
 
 
 def test_invalid_delta_encoding_combo():
     codec = PCodec(delta_encoding_order=2, delta_spec="none")
     with pytest.raises(ValueError):
-        check_encode_decode_array_to_bytes(arrays[0], codec)
+        check_encode_decode_array(arrays[0], codec)
 
 
 def test_repr():
