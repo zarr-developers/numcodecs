@@ -17,18 +17,90 @@ Release notes
 Unreleased
 ----------
 
-Enhancements
+
+.. _release_0.16.4:
+
+0.16.4
+------
+
+Improvements
 ~~~~~~~~~~~~
+
+* The Zstandard codec can now decode bytes containing multiple frames.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
+
+Fixes
+~~~~~
+
+* Fix ``PCodec.decode()`` to handle numpy arrays by calling ``ensure_bytes`` on input buffers.
+  By :user:`Sam Levang <slowjazz>`, :issue:`756`
+
+Maintenance
+~~~~~~~~~~~
+
+* Replace ``crc32c`` dependency with ``google-crc32c``.
+  By :user:`Joe Hamman <jhamman>`, :issue:`792`
+
+* Refactor ``numcodecs.zarr3`` to re-export classes from ``zarr.codecs._numcodecs``
+  instead of defining them locally.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`780`
+
+* Improve CRC32C codec test skipping to properly report skipped tests using ``pytest.skipif``.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`740`
+
+
+.. _release_0.16.3:
+
+0.16.3
+------
+
+Fixes
+~~~~~
+
+* Fix Zstd decompression negative size issue on 32-bit platforms.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`782`
+
+Maintenance
+~~~~~~~~~~~
+
+* Test 32-bit support via x86 Alpine Setup Action Linux.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`784`
+
+* Bump to main branch of c-blosc to fix gcc15 compilation.
+  By :user:`Thomas Caswell <tacaswell>`, :issue:`772`
+
+
+.. _release_0.16.2:
+
+0.16.2
+------
+
+Improvements
+~~~~~~~~~~~~
+
+* Add streaming decompression for ZSTD_CONTENTSIZE_UNKNOWN case.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`707`
+
+Maintenance
+~~~~~~~~~~~
+
+* Handle zarr 3.1.0 compatibility.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`766`
+
+
+.. _release_0.16.1:
+
+0.16.1
+------
 
 Improvements
 ~~~~~~~~~~~~
 
 * In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
   By :user:`John Kirkham <jakirkham>`, :issue:`723`
+
 * All codecs are now pickleable.
-  By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
-* The Zstandard codec can now decode bytes containing multiple frames
-  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
+  By :user:`Tom Nicholas <TomNicholas>`, :issue:`745`
 
 Fixes
 ~~~~~
@@ -42,12 +114,11 @@ Fixes
 * Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
   By :user:`John Kirkham <jakirkham>`, :issue:`732`
 
-* Remove ``typesize`` from ``Blosc.get_config`` output
-  By :user:`Ilan Gold <ilan-gold>`
+* Remove ``typesize`` from ``Blosc.get_config`` output.
+  By :user:`Ilan Gold <ilan-gold>`, :issue:`739`
 
-Maintenance
-~~~~~~~~~~~
 
+.. _release_0.16.0:
 
 0.16.0
 ------
