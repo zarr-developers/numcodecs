@@ -94,7 +94,10 @@ pcodec = [
     "pcodec>=0.3,<0.4",
 ]
 crc32c = [
-    "google-crc32c>=1.5",
+    "crc32c>=2.7",
+]
+google_crc32c = [
+    "google-crc32c>=1.5"
 ]
 
 [tool.setuptools]
