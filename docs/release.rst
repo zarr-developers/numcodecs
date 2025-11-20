@@ -27,6 +27,8 @@ Improvements
   By :user:`John Kirkham <jakirkham>`, :issue:`723`
 * All codecs are now pickleable.
   By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
+* The Zstandard codec can now decode bytes containing multiple frames
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
 
 Fixes
 ~~~~~

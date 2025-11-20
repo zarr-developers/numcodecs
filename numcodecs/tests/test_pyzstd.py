@@ -25,7 +25,6 @@ def test_pyzstd_simple(input):
     assert pyzstd.decompress(z.encode(input)) == input
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("input", test_data)
 def test_pyzstd_simple_multiple_frames_decode(input):
     """

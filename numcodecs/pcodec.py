@@ -1,7 +1,7 @@
 from typing import Literal
 
 from numcodecs.abc import Codec
-from numcodecs.compat import ensure_contiguous_ndarray
+from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
 DEFAULT_MAX_PAGE_N = 262144
@@ -110,6 +110,7 @@ class PCodec(Codec):
         return standalone.simple_compress(buf, config)
 
     def decode(self, buf, out=None):
+        buf = ensure_bytes(buf)
         if out is not None:
             out = ensure_contiguous_ndarray(out)
             standalone.simple_decompress_into(buf, out)

@@ -28,7 +28,7 @@ jobs:
       # note: CIBW_ENVIRONMENT is now set in pyproject.toml
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0  # required for version resolution for nightly wheels
@@ -44,7 +44,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0
