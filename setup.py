@@ -5,16 +5,31 @@ from distutils.command.clean import clean
 from distutils.sysconfig import customize_compiler
 from glob import glob
 
-import cpuinfo
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from setuptools import Extension, setup
 from setuptools.errors import CCompilerError, ExecError, PlatformError
 
-# determine CPU support for SSE2 and AVX2
-cpu_info = cpuinfo.get_cpu_info()
-flags = cpu_info.get('flags', [])
-machine = cpuinfo.platform.machine()
+if sys.version_info >= (3, 10):  # noqa: UP036
+    import sysconfig
+else:
+    from distutils import sysconfig
 
+
+# sys.platform is not trustworthy in a cross-compiling environment
+is_emscripten = sysconfig.get_config_var("SOABI") and "emscripten" in sysconfig.get_config_var(
+    "SOABI"
+)
+
+if not is_emscripten:
+    import cpuinfo
+
+    # determine CPU support for SSE2 and AVX2
+    cpu_info = cpuinfo.get_cpu_info()
+    flags = cpu_info.get('flags', [])
+    machine = cpuinfo.platform.machine()
+else:
+    flags = []
+    machine = "emscripten-wasm32"
 # only check for x86 features on x86_64 arch
 have_sse2 = False
 have_avx2 = False
@@ -42,7 +57,7 @@ elif os.name == 'posix' and machine == 'x86_64':
         base_compile_args.append('-mavx2')
 # On macOS, force libc++ in case the system tries to use `stdlibc++`.
 # The latter is often absent from modern macOS systems.
-if sys.platform == 'darwin':
+if sys.platform == 'darwin' and not is_emscripten:
     base_compile_args.append('-stdlib=libc++')
 
 
@@ -64,7 +79,7 @@ def blosc_extension():
     define_macros = []
 
     # ensure pthread is properly linked on POSIX systems
-    if os.name == 'posix':
+    if os.name == 'posix' and not is_emscripten:
         extra_compile_args.append('-pthread')
         extra_link_args.append('-pthread')
 
@@ -114,7 +129,7 @@ def blosc_extension():
         info('compiling Blosc extension without AVX2 support')
 
     # include assembly files
-    if cpuinfo.platform.machine() == 'x86_64':
+    if machine == 'x86_64':
         extra_objects = [
             S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
         ]
@@ -157,7 +172,7 @@ def zstd_extension():
     sources = ['numcodecs/zstd.pyx']
 
     # include assembly files
-    if cpuinfo.platform.machine() == 'x86_64':
+    if machine == 'x86_64':
         extra_objects = [
             S[:-1] + 'o' for S in glob("c-blosc/internal-complibs/zstd*/decompress/*amd64.S")
         ]
@@ -321,7 +336,6 @@ class ve_build_ext(build_ext):
 
     def run(self):
         try:
-            machine = cpuinfo.platform.machine()
             if machine in ('x86_64', 'aarch64'):
                 pattern = '*amd64.S' if machine == 'x86_64' else '*aarch64.S'
                 S_files = glob(f'c-blosc/internal-complibs/zstd*/decompress/{pattern}')
@@ -347,7 +361,7 @@ class Sclean(clean):
     # Clean up .o files created by .S files
 
     def run(self):
-        if cpuinfo.platform.machine() == 'x86_64':
+        if machine == 'x86_64':
             o_files = glob('c-blosc/internal-complibs/zstd*/decompress/*amd64.o')
             for f in o_files:
                 os.remove(f)
