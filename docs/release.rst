@@ -17,18 +17,126 @@ Release notes
 Unreleased
 ----------
 
+
+.. _release_0.16.4:
+
+0.16.4
+------
+
 Enhancements
 ~~~~~~~~~~~~
 
-Improvements
+* The Zstandard codec can now decode bytes containing multiple frames.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
+
+* Add Python 3.14 support to the test matrix.
+  By :user:`Max Jones <maxrjones>`, :issue:`799`
+
+* Add Python 3.14 wheel builds.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`796`
+
+Fixes
+~~~~~
+
+* Fix ``PCodec.decode()`` to handle numpy arrays by calling ``ensure_bytes`` on input buffers.
+  By :user:`Sam Levang <slowjazz>`, :issue:`756`
+
+Maintenance
+~~~~~~~~~~~
+
+* Replace ``crc32c`` dependency with ``google-crc32c``.
+  By :user:`Joe Hamman <jhamman>`, :issue:`792`
+
+* Refactor ``numcodecs.zarr3`` to re-export classes from ``zarr.codecs._numcodecs``
+  instead of defining them locally.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`780`
+
+* Add testing against zarr-python main branch.
+  By :user:`Max Jones <maxrjones>`, :issue:`800`
+
+* Add pcodec and zfpy to 32-bit CI testing.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`786`
+
+* Improve CRC32C codec test skipping to properly report skipped tests using ``pytest.skipif``.
+  By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`740`
+
+* Add nightly wheel upload to scientific-python channel.
+  By :user:`Ian Hunt-Isaak <ianhi>`, :issue:`787`
+
+* Fetch tags to version nightly wheels correctly.
+  By :user:`Ian Hunt-Isaak <ianhi>`, :issue:`790`
+
+* Bump ``pypa/cibuildwheel`` from 2.23.2 to 3.1.3.
+  By :user:`dependabot <dependabot>`, :issue:`771`
+
+* Bump ``actions/checkout`` from 4 to 5.
+  By :user:`dependabot <dependabot>`, :issue:`775`
+
+* Bump ``actions/download-artifact`` from 4 to 6.
+  By :user:`dependabot <dependabot>`, :issue:`794`
+
+* Bump ``prefix-dev/setup-pixi`` from 0.8.14 to 0.9.0.
+  By :user:`dependabot <dependabot>`, :issue:`783`
+
+* Bump ``jirutka/setup-alpine`` from 1.2.0 to 1.3.0.
+  By :user:`dependabot <dependabot>`, :issue:`789`
+
+* Bump ``conda-incubator/setup-miniconda`` from 3.1.1 to 3.2.0.
+  By :user:`dependabot <dependabot>`, :issue:`753`
+
+
+.. _release_0.16.3:
+
+0.16.3
+------
+
+Fixes
+~~~~~
+
+* Fix Zstd decompression negative size issue on 32-bit platforms.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`782`
+
+Maintenance
+~~~~~~~~~~~
+
+* Test 32-bit support via x86 Alpine Setup Action Linux.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`784`
+
+* Bump to main branch of c-blosc to fix gcc15 compilation.
+  By :user:`Thomas Caswell <tacaswell>`, :issue:`772`
+
+
+.. _release_0.16.2:
+
+0.16.2
+------
+
+Enhancements
+~~~~~~~~~~~~
+
+* Add streaming decompression for ZSTD_CONTENTSIZE_UNKNOWN case.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`707`
+
+Maintenance
+~~~~~~~~~~~
+
+* Handle zarr 3.1.0 compatibility.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`766`
+
+
+.. _release_0.16.1:
+
+0.16.1
+------
+
+Enhancements
 ~~~~~~~~~~~~
 
 * In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
   By :user:`John Kirkham <jakirkham>`, :issue:`723`
+
 * All codecs are now pickleable.
-  By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
-* The Zstandard codec can now decode bytes containing multiple frames
-  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
+  By :user:`Tom Nicholas <TomNicholas>`, :issue:`745`
 
 Fixes
 ~~~~~
@@ -42,12 +150,11 @@ Fixes
 * Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
   By :user:`John Kirkham <jakirkham>`, :issue:`732`
 
-* Remove ``typesize`` from ``Blosc.get_config`` output
-  By :user:`Ilan Gold <ilan-gold>`
+* Remove ``typesize`` from ``Blosc.get_config`` output.
+  By :user:`Ilan Gold <ilan-gold>`, :issue:`739`
 
-Maintenance
-~~~~~~~~~~~
 
+.. _release_0.16.0:
 
 0.16.0
 ------
