@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0 # required for version resolution
 
       - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.1.1
+        uses: conda-incubator/setup-miniconda@v3.2.0
         with:
           channels: conda-forge
           miniforge-version: latest
