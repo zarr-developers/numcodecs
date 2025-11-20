@@ -29,6 +29,12 @@ Enhancements
 * The Zstandard codec can now decode bytes containing multiple frames.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
 
+* Add Python 3.14 support to the test matrix.
+  By :user:`Max Jones <maxrjones>`, :issue:`799`
+
+* Add Python 3.14 wheel builds.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`796`
+
 Fixes
 ~~~~~
 
@@ -45,8 +51,38 @@ Maintenance
   instead of defining them locally.
   By :user:`Davis Bennett <d-v-b>`, :issue:`780`
 
+* Add testing against zarr-python main branch.
+  By :user:`Max Jones <maxrjones>`, :issue:`800`
+
+* Add pcodec and zfpy to 32-bit CI testing.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`786`
+
 * Improve CRC32C codec test skipping to properly report skipped tests using ``pytest.skipif``.
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`740`
+
+* Add nightly wheel upload to scientific-python channel.
+  By :user:`Ian Hunt-Isaak <ianhi>`, :issue:`787`
+
+* Fetch tags to version nightly wheels correctly.
+  By :user:`Ian Hunt-Isaak <ianhi>`, :issue:`790`
+
+* Bump ``pypa/cibuildwheel`` from 2.23.2 to 3.1.3.
+  By :user:`dependabot <dependabot>`, :issue:`771`
+
+* Bump ``actions/checkout`` from 4 to 5.
+  By :user:`dependabot <dependabot>`, :issue:`775`
+
+* Bump ``actions/download-artifact`` from 4 to 6.
+  By :user:`dependabot <dependabot>`, :issue:`794`
+
+* Bump ``prefix-dev/setup-pixi`` from 0.8.14 to 0.9.0.
+  By :user:`dependabot <dependabot>`, :issue:`783`
+
+* Bump ``jirutka/setup-alpine`` from 1.2.0 to 1.3.0.
+  By :user:`dependabot <dependabot>`, :issue:`789`
+
+* Bump ``conda-incubator/setup-miniconda`` from 3.1.1 to 3.2.0.
+  By :user:`dependabot <dependabot>`, :issue:`753`
 
 
 .. _release_0.16.3:
