@@ -25,6 +25,10 @@ Improvements
 
 * In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
   By :user:`John Kirkham <jakirkham>`, :issue:`723`
+* All codecs are now pickleable.
+  By :user:`Tom Nicholas <TomNicholas>`, :issue:`744`
+* The Zstandard codec can now decode bytes containing multiple frames
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
 
 Fixes
 ~~~~~
@@ -37,6 +41,9 @@ Fixes
 
 * Add ``#ifndef`` guard around ``PyBytes_RESIZE``.
   By :user:`John Kirkham <jakirkham>`, :issue:`732`
+
+* Remove ``typesize`` from ``Blosc.get_config`` output
+  By :user:`Ilan Gold <ilan-gold>`
 
 Maintenance
 ~~~~~~~~~~~
@@ -90,6 +97,8 @@ Maintenance
 
 Improvements
 ~~~~~~~~~~~~
+* Add streaming decompression for ZSTD (:issue:`699`)
+  By :user:`Mark Kittisopikul <mkitti>`.
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
   By :user:`Cas Wognum <cwognum>`.
 

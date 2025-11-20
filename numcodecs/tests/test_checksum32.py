@@ -171,6 +171,25 @@ def test_crc32c_checksum():
     assert np.frombuffer(buf, dtype="<u4", offset=(len(buf) - 4))[0] == np.uint32(4218238699)
 
 
+@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed")
+def test_crc32c_incremental():
+    """Test that CRC32C.checksum supports incremental calculation via value parameter."""
+    # Test incremental checksum calculation (for API compatibility)
+    data1 = np.frombuffer(b"hello", dtype='uint8')
+    data2 = np.frombuffer(b" world", dtype='uint8')
+    full_data = np.frombuffer(b"hello world", dtype='uint8')
+
+    # Calculate checksum in one go
+    checksum_full = CRC32C.checksum(full_data)
+
+    # Calculate incrementally using the value parameter
+    checksum_part1 = CRC32C.checksum(data1, 0)
+    checksum_part2 = CRC32C.checksum(data2, checksum_part1)
+
+    # Both methods should produce the same result
+    assert checksum_full == checksum_part2
+
+
 @pytest.mark.parametrize("codec", get_all_codecs())
 def test_err_checksum(codec):
     arr = np.arange(0, 64, dtype="uint8")

@@ -278,7 +278,13 @@ def test_typesize_less_than_1():
         Blosc(shuffle=Blosc.SHUFFLE, typesize=0)
     compressor = Blosc(shuffle=Blosc.SHUFFLE)
     # not really something that should be done in practice, but good for testing.
-    compressor.typesize = 0
+    compressor._typesize = 0
     arr = np.arange(100)
     with pytest.raises(ValueError, match=r"Cannot use typesize"):
         compressor.encode(arr.tobytes())
+
+
+def test_config_no_typesize():
+    codec = Blosc(shuffle=Blosc.SHUFFLE, typesize=5)
+    config = codec.get_config()
+    assert "typesize" not in config

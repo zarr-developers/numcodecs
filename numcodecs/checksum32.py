@@ -3,7 +3,7 @@ import struct
 import zlib
 from contextlib import suppress
 from types import ModuleType
-from typing import Literal, Optional
+from typing import Literal
 
 import numpy as np
 from typing_extensions import Buffer
@@ -12,9 +12,9 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
-_crc32c: Optional[ModuleType] = None
+_crc32c: ModuleType | None = None
 with suppress(ImportError):
-    import crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
+    import google_crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
 
 CHECKSUM_LOCATION = Literal['start', 'end']
 
@@ -179,5 +179,11 @@ if _crc32c:
         """
 
         codec_id = 'crc32c'
-        checksum = _crc32c.crc32c  # type: ignore[union-attr]
         location = 'end'
+
+        @staticmethod
+        def checksum(data: Buffer, value: int = 0) -> int:
+            if value == 0:
+                return _crc32c.value(data)  # type: ignore[union-attr]
+            else:
+                return _crc32c.extend(value, data)  # type: ignore[union-attr]
