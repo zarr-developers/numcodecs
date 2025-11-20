@@ -61,6 +61,7 @@ test = [
 ]
 test_extras = [
     "importlib_metadata",
+    "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
 
 [dependency-groups]
@@ -87,7 +88,7 @@ pcodec = [
     "pcodec>=0.3,<0.4",
 ]
 crc32c = [
-    "crc32c>=2.7",
+    "google-crc32c>=1.5",
 ]
 
 [tool.setuptools]

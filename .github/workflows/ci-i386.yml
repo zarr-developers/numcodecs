@@ -22,28 +22,48 @@ jobs:
           fetch-depth: 0 # required for version resolution
 
       - name: Setup Alpine Linux environment
-        uses: jirutka/setup-alpine@v1.2.0
+        uses: jirutka/setup-alpine@v1.3.0
         with:
           arch: x86
           packages: >
             build-base
-            python3
-            python3-dev
+            cargo
+            cmake
+            cython
             git
-            py3-pip
-            py3-pytest
-            uv
             meson
             pkgconf
+            rust
+            sed
+            sudo
+            uv
+            zstd
+            python3
+            python3-dev
             py3-numpy
             py3-numpy-dev
-            zstd
+            py3-pip
+            py3-pytest
+
+      - name: Install zfp
+        run: |
+          uv venv
+          PYTHON_INCLUDE=$(uv run python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
+          PYTHON_LIB=$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
+          git clone https://github.com/LLNL/zfp
+          sed -i "s/distutils.sysconfig/sysconfig/g" zfp/python/scikit-build-cmake/FindPythonExtensions.cmake
+          mkdir zfp/build;
+          uv run cmake zfp -B zfp/build -DBUILD_ZFPY=ON -DBUILD_TESTING=OFF -DPYTHON_LIBRARY=$PYTHON_LIB -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE
+          uv run make -j -C zfp/build
+          uv run sudo make -C zfp/build install
+          uv add "zfpy @ ./zfp"
+        shell: alpine.sh {0}
 
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
           uv venv
-          uv pip install -v -e .[test,test_extras,msgpack,crc32c]
+          uv pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
         shell: alpine.sh {0}
 
       - name: List installed packages
