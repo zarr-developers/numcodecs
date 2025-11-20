@@ -77,6 +77,12 @@ test-zarr-313 = [
     "zarr==3.1.3",
     "crc32c",
 ]
+test-zarr-main = [
+    "pytest",
+    "pytest-cov",
+    "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
+    "crc32c",
+]
 
 msgpack = [
     "msgpack",
@@ -240,7 +246,8 @@ conflicts = [
     # Zarr versions conflict with each other
     [
         { group = "test-zarr-312" },
-        { group = "test-zarr-313" }
+        { group = "test-zarr-313" },
+        { group = "test-zarr-main" }
     ]
 ]
 
@@ -257,5 +264,7 @@ uv = "*"
 [tool.pixi.tasks]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
+ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
 test-zarr-312 = "uv run --group test-zarr-312 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 test-zarr-313 = "uv run --group test-zarr-313 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-main = "uv run --group test-zarr-main pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
