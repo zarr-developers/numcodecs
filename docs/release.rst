@@ -23,7 +23,7 @@ Unreleased
 0.16.4
 ------
 
-Improvements
+Enhancements
 ~~~~~~~~~~~~
 
 * The Zstandard codec can now decode bytes containing multiple frames.
@@ -75,7 +75,7 @@ Maintenance
 0.16.2
 ------
 
-Improvements
+Enhancements
 ~~~~~~~~~~~~
 
 * Add streaming decompression for ZSTD_CONTENTSIZE_UNKNOWN case.
@@ -93,7 +93,7 @@ Maintenance
 0.16.1
 ------
 
-Improvements
+Enhancements
 ~~~~~~~~~~~~
 
 * In ``vlen``, define and use ``const`` ``HEADER_LENGTH``.
