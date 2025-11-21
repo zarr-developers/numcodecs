@@ -1,6 +1,7 @@
 import abc
 import importlib.util
 import struct
+import warnings
 import zlib
 from collections.abc import Callable
 from typing import Literal
@@ -24,6 +25,12 @@ if importlib.util.find_spec("google_crc32c") is not None:
             return google_crc32c.extend(value, data)
 
 elif importlib.util.find_spec("crc32c") is not None:
+    warnings.warn(
+        "crc32c usage is deprecated since numcodecs v0.16.4. "
+        "It is recommended to install google_crc32c instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     import crc32c
 
     def crc32c_checksum(data: Buffer, value: int = 0) -> int:
