@@ -74,12 +74,12 @@ test = [
     "pytest-cov",
     "pyzstd"
 ]
-
-[dependency-groups]
 test_extras = [
     "importlib_metadata",
     "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
+
+[dependency-groups]
 test-zarr-312 = [
     "pytest",
     "pytest-cov",
