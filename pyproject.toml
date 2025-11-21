@@ -47,6 +47,23 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
+msgpack = [
+    "msgpack",
+]
+zfpy = [
+    "zfpy>=1.0.0"
+]
+pcodec = [
+    "pcodec>=0.3,<0.4",
+]
+crc32c = [
+    "crc32c>=2.7",
+]
+google_crc32c = [
+    "google-crc32c>=1.5"
+]
+
+[dependency-groups]
 docs = [
     "sphinx",
     "sphinx-issues",
@@ -63,8 +80,6 @@ test_extras = [
     "importlib_metadata",
     "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
-
-[dependency-groups]
 test-zarr-312 = [
     "pytest",
     "pytest-cov",
@@ -82,22 +97,6 @@ test-zarr-main = [
     "pytest-cov",
     "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
     "crc32c",
-]
-
-msgpack = [
-    "msgpack",
-]
-zfpy = [
-    "zfpy>=1.0.0"
-]
-pcodec = [
-    "pcodec>=0.3,<0.4",
-]
-crc32c = [
-    "crc32c>=2.7",
-]
-google_crc32c = [
-    "google-crc32c>=1.5"
 ]
 
 [tool.setuptools]
