@@ -1,8 +1,9 @@
 import abc
+import importlib.util
 import struct
+import warnings
 import zlib
-from contextlib import suppress
-from types import ModuleType
+from collections.abc import Callable
 from typing import Literal
 
 import numpy as np
@@ -12,9 +13,32 @@ from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
-_crc32c: ModuleType | None = None
-with suppress(ImportError):
-    import google_crc32c as _crc32c  # type: ignore[no-redef, unused-ignore]
+crc32c_checksum: Callable[[Buffer, int], int] | None
+
+warnings.filterwarnings('once', message='crc32c usage is deprecated.*', category=DeprecationWarning)
+
+if importlib.util.find_spec("google_crc32c") is not None:
+    import google_crc32c
+
+    def crc32c_checksum(data: Buffer, value: int = 0) -> int:
+        if value == 0:
+            return google_crc32c.value(data)
+        else:
+            return google_crc32c.extend(value, data)
+
+elif importlib.util.find_spec("crc32c") is not None:
+    warnings.warn(
+        "crc32c usage is deprecated since numcodecs v0.16.4. "
+        "It is recommended to install google_crc32c instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    import crc32c
+
+    def crc32c_checksum(data: Buffer, value: int = 0) -> int:
+        return crc32c.crc32c(data, value)
+else:
+    crc32c_checksum = None
 
 CHECKSUM_LOCATION = Literal['start', 'end']
 
@@ -167,7 +191,7 @@ class JenkinsLookup3(Checksum32):
         return memoryview(b[:-4])
 
 
-if _crc32c:
+if crc32c_checksum is not None:
 
     class CRC32C(Checksum32):
         """Codec add a crc32c checksum to the buffer.
@@ -183,7 +207,4 @@ if _crc32c:
 
         @staticmethod
         def checksum(data: Buffer, value: int = 0) -> int:
-            if value == 0:
-                return _crc32c.value(data)  # type: ignore[union-attr]
-            else:
-                return _crc32c.extend(value, data)  # type: ignore[union-attr]
+            return crc32c_checksum(data, value)  # type: ignore[misc]

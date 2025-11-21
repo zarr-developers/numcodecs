@@ -1,3 +1,4 @@
+import importlib
 import itertools
 from contextlib import suppress
 
@@ -15,6 +16,9 @@ from numcodecs.tests.common import (
 )
 
 has_crc32c = False
+has_google_crc32c = importlib.util.find_spec("google_crc32c") is not None
+has_legacy_crc32c = importlib.util.find_spec("crc32c") is not None
+
 with suppress(ImportError):
     from numcodecs.checksum32 import CRC32C
 
@@ -104,7 +108,7 @@ def test_err_location():
     with pytest.raises(ValueError):
         Adler32(location="foo")
     if not has_crc32c:
-        pytest.skip("Needs `crc32c` installed")
+        pytest.skip("Needs `crc32c` or `google_crc32c` installed")
     with pytest.raises(ValueError):
         CRC32C(location="foo")
 
@@ -118,11 +122,15 @@ def test_err_location():
         "Adler32(location='end')",
         pytest.param(
             "CRC32C(location='start')",
-            marks=pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed"),
+            marks=pytest.mark.skipif(
+                not has_crc32c, reason="Needs `crc32c` or `google_crc32c` installed"
+            ),
         ),
         pytest.param(
             "CRC32C(location='end')",
-            marks=pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed"),
+            marks=pytest.mark.skipif(
+                not has_crc32c, reason="Needs `crc32c` or `google_crc32c` installed"
+            ),
         ),
     ],
 )
@@ -141,7 +149,7 @@ def test_backwards_compatibility(codec_id, codec_instance):
     check_backwards_compatibility(codec_id, arrays, [codec_instance])
 
 
-@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed")
+@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` or `google_crc32c` installed")
 def test_backwards_compatibility_crc32c():
     check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
 
@@ -164,14 +172,14 @@ def test_err_out_too_small(codec):
         codec.decode(codec.encode(arr), out)
 
 
-@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed")
+@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` or `google_crc32c` installed")
 def test_crc32c_checksum():
     arr = np.arange(0, 64, dtype="uint8")
     buf = CRC32C(location="end").encode(arr)
     assert np.frombuffer(buf, dtype="<u4", offset=(len(buf) - 4))[0] == np.uint32(4218238699)
 
 
-@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` installed")
+@pytest.mark.skipif(not has_crc32c, reason="Needs `crc32c` or `google_crc32c` installed")
 def test_crc32c_incremental():
     """Test that CRC32C.checksum supports incremental calculation via value parameter."""
     # Test incremental checksum calculation (for API compatibility)
@@ -197,3 +205,23 @@ def test_err_checksum(codec):
     buf[-1] = 0  # corrupt the checksum
     with pytest.raises(RuntimeError):
         codec.decode(buf)
+
+
+@pytest.mark.skipif(
+    has_google_crc32c or not has_legacy_crc32c,
+    reason="Only runs when legacy `crc32c` is used (not `google_crc32c`)",
+)
+def test_crc32c_deprecation_warning():
+    """Test that using legacy crc32c (not google_crc32c) issues a deprecation warning."""
+    import sys
+
+    # Remove the module from cache to force re-import and trigger the warning
+    if 'numcodecs.checksum32' in sys.modules:
+        del sys.modules['numcodecs.checksum32']
+
+    with pytest.warns(
+        DeprecationWarning, match="crc32c usage is deprecated since numcodecs v0.16.4"
+    ):
+        import numcodecs.checksum32
+
+        importlib.reload(numcodecs.checksum32)
