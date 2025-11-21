@@ -47,6 +47,21 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
+msgpack = [
+    "msgpack",
+]
+zfpy = [
+    "zfpy>=1.0.0"
+]
+pcodec = [
+    "pcodec>=0.3,<0.4",
+]
+crc32c = [
+    "crc32c>=2.7",
+]
+google_crc32c = [
+    "google-crc32c>=1.5"
+]
 docs = [
     "sphinx",
     "sphinx-issues",
@@ -82,19 +97,6 @@ test-zarr-main = [
     "pytest-cov",
     "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
     "crc32c",
-]
-
-msgpack = [
-    "msgpack",
-]
-zfpy = [
-    "zfpy>=1.0.0"
-]
-pcodec = [
-    "pcodec>=0.3,<0.4",
-]
-crc32c = [
-    "google-crc32c>=1.5",
 ]
 
 [tool.setuptools]
@@ -152,6 +154,7 @@ log_cli_level = "INFO"
 xfail_strict = true
 filterwarnings = [
     "error",
+    "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
 ]
 
 [tool.cibuildwheel]
@@ -251,15 +254,31 @@ conflicts = [
     ]
 ]
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
+python = "=3.14"
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 uv = "*"
+
+[tool.pixi.feature.test.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","zfpy"] }
+
+[tool.pixi.feature.test-google-crc32c.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
+
+[tool.pixi.feature.test-crc32c.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["crc32c"] }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+test = ["test"]
+test-crc32c = ["test", "test-crc32c"]
+test-google-crc32c = ["test", "test-google-crc32c"]
 
 [tool.pixi.tasks]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
@@ -268,3 +287,6 @@ ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
 test-zarr-312 = "uv run --group test-zarr-312 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 test-zarr-313 = "uv run --group test-zarr-313 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 test-zarr-main = "uv run --group test-zarr-main pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+
+[tool.pixi.feature.test.tasks]
+run-tests = "pytest -v"

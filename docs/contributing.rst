@@ -101,6 +101,10 @@ like the following::
     $ source ~/pyenv/numcodecs-dev/bin/activate
     $ pip install -e .[docs,test,msgpack,zfpy]
 
+You may need to initialize the submodule for c-blosc:
+
+    $ git submodule update --init --recursive
+
 To verify that your development environment is working, you can run the unit tests::
 
     $ pytest -v
