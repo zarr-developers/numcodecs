@@ -15,6 +15,8 @@ from .jenkins import jenkins_lookup3
 
 crc32c_checksum: Callable[[Buffer, int], int] | None
 
+warnings.filterwarnings('once', message='crc32c usage is deprecated.*', category=DeprecationWarning)
+
 if importlib.util.find_spec("google_crc32c") is not None:
     import google_crc32c
 
