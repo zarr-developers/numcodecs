@@ -17,6 +17,16 @@ Release notes
 Unreleased
 ----------
 
+.. _release_0.16.5:
+
+0.16.5
+------
+
+Fixes
+~~~~~
+
+* Restore prior optional dependency behavior for 'crc32c'.
+  By :user:`Davis Bennett <d-v-b>`, :issue:`802`
 
 .. _release_0.16.4:
 
