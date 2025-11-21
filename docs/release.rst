@@ -25,7 +25,7 @@ Unreleased
 Fixes
 ~~~~~
 
-* Restore prior optional dependency behavior for 'crc32c'.
+* Restore prior optional dependency behavior for `'crc32c'` group.
   By :user:`Davis Bennett <d-v-b>`, :issue:`802`
 
 .. _release_0.16.4:
