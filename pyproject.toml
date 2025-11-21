@@ -284,9 +284,9 @@ test-google-crc32c = ["test", "test-google-crc32c"]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
 ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
-test-zarr-312 = "uv run --group test-zarr-312 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-313 = "uv run --group test-zarr-313 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-main = "uv run --group test-zarr-main pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 
 [tool.pixi.feature.test.tasks]
 run-tests = "pytest -v"
