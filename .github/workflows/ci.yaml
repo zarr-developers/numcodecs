@@ -50,7 +50,7 @@ jobs:
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
+          python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]
 
       - name: List installed packages
         run: python -m pip list
