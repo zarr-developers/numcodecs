@@ -154,6 +154,7 @@ log_cli_level = "INFO"
 xfail_strict = true
 filterwarnings = [
     "error",
+    "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
 ]
 
 [tool.cibuildwheel]
@@ -258,14 +259,14 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
-python = "=3.13"
+python = "=3.14"
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 uv = "*"
 
 [tool.pixi.feature.test.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","pcodec","zfpy"] }
+numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","zfpy"] }
 
 [tool.pixi.feature.test-google-crc32c.pypi-dependencies]
 numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
