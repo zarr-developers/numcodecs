@@ -62,8 +62,6 @@ crc32c = [
 google_crc32c = [
     "google-crc32c>=1.5"
 ]
-
-[dependency-groups]
 docs = [
     "sphinx",
     "sphinx-issues",
@@ -76,6 +74,8 @@ test = [
     "pytest-cov",
     "pyzstd"
 ]
+
+[dependency-groups]
 test_extras = [
     "importlib_metadata",
     "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
