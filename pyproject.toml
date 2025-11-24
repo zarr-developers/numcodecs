@@ -204,13 +204,13 @@ ignore = [
     "PT001",
     "PT011",
     "PT012",
+    "PT031",
     "RET505",
     "RET506",
     "SIM108",
     "TRY003",
     "TRY301",
     "UP007",
-    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
     # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
