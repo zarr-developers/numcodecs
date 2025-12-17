@@ -84,7 +84,7 @@ if _zfpy:
                 )
             # Force C-contiguous if needed (copies only if not already C-contiguous)
             buf = np.ascontiguousarray(buf)
-            
+
             # No flattening needed for C-order
             flatten = False
             buf = ensure_contiguous_ndarray(buf, flatten=flatten)
