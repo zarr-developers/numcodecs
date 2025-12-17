@@ -17,6 +17,13 @@ Release notes
 Unreleased
 ----------
 
+
+Fixes
+~~~~~
+
+* Fix Zarr serialization with ZFP when array is a view.
+  By :user:`Altay Sansal <tasansal>`, :issue:`812`
+
 .. _release_0.16.5:
 
 0.16.5
