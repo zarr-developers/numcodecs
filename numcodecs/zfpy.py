@@ -77,13 +77,16 @@ if _zfpy:
                     "The zfp codec does not support none numpy arrays."
                     f" Your buffers were {type(buf)}."
                 )
-            if buf.flags.c_contiguous:
-                flatten = False
-            else:
+            if buf.flags.f_contiguous:
                 raise ValueError(
                     "The zfp codec does not support F order arrays. "
                     f"Your arrays flags were {buf.flags}."
                 )
+            # Force C-contiguous if needed (copies only if not already C-contiguous)
+            buf = np.ascontiguousarray(buf)
+            
+            # No flattening needed for C-order
+            flatten = False
             buf = ensure_contiguous_ndarray(buf, flatten=flatten)
 
             # do compression
