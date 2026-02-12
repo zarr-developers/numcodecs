@@ -54,7 +54,7 @@ zfpy = [
     "zfpy>=1.0.0"
 ]
 pcodec = [
-    "pcodec>=0.3,<0.4",
+    "pcodec>=1,<2",
 ]
 crc32c = [
     "crc32c>=2.7",
