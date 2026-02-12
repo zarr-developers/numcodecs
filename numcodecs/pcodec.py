@@ -27,9 +27,10 @@ class PCodec(Codec):
         structure of the data (e.g. approximate multiples of 0.1) to improve
         compression ratio, or skip this step and just use the numbers as-is
         (Classic mode). Note that the "try*" specs are not currently supported.
-    delta_spec : {"auto", "no_op", "try_consecutive", "try_lookback"}
+    delta_spec : {"auto", "no_op", "none", "try_consecutive", "try_lookback"}
         Configures the delta encoding strategy. By default, uses "auto" which
-        will try to infer the best encoding order.
+        will try to infer the best encoding order. "none" is equivalent to
+        "no_op" and may be removed in the future.
     paging_spec : {"equal_pages_up_to"}
         Configures the paging strategy. Only "equal_pages_up_to" is currently
         supported.
@@ -48,7 +49,7 @@ class PCodec(Codec):
         level: int = 8,
         *,
         mode_spec: Literal["auto", "classic"] = "auto",
-        delta_spec: Literal["auto", "no_op", "try_consecutive", "try_lookback"] = "auto",
+        delta_spec: Literal["auto", "no_op", "none", "try_consecutive", "try_lookback"] = "auto",
         paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
         delta_encoding_order: int | None = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
