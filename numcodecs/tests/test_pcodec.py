@@ -24,7 +24,7 @@ codecs = [
     PCodec(equal_pages_up_to=300),
     PCodec(delta_encoding_order=2),
     PCodec(delta_spec="try_lookback"),
-    PCodec(delta_spec="none"),
+    PCodec(delta_spec="none"),  # type: ignore[arg-type]
     PCodec(delta_spec="try_consecutive", delta_encoding_order=1),
     PCodec(delta_spec="no_op"),
 ]
