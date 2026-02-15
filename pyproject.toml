@@ -155,6 +155,7 @@ xfail_strict = true
 filterwarnings = [
     "error",
     "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
+    "ignore:.*align should be passed as Python or NumPy boolean.*:numpy.exceptions.VisibleDeprecationWarning", # Old fixture files trigger numpy-internal dtype(align=0) warning (NumPy 2.4+)
 ]
 
 [tool.cibuildwheel]
