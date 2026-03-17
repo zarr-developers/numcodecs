@@ -102,7 +102,6 @@ test-zarr-main = [
 [tool.setuptools]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
-zip-safe = false
 
 [tool.setuptools.package-data]
 numcodecs = [
@@ -113,7 +112,7 @@ numcodecs = [
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
 local_scheme = "dirty-tag"
-write_to = "numcodecs/version.py"
+version_file = "numcodecs/version.py"
 
 [tool.codespell]
 skip = "./.git,fixture"
@@ -132,7 +131,7 @@ exclude_lines = [
 ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
+addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules"
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
@@ -151,7 +150,7 @@ norecursedirs = [
     "docs",
     "fixture",
     "notebooks",
-    "numcodecs.egg-info",
+    "*.egg-info",
 ]
 log_cli_level = "INFO"
 xfail_strict = true
@@ -162,10 +161,10 @@ filterwarnings = [
 
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
+
 [tool.cibuildwheel.macos]
-# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
-# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
 environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
 environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
@@ -257,16 +256,38 @@ conflicts = [
     ]
 ]
 
+# Pixi source package — pixi-build-python builds numcodecs as a conda
+# package, ensuring compilers are available at build time (fixes Windows CI).
+# numcodecs is not listed as a path dependency in the per-version features
+# below; [tool.pixi.package] causes pixi to build and install it automatically
+# per solve-group, so explicit path deps would cause a double-resolution
+# conflict (the ABI-tagged build from one solve leaking into another).
+[tool.pixi.package]
+version = "0.16.6.dev0"
+
+[tool.pixi.package.build]
+backend = { name = "pixi-build-python", version = "0.4.*" }
+
+[tool.pixi.package.build.config]
+compilers = ["c", "cxx"]
+noarch = false
+
+[tool.pixi.package.host-dependencies]
+setuptools = ">=77"
+setuptools-scm = ">=6.2"
+cython = "*"
+numpy = ">2"
+
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64", "linux-aarch64", "osx-arm64", "osx-64", "win-64"]
+preview = ["pixi-build"]
 
 [tool.pixi.dependencies]
-c-compiler = ">=1.9.0,<2"
-cxx-compiler = ">=1.9.0,<2"
 uv = "*"
 
-# Python version features
+# Python version features. numcodecs is intentionally not listed here —
+# [tool.pixi.package] handles building and installing it per solve-group.
 [tool.pixi.feature.py311.dependencies]
 python = "3.11.*"
 
@@ -277,17 +298,26 @@ python = "3.12.*"
 python = "3.13.*"
 
 [tool.pixi.feature.py314.dependencies]
-python = "3.14.*"
+python = ">=3.14.0,<3.15"
 
-# Test dependencies
+# Test dependencies (extras from [project.optional-dependencies] declared as
+# separate pypi-dependencies since the source package has no extras concept).
 [tool.pixi.feature.test.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["test", "test_extras", "msgpack", "zfpy", "pcodec"] }
+coverage = "*"
+pytest = "*"
+pytest-cov = "*"
+pyzstd = "*"
+importlib-metadata = "*"
+crc32c = "*"
+msgpack = "*"
+zfpy = ">=1.0.0"
+pcodec = ">=0.3,<0.4"
 
 [tool.pixi.feature.test-google-crc32c.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
+google-crc32c = ">=1.5"
 
 [tool.pixi.feature.test-crc32c.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["crc32c"] }
+crc32c = ">=2.7"
 
 # Environments
 [tool.pixi.environments]
