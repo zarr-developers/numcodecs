@@ -1,6 +1,7 @@
 import array
 import json as _json
 import os
+import warnings
 from glob import glob
 
 import numpy as np
@@ -183,7 +184,11 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
     for arr_fn in glob(os.path.join(fixture_dir, 'array.*.npy')):
         # setup
         i = int(arr_fn.split('.')[-2])
-        arr = np.load(arr_fn, allow_pickle=True)
+        with warnings.catch_warnings():
+            # Old .npy fixture files contain dtype descriptors with align=0 (int).
+            # NumPy 2.4+ requires align to be a boolean.
+            warnings.filterwarnings("ignore", message="dtype.*align", category=UserWarning)
+            arr = np.load(arr_fn, allow_pickle=True)
         arr_bytes = arr.tobytes(order='A')
         if arr.flags.f_contiguous:
             order = 'F'
@@ -222,9 +227,13 @@ def check_backwards_compatibility(codec_id, arrays, codecs, precision=None, pref
             # load and decode data
             with open(enc_fn, mode='rb') as ef:
                 enc = ef.read()
-                dec = codec.decode(enc)
-                dec_arr = ensure_ndarray(dec).reshape(-1, order='A')
-                dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
+                with warnings.catch_warnings():
+                    # Old fixture data may contain dtypes with align=0 (int).
+                    # NumPy 2.4+ requires align to be a boolean.
+                    warnings.filterwarnings("ignore", message="dtype.*align", category=UserWarning)
+                    dec = codec.decode(enc)
+                    dec_arr = ensure_ndarray(dec).reshape(-1, order='A')
+                    dec_arr = dec_arr.view(dtype=arr.dtype).reshape(arr.shape, order=order)
                 if precision and precision[j] is not None:
                     assert_array_almost_equal(arr, dec_arr, decimal=precision[j])
                 elif arr.dtype == 'object':
