@@ -259,17 +259,29 @@ conflicts = [
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
-platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
-python = "=3.14"
-clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 uv = "*"
 
+# Python version features
+[tool.pixi.feature.py311.dependencies]
+python = "3.11.*"
+
+[tool.pixi.feature.py312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
+[tool.pixi.feature.py314.dependencies]
+python = "3.14.*"
+
+# Test dependencies
 [tool.pixi.feature.test.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","zfpy"] }
+numcodecs = { path = ".", editable = true, extras = ["test", "test_extras", "msgpack", "zfpy", "pcodec"] }
 
 [tool.pixi.feature.test-google-crc32c.pypi-dependencies]
 numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
@@ -277,16 +289,21 @@ numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
 [tool.pixi.feature.test-crc32c.pypi-dependencies]
 numcodecs = { path = ".", editable = true, extras = ["crc32c"] }
 
+# Environments
 [tool.pixi.environments]
-default = { solve-group = "default" }
-test = ["test"]
-test-crc32c = ["test", "test-crc32c"]
-test-google-crc32c = ["test", "test-google-crc32c"]
+default = { features = ["py314"], solve-group = "py314" }
+test-py311 = { features = ["test", "test-google-crc32c", "py311"], solve-group = "py311" }
+test-py312 = { features = ["test", "test-google-crc32c", "py312"], solve-group = "py312" }
+test-py313 = { features = ["test", "test-google-crc32c", "py313"], solve-group = "py313" }
+test-py314 = { features = ["test", "test-google-crc32c", "py314"], solve-group = "py314" }
+test-crc32c = { features = ["test", "test-crc32c", "py314"], solve-group = "py314-crc32c" }
+test-google-crc32c = { features = ["test", "test-google-crc32c", "py314"], solve-group = "py314-google-crc32c" }
 
+# Tasks
 [tool.pixi.tasks]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
-ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
+ls-deps-main = "uv run --group test-zarr-main 'uv pip freeze'"
 test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
 test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
