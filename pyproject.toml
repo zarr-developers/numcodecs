@@ -102,6 +102,7 @@ test-zarr-main = [
 [tool.setuptools]
 package-dir = {"" = "."}
 packages = ["numcodecs", "numcodecs.tests"]
+zip-safe = false
 
 [tool.setuptools.package-data]
 numcodecs = [
@@ -112,7 +113,7 @@ numcodecs = [
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
 local_scheme = "dirty-tag"
-version_file = "numcodecs/version.py"
+write_to = "numcodecs/version.py"
 
 [tool.codespell]
 skip = "./.git,fixture"
@@ -131,7 +132,7 @@ exclude_lines = [
 ignore = ["PY005", "PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100", "RF103"]
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules"
+addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
@@ -150,7 +151,7 @@ norecursedirs = [
     "docs",
     "fixture",
     "notebooks",
-    "*.egg-info",
+    "numcodecs.egg-info",
 ]
 log_cli_level = "INFO"
 xfail_strict = true
@@ -163,6 +164,8 @@ filterwarnings = [
 environment = { DISABLE_NUMCODECS_AVX2=1 }
 
 [tool.cibuildwheel.macos]
+# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
+# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
 environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
 
 [[tool.cibuildwheel.overrides]]
