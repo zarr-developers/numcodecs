@@ -23,13 +23,7 @@ from contextlib import suppress
 
 from numcodecs.registry import get_codec as get_codec
 from numcodecs.registry import register_codec
-
-try:
-    from numcodecs.version import version as __version__
-except ImportError:
-    from importlib.metadata import version as _get_version
-
-    __version__ = _get_version("numcodecs")
+from numcodecs.version import version as __version__  # noqa: F401
 from numcodecs.zlib import Zlib
 
 register_codec(Zlib)
