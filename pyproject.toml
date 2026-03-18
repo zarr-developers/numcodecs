@@ -101,14 +101,11 @@ test-zarr-main = [
 
 [tool.setuptools]
 package-dir = {"" = "."}
-packages = ["numcodecs", "numcodecs.tests"]
+packages = ["numcodecs"]
 zip-safe = false
 
 [tool.setuptools.package-data]
-numcodecs = [
-    "tests/package_with_entrypoint/__init__.py",
-    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
-]
+numcodecs = []
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
@@ -120,7 +117,7 @@ skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
 [tool.coverage.run]
-omit = ["numcodecs/tests/*"]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -139,7 +136,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs/tests",
+    "tests",
 ]
 norecursedirs = [
     ".git",
@@ -230,7 +227,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
 "notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
@@ -287,9 +284,9 @@ test-google-crc32c = ["test", "test-google-crc32c"]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
 ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
-test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
 
 [tool.pixi.feature.test.tasks]
 run-tests = "pytest -v"
