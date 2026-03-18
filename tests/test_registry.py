@@ -1,8 +1,7 @@
 import inspect
 
-import pytest
-
 import numcodecs
+import pytest
 from numcodecs.errors import UnknownCodecError
 from numcodecs.registry import get_codec
 

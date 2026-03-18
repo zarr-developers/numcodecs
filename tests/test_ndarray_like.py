@@ -1,5 +1,4 @@
 import pytest
-
 from numcodecs.ndarray_like import DType, FlagsObj, NDArrayLike
 
 

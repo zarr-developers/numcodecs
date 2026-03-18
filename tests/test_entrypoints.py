@@ -1,9 +1,8 @@
 import os.path
 import sys
 
-import pytest
-
 import numcodecs.registry
+import pytest
 
 here = os.path.abspath(os.path.dirname(__file__))
 

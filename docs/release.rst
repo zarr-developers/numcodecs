@@ -39,16 +39,15 @@ Maintenance
 
 * Move source code from ``numcodecs/`` to ``src/numcodecs/`` (src layout). This avoids
   import shadowing issues where the source tree's ``numcodecs/`` package (without compiled
-  C extensions) would shadow the installed package. Move test suite from
-  ``numcodecs/tests/`` to top-level ``tests/`` directory, following the standard layout
-  for meson-python projects (numpy, scipy, scikit-learn). Test imports change from
-  ``from numcodecs.tests.common import ...`` to ``from tests.common import ...``.
+  C extensions) would shadow the installed package.
 
   By :user:`Max Jones <maxrjones>`.
 
 * Rewrite contributing guide with pixi and uv development environment instructions.
 
   By :user:`Max Jones <maxrjones>`.
+* Move tests out of installable package into top-level ``tests/`` directory.
+  By :user:`Max Jones <maxrjones>`, :issue:`829`
 
 .. _release_0.16.5:
 
