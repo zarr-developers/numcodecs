@@ -160,7 +160,7 @@ config-settings = "setup-args=-Davx2=disabled"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
-config-settings = "setup-args=-Davx2=disabled -Dsse2=disabled"
+config-settings = {setup-args = ["-Davx2=disabled", "-Dsse2=disabled"]}
 
 [tool.ruff]
 line-length = 100
