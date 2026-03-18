@@ -138,7 +138,7 @@ If you prefer the standard library ``venv``::
     $ source venv/bin/activate        # macOS/Linux
     $ # .\venv\Scripts\activate       # Windows
 
-    $ pip install meson-python meson ninja cython numpy setuptools-scm
+    $ pip install --group dev
     $ pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
     $ pytest -v
 

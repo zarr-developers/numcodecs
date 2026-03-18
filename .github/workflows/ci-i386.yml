@@ -48,7 +48,7 @@ jobs:
       - name: Install zfp and numcodecs
         run: |
           uv venv
-          uv pip install meson-python meson ninja cython numpy setuptools-scm
+          uv pip install --group dev
           PYTHON_INCLUDE=$(uv run python -c 'from sysconfig import get_paths; print(get_paths()["include"])');
           PYTHON_LIB=$(uv run python -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))');
           git clone https://github.com/LLNL/zfp
