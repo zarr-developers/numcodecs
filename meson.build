@@ -2,7 +2,7 @@ project(
   'numcodecs',
   'c', 'cython',
   version: run_command(
-    'python3', '-m', 'setuptools_scm', check: true,
+    ['src/numcodecs/_build_utils/gitversion.py'], check: true,
   ).stdout().strip(),
   default_options: [
     'c_std=gnu11',

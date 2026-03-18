@@ -21,11 +21,11 @@ if host_machine.cpu_family() == 'x86_64'
   # Honor legacy environment variables for backwards compatibility with
   # existing build scripts and packaging recipes.
   disable_sse2_env = run_command(
-    'python3', '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_SSE2", ""))',
+    py, '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_SSE2", ""))',
     check: true,
   ).stdout().strip() != ''
   disable_avx2_env = run_command(
-    'python3', '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_AVX2", ""))',
+    py, '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_AVX2", ""))',
     check: true,
   ).stdout().strip() != ''
 
