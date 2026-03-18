@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  tests:
     runs-on: ${{ matrix.platform }}
     strategy:
       fail-fast: false
@@ -62,6 +62,60 @@ jobs:
       - name: Run tests
         shell: "bash -l {0}"
         run: pytest -v
+
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  test-crc32c:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: google-crc32c
+            extras: "google_crc32c"
+          - name: crc32c
+            extras: "crc32c"
+          - name: no-crc32c
+            extras: ""
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3.2.0
+        with:
+          channels: conda-forge
+          miniforge-version: latest
+          python-version: "3.13"
+
+      - name: Install compilers
+        run: conda install -y c-compiler cxx-compiler
+
+      - name: Install numcodecs
+        run: |
+          if [[ -n "${{ matrix.extras }}" ]]; then
+            python -m pip install -v ".[${{ matrix.extras }},test]"
+          else
+            python -m pip install -v ".[test]"
+          fi
+
+      - name: List installed packages
+        run: python -m pip list
+
+      - name: Run checksum tests
+        run: pytest -v tests/test_checksum32.py
 
       - uses: codecov/codecov-action@v5
         with:
