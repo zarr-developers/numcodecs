@@ -2,10 +2,6 @@
 c_args = []
 link_args = []
 
-if host_machine.system() == 'darwin'
-  c_args += ['-stdlib=libc++']
-endif
-
 if host_machine.system() != 'windows'
   c_args += ['-pthread']
   link_args += ['-pthread']
