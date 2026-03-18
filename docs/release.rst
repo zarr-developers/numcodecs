@@ -37,11 +37,11 @@ Maintenance
 
   By :user:`Max Jones <maxrjones>`.
 
-* Move test suite from ``numcodecs/tests/`` to top-level ``tests/`` directory. This
-  avoids import shadowing issues with meson-python non-editable installs, where the
-  source tree's ``numcodecs/`` package (without compiled C extensions) would shadow the
-  installed package. This is the standard layout for meson-python projects (numpy, scipy,
-  scikit-learn all use top-level ``tests/``). Test imports change from
+* Move source code from ``numcodecs/`` to ``src/numcodecs/`` (src layout). This avoids
+  import shadowing issues where the source tree's ``numcodecs/`` package (without compiled
+  C extensions) would shadow the installed package. Move test suite from
+  ``numcodecs/tests/`` to top-level ``tests/`` directory, following the standard layout
+  for meson-python projects (numpy, scipy, scikit-learn). Test imports change from
   ``from numcodecs.tests.common import ...`` to ``from tests.common import ...``.
 
   By :user:`Max Jones <maxrjones>`.
