@@ -6,10 +6,11 @@ from glob import glob
 
 import numpy as np
 import pytest
+from numpy.testing import assert_array_almost_equal, assert_array_equal
+
 from numcodecs import *  # noqa: F403  # for eval to find names in repr tests
 from numcodecs.compat import ensure_bytes, ensure_ndarray
 from numcodecs.registry import get_codec
-from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 greetings = [
     '¡Hola mundo!',

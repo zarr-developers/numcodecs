@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from numcodecs.bitround import BitRound, max_bits
 
 # adapted from https://github.com/milankl/BitInformation.jl/blob/main/test/round_nearest.jl

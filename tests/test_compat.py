@@ -3,6 +3,7 @@ import mmap
 
 import numpy as np
 import pytest
+
 from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text
 
 
