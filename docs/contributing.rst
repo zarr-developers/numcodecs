@@ -116,7 +116,7 @@ Setting up with uv (recommended)
 bootstrap the build dependencies, then sync the project::
 
     $ uv venv
-    $ uv pip install meson-python meson ninja cython numpy setuptools-scm
+    $ uv pip install --group dev
     $ uv sync --group dev --extra test --extra msgpack
 
 The first ``uv pip install`` step bootstraps the build tools into the virtualenv.
