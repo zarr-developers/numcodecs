@@ -58,7 +58,8 @@ jobs:
           uv run make -j -C zfp/build
           uv run sudo make -C zfp/build install
           uv pip install ./zfp
-          uv pip install --no-build-isolation -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+          uv pip install --no-build-isolation -v .
+          uv pip install "numcodecs[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
         shell: alpine.sh {0}
 
       - name: List installed packages
