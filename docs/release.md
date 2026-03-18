@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Maintenance
+
+* Convert documentation from reStructuredText to Markdown using MyST.
+  By {user}`Max Jones <maxrjones>`
+
 (release_0.16.5)=
 
 ## 0.16.5
