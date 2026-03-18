@@ -72,7 +72,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
-    "pyzstd"
+    "backports.zstd ; python_version<'3.14'"
 ]
 test_extras = [
     "importlib_metadata",
