@@ -54,7 +54,7 @@ Enhancements
 Fixes
 ~~~~~
 
-* Fix ``PCodec.decode()`` to handle numpy arrays by calling ``ensure_bytes`` on input buffers.
+* Fix ``PCodec.decode()`` to handle NumPy arrays by calling ``ensure_bytes`` on input buffers.
   By :user:`Sam Levang <slowjazz>`, :issue:`756`
 
 Maintenance
@@ -186,14 +186,14 @@ Enhancements
   By :user:`Agriya Khetarpal <agriyakhetarpal>`, :issue:`288`.
 * Preallocate output buffers and resize directly as needed.
   By :user:`John Kirkham <jakirkham>`, :issue:`656`
-* ``Checksum32`` is now an abstract base clase, with ``checksum()`` as an abstract method.
+* ``Checksum32`` is now an abstract base class, with ``checksum()`` as an abstract method.
   This helps ensure that any subclasses implement the ``checksum()`` method.
   :issue:`711`
 
 Removals
 ~~~~~~~~
 
-The following ``blosc`` funcitons are removed, with no replacement.
+The following ``blosc`` functions are removed, with no replacement.
 This is because they were not intended to be public API.
 
 - ``numcodecs.blosc.init``
@@ -204,7 +204,7 @@ This is because they were not intended to be public API.
 
 In addition, ``numcodecs.blosc.decompress_partial`` is removed as
 has always been experimental and there is no equivalent in the official
-blsoc Python package.
+blosc Python package.
 By :user:`David Stansby <dstansby>`, :issue:`712`
 
 Maintenance
@@ -254,7 +254,7 @@ This is because they are not intended to be public API.
 
 In addition, ``numcodecs.blosc.decompress_partial`` is deprecated as
 has always been experimental and there is no equivalent in the official
-blsoc Python package.
+blosc Python package.
 By :user:`David Stansby <dstansby>`, :issue:`619`
 
 Fixes
@@ -335,7 +335,7 @@ Maintenance
 ~~~~~~~~~~~
 * The minimum supported Python version is now Python 3.11.
   By :user:`David Stansby <dstansby>`, :issue:`622`
-* The minimum supported numpy version is now 1.24.
+* The minimum supported NumPy version is now 1.24.
   By :user:`David Stansby <dstansby>`, :issue:`622`
 
 .. _release_0.13.1:
@@ -393,17 +393,17 @@ Fix
   By :user:`Elliott Sales de Andrade <QuLogic>`, :issue:`487`.
 * Fix Upgrade to Zstd 1.5.5 due to potential corruption.
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`429`
-* Add version constraint(<2.0) for numpy in zfpy.
+* Add version constraint(<2.0) for NumPy in zfpy.
   By :user:`Tom Liang <px39n>`, :issue:`540`.
 
 Maintenance
 ~~~~~~~~~~~
 * The minimum supported Python version is now Python 3.10.
   By :user:`David Stansby <dstansby>`, :issue:`531`
-* Add numpy 2 compatibility.
+* Add NumPy 2 compatibility.
   By :user:`David Stansby <dstansby>`, :issue:`535`
 * Update c-blosc to 1.21.0 to 1.21.5, zstd from 1.4.8 to 1.5.5,
-  lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to to 1.2.13
+  lz4 from 1.9.3 to 1.9.4, and zlib from 1.2.8 to 1.2.13
   By :user:`Mark Kittisopikul <mkitti>`, :issue:`500`
 
 
@@ -489,7 +489,7 @@ Maintenance
   By :user:`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, :issue:`369`.
 
 * Drop Python 3.7.
-  By :user:`John Kirkham <jakirkham>`,, :issue:`405` :issue:`406`.
+  By :user:`John Kirkham <jakirkham>`, :issue:`405` :issue:`406`.
 
 * Test with zfpy 1.0.0.
   By :user:`John Kirkham <jakirkham>`, :issue:`385`.
@@ -721,7 +721,7 @@ Maintenance
 * Automatically release to PyPI.
   By :user:`Josh Moore <joshmoore>`, :issue:`241`.
 
-* Build wheels on github actions.
+* Build wheels on GitHub Actions.
   By :user:`Grzegorz Bokota <Czaki>`, :issue:`224`.
 
 * Add Base64 codec.
@@ -878,7 +878,7 @@ Maintenance
   code readability and maintainability. By :user:`John Kirkham <jakirkham>` and
   :user:`Alistair Miles <alimanfoo>`; :issue:`119`, :issue:`121`, :issue:`128`.
 
-* Return values from encode() and decode() methods are now returned as numpy
+* Return values from encode() and decode() methods are now returned as NumPy
   arrays for consistency across codecs. By :user:`John Kirkham <jakirkham>`,
   :issue:`136`.
 

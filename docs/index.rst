@@ -12,7 +12,7 @@ Installation
 
 Numcodecs depends on NumPy. It is generally best to `install NumPy
 <https://numpy.org/install/>`_ first using whatever method is most
-appropriate for you operating system and Python distribution.
+appropriate for your operating system and Python distribution.
 
 Install from PyPI::
 
@@ -51,7 +51,7 @@ and then install in editable mode using `pip`.::
     $ pip install -e .[test,msgpack,zfpy]
 
 Note: if you prefer to use the GitHub CLI ``gh`` you will need to append ``-- --recurse-submodules``
-to the clone command to everything works properly.
+to the clone command to ensure everything works properly.
 
 To verify that Numcodecs has been fully installed (including the Blosc
 extension) run the test suite::

@@ -439,6 +439,13 @@ class Zstd(Codec):
         return compress(buf, self.level, self.checksum)
 
     def decode(self, buf, out=None):
+        """
+        Notes
+        -----
+        If the compressed data does not contain the decompressed size, streaming
+        decompression will be used.
+
+        """
         buf = ensure_contiguous_ndarray(buf)
         return decompress(buf, out)
 

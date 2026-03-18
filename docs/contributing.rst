@@ -9,10 +9,10 @@ Asking for help
 ---------------
 
 If you have a question about how to use NumCodecs, please post your question on
-StackOverflow using the `"numcodecs" tag <https://stackoverflow.com/questions/tagged/numcodecs>`_.
+Stack Overflow using the `"numcodecs" tag <https://stackoverflow.com/questions/tagged/numcodecs>`_.
 If you don't get a response within a day or two, feel free to raise a `GitHub issue
 <https://github.com/zarr-developers/numcodecs/issues/new>`_ including a link to your
-StackOverflow question. We will try to respond to questions as quickly as possible, but
+Stack Overflow question. We will try to respond to questions as quickly as possible, but
 please bear in mind that there may be periods where we have limited time to answer
 questions due to other commitments.
 
@@ -148,12 +148,12 @@ docstrings. The simplest way to run the unit tests is to invoke::
 
     $ pytest -v
 
-NumCodecs currently supports Python 6-3.9, so the above command must
+NumCodecs currently supports Python 3.11+, so the above command must
 succeed before code can be accepted into the main code base.
 
-All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
-integration services for every pull request. Tests must pass under both services before
-code can be accepted.
+All tests are automatically run via GitHub Actions continuous
+integration services for every pull request. Tests must pass
+before code can be accepted.
 
 Code standards
 ~~~~~~~~~~~~~~
@@ -167,8 +167,7 @@ Conformance can be checked by running::
 Test coverage
 ~~~~~~~~~~~~~
 
-NumCodecs maintains 100% test coverage under the latest Python stable release (currently
-Python 3.9). Both unit tests and docstring doctests are included when computing
+NumCodecs maintains 100% test coverage under the latest Python stable release. Both unit tests and docstring doctests are included when computing
 coverage. Running ``pytest -v`` will automatically run the test suite with coverage
 and produce a coverage report. This should be 100% before code can be accepted into the
 main code base.
@@ -182,8 +181,7 @@ Documentation
 
 Docstrings for user-facing classes and functions should follow the `numpydoc
 <https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard>`_ standard,
-including sections for Parameters and Examples. All examples will be run as doctests
-under Python 3.9.
+including sections for Parameters and Examples. All examples will be run as doctests.
 
 NumCodecs uses Sphinx for documentation, hosted on readthedocs.org. Documentation is
 written in the RestructuredText markup language (.rst files) in the ``docs`` folder.
