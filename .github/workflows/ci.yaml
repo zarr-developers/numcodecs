@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -38,7 +38,7 @@ jobs:
         run: conda install -y c-compiler cxx-compiler
 
       - name: Install clang
-        if: matrix.platform == 'macos-13'
+        if: matrix.platform == 'macos-15-large'
         run: conda install -y 'clang>=12.0.1,<17'
 
       - name: Show conda environment info
