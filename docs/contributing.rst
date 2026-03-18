@@ -213,6 +213,26 @@ Or, if using venv/pip::
 
     $ pytest -v
 
+To test against specific Zarr-Python versions, use the dependency groups defined in
+``pyproject.toml``::
+
+    $ uv run --group test-zarr-312 pytest tests/test_zarr3.py tests/test_zarr3_import.py
+    $ uv run --group test-zarr-313 pytest tests/test_zarr3.py tests/test_zarr3_import.py
+    $ uv run --group test-zarr-main pytest tests/test_zarr3.py tests/test_zarr3_import.py
+
+Or, if using venv/pip::
+
+    $ pip install --group test-zarr-312
+    $ pytest tests/test_zarr3.py tests/test_zarr3_import.py
+
+To test with different CRC32C implementations::
+
+    $ uv pip install "numcodecs[crc32c]"        # sw-based crc32c
+    $ pytest tests/test_checksum32.py -v
+
+    $ uv pip install "numcodecs[google_crc32c]"  # hw-accelerated google-crc32c
+    $ pytest tests/test_checksum32.py -v
+
 All tests are automatically run via GitHub Actions for every pull request across Linux
 (x86_64, aarch64, i386), macOS (x86_64, arm64), and Windows (x86_64), with Python 3.11
 through 3.14. Tests must pass on all platforms before code can be accepted.

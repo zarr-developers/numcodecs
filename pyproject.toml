@@ -242,8 +242,8 @@ warn_unused_configs = true
 # meson-python editable installs require build deps (ninja, meson) at runtime for
 # auto-rebuild on import. Skip build isolation so the venv's ninja is used.
 # The "dev" dependency group provides these build tools. Bootstrap with:
-#   uv pip install meson-python meson ninja cython numpy setuptools-scm
-# before running uv sync.
+# `uv pip install --group dev` before running
+# `uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"`.
 no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
@@ -253,41 +253,3 @@ conflicts = [
         { group = "test-zarr-main" }
     ]
 ]
-
-[tool.pixi.workspace]
-channels = ["conda-forge"]
-platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
-
-[tool.pixi.dependencies]
-python = "=3.14"
-clang = ">=19.1.7,<20"
-c-compiler = ">=1.9.0,<2"
-cxx-compiler = ">=1.9.0,<2"
-uv = "*"
-
-[tool.pixi.feature.test.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","zfpy"] }
-
-[tool.pixi.feature.test-google-crc32c.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
-
-[tool.pixi.feature.test-crc32c.pypi-dependencies]
-numcodecs = { path = ".", editable = true, extras = ["crc32c"] }
-
-[tool.pixi.environments]
-default = { solve-group = "default" }
-test = ["test"]
-test-crc32c = ["test", "test-crc32c"]
-test-google-crc32c = ["test", "test-google-crc32c"]
-
-[tool.pixi.tasks]
-bootstrap = "uv pip install meson-python meson ninja cython numpy setuptools-scm"
-ls-deps-312 = { cmd = "uv run --group test-zarr-312 uv pip freeze", depends-on = ["bootstrap"] }
-ls-deps-313 = { cmd = "uv run --group test-zarr-313 uv pip freeze", depends-on = ["bootstrap"] }
-ls-deps-main = { cmd = "uv run --group test-zarr-main uv pip freeze", depends-on = ["bootstrap"] }
-test-zarr-312 = { cmd = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
-test-zarr-313 = { cmd = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
-test-zarr-main = { cmd = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
-
-[tool.pixi.feature.test.tasks]
-run-tests = "pytest -v"
