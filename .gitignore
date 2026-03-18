@@ -3,9 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-src/numcodecs/**/*.c
-src/numcodecs/**/*.h
+# Shared libraries (legacy, meson builds out-of-source)
 *.so
 
 # editor
@@ -50,8 +48,6 @@ coverage.xml
 .hypothesis/
 cover/
 
-# Cython annotation files
-src/numcodecs/*.html
 
 # Translations
 *.mo
@@ -103,8 +99,6 @@ ENV/
 builddir/
 subprojects/
 
-# Cython generated
-src/numcodecs/*.c
 # pixi environments
 .pixi/*
 *.egg-info
