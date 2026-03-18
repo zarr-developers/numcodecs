@@ -62,7 +62,8 @@ jobs:
       - name: Install numcodecs
         run: |
           uv venv
-          uv pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+          uv pip install meson-python meson ninja cython numpy setuptools-scm
+          uv pip install --no-build-isolation -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
         shell: alpine.sh {0}
 
       - name: List installed packages

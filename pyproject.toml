@@ -281,12 +281,13 @@ test-crc32c = ["test", "test-crc32c"]
 test-google-crc32c = ["test", "test-google-crc32c"]
 
 [tool.pixi.tasks]
-ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
-ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
-ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
-test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
-test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
-test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+bootstrap = "uv pip install meson-python meson ninja cython numpy setuptools-scm"
+ls-deps-312 = { cmd = "uv run --group test-zarr-312 uv pip freeze", depends-on = ["bootstrap"] }
+ls-deps-313 = { cmd = "uv run --group test-zarr-313 uv pip freeze", depends-on = ["bootstrap"] }
+ls-deps-main = { cmd = "uv run --group test-zarr-main uv pip freeze", depends-on = ["bootstrap"] }
+test-zarr-312 = { cmd = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
+test-zarr-313 = { cmd = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
+test-zarr-main = { cmd = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py", depends-on = ["bootstrap"] }
 
 [tool.pixi.feature.test.tasks]
 run-tests = "pytest -v"
