@@ -17,6 +17,12 @@ Release notes
 Unreleased
 ----------
 
+Maintenance
+~~~~~~~~~~~
+
+* Move tests out of installable package into top-level ``tests/`` directory.
+  By :user:`Max Jones <maxrjones>`, :issue:`829`
+
 .. _release_0.16.5:
 
 0.16.5
