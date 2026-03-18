@@ -113,17 +113,17 @@ Setting up with uv (recommended)
 """""""""""""""""""""""""""""""""
 
 `uv <https://docs.astral.sh/uv/>`_ is a fast Python package manager. First,
-bootstrap the build dependencies, then sync the project::
+bootstrap the build dependencies, then install numcodecs in editable mode::
 
     $ uv venv
     $ uv pip install --group dev
-    $ uv sync --group dev --extra test --extra msgpack
+    $ uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
 
 The first ``uv pip install`` step bootstraps the build tools into the virtualenv.
-``uv sync`` then builds numcodecs in editable mode (without build isolation, so
-the venv's ``ninja`` is used for auto-rebuild on import). This two-step bootstrap
-is needed because meson-python editable installs require build tools at runtime,
-not just at build time.
+The second installs numcodecs in editable mode without build isolation (so the
+venv's build tools are used). This two-step process is needed because
+meson-python editable installs require build tools at runtime for auto-rebuild
+on import.
 
 To run the tests::
 
@@ -167,7 +167,7 @@ Rebuilding after changes
 With an editable install, meson-python automatically rebuilds changed C/Cython
 extensions when you import ``numcodecs``. If you need a full clean rebuild::
 
-    $ rm -rf builddir
+    $ rm -rf build
     $ pip install --no-build-isolation -e .
 
 Creating a branch

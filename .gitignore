@@ -95,10 +95,6 @@ ENV/
 # PyCharm
 .idea
 
-# Meson build artifacts
-builddir/
-subprojects/
-
 # pixi environments
 .pixi/*
 *.egg-info
