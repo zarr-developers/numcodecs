@@ -49,12 +49,11 @@ jobs:
 
       - name: Install numcodecs
         run: |
-          export DISABLE_NUMCODECS_AVX2=""
           # TODO: Remove this conditional when pcodec supports Python 3.14
           if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
-            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]"
           else
-            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
           fi
 
       - name: List installed packages

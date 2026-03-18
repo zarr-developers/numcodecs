@@ -1,12 +1,12 @@
 [build-system]
 requires = [
-    "setuptools>=77",
-    "setuptools-scm[toml]>=6.2",
-    "Cython",
-    "py-cpuinfo",
-    "numpy>2",
+    "meson-python>=0.17",
+    "meson>=1.6.0",
+    "setuptools-scm>=6.2",
+    "Cython>=3.0",
+    "numpy>=2",
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "mesonpy"
 
 [project]
 name = "numcodecs"
@@ -80,6 +80,14 @@ test_extras = [
 ]
 
 [dependency-groups]
+dev = [
+    "meson-python>=0.17",
+    "meson>=1.6.0",
+    "ninja",
+    "cython>=3.0",
+    "setuptools-scm>=6.2",
+    "numpy>=2",
+]
 test-zarr-312 = [
     "pytest",
     "pytest-cov",
@@ -99,28 +107,12 @@ test-zarr-main = [
     "crc32c",
 ]
 
-[tool.setuptools]
-package-dir = {"" = "."}
-packages = ["numcodecs", "numcodecs.tests"]
-zip-safe = false
-
-[tool.setuptools.package-data]
-numcodecs = [
-    "tests/package_with_entrypoint/__init__.py",
-    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
-]
-
-[tool.setuptools_scm]
-version_scheme = "guess-next-dev"
-local_scheme = "dirty-tag"
-write_to = "numcodecs/version.py"
-
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
 [tool.coverage.run]
-omit = ["numcodecs/tests/*"]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -139,7 +131,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs/tests",
+    "tests",
 ]
 norecursedirs = [
     ".git",
@@ -147,6 +139,8 @@ norecursedirs = [
     ".pytest_cache",
     "adhoc",
     "build",
+    "builddir",
+    "subprojects",
     "c-blosc",
     "docs",
     "fixture",
@@ -161,19 +155,16 @@ filterwarnings = [
 ]
 
 [tool.cibuildwheel]
-environment = { DISABLE_NUMCODECS_AVX2=1 }
-[tool.cibuildwheel.macos]
-# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
-# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
-environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+# AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
+config-settings = "setup-args=-Davx2=disabled"
+
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
-environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
+config-settings = "setup-args=-Davx2=disabled -Dsse2=disabled"
 
 [tool.ruff]
 line-length = 100
 extend-exclude = ["c-blosc"]
-src = ["numcodecs"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -230,7 +221,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
 "notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
@@ -248,6 +239,12 @@ warn_unused_ignores = true
 warn_unused_configs = true
 
 [tool.uv]
+# meson-python editable installs require build deps (ninja, meson) at runtime for
+# auto-rebuild on import. Skip build isolation so the venv's ninja is used.
+# The "dev" dependency group provides these build tools. Bootstrap with:
+#   uv pip install meson-python meson ninja cython numpy setuptools-scm
+# before running uv sync.
+no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
     [
@@ -287,9 +284,9 @@ test-google-crc32c = ["test", "test-google-crc32c"]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
 ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
-test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
 
 [tool.pixi.feature.test.tasks]
 run-tests = "pytest -v"

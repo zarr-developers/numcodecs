@@ -17,6 +17,39 @@ Release notes
 Unreleased
 ----------
 
+Maintenance
+~~~~~~~~~~~
+
+* **Migrate build system from setuptools/setup.py to meson-python.** This replaces the
+  386-line ``setup.py`` with declarative ``meson.build`` files. Benefits include correct
+  SIMD detection for cross-compilation, native support for linking against system-installed
+  Blosc/Zstd/LZ4 libraries (via ``-Dsystem_blosc=enabled`` etc.), and alignment with the
+  build system used by numpy, scipy, and scikit-learn.
+
+  The ``DISABLE_NUMCODECS_AVX2`` and ``DISABLE_NUMCODECS_SSE2`` environment variables
+  continue to work for backwards compatibility. The preferred way to control SIMD is now
+  via meson options::
+
+      pip install numcodecs --no-binary numcodecs \
+          --config-settings=setup-args=-Davx2=disabled
+
+  The ``DISABLE_NUMCODECS_CEXT`` environment variable is no longer supported.
+
+  By :user:`Max Jones <maxrjones>`.
+
+* Move test suite from ``numcodecs/tests/`` to top-level ``tests/`` directory. This
+  avoids import shadowing issues with meson-python non-editable installs, where the
+  source tree's ``numcodecs/`` package (without compiled C extensions) would shadow the
+  installed package. This is the standard layout for meson-python projects (numpy, scipy,
+  scikit-learn all use top-level ``tests/``). Test imports change from
+  ``from numcodecs.tests.common import ...`` to ``from tests.common import ...``.
+
+  By :user:`Max Jones <maxrjones>`.
+
+* Rewrite contributing guide with pixi and uv development environment instructions.
+
+  By :user:`Max Jones <maxrjones>`.
+
 .. _release_0.16.5:
 
 0.16.5
