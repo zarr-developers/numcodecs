@@ -107,9 +107,9 @@ jobs:
       - name: Install numcodecs
         run: |
           if [[ -n "${{ matrix.extras }}" ]]; then
-            python -m pip install -v ".[${{ matrix.extras }},test]"
+            python -m pip install -v -e ".[${{ matrix.extras }},test]"
           else
-            python -m pip install -v ".[test]"
+            python -m pip install -v -e ".[test]"
           fi
 
       - name: List installed packages
@@ -160,7 +160,7 @@ jobs:
 
       - name: Install numcodecs and Zarr
         run: |
-          python -m pip install -v ".[test,test_extras]"
+          python -m pip install -v -e ".[test,test_extras]"
           python -m pip install "${{ matrix.zarr-pkg }}" crc32c
 
       - name: List installed packages
