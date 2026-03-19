@@ -67,6 +67,7 @@ docs = [
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
+    "myst-parser",
 ]
 test = [
     "coverage",
