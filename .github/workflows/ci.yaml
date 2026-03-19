@@ -165,7 +165,7 @@ jobs:
         run: python -m pip list
 
       - name: Run Zarr integration tests
-        run: pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py
+        run: pytest tests/test_zarr3.py tests/test_zarr3_import.py
 
       - uses: codecov/codecov-action@v5
         with:
