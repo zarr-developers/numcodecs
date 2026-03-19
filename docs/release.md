@@ -17,7 +17,10 @@
 ### Maintenance
 
 * Convert documentation from reStructuredText to Markdown using MyST.
-  By {user}`Max Jones <maxrjones>`
+  By {user}`Max Jones <maxrjones>`, :issue:`830`
+
+* Move tests out of installable package into top-level ``tests/`` directory.
+  By :user:`Max Jones <maxrjones>`, :issue:`829`
 
 (release_0.16.5)=
 
