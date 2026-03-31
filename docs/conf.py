@@ -49,6 +49,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'numpydoc',
     'sphinx_issues',
+    'myst_parser',
 ]
 
 numpydoc_show_class_members = False
@@ -59,9 +60,10 @@ issues_github_path = 'zarr-developers/numcodecs'
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -127,6 +129,13 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+
+# -- Options for MyST -------------------------------------------------------
+
+myst_enable_extensions = [
+    "colon_fence",
+]
 
 
 # -- Options for HTML output ----------------------------------------------

@@ -7,6 +7,8 @@ coverage:
     patch:
       default:
         target: 100
+  ignore:
+    - "tests/**"
 comment:
   layout: "diff, files"
   behavior: default

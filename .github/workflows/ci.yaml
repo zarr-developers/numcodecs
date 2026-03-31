@@ -12,9 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -38,7 +38,7 @@ jobs:
         run: conda install -y c-compiler cxx-compiler
 
       - name: Install clang
-        if: matrix.platform == 'macos-13'
+        if: matrix.platform == 'macos-15-large'
         run: conda install -y 'clang>=12.0.1,<17'
 
       - name: Show conda environment info
@@ -50,7 +50,12 @@ jobs:
       - name: Install numcodecs
         run: |
           export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
+          # TODO: Remove this conditional when pcodec supports Python 3.14
+          if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
+            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]
+          else
+            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]
+          fi
 
       - name: List installed packages
         run: python -m pip list
@@ -70,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        zarr-version: ["312", "313"]
+        zarr-version: ["312", "313", "main"]
 
     defaults:
       run:
@@ -96,3 +101,9 @@ jobs:
       - name: Run tests with Zarr ${{ matrix.zarr-version }}
         shell: "bash -l {0}"
         run: pixi run test-zarr-${{ matrix.zarr-version }}
+
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true

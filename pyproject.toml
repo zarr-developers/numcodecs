@@ -13,7 +13,7 @@ name = "numcodecs"
 description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
-readme = "README.rst"
+readme = "README.md"
 dependencies = ["numpy>=1.24", "typing_extensions"]
 requires-python = ">=3.11"
 dynamic = [
@@ -47,11 +47,27 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
+msgpack = [
+    "msgpack",
+]
+zfpy = [
+    "zfpy>=1.0.0"
+]
+pcodec = [
+    "pcodec>=0.3,<0.4",
+]
+crc32c = [
+    "crc32c>=2.7",
+]
+google_crc32c = [
+    "google-crc32c>=1.5"
+]
 docs = [
     "sphinx",
     "sphinx-issues",
     "pydata-sphinx-theme",
     "numpydoc",
+    "myst-parser",
 ]
 test = [
     "coverage",
@@ -77,30 +93,20 @@ test-zarr-313 = [
     "zarr==3.1.3",
     "crc32c",
 ]
-
-msgpack = [
-    "msgpack",
-]
-zfpy = [
-    "zfpy>=1.0.0"
-]
-pcodec = [
-    "pcodec>=0.3,<0.4",
-]
-crc32c = [
-    "google-crc32c>=1.5",
+test-zarr-main = [
+    "pytest",
+    "pytest-cov",
+    "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
+    "crc32c",
 ]
 
 [tool.setuptools]
 package-dir = {"" = "."}
-packages = ["numcodecs", "numcodecs.tests"]
+packages = ["numcodecs"]
 zip-safe = false
 
 [tool.setuptools.package-data]
-numcodecs = [
-    "tests/package_with_entrypoint/__init__.py",
-    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
-]
+numcodecs = []
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
@@ -110,6 +116,9 @@ write_to = "numcodecs/version.py"
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
+
+[tool.coverage.run]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -128,7 +137,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs/tests",
+    "tests",
 ]
 norecursedirs = [
     ".git",
@@ -146,6 +155,7 @@ log_cli_level = "INFO"
 xfail_strict = true
 filterwarnings = [
     "error",
+    "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
 ]
 
 [tool.cibuildwheel]
@@ -195,13 +205,13 @@ ignore = [
     "PT001",
     "PT011",
     "PT012",
+    "PT031",
     "RET505",
     "RET506",
     "SIM108",
     "TRY003",
     "TRY301",
     "UP007",
-    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
     # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
@@ -218,7 +228,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
 "notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
@@ -240,22 +250,44 @@ conflicts = [
     # Zarr versions conflict with each other
     [
         { group = "test-zarr-312" },
-        { group = "test-zarr-313" }
+        { group = "test-zarr-313" },
+        { group = "test-zarr-main" }
     ]
 ]
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.dependencies]
+python = "=3.14"
 clang = ">=19.1.7,<20"
 c-compiler = ">=1.9.0,<2"
 cxx-compiler = ">=1.9.0,<2"
 uv = "*"
 
+[tool.pixi.feature.test.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["test","test_extras","msgpack","zfpy"] }
+
+[tool.pixi.feature.test-google-crc32c.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["google_crc32c"] }
+
+[tool.pixi.feature.test-crc32c.pypi-dependencies]
+numcodecs = { path = ".", editable = true, extras = ["crc32c"] }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+test = ["test"]
+test-crc32c = ["test", "test-crc32c"]
+test-google-crc32c = ["test", "test-google-crc32c"]
+
 [tool.pixi.tasks]
 ls-deps-312 = "uv run --group test-zarr-312 uv pip freeze"
 ls-deps-313 = "uv run --group test-zarr-313 uv pip freeze"
-test-zarr-312 = "uv run --group test-zarr-312 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
-test-zarr-313 = "uv run --group test-zarr-313 pytest numcodecs/tests/test_zarr3.py numcodecs/tests/test_zarr3_import.py"
+ls-deps-main = "uv run --group test-zarr-main uv pip freeze"
+test-zarr-312 = "uv run --group test-zarr-312 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-313 = "uv run --group test-zarr-313 pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+test-zarr-main = "uv run --group test-zarr-main pytest --cov=numcodecs --cov-report=xml --cov-report=term tests/test_zarr3.py tests/test_zarr3_import.py"
+
+[tool.pixi.feature.test.tasks]
+run-tests = "pytest -v"
