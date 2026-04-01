@@ -3,8 +3,9 @@ import os.path
 import sys
 from multiprocessing import Process
 
-import numcodecs.registry
 import pytest
+
+import numcodecs.registry
 
 importlib_spec = importlib.util.find_spec("importlib_metadata")
 if importlib_spec is None or importlib_spec.loader is None:  # pragma: no cover

@@ -1,3 +1,0 @@
-recursive-include c-blosc *
-recursive-include numcodecs *.pyx
-recursive-include numcodecs *.pxd

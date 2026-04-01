@@ -1,6 +1,6 @@
 import numpy as np
-from numcodecs.packbits import PackBits
 
+from numcodecs.packbits import PackBits
 from tests.common import (
     check_backwards_compatibility,
     check_config,

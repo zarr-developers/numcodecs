@@ -1,0 +1,10 @@
+option('system_blosc', type: 'feature', value: 'disabled',
+       description: 'Use system-installed Blosc library')
+option('system_zstd', type: 'feature', value: 'disabled',
+       description: 'Use system-installed Zstandard library')
+option('system_lz4', type: 'feature', value: 'disabled',
+       description: 'Use system-installed LZ4 library')
+option('sse2', type: 'feature', value: 'auto',
+       description: 'Enable SSE2 SIMD optimizations')
+option('avx2', type: 'feature', value: 'auto',
+       description: 'Enable AVX2 SIMD optimizations')

@@ -1,8 +1,9 @@
 from typing import Literal
 
+from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
+
 from numcodecs.abc import Codec
 from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
-from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
 DEFAULT_MAX_PAGE_N = 262144
 

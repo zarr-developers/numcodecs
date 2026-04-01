@@ -20,10 +20,12 @@ contribute code, please `raise an issue on GitHub
 import atexit
 import multiprocessing
 from contextlib import suppress
+from importlib.metadata import version as _version
 
 from numcodecs.registry import get_codec as get_codec
 from numcodecs.registry import register_codec
-from numcodecs.version import version as __version__  # noqa: F401
+
+__version__: str = _version("numcodecs")
 from numcodecs.zlib import Zlib
 
 register_codec(Zlib)

@@ -31,16 +31,9 @@ a bug report:
    Python interpreter, and installation information. The version of NumCodecs can be obtained
    from the `numcodecs.__version__` property. Please also state how NumCodecs was installed,
    e.g., "installed via pip into a virtual environment", or "installed using conda".
-   Information about other packages installed can be obtained by executing `pip list`
-   (if using pip to install packages) or `conda list` (if using conda to install
-   packages) from the operating system command prompt. The version of the Python
-   interpreter can be obtained by running a Python interactive session, e.g.:
-
-    ```
-    $ python
-    Python 3.8.15 | packaged by conda-forge | (default, Nov 22 2022, 08:49:06)
-    [Clang 14.0.6 ] on darwin
-    ```
+   Information about other packages installed can be obtained by executing ``pip list``
+   (if using pip to install packages) or ``conda list`` (if using conda to install
+   packages) from the operating system command prompt.
 
 3. An explanation of why the current behaviour is wrong/not desired, and what you
    expect instead.
@@ -85,32 +78,104 @@ $ cd numcodecs
 $ git remote add upstream https://github.com/zarr-developers/numcodecs.git
 ```
 
-### Creating a development environment
-
-To work with the NumCodecs source code, it is recommended to set up a Python virtual
-environment and install all NumCodecs dependencies using the same versions as are used by
-the core developers and continuous integration services. Assuming you have a Python
-3 interpreter already installed matching the `requires-python` constraint from
-`pyproject.toml`, and you have cloned the NumCodecs source code and your
-current working directory is the root of the repository, you can do something
-like the following:
-
-```
-$ python3 -m venv ~/pyenv/numcodecs-dev
-$ source ~/pyenv/numcodecs-dev/bin/activate
-$ pip install -e .[docs,test,msgpack,zfpy]
-```
-
-You may need to initialize the submodule for c-blosc:
+Note the ``--recursive`` flag is required to clone the ``c-blosc`` git submodule. If you
+forgot it, you can initialize it later with:
 
 ```
 $ git submodule update --init --recursive
 ```
 
-To verify that your development environment is working, you can run the unit tests:
+### Creating a development environment
+
+NumCodecs contains C and Cython extensions, so you need a C compiler and build
+tooling in addition to Python.
+
+#### Prerequisites
+
+You need a C compiler available on your ``PATH``.
+
+On Debian/Ubuntu:
 
 ```
+$ sudo apt install build-essential
+```
+
+On macOS (Xcode command line tools):
+
+```
+$ xcode-select --install
+```
+
+On Windows, install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with the "Desktop development
+with C++" workload.
+
+#### Setting up with uv (recommended)
+
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager. First,
+bootstrap the build dependencies, then install numcodecs in editable mode:
+
+```
+$ uv venv
+$ uv pip install --group dev
+$ uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
+```
+
+The first ``uv pip install`` step bootstraps the build tools into the virtualenv.
+The second installs numcodecs in editable mode without build isolation (so the
+venv's build tools are used). This two-step process is needed because
+meson-python editable installs require build tools at runtime for auto-rebuild
+on import.
+
+To run the tests:
+
+```
+$ uv run pytest -v
+```
+
+#### Setting up with venv and pip
+
+If you prefer the standard library ``venv``:
+
+```
+$ python -m venv venv
+$ source venv/bin/activate        # macOS/Linux
+$ # .\venv\Scripts\activate       # Windows
+
+$ pip install --group dev
+$ pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
 $ pytest -v
+```
+
+#### Passing build options
+
+NumCodecs uses [Meson](https://mesonbuild.com) as its build system. You can
+pass Meson options via pip's ``--config-settings``.
+
+To build against system-installed libraries instead of the vendored copies:
+
+```
+$ pip install --no-build-isolation -e . \
+    --config-settings=setup-args=-Dsystem_blosc=enabled \
+    --config-settings=setup-args=-Dsystem_zstd=enabled \
+    --config-settings=setup-args=-Dsystem_lz4=enabled
+```
+
+To disable SIMD optimizations (e.g., for portable debugging):
+
+```
+$ pip install --no-build-isolation -e . \
+    --config-settings=setup-args=-Davx2=disabled \
+    --config-settings=setup-args=-Dsse2=disabled
+```
+
+#### Rebuilding after changes
+
+With an editable install, meson-python automatically rebuilds changed C/Cython
+extensions when you import ``numcodecs``. If you need a full clean rebuild:
+
+```
+$ rm -rf build
+$ pip install --no-build-isolation -e .
 ```
 
 ### Creating a branch
@@ -152,18 +217,47 @@ Again, any conflicts need to be resolved before submitting a pull request.
 ### Running the test suite
 
 NumCodecs includes a suite of unit tests, as well as doctests included in function and class
-docstrings. The simplest way to run the unit tests is to invoke:
+docstrings:
+
+```
+$ uv run pytest -v
+```
+
+Or, if using venv/pip:
 
 ```
 $ pytest -v
 ```
 
-NumCodecs currently supports Python 6-3.9, so the above command must
-succeed before code can be accepted into the main code base.
+To test against specific Zarr-Python versions, use the dependency groups defined in
+``pyproject.toml``:
 
-All tests are automatically run via Travis (Linux) and AppVeyor (Windows) continuous
-integration services for every pull request. Tests must pass under both services before
-code can be accepted.
+```
+$ uv run --group test-zarr-312 pytest tests/test_zarr3.py tests/test_zarr3_import.py
+$ uv run --group test-zarr-313 pytest tests/test_zarr3.py tests/test_zarr3_import.py
+$ uv run --group test-zarr-main pytest tests/test_zarr3.py tests/test_zarr3_import.py
+```
+
+Or, if using venv/pip:
+
+```
+$ pip install --group test-zarr-312
+$ pytest tests/test_zarr3.py tests/test_zarr3_import.py
+```
+
+To test with different CRC32C implementations:
+
+```
+$ uv pip install "numcodecs[crc32c]"        # sw-based crc32c
+$ pytest tests/test_checksum32.py -v
+
+$ uv pip install "numcodecs[google_crc32c]"  # hw-accelerated google-crc32c
+$ pytest tests/test_checksum32.py -v
+```
+
+All tests are automatically run via GitHub Actions for every pull request across Linux
+(x86_64, aarch64, i386), macOS (x86_64, arm64), and Windows (x86_64), with Python 3.11
+through 3.14. Tests must pass on all platforms before code can be accepted.
 
 ### Code standards
 
@@ -177,11 +271,10 @@ $ pre-commit run ruff
 
 ### Test coverage
 
-NumCodecs maintains 100% test coverage under the latest Python stable release (currently
-Python 3.9). Both unit tests and docstring doctests are included when computing
-coverage. Running `pytest -v` will automatically run the test suite with coverage
-and produce a coverage report. This should be 100% before code can be accepted into the
-main code base.
+NumCodecs maintains 100% test coverage under the latest stable Python release. Both unit
+tests and docstring doctests are included when computing coverage. Running ``pytest -v``
+will automatically run the test suite with coverage and produce a coverage report. This
+should be 100% before code can be accepted into the main code base.
 
 When submitting a pull request, coverage will also be collected across all supported
 Python versions via the Codecov service, and will be reported back within the pull
@@ -190,8 +283,7 @@ request. Codecov coverage must also be 100% before code can be accepted.
 ### Documentation
 
 Docstrings for user-facing classes and functions should follow the [numpydoc](https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard) standard,
-including sections for Parameters and Examples. All examples will be run as doctests
-under Python 3.9.
+including sections for Parameters and Examples. All examples will be run as doctests.
 
 NumCodecs uses Sphinx for documentation, hosted on readthedocs.org. Documentation is
 written in Markdown (.md files) using [MyST](https://myst-parser.readthedocs.io/) in the `docs` folder.

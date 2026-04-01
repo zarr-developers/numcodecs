@@ -4,8 +4,8 @@ from contextlib import suppress
 
 import numpy as np
 import pytest
-from numcodecs.checksum32 import CRC32, Adler32
 
+from numcodecs.checksum32 import CRC32, Adler32
 from tests.common import (
     check_backwards_compatibility,
     check_config,

@@ -37,16 +37,25 @@ $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs
 Note that if you compile the C extensions on a machine with AVX2 support
 you probably then cannot use the same binaries on a machine without AVX2.
 
-If you specifically want to disable AVX2 or SSE2 when compiling, you can use
-the following environment variables:
+If you specifically want to disable AVX2 or SSE2 when compiling from source,
+you can pass meson build options::
 
-```
-$ export DISABLE_NUMCODECS_AVX2=1
-$ export DISABLE_NUMCODECS_SSE2=1
-```
+    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs \
+        --config-settings=setup-args=-Davx2=disabled \
+        --config-settings=setup-args=-Dsse2=disabled
 
-To work with Numcodecs source code in development, clone the repository from GitHub
-and then install in editable mode using `pip`.
+You can also build against system-installed Blosc, Zstd, and LZ4 libraries
+instead of the vendored copies::
+
+    $ pip install -v --no-cache-dir --no-binary numcodecs numcodecs \
+        --config-settings=setup-args=-Dsystem_blosc=enabled \
+        --config-settings=setup-args=-Dsystem_zstd=enabled \
+        --config-settings=setup-args=-Dsystem_lz4=enabled
+
+
+To work with Numcodecs source code in development, see the
+`contributing guide <contributing.html>`_ for instructions on setting up a
+development environment with venv or uv.
 
 ```
 $ git clone --recursive https://github.com/zarr-developers/numcodecs.git

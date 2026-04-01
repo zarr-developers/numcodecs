@@ -25,7 +25,7 @@ jobs:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
       CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"
       CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
-      # note: CIBW_ENVIRONMENT is now set in pyproject.toml
+      # note: cibuildwheel config-settings are set in pyproject.toml
 
     steps:
       - uses: actions/checkout@v5
