@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.12", "3.13", "3.14"]
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
         platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
@@ -129,10 +129,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - zarr-version: "312"
-            zarr-pkg: "zarr==3.1.2"
-          - zarr-version: "313"
-            zarr-pkg: "zarr==3.1.3"
+          - zarr-version: "308"
+            zarr-pkg: "zarr==3.0.8"
+          - zarr-version: "316"
+            zarr-pkg: "zarr==3.1.6"
           - zarr-version: "main"
             zarr-pkg: "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main"
 
