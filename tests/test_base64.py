@@ -2,8 +2,8 @@ import itertools
 
 import numpy as np
 import pytest
-from numcodecs.base64 import Base64
 
+from numcodecs.base64 import Base64
 from tests.common import (
     check_backwards_compatibility,
     check_encode_decode,

@@ -2,9 +2,9 @@ import itertools
 
 import numpy as np
 import pytest
-from numcodecs.fixedscaleoffset import FixedScaleOffset
 from numpy.testing import assert_array_equal
 
+from numcodecs.fixedscaleoffset import FixedScaleOffset
 from tests.common import (
     check_backwards_compatibility,
     check_config,

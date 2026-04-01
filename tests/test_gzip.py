@@ -2,8 +2,8 @@ import itertools
 
 import numpy as np
 import pytest
-from numcodecs.gzip import GZip
 
+from numcodecs.gzip import GZip
 from tests.common import (
     check_backwards_compatibility,
     check_config,

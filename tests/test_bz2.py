@@ -1,8 +1,8 @@
 import itertools
 
 import numpy as np
-from numcodecs.bz2 import BZ2
 
+from numcodecs.bz2 import BZ2
 from tests.common import (
     check_backwards_compatibility,
     check_config,

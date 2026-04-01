@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-from numcodecs.delta import Delta
 from numpy.testing import assert_array_equal
 
+from numcodecs.delta import Delta
 from tests.common import (
     check_backwards_compatibility,
     check_config,

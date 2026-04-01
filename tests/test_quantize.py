@@ -2,9 +2,9 @@ import itertools
 
 import numpy as np
 import pytest
-from numcodecs.quantize import Quantize
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
+from numcodecs.quantize import Quantize
 from tests.common import (
     check_backwards_compatibility,
     check_config,

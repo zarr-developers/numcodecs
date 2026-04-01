@@ -3,8 +3,8 @@ import sys
 
 import numpy as np
 import pytest
-from numcodecs.pickles import Pickle
 
+from numcodecs.pickles import Pickle
 from tests.common import (
     check_backwards_compatibility,
     check_config,

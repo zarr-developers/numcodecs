@@ -16,6 +16,33 @@
 
 ### Maintenance
 
+* **Migrate build system from setuptools/setup.py to meson-python.** This replaces the
+  386-line ``setup.py`` with declarative ``meson.build`` files. Benefits include correct
+  SIMD detection for cross-compilation, native support for linking against system-installed
+  Blosc/Zstd/LZ4 libraries (via ``-Dsystem_blosc=enabled`` etc.), and alignment with the
+  build system used by numpy, scipy, and scikit-learn.
+
+  The ``DISABLE_NUMCODECS_AVX2`` and ``DISABLE_NUMCODECS_SSE2`` environment variables
+  continue to work for backwards compatibility. The preferred way to control SIMD is now
+  via meson options::
+
+      pip install numcodecs --no-binary numcodecs \
+          --config-settings=setup-args=-Davx2=disabled
+
+  The ``DISABLE_NUMCODECS_CEXT`` environment variable is no longer supported.
+
+  By :user:`Max Jones <maxrjones>`.
+
+* Move source code from ``numcodecs/`` to ``src/numcodecs/`` (src layout). This avoids
+  import shadowing issues where the source tree's ``numcodecs/`` package (without compiled
+  C extensions) would shadow the installed package.
+
+  By :user:`Max Jones <maxrjones>`.
+
+* Rewrite contributing guide with uv development environment instructions.
+
+  By :user:`Max Jones <maxrjones>`.
+
 * Convert documentation from reStructuredText to Markdown using MyST.
   By {user}`Max Jones <maxrjones>`, :issue:`830`
 

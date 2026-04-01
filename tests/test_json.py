@@ -2,8 +2,8 @@ import itertools
 
 import numpy as np
 import pytest
-from numcodecs.json import JSON
 
+from numcodecs.json import JSON
 from tests.common import (
     check_backwards_compatibility,
     check_config,
