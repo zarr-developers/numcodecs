@@ -3,11 +3,10 @@ import importlib.util
 import struct
 import warnings
 import zlib
-from collections.abc import Callable
+from collections.abc import Buffer, Callable
 from typing import Literal
 
 import numpy as np
-from typing_extensions import Buffer
 
 from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
