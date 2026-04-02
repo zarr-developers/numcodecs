@@ -609,7 +609,7 @@ To run tests for specific Zarr integration versions::
 
 All tests are automatically run via GitHub Actions for every pull request
 across Linux (x86_64, aarch64, i386), macOS (x86_64, arm64), and Windows
-(x86_64), with Python 3.11 through 3.14.
+(x86_64), with Python 3.12 through 3.14.
 ```
 
 ### Other sections to update

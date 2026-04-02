@@ -256,7 +256,7 @@ $ pytest tests/test_checksum32.py -v
 ```
 
 All tests are automatically run via GitHub Actions for every pull request across Linux
-(x86_64, aarch64, i386), macOS (x86_64, arm64), and Windows (x86_64), with Python 3.11
+(x86_64, aarch64, i386), macOS (x86_64, arm64), and Windows (x86_64), with Python 3.12
 through 3.14. Tests must pass on all platforms before code can be accepted.
 
 ### Code standards

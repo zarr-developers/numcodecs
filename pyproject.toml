@@ -14,8 +14,8 @@ description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme = "README.md"
-dependencies = ["numpy>=1.24", "typing_extensions"]
-requires-python = ">=3.11"
+dependencies = ["numpy>=2.0", "typing_extensions"]
+requires-python = ">=3.12"
 dynamic = [
   "version",
 ]
@@ -89,16 +89,16 @@ dev = [
     "setuptools-scm>=6.2",
     "numpy>=2",
 ]
-test-zarr-312 = [
+test-zarr-308 = [
     "pytest",
     "pytest-cov",
-    "zarr==3.1.2",
+    "zarr==3.0.8",
     "crc32c",
 ]
-test-zarr-313 = [
+test-zarr-316 = [
     "pytest",
     "pytest-cov",
-    "zarr==3.1.3",
+    "zarr==3.1.6",
     "crc32c",
 ]
 test-zarr-main = [
@@ -249,8 +249,8 @@ no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
     [
-        { group = "test-zarr-312" },
-        { group = "test-zarr-313" },
+        { group = "test-zarr-308" },
+        { group = "test-zarr-316" },
         { group = "test-zarr-main" }
     ]
 ]
