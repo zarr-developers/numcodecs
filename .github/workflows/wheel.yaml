@@ -86,31 +86,37 @@ jobs:
 
   upload_pypi:
     needs: [build_wheels, build_sdist]
+    environment: pypi
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: sdist
           path: dist
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: wheels-*
           path: dist
           merge-multiple: true
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - name: Generate artifact attestations
+        uses: actions/attest-build-provenance@v4
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
-          # To test: repository_url: https://test.pypi.org/legacy/
+          subject-path: "dist/*"
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
 
   upload_nightly:
     needs: [build_wheels]
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: wheels-*
           path: dist
