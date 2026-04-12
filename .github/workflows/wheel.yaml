@@ -19,13 +19,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
     env:
       CIBW_TEST_COMMAND: python -c "import numcodecs"
-      CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"
+      CIBW_BUILD: "cp312-* cp313-* cp314-*"
       CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
-      # note: CIBW_ENVIRONMENT is now set in pyproject.toml
+      # note: cibuildwheel config-settings are set in pyproject.toml
 
     steps:
       - uses: actions/checkout@v5
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Build sdist
         run: pipx run build --sdist

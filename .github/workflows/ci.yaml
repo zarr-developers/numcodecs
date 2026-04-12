@@ -12,9 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        python-version: ["3.12", "3.13", "3.14"]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -38,7 +38,7 @@ jobs:
         run: conda install -y c-compiler cxx-compiler
 
       - name: Install clang
-        if: matrix.platform == 'macos-13'
+        if: matrix.platform == 'macos-15-large'
         run: conda install -y 'clang>=12.0.1,<17'
 
       - name: Show conda environment info
@@ -49,12 +49,11 @@ jobs:
 
       - name: Install numcodecs
         run: |
-          export DISABLE_NUMCODECS_AVX2=""
           # TODO: Remove this conditional when pcodec supports Python 3.14
           if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
-            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]"
           else
-            python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
           fi
 
       - name: List installed packages
@@ -70,12 +69,72 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  test-crc32c:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: google-crc32c
+            extras: "google_crc32c"
+          - name: crc32c
+            extras: "crc32c"
+          - name: no-crc32c
+            extras: ""
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3.2.0
+        with:
+          channels: conda-forge
+          miniforge-version: latest
+          python-version: "3.13"
+
+      - name: Install compilers
+        run: conda install -y c-compiler cxx-compiler
+
+      - name: Install numcodecs
+        run: |
+          if [[ -n "${{ matrix.extras }}" ]]; then
+            python -m pip install -v ".[${{ matrix.extras }},test]"
+          else
+            python -m pip install -v ".[test]"
+          fi
+
+      - name: List installed packages
+        run: python -m pip list
+
+      - name: Run checksum tests
+        run: pytest -v tests/test_checksum32.py
+
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
   test-zarr:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        zarr-version: ["312", "313", "main"]
+        include:
+          - zarr-version: "308"
+            zarr-pkg: "zarr==3.0.8"
+          - zarr-version: "316"
+            zarr-pkg: "zarr==3.1.6"
+          - zarr-version: "main"
+            zarr-pkg: "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main"
 
     defaults:
       run:
@@ -88,19 +147,24 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
 
-      - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.9.0
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3.2.0
         with:
-          pixi-version: v0.49.0
-          cache: false
+          channels: conda-forge
+          miniforge-version: latest
+          python-version: "3.13"
 
+      - name: Install compilers
+        run: conda install -y c-compiler cxx-compiler
+
+      - name: Install numcodecs and Zarr
+        run: |
+          python -m pip install -v ".[test,test_extras]" "${{ matrix.zarr-pkg }}" crc32c
       - name: List installed packages
-        shell: "bash -l {0}"
-        run: pixi run ls-deps-${{matrix.zarr-version}}
+        run: python -m pip list
 
-      - name: Run tests with Zarr ${{ matrix.zarr-version }}
-        shell: "bash -l {0}"
-        run: pixi run test-zarr-${{ matrix.zarr-version }}
+      - name: Run Zarr integration tests
+        run: pytest tests/test_zarr3.py tests/test_zarr3_import.py
 
       - uses: codecov/codecov-action@v5
         with:
