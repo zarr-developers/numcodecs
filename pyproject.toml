@@ -122,7 +122,7 @@ exclude_lines = [
 ignore = ["PY007", "PP302", "PP308", "PP309", "GH103", "GH212", "PC111", "PC140", "PC160", "PC170", "PC180", "MY100"]
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-config --strict-markers --cov=numcodecs --cov-report xml --doctest-modules --doctest-glob=*.pyx"
+addopts = ["-ra", "--strict-config", "--strict-markers", "--cov=numcodecs", "--cov-report", "xml", "--doctest-modules", "--doctest-glob=*.pyx"]
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "ELLIPSIS",
@@ -145,7 +145,7 @@ norecursedirs = [
     "notebooks",
     "numcodecs.egg-info",
 ]
-log_cli_level = "INFO"
+log_level = "INFO"
 xfail_strict = true
 filterwarnings = [
     "error",
