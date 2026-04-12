@@ -65,7 +65,7 @@ class Codec(ABC):
             Encoded data. May be any object supporting the new-style buffer
             protocol.
         out : buffer-like, optional
-            Writeable buffer to store decoded data. N.B. if provided, this buffer must
+            Writable buffer to store decoded data. N.B. if provided, this buffer must
             be exactly the right size to store the decoded data.
 
         Returns

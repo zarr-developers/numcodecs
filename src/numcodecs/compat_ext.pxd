@@ -10,4 +10,4 @@ cdef extern from *:
     int PyBytes_RESIZE(object b, Py_ssize_t n) except -1
 
 
-cpdef memoryview ensure_continguous_memoryview(obj)
+cpdef memoryview ensure_contiguous_memoryview(obj)

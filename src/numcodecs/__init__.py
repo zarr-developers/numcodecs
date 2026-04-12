@@ -126,7 +126,7 @@ from numcodecs.fletcher32 import Fletcher32
 
 register_codec(Fletcher32)
 
-# Optional depenedencies
+# Optional dependencies
 with suppress(ImportError):
     from numcodecs.zfpy import ZFPY
 
