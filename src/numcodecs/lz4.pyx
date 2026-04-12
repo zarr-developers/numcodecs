@@ -10,7 +10,7 @@ from libc.stdint cimport uint8_t, uint32_t
 from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
-from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
+from .compat_ext cimport PyBytes_RESIZE, ensure_contiguous_memoryview
 from ._utils cimport store_le32, load_le32
 
 from .compat import ensure_contiguous_ndarray
@@ -79,7 +79,7 @@ def compress(source, int acceleration=DEFAULT_ACCELERATION):
         acceleration = DEFAULT_ACCELERATION
 
     # setup source buffer
-    source_mv = ensure_continguous_memoryview(source)
+    source_mv = ensure_contiguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # extract metadata
@@ -141,7 +141,7 @@ def decompress(source, dest=None):
         int source_size, dest_size, decompressed_size
 
     # setup source buffer
-    source_mv = ensure_continguous_memoryview(source)
+    source_mv = ensure_contiguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # extract source metadata

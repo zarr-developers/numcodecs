@@ -17,7 +17,7 @@ from cpython.unicode cimport PyUnicode_FromStringAndSize
 
 from numpy cimport ndarray
 
-from .compat_ext cimport ensure_continguous_memoryview
+from .compat_ext cimport ensure_contiguous_memoryview
 from ._utils cimport store_le32, load_le32
 
 import numpy as np
@@ -139,7 +139,7 @@ class VLenUTF8(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = ensure_continguous_memoryview(buf)
+        buf_mv = ensure_contiguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks
@@ -268,7 +268,7 @@ class VLenBytes(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = ensure_continguous_memoryview(buf)
+        buf_mv = ensure_contiguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks
@@ -375,7 +375,7 @@ class VLenArray(Codec):
         for i in range(n_items):
             o = values[i]
             # replace missing value and coerce to typed data
-            value_mv = ensure_continguous_memoryview(
+            value_mv = ensure_contiguous_memoryview(
                 np.array([], dtype=self.dtype) if o is None
                 else np.ascontiguousarray(o, self.dtype)
             )
@@ -424,7 +424,7 @@ class VLenArray(Codec):
 
         # obtain memoryview
         buf = ensure_contiguous_ndarray(buf)
-        buf_mv = ensure_continguous_memoryview(buf)
+        buf_mv = ensure_contiguous_memoryview(buf)
         buf_pb = PyMemoryView_GET_BUFFER(buf_mv)
 
         # sanity checks

@@ -43,7 +43,7 @@ build-backend = "setuptools.build_meta"
 
 ### Shared Cython declarations
 
-- `compat_ext.pxd` — `PyBytes_RESIZE`, `ensure_continguous_memoryview` (used by blosc, zstd, lz4, vlen)
+- `compat_ext.pxd` — `PyBytes_RESIZE`, `ensure_contiguous_memoryview` (used by blosc, zstd, lz4, vlen)
 - `_utils.pxd` — `store_le32`, `load_le32` (used by lz4, fletcher32, vlen)
 
 ### Vendored C sources (c-blosc git submodule)

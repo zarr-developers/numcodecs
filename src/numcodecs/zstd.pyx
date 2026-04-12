@@ -8,7 +8,7 @@
 from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
-from .compat_ext cimport PyBytes_RESIZE, ensure_continguous_memoryview
+from .compat_ext cimport PyBytes_RESIZE, ensure_contiguous_memoryview
 
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
@@ -134,7 +134,7 @@ def compress(source, int level=DEFAULT_CLEVEL, bint checksum=False):
         level = MAX_CLEVEL
 
     # obtain source memoryview
-    source_mv = ensure_continguous_memoryview(source)
+    source_mv = ensure_contiguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # setup source buffer
@@ -211,7 +211,7 @@ def decompress(source, dest=None):
         unsigned long long content_size
 
     # obtain source memoryview
-    source_mv = ensure_continguous_memoryview(source)
+    source_mv = ensure_contiguous_memoryview(source)
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # get source pointer

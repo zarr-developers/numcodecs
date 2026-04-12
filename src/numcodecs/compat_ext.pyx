@@ -8,7 +8,7 @@ from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
 
-cpdef memoryview ensure_continguous_memoryview(obj):
+cpdef memoryview ensure_contiguous_memoryview(obj):
     cdef memoryview mv
     if type(obj) is memoryview:
         mv = <memoryview>obj
