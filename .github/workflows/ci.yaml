@@ -34,8 +34,9 @@ jobs:
           miniforge-version: latest
           python-version: ${{ matrix.python-version }}
 
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
+      - name: Install build dependencies and compilers
+        run: |
+          conda install -y python numpy cython meson meson-python ninja c-compiler cxx-compiler
 
       - name: Install clang
         if: matrix.platform == 'macos-15-large'
@@ -47,21 +48,33 @@ jobs:
           conda config --show-sources
           conda list --show-channel-urls
 
+      - name: Meson args - prefer Conda over system Python (Ubuntu)
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          echo "MESONPY_PYTHON=$(python -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
+          PY_INC="$(python -c 'import sysconfig; print(sysconfig.get_path("include"))')"
+          echo "CFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CFLAGS:-}" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CPPFLAGS:-}" >> $GITHUB_ENV
+          echo "LDFLAGS=-L${CONDA_PREFIX}/lib ${LDFLAGS:-}" >> $GITHUB_ENV
+
       - name: Install numcodecs
         run: |
           # TODO: Remove this conditional when pcodec supports Python 3.14
           if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
-            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]"
+            python -m pip install -v \
+              ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]" \
+              pytest
           else
-            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+            python -m pip install -v \
+              ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]" \
+              pytest
           fi
 
       - name: List installed packages
         run: python -m pip list
 
       - name: Run tests
-        shell: "bash -l {0}"
-        run: pytest -v
+        run: python -m pytest -v
 
       - uses: codecov/codecov-action@v5
         with:
@@ -100,8 +113,17 @@ jobs:
           miniforge-version: latest
           python-version: "3.13"
 
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
+      - name: Install build dependencies and compilers
+        run: |
+          conda install -y python numpy cython meson meson-python ninja c-compiler cxx-compiler
+
+      - name: Meson args - prefer Conda over system Python (Ubuntu)
+        run: |
+          echo "MESONPY_PYTHON=$(python -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
+          PY_INC="$(python -c 'import sysconfig; print(sysconfig.get_path("include"))')"
+          echo "CFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CFLAGS:-}" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CPPFLAGS:-}" >> $GITHUB_ENV
+          echo "LDFLAGS=-L${CONDA_PREFIX}/lib ${LDFLAGS:-}" >> $GITHUB_ENV
 
       - name: Install numcodecs
         run: |
@@ -115,7 +137,7 @@ jobs:
         run: python -m pip list
 
       - name: Run checksum tests
-        run: pytest -v tests/test_checksum32.py
+        run: python -m pytest -v tests/test_checksum32.py
 
       - uses: codecov/codecov-action@v5
         with:
@@ -154,17 +176,26 @@ jobs:
           miniforge-version: latest
           python-version: "3.13"
 
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
+      - name: Install build dependencies and compilers
+        run: |
+          conda install -y python numpy cython meson meson-python ninja c-compiler cxx-compiler
+
+      - name: Meson args - prefer Conda over system Python (Ubuntu)
+        run: |
+          echo "MESONPY_PYTHON=$(python -c 'import sys; print(sys.executable)')" >> $GITHUB_ENV
+          PY_INC="$(python -c 'import sysconfig; print(sysconfig.get_path("include"))')"
+          echo "CFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CFLAGS:-}" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I${PY_INC} -I${CONDA_PREFIX}/include ${CPPFLAGS:-}" >> $GITHUB_ENV
+          echo "LDFLAGS=-L${CONDA_PREFIX}/lib ${LDFLAGS:-}" >> $GITHUB_ENV
 
       - name: Install numcodecs and Zarr
         run: |
-          python -m pip install -v ".[test,test_extras]" "${{ matrix.zarr-pkg }}" crc32c
+          python -m pip install -v  ".[test,test_extras]" "${{ matrix.zarr-pkg }}" crc32c
       - name: List installed packages
         run: python -m pip list
 
       - name: Run Zarr integration tests
-        run: pytest tests/test_zarr3.py tests/test_zarr3_import.py
+        run: python -m pytest tests/test_zarr3.py tests/test_zarr3_import.py
 
       - uses: codecov/codecov-action@v5
         with:
