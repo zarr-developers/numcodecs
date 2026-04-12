@@ -16,13 +16,13 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
 
       - name: Setup Alpine Linux environment
-        uses: jirutka/setup-alpine@v1.3.0
+        uses: jirutka/setup-alpine@v1.4.1
         with:
           arch: x86
           packages: >
