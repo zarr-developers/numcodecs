@@ -48,13 +48,7 @@ jobs:
           conda list --show-channel-urls
 
       - name: Install numcodecs
-        run: |
-          # TODO: Remove this conditional when pcodec supports Python 3.14
-          if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
-            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]"
-          else
-            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
-          fi
+        run: python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
 
       - name: List installed packages
         run: python -m pip list
