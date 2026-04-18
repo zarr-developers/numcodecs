@@ -1,5 +1,5 @@
-from typing import Literal
 import warnings
+from typing import Literal
 
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
