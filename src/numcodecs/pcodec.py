@@ -1,4 +1,5 @@
 from typing import Literal
+import warnings
 
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
@@ -30,8 +31,8 @@ class PCodec(Codec):
         (Classic mode). Note that the "try*" specs are not currently supported.
     delta_spec : {"auto", "no_op", "none", "try_consecutive", "try_lookback"}
         Configures the delta encoding strategy. By default, uses "auto" which
-        will try to infer the best encoding order. "none" is equivalent to
-        "no_op" and may be removed in the future.
+        will try to infer the best encoding order. "none" is deprecated in favor
+        of "no_op".
     paging_spec : {"equal_pages_up_to"}
         Configures the paging strategy. Only "equal_pages_up_to" is currently
         supported.
@@ -84,7 +85,14 @@ class PCodec(Codec):
             match self.delta_spec:
                 case "auto":
                     delta_spec = DeltaSpec.auto()
-                case "no_op" | "none":  # legacy support for "none"
+                case "none":  # legacy
+                    warnings.warn(
+                        "delta_spec='none' is deprecated and will be removed in a future version. Use 'no_op' instead.",
+                        DeprecationWarning,
+                        stacklevel=1,
+                    )
+                    delta_spec = DeltaSpec.no_op()
+                case "no_op":
                     delta_spec = DeltaSpec.no_op()
                 case "try_consecutive":
                     delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)

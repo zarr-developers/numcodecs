@@ -49,6 +49,7 @@ arrays = [
 
 @pytest.mark.parametrize("arr", arrays)
 @pytest.mark.parametrize("codec", codecs)
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_encode_decode(arr, codec):
     check_encode_decode_array(arr, codec)
 
