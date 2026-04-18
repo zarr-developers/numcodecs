@@ -54,7 +54,7 @@ zfpy = [
     "zfpy>=1.0.0"
 ]
 pcodec = [
-    "pcodec>=0.3,<0.4",
+    "pcodec>=1,<2",
 ]
 crc32c = [
     "crc32c>=2.7",
@@ -153,6 +153,7 @@ xfail_strict = true
 filterwarnings = [
     "error",
     "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
+    "ignore:.*align should be passed as Python or NumPy boolean.*:numpy.exceptions.VisibleDeprecationWarning", # Old fixture files trigger numpy-internal dtype(align=0) warning (NumPy 2.4+)
 ]
 
 [tool.cibuildwheel]

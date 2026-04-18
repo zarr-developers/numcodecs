@@ -1,3 +1,4 @@
+import warnings
 from typing import Literal
 
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
@@ -28,9 +29,10 @@ class PCodec(Codec):
         structure of the data (e.g. approximate multiples of 0.1) to improve
         compression ratio, or skip this step and just use the numbers as-is
         (Classic mode). Note that the "try*" specs are not currently supported.
-    delta_spec : {"auto", "none", "try_consecutive", "try_lookback"}
+    delta_spec : {"auto", "no_op", "none", "try_consecutive", "try_lookback"}
         Configures the delta encoding strategy. By default, uses "auto" which
-        will try to infer the best encoding order.
+        will try to infer the best encoding order. "none" is deprecated in favor
+        of "no_op".
     paging_spec : {"equal_pages_up_to"}
         Configures the paging strategy. Only "equal_pages_up_to" is currently
         supported.
@@ -49,7 +51,7 @@ class PCodec(Codec):
         level: int = 8,
         *,
         mode_spec: Literal["auto", "classic"] = "auto",
-        delta_spec: Literal["auto", "none", "try_consecutive", "try_lookback"] = "auto",
+        delta_spec: Literal["auto", "no_op", "none", "try_consecutive", "try_lookback"] = "auto",
         paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
         delta_encoding_order: int | None = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
@@ -83,8 +85,15 @@ class PCodec(Codec):
             match self.delta_spec:
                 case "auto":
                     delta_spec = DeltaSpec.auto()
-                case "none":
-                    delta_spec = DeltaSpec.none()
+                case "none":  # legacy
+                    warnings.warn(
+                        "delta_spec='none' is deprecated and will be removed in a future version. Use 'no_op' instead.",
+                        DeprecationWarning,
+                        stacklevel=1,
+                    )
+                    delta_spec = DeltaSpec.no_op()
+                case "no_op":
+                    delta_spec = DeltaSpec.no_op()
                 case "try_consecutive":
                     delta_spec = DeltaSpec.try_consecutive(self.delta_encoding_order)
                 case "try_lookback":
