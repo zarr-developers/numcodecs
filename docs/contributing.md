@@ -116,8 +116,8 @@ bootstrap the build dependencies, then install numcodecs in editable mode:
 
 ```
 $ uv venv
-$ uv pip install --group dev
-$ uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
+$ uv pip install --group dev --group test --group test_extras
+$ uv pip install --no-build-isolation -e ".[msgpack]"
 ```
 
 The first ``uv pip install`` step bootstraps the build tools into the virtualenv.
@@ -141,8 +141,8 @@ $ python -m venv venv
 $ source venv/bin/activate        # macOS/Linux
 $ # .\venv\Scripts\activate       # Windows
 
-$ pip install --group dev
-$ pip install --no-build-isolation -e ".[test,test_extras,msgpack]"
+$ pip install --group dev --group test --group test_extras
+$ pip install --no-build-isolation -e ".[msgpack]"
 $ pytest -v
 ```
 

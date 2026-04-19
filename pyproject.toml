@@ -62,6 +62,16 @@ crc32c = [
 google_crc32c = [
     "google-crc32c>=1.5"
 ]
+
+[dependency-groups]
+dev = [
+    "meson-python>=0.17",
+    "meson>=1.6.0",
+    "ninja",
+    "cython>=3.0",
+    "setuptools-scm>=6.2",
+    "numpy>=2",
+]
 docs = [
     "sphinx",
     "sphinx-issues",
@@ -78,16 +88,6 @@ test = [
 test_extras = [
     "importlib_metadata",
     "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
-]
-
-[dependency-groups]
-dev = [
-    "meson-python>=0.17",
-    "meson>=1.6.0",
-    "ninja",
-    "cython>=3.0",
-    "setuptools-scm>=6.2",
-    "numpy>=2",
 ]
 test-zarr-308 = [
     "pytest",
@@ -243,8 +243,8 @@ warn_unused_configs = true
 # meson-python editable installs require build deps (ninja, meson) at runtime for
 # auto-rebuild on import. Skip build isolation so the venv's ninja is used.
 # The "dev" dependency group provides these build tools. Bootstrap with:
-# `uv pip install --group dev` before running
-# `uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"`.
+# `uv pip install --group dev --group test --group test_extras` before running
+# `uv pip install --no-build-isolation -e ".[msgpack]"`.
 no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
