@@ -27,25 +27,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.2.0
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          channels: conda-forge
-          miniforge-version: latest
           python-version: ${{ matrix.python-version }}
-
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
-
-      - name: Install clang
-        if: matrix.platform == 'macos-15-large'
-        run: conda install -y 'clang>=12.0.1,<17'
-
-      - name: Show conda environment info
-        run: |
-          conda info
-          conda config --show-sources
-          conda list --show-channel-urls
+          cache: 'pip'
 
       - name: Install numcodecs
         run: |
@@ -93,15 +79,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.2.0
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          channels: conda-forge
-          miniforge-version: latest
-          python-version: "3.13"
-
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
       - name: Install numcodecs
         run: |
@@ -147,15 +129,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.2.0
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          channels: conda-forge
-          miniforge-version: latest
-          python-version: "3.13"
-
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
       - name: Install numcodecs and Zarr
         run: |
