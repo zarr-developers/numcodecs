@@ -3,12 +3,6 @@ import itertools
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.lz4 import LZ4
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.lz4 not available", allow_module_level=True)
-
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -18,6 +12,8 @@ from tests.common import (
     check_max_buffer_size,
     check_repr,
 )
+
+LZ4 = pytest.importorskip("numcodecs.lz4").LZ4
 
 codecs = [
     LZ4(),

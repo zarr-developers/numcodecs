@@ -2,8 +2,10 @@
 
 import numpy as np
 import pytest
-import pyzstd
 from numcodecs.zstd import Zstd
+
+pyzstd = pytest.importorskip("pyzstd")
+
 
 test_data = [
     b"Hello World!",

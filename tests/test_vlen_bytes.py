@@ -1,12 +1,6 @@
-import unittest
-
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.vlen import VLenBytes
-except ImportError as e:  # pragma: no cover
-    raise unittest.SkipTest("vlen-bytes not available") from e
 from tests.common import (
     assert_array_items_equal,
     check_backwards_compatibility,
@@ -15,6 +9,8 @@ from tests.common import (
     check_repr,
     greetings,
 )
+
+VLenBytes = pytest.importorskip("numcodecs.vlen").VLenBytes
 
 greetings_bytes = [g.encode('utf-8') for g in greetings]
 

@@ -4,14 +4,6 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.blosc import Blosc
-
-    from numcodecs import blosc
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.blosc not available", allow_module_level=True)
-
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -21,6 +13,9 @@ from tests.common import (
     check_max_buffer_size,
     is_wasm,
 )
+
+blosc = pytest.importorskip("numcodecs.blosc")
+Blosc = blosc.Blosc
 
 codecs = [
     Blosc(shuffle=Blosc.SHUFFLE),

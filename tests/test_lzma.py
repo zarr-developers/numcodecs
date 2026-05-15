@@ -1,17 +1,9 @@
 import itertools
-import unittest
 from types import ModuleType
 from typing import cast
 
 import numpy as np
 import pytest
-
-try:
-    # noinspection PyProtectedMember
-    from numcodecs.lzma import LZMA, _lzma
-except ImportError as e:  # pragma: no cover
-    raise unittest.SkipTest("LZMA not available") from e
-
 
 from tests.common import (
     check_backwards_compatibility,
@@ -21,6 +13,10 @@ from tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
+
+_lzma_mod = pytest.importorskip("numcodecs.lzma")
+LZMA = _lzma_mod.LZMA
+_lzma = _lzma_mod._lzma
 
 _lzma = cast(ModuleType, _lzma)
 

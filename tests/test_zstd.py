@@ -153,9 +153,12 @@ def view_zstd_streaming_bytes():
 
 
 def zstd_cli_available() -> bool:
-    return not subprocess.run(
-        ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    ).returncode
+    try:
+        return not subprocess.run(
+            ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        ).returncode
+    except OSError:
+        return False
 
 
 def test_multi_frame():

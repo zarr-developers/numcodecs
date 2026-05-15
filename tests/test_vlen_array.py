@@ -1,12 +1,6 @@
-import unittest
-
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.vlen import VLenArray
-except ImportError as e:  # pragma: no cover
-    raise unittest.SkipTest("vlen-array not available") from e
 from tests.common import (
     assert_array_items_equal,
     check_backwards_compatibility,
@@ -14,6 +8,8 @@ from tests.common import (
     check_encode_decode_array,
     check_repr,
 )
+
+VLenArray = pytest.importorskip("numcodecs.vlen").VLenArray
 
 arrays = [
     np.array([np.array([1, 2, 3]), np.array([4]), np.array([5, 6])] * 300, dtype=object),
