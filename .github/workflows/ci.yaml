@@ -12,9 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        python-version: ["3.12", "3.13", "3.14"]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -22,43 +22,27 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
           fetch-depth: 0
           # https://github.com/actions/checkout/issues/2041 isn't released yet
           # fetch-tags: true # required for version resolution
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3.1.1
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          channels: conda-forge
-          miniforge-version: latest
           python-version: ${{ matrix.python-version }}
-
-      - name: Install compilers
-        run: conda install -y c-compiler cxx-compiler
-
-      - name: Install clang
-        if: matrix.platform == 'macos-13'
-        run: conda install -y 'clang>=12.0.1,<17'
-
-      - name: Show conda environment info
-        run: |
-          conda info
-          conda config --show-sources
-          conda list --show-channel-urls
+          cache: 'pip'
 
       - name: Install numcodecs
         run: |
-          export DISABLE_NUMCODECS_AVX2=""
-          python -m pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
-
-      - name: Install zarr-python
-        # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
-        # so we can have some tests of our minimum version of numpy (1.24)
-        if: matrix.python-version != '3.11'
-        run: python -m pip install zarr>=3
+          # TODO: Remove this conditional when pcodec supports Python 3.14
+          if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,zfpy]"
+          else
+            python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+          fi
 
       - name: List installed packages
         run: python -m pip list
@@ -66,6 +50,101 @@ jobs:
       - name: Run tests
         shell: "bash -l {0}"
         run: pytest -v
+
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  test-crc32c:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: google-crc32c
+            extras: "google_crc32c"
+          - name: crc32c
+            extras: "crc32c"
+          - name: no-crc32c
+            extras: ""
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install numcodecs
+        run: |
+          if [[ -n "${{ matrix.extras }}" ]]; then
+            python -m pip install -v ".[${{ matrix.extras }},test]"
+          else
+            python -m pip install -v ".[test]"
+          fi
+
+      - name: List installed packages
+        run: python -m pip list
+
+      - name: Run checksum tests
+        run: pytest -v tests/test_checksum32.py
+
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  test-zarr:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - zarr-version: "308"
+            zarr-pkg: "zarr==3.0.8"
+          - zarr-version: "316"
+            zarr-pkg: "zarr==3.1.6"
+          - zarr-version: "main"
+            zarr-pkg: "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main"
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install numcodecs and Zarr
+        run: |
+          python -m pip install -v ".[test,test_extras]" "${{ matrix.zarr-pkg }}" crc32c
+      - name: List installed packages
+        run: python -m pip list
+
+      - name: Run Zarr integration tests
+        run: pytest tests/test_zarr3.py tests/test_zarr3_import.py
 
       - uses: codecov/codecov-action@v5
         with:

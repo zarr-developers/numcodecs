@@ -1,21 +1,21 @@
 [build-system]
 requires = [
-    "setuptools>=77",
-    "setuptools-scm[toml]>=6.2",
-    "Cython",
-    "py-cpuinfo",
-    "numpy>2",
+    "meson-python>=0.17",
+    "meson>=1.6.0",
+    "setuptools-scm>=6.2",
+    "Cython>=3.0",
+    "numpy>=2",
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "mesonpy"
 
 [project]
 name = "numcodecs"
 description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
-readme = "README.rst"
-dependencies = ["numpy>=1.24", "typing_extensions"]
-requires-python = ">=3.11"
+readme = "README.md"
+dependencies = ["numpy>=2.0", "typing_extensions"]
+requires-python = ">=3.12"
 dynamic = [
   "version",
 ]
@@ -47,20 +47,6 @@ Documentation = "https://numcodecs.readthedocs.io/"
 Homepage = "https://github.com/zarr-developers/numcodecs"
 
 [project.optional-dependencies]
-docs = [
-    "sphinx",
-    "sphinx-issues",
-    "pydata-sphinx-theme",
-    "numpydoc",
-]
-test = [
-    "coverage",
-    "pytest",
-    "pytest-cov",
-]
-test_extras = [
-    "importlib_metadata",
-]
 msgpack = [
     "msgpack",
 ]
@@ -73,49 +59,61 @@ pcodec = [
 crc32c = [
     "crc32c>=2.7",
 ]
-
-[project.entry-points."zarr.codecs"]
-"numcodecs.blosc" = "numcodecs.zarr3:Blosc"
-"numcodecs.lz4" = "numcodecs.zarr3:LZ4"
-"numcodecs.zstd" = "numcodecs.zarr3:Zstd"
-"numcodecs.zlib" = "numcodecs.zarr3:Zlib"
-"numcodecs.gzip" = "numcodecs.zarr3:GZip"
-"numcodecs.bz2" = "numcodecs.zarr3:BZ2"
-"numcodecs.lzma" = "numcodecs.zarr3:LZMA"
-"numcodecs.shuffle" = "numcodecs.zarr3:Shuffle"
-"numcodecs.delta" = "numcodecs.zarr3:Delta"
-"numcodecs.bitround" = "numcodecs.zarr3:BitRound"
-"numcodecs.fixedscaleoffset" = "numcodecs.zarr3:FixedScaleOffset"
-"numcodecs.quantize" = "numcodecs.zarr3:Quantize"
-"numcodecs.packbits" = "numcodecs.zarr3:PackBits"
-"numcodecs.astype" = "numcodecs.zarr3:AsType"
-"numcodecs.crc32" = "numcodecs.zarr3:CRC32"
-"numcodecs.crc32c" = "numcodecs.zarr3:CRC32C"
-"numcodecs.adler32" = "numcodecs.zarr3:Adler32"
-"numcodecs.fletcher32" = "numcodecs.zarr3:Fletcher32"
-"numcodecs.jenkins_lookup3" = "numcodecs.zarr3:JenkinsLookup3"
-"numcodecs.pcodec" = "numcodecs.zarr3:PCodec"
-"numcodecs.zfpy" = "numcodecs.zarr3:ZFPY"
-
-[tool.setuptools]
-package-dir = {"" = "."}
-packages = ["numcodecs", "numcodecs.tests"]
-zip-safe = false
-
-[tool.setuptools.package-data]
-numcodecs = [
-    "tests/package_with_entrypoint/__init__.py",
-    "tests/package_with_entrypoint-0.1.dist-info/entry_points.txt"
+google_crc32c = [
+    "google-crc32c>=1.5"
+]
+docs = [
+    "sphinx",
+    "sphinx-issues",
+    "pydata-sphinx-theme",
+    "numpydoc",
+    "myst-parser",
+]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pyzstd"
+]
+test_extras = [
+    "importlib_metadata",
+    "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
 
-[tool.setuptools_scm]
-version_scheme = "guess-next-dev"
-local_scheme = "dirty-tag"
-write_to = "numcodecs/version.py"
+[dependency-groups]
+dev = [
+    "meson-python>=0.17",
+    "meson>=1.6.0",
+    "ninja",
+    "cython>=3.0",
+    "setuptools-scm>=6.2",
+    "numpy>=2",
+]
+test-zarr-308 = [
+    "pytest",
+    "pytest-cov",
+    "zarr==3.0.8",
+    "crc32c",
+]
+test-zarr-316 = [
+    "pytest",
+    "pytest-cov",
+    "zarr==3.1.6",
+    "crc32c",
+]
+test-zarr-main = [
+    "pytest",
+    "pytest-cov",
+    "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
+    "crc32c",
+]
 
 [tool.codespell]
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
+
+[tool.coverage.run]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -134,7 +132,7 @@ doctest_optionflags = [
     "IGNORE_EXCEPTION_DETAIL",
 ]
 testpaths = [
-    "numcodecs/tests",
+    "tests",
 ]
 norecursedirs = [
     ".git",
@@ -142,6 +140,8 @@ norecursedirs = [
     ".pytest_cache",
     "adhoc",
     "build",
+    "builddir",
+    "subprojects",
     "c-blosc",
     "docs",
     "fixture",
@@ -152,22 +152,20 @@ log_cli_level = "INFO"
 xfail_strict = true
 filterwarnings = [
     "error",
+    "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
 ]
 
 [tool.cibuildwheel]
-environment = { DISABLE_NUMCODECS_AVX2=1 }
-[tool.cibuildwheel.macos]
-# cibuildwheel uses 3.12 for the Python driver, which supports High Sierra and later
-# https://github.com/pypa/cibuildwheel/blob/ee63bf16da6cddfb925f542f2c7b59ad50e93969/action.yml#L31
-environment = { MACOSX_DEPLOYMENT_TARGET=10.13, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
+# AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
+config-settings = "setup-args=-Davx2=disabled"
+
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
-environment = { DISABLE_NUMCODECS_AVX2=1, DISABLE_NUMCODECS_SSE2=1 }
+config-settings = {setup-args = ["-Davx2=disabled", "-Dsse2=disabled"]}
 
 [tool.ruff]
 line-length = 100
 extend-exclude = ["c-blosc"]
-src = ["numcodecs"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -201,13 +199,13 @@ ignore = [
     "PT001",
     "PT011",
     "PT012",
+    "PT031",
     "RET505",
     "RET506",
     "SIM108",
     "TRY003",
     "TRY301",
     "UP007",
-    "UP038",  # https://github.com/astral-sh/ruff/issues/7871
     # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
@@ -224,7 +222,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"numcodecs/tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
+"tests/**" = ["SIM201", "SIM202", "SIM300", "TRY002"]
 "notebooks/**" = ["W391"]  # https://github.com/astral-sh/ruff/issues/13763
 
 [tool.ruff.format]
@@ -240,3 +238,19 @@ warn_unreachable = false
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+[tool.uv]
+# meson-python editable installs require build deps (ninja, meson) at runtime for
+# auto-rebuild on import. Skip build isolation so the venv's ninja is used.
+# The "dev" dependency group provides these build tools. Bootstrap with:
+# `uv pip install --group dev` before running
+# `uv pip install --no-build-isolation -e ".[test,test_extras,msgpack]"`.
+no-build-isolation-package = ["numcodecs"]
+conflicts = [
+    # Zarr versions conflict with each other
+    [
+        { group = "test-zarr-308" },
+        { group = "test-zarr-316" },
+        { group = "test-zarr-main" }
+    ]
+]
