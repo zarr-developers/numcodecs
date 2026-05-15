@@ -12,7 +12,6 @@ from tests.common import (
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_repr,
-    is_wasm,
 )
 
 codecs = [
@@ -89,9 +88,6 @@ def test_native_functions():
     assert Zstd.max_level() == 22
 
 
-@pytest.mark.xfail(
-    is_wasm, reason="Streaming frames with unknown content size overflow on 32-bit WASM"
-)
 def test_streaming_decompression():
     # Test input frames with unknown frame content size
     codec = Zstd()
@@ -165,9 +161,6 @@ def zstd_cli_available() -> bool:
         return False
 
 
-@pytest.mark.xfail(
-    is_wasm, reason="Multi-frame decompression with unknown-size frames fails on 32-bit WASM"
-)
 def test_multi_frame():
     codec = Zstd()
 
