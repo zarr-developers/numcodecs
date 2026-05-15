@@ -17,7 +17,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: recursive
-          fetch-tags: true
+          fetch-depth: 0
+          # https://github.com/actions/checkout/issues/2041 isn't released yet
+          # fetch-tags: true # required for version resolution
+
         # TODO: build for Pyodide 314.0.0 stable when released and added to cibuildwheel
         # hopefully this will happen for us in sync with cibuildwheel v4.0.0 stable as well
       - name: Build and test numcodecs for Pyodide
