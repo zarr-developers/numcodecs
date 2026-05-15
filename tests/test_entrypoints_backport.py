@@ -4,9 +4,9 @@ import sys
 from multiprocessing import Process
 
 import pytest
-from numcodecs.tests.common import is_wasm
 
 import numcodecs.registry
+from tests.common import is_wasm
 
 importlib_spec = importlib.util.find_spec("importlib_metadata")
 if importlib_spec is None or importlib_spec.loader is None:  # pragma: no cover
