@@ -41,9 +41,6 @@ def test_export(codec_name: str) -> None:
     """
     Ensure that numcodecs.zarr3 re-exports codecs defined in zarr.codecs.numcodecs
     """
-    # zarr3.__getattr__ caches resolved attrs in globals for performance.
-    # We should clear any cached value so __getattr__ runs fresh and emits warnings.
-    zarr3.__dict__.pop(codec_name, None)
     with pytest.warns(
         DeprecationWarning,
         match="The numcodecs.zarr3 module is deprecated and will be removed in a future release of numcodecs. ",
