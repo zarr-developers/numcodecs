@@ -13,9 +13,8 @@ from tests.common import (
     check_repr,
 )
 
-_zfpy_mod = pytest.importorskip("numcodecs.zfpy")
-ZFPY = _zfpy_mod.ZFPY
-_zfpy = _zfpy_mod._zfpy
+pytest.importorskip("zfpy")
+from numcodecs.zfpy import ZFPY, _zfpy
 
 _zfpy = cast(ModuleType, _zfpy)
 

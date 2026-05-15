@@ -14,9 +14,8 @@ from tests.common import (
     check_repr,
 )
 
-_lzma_mod = pytest.importorskip("numcodecs.lzma")
-LZMA = _lzma_mod.LZMA
-_lzma = _lzma_mod._lzma
+pytest.importorskip("lzma")
+from numcodecs.lzma import LZMA, _lzma
 
 _lzma = cast(ModuleType, _lzma)
 
