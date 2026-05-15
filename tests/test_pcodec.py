@@ -1,11 +1,6 @@
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.pcodec import PCodec
-except ImportError:  # pragma: no cover
-    pytest.skip("pcodec not available", allow_module_level=True)
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -14,6 +9,10 @@ from tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
+
+# pcodec is not installed in the Pyodide CI environment because Pyodide ships
+# pcodec>=1.0, which has an incompatible API with what we require, i.e., <0.4.
+PCodec = pytest.importorskip("numcodecs.pcodec").PCodec
 
 codecs = [
     PCodec(),
