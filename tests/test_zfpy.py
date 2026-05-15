@@ -4,6 +4,13 @@ from typing import cast
 import numpy as np
 import pytest
 
+try:
+    # noinspection PyProtectedMember
+    from numcodecs.zfpy import ZFPY, _zfpy
+except ImportError:  # pragma: no cover
+    pytest.skip("ZFPY not available", allow_module_level=True)
+
+
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -12,9 +19,6 @@ from tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
-
-pytest.importorskip("zfpy")
-from numcodecs.zfpy import ZFPY, _zfpy
 
 _zfpy = cast(ModuleType, _zfpy)
 
