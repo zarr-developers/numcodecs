@@ -30,3 +30,25 @@ connection-pool race in s3fs/fsspec/zarr). This explains:
   - BLOSC_NTHREADS=1 not helping (not a blosc thread bug),
   - failures clustering near completion of large jobs (more chunk reads = more chances),
   - the absence of any pure-codec reproducer.
+
+## Real-world traceback captured
+
+Confirms the failure is on the READ/decode path during a distributed write
+(`to_zarr` reading & decompressing source chunks from S3), exactly matching the
+truncation finding above:
+
+```
+  File ".../dask/array/core.py", line 1220, in store
+    dask.compute(arrays, **kwargs)
+  ...
+  File ".../zarr/core.py", line 2187, in _chunk_getitems
+  File ".../zarr/core.py", line 2100, in _process_chunk
+  File ".../zarr/core.py", line 2356, in _decode_chunk
+  File "numcodecs/blosc.pyx", line 585, in numcodecs.blosc.Blosc.decode
+  File "numcodecs/blosc.pyx", line 414, in numcodecs.blosc.decompress
+RuntimeError: error during blosc decompression: -1
+```
+
+The error is raised inside `_decode_chunk` (a read) -- blosc was handed the bytes of
+a chunk just fetched from the store -> consistent with a truncated read from the
+storage/transport layer (s3fs/fsspec/zarr), not a codec thread-safety race.
