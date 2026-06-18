@@ -52,13 +52,11 @@ base_codecs = [
 ]
 
 
-all_codecs: list[Codec] = base_codecs.copy()
+all_codecs: tuple[Codec, ...] = tuple(base_codecs.copy())
 if has_crc32c:
-    all_codecs.extend(
-        [
-            CRC32C(location="start"),
-            CRC32C(),
-        ]
+    all_codecs += (
+        CRC32C(location="start"),
+        CRC32C(),
     )
 
 
