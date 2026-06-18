@@ -16,10 +16,12 @@ sphinx:
 
 python:
   install:
-    - method: pip
+    - method: uv
+      command: sync
       path: .
-      extra_requirements:
+      groups:
         - docs
+      extras:
         - msgpack
         - zfpy
         - crc32c
