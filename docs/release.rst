@@ -21,6 +21,12 @@ Improvements
 ~~~~~~~~~~~~
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
   By :user:`Cas Wognum <cwognum>`.
+* Add streaming decompression for Zstandard when the frame content size is unknown.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`707`
+* Fix Zstd decompression negative size issue on 32-bit platforms.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`782`
+* Allow Zstandard to decompress multiple concatenated frames.
+  By :user:`Mark Kittisopikul <mkitti>`, :issue:`757`
 
 Fixes
 ~~~~~
