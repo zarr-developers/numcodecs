@@ -8,7 +8,7 @@ coverage:
       default:
         target: 100
   ignore:
-    - "numcodecs/tests/**"
+    - "tests/**"
 comment:
   layout: "diff, files"
   behavior: default
