@@ -2,10 +2,10 @@
 
 import numpy as np
 import pytest
-from numcodecs.zstd import Zstd
 
 pyzstd = pytest.importorskip("pyzstd")
 
+from numcodecs.zstd import Zstd  # noqa: E402
 
 test_data = [
     b"Hello World!",

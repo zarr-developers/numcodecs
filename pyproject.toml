@@ -77,7 +77,6 @@ test = [
 ]
 test_extras = [
     "importlib_metadata",
-    "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
 
 [dependency-groups]
@@ -88,22 +87,20 @@ dev = [
     "cython>=3.0",
     "setuptools-scm>=6.2",
     "numpy>=2",
+    "pytest==9.0.3",
 ]
 test-zarr-308 = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr==3.0.8",
     "crc32c",
 ]
 test-zarr-316 = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr==3.1.6",
     "crc32c",
 ]
 test-zarr-main = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
     "crc32c",
 ]
