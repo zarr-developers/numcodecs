@@ -5,6 +5,7 @@ from contextlib import suppress
 import numpy as np
 import pytest
 
+from numcodecs.abc import Codec
 from numcodecs.checksum32 import CRC32, Adler32
 from tests.common import (
     check_backwards_compatibility,
@@ -51,43 +52,39 @@ base_codecs = [
 ]
 
 
-def get_all_codecs():
-    codecs = base_codecs.copy()
-    if has_crc32c:
-        codecs.extend(
-            [
-                CRC32C(location="start"),
-                CRC32C(),
-            ]
-        )
-    return codecs
+all_codecs: tuple[Codec, ...] = tuple(base_codecs.copy())
+if has_crc32c:
+    all_codecs += (
+        CRC32C(location="start"),
+        CRC32C(),
+    )
 
 
-@pytest.mark.parametrize(("codec", "arr"), itertools.product(get_all_codecs(), arrays))
+@pytest.mark.parametrize(("codec", "arr"), tuple(itertools.product(all_codecs, arrays)))
 def test_encode_decode(codec, arr):
     check_encode_decode(arr, codec)
 
 
-@pytest.mark.parametrize(("codec", "arr"), itertools.product(get_all_codecs(), arrays))
+@pytest.mark.parametrize(("codec", "arr"), tuple(itertools.product(all_codecs, arrays)))
 def test_errors(codec, arr):
     enc = codec.encode(arr)
     with pytest.raises(RuntimeError):
         codec.decode(enc[:-1])
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_config(codec):
     check_config(codec)
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_input_too_small(codec):
     buf = b'000'  # 3 bytes are too little for a 32-bit checksum
     with pytest.raises(ValueError):
         codec.decode(buf)
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_encode_non_contiguous(codec):
     # non-contiguous memory
     arr = np.arange(1000, dtype='i4')[::2]
@@ -95,7 +92,7 @@ def test_err_encode_non_contiguous(codec):
         codec.encode(arr)
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_encode_list(codec):
     data = ['foo', 'bar', 'baz']
     with pytest.raises(TypeError):
@@ -154,17 +151,17 @@ def test_backwards_compatibility_crc32c():
     check_backwards_compatibility(CRC32C.codec_id, arrays, [CRC32C()])
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_encode_object_buffer(codec):
     check_err_encode_object_buffer(codec)
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_decode_object_buffer(codec):
     check_err_decode_object_buffer(codec)
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_out_too_small(codec):
     arr = np.arange(10, dtype='i4')
     out = np.empty_like(arr)[:-1]
@@ -198,7 +195,7 @@ def test_crc32c_incremental():
     assert checksum_full == checksum_part2
 
 
-@pytest.mark.parametrize("codec", get_all_codecs())
+@pytest.mark.parametrize("codec", all_codecs)
 def test_err_checksum(codec):
     arr = np.arange(0, 64, dtype="uint8")
     buf = bytearray(codec.encode(arr))
