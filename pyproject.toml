@@ -88,6 +88,7 @@ dev = [
     "setuptools-scm>=6.2",
     "numpy>=2",
     "pytest==9.0.3",
+    "pytest-cov",
 ]
 test-zarr-308 = [
     {include-group="dev"},
