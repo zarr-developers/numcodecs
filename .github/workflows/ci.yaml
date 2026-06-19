@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
@@ -43,7 +43,7 @@ jobs:
         shell: "bash -l {0}"
         run: pytest -v
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0
@@ -93,7 +93,7 @@ jobs:
       - name: Run checksum tests
         run: pytest -v tests/test_checksum32.py
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -118,7 +118,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 0 # required for version resolution
@@ -138,7 +138,7 @@ jobs:
       - name: Run Zarr integration tests
         run: pytest tests/test_zarr3.py tests/test_zarr3_import.py
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
