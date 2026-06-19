@@ -56,8 +56,9 @@ jobs:
         # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
         # so we can have some tests of our minimum version of numpy (1.24)
         if: matrix.python-version != '3.11'
-        # TODO: remove --pre option when zarr v3 is out
-        run: python -m pip install --pre zarr>=3.0.0b2
+        # numcodecs.zarr3 in this branch targets the zarr 3.0.x API; zarr 3.1+
+        # moved these codecs into zarr itself and changed internal APIs.
+        run: python -m pip install "zarr>=3.0,<3.1"
 
       - name: List installed packages
         run: python -m pip list
