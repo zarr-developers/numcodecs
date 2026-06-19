@@ -1,13 +1,5 @@
-import unittest
-
 import numpy as np
 import pytest
-
-try:
-    from numcodecs.msgpacks import MsgPack
-except ImportError as e:  # pragma: no cover
-    raise unittest.SkipTest("msgpack not available") from e
-
 
 from tests.common import (
     check_backwards_compatibility,
@@ -16,6 +8,8 @@ from tests.common import (
     check_repr,
     greetings,
 )
+
+MsgPack = pytest.importorskip("numcodecs.msgpacks").MsgPack
 
 # object array with strings
 # object array with mix strings / nans

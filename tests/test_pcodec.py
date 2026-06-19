@@ -1,11 +1,6 @@
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.pcodec import PCodec
-except ImportError:  # pragma: no cover
-    pytest.skip("pcodec not available", allow_module_level=True)
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -14,6 +9,8 @@ from tests.common import (
     check_err_encode_object_buffer,
     check_repr,
 )
+
+PCodec = pytest.importorskip("numcodecs.pcodec").PCodec
 
 codecs = [
     PCodec(),

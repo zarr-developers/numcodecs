@@ -4,17 +4,14 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.shuffle import Shuffle
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.shuffle not available", allow_module_level=True)
-
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
     check_encode_decode,
+    is_wasm,
 )
+
+Shuffle = pytest.importorskip("numcodecs.shuffle").Shuffle
 
 codecs = [
     Shuffle(),
@@ -87,6 +84,7 @@ def _decode_worker(enc):
     return compressor.decode(enc)
 
 
+@pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(pool):
     data = np.arange(1000000)

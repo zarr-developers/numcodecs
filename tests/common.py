@@ -1,6 +1,8 @@
 import array
 import json as _json
 import os
+import platform
+import sys
 import warnings
 from glob import glob
 
@@ -26,6 +28,8 @@ greetings = [
     'Zdravo svete!',
     'เฮลโลเวิลด์',
 ]
+
+is_wasm = (sys.platform == 'emscripten') or (platform.machine() in ['wasm32', 'wasm64'])
 
 
 def compare_arrays(arr, res, precision=None):

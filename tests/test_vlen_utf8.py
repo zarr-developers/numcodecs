@@ -1,12 +1,6 @@
-import unittest
-
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.vlen import VLenUTF8
-except ImportError as e:  # pragma: no cover
-    raise unittest.SkipTest("vlen-utf8 not available") from e
 from tests.common import (
     assert_array_items_equal,
     check_backwards_compatibility,
@@ -15,6 +9,8 @@ from tests.common import (
     check_repr,
     greetings,
 )
+
+VLenUTF8 = pytest.importorskip("numcodecs.vlen").VLenUTF8
 
 arrays = [
     np.array(['foo', 'bar', 'baz'] * 300, dtype=object),

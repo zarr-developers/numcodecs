@@ -1,0 +1,27 @@
+name: Tests on Pyodide
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build numcodecs WASM distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          # https://github.com/actions/checkout/issues/2041 isn't released yet
+          # fetch-tags: true # required for version resolution
+
+      - name: Build and test numcodecs for Pyodide
+        uses: pypa/cibuildwheel@294735312765b09d24a2fbec22660ce817587d55 # v4.1.0
+        env:
+          CIBW_PLATFORM: pyodide

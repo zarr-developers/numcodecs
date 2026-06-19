@@ -4,14 +4,6 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 import pytest
 
-try:
-    from numcodecs.blosc import Blosc
-
-    from numcodecs import blosc
-except ImportError:  # pragma: no cover
-    pytest.skip("numcodecs.blosc not available", allow_module_level=True)
-
-
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -19,7 +11,11 @@ from tests.common import (
     check_err_decode_object_buffer,
     check_err_encode_object_buffer,
     check_max_buffer_size,
+    is_wasm,
 )
+
+blosc = pytest.importorskip("numcodecs.blosc")
+Blosc = blosc.Blosc
 
 codecs = [
     Blosc(shuffle=Blosc.SHUFFLE),
@@ -210,6 +206,7 @@ def _decode_worker(enc):
     return compressor.decode(enc)
 
 
+@pytest.mark.skipif(is_wasm, reason="WASM/Pyodide does not support multiprocessing")
 @pytest.mark.parametrize('pool', [Pool, ThreadPool])
 def test_multiprocessing(use_threads, pool):
     data = np.arange(1000000)
