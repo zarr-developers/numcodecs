@@ -25,6 +25,7 @@ codecs = [
     PCodec(delta_spec="try_lookback"),
     PCodec(delta_spec="none"),
     PCodec(delta_spec="try_consecutive", delta_encoding_order=1),
+    PCodec(delta_spec="no_op"),
 ]
 
 
@@ -47,6 +48,7 @@ arrays = [
 
 @pytest.mark.parametrize("arr", arrays)
 @pytest.mark.parametrize("codec", codecs)
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 def test_encode_decode(arr, codec):
     check_encode_decode_array(arr, codec)
 
