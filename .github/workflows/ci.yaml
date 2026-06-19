@@ -52,6 +52,22 @@ jobs:
           export DISABLE_NUMCODECS_AVX2=""
           python -m pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
 
+      - name: Deduplicate LC_RPATH entries
+        # The conda-forge compilers inject -Wl,-rpath,$PREFIX/lib multiple
+        # times, producing duplicate LC_RPATH load commands. macOS 15's dyld
+        # rejects duplicate LC_RPATH at load time, so strip the extras.
+        if: runner.os == 'macOS'
+        run: |
+          rpaths() { otool -l "$1" | awk '/ LC_RPATH$/{getline; getline; print $2}'; }
+          for so in numcodecs/*.so; do
+            for rp in $(rpaths "$so" | sort | uniq -d); do
+              while [ "$(rpaths "$so" | grep -cx "$rp")" -gt 1 ]; do
+                echo "Removing duplicate LC_RPATH '$rp' from $so"
+                install_name_tool -delete_rpath "$rp" "$so"
+              done
+            done
+          done
+
       - name: Install zarr-python
         # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
         # so we can have some tests of our minimum version of numpy (1.24)
