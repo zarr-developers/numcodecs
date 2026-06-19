@@ -54,7 +54,7 @@ zfpy = [
     "zfpy>=1.0.0"
 ]
 pcodec = [
-    "pcodec>=0.3,<0.4",
+    "pcodec>=1,<2",
 ]
 crc32c = [
     "crc32c>=2.7",
@@ -77,7 +77,6 @@ test = [
 ]
 test_extras = [
     "importlib_metadata",
-    "crc32c",  # TODO: remove once zarr-python does not depend on crc32c anymore
 ]
 
 [dependency-groups]
@@ -88,22 +87,21 @@ dev = [
     "cython>=3.0",
     "setuptools-scm>=6.2",
     "numpy>=2",
+    "pytest==9.0.3",
+    "pytest-cov",
 ]
 test-zarr-308 = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr==3.0.8",
     "crc32c",
 ]
 test-zarr-316 = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr==3.1.6",
     "crc32c",
 ]
 test-zarr-main = [
-    "pytest",
-    "pytest-cov",
+    {include-group="dev"},
     "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main",
     "crc32c",
 ]
@@ -153,6 +151,7 @@ xfail_strict = true
 filterwarnings = [
     "error",
     "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
+    "ignore:.*align should be passed as Python or NumPy boolean.*:numpy.exceptions.VisibleDeprecationWarning", # Old fixture files trigger numpy-internal dtype(align=0) warning (NumPy 2.4+)
 ]
 
 [tool.cibuildwheel]
