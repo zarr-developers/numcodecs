@@ -10,8 +10,6 @@ from tests.common import (
     check_repr,
 )
 
-# pcodec is not installed in the Pyodide CI environment because Pyodide ships
-# pcodec>=1.0, which has an incompatible API with what we require, i.e., <0.4.
 PCodec = pytest.importorskip("numcodecs.pcodec").PCodec
 
 codecs = [
