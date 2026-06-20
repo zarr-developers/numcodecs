@@ -92,12 +92,14 @@ def test_generic_compressor(
         (numcodecs.zarr3.FixedScaleOffset, {"offset": 0, "scale": 25.5}),
         (numcodecs.zarr3.FixedScaleOffset, {"offset": 0, "scale": 51, "astype": "uint16"}),
         (numcodecs.zarr3.AsType, {"encode_dtype": "float32", "decode_dtype": "float32"}),
+        (numcodecs.zarr3.AsType, {"encode_dtype": "float32"}),
     ],
     ids=[
         "delta",
         "fixedscaleoffset",
         "fixedscaleoffset2",
         "astype",
+        "astype_no_decode_dtype",
     ],
 )
 def test_generic_filter(

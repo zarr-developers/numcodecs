@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 import pyzstd
+
 from numcodecs.zstd import Zstd
 
 test_data = [
