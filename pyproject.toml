@@ -119,7 +119,7 @@ skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
 [tool.coverage.run]
-omit = ["tests/*"]
+omit = ["numcodecs/tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
