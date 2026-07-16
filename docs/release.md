@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Fixes
+
+* Normalize NumPy integer scalar ``keepbits`` values in {class}`numcodecs.bitround.BitRound`
+  to avoid overflow during floating-point rounding. By {user}`sapunyangkut`, {issue}`793`.
+
 ### Maintenance
 
 * **Migrate build system from setuptools/setup.py to meson-python.** This replaces the
