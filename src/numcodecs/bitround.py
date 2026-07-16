@@ -1,3 +1,5 @@
+from operator import index
+
 import numpy as np
 
 from .abc import Codec
@@ -38,6 +40,7 @@ class BitRound(Codec):
     codec_id = 'bitround'
 
     def __init__(self, keepbits: int):
+        keepbits = index(keepbits)
         if keepbits < 0:
             raise ValueError("keepbits must be zero or positive")
         self.keepbits = keepbits

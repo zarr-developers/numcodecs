@@ -29,6 +29,12 @@ def test_round_zero_to_zero(dtype):
         np.testing.assert_equal(a, ar)
 
 
+@pytest.mark.parametrize("keepbits", [10, np.int32(10), np.int64(10)])
+def test_round_zero_with_integer_scalar_keepbits(keepbits):
+    a = np.array([0.0], dtype="float64")
+    np.testing.assert_equal(a, round(a, keepbits))
+
+
 def test_round_one_to_one(dtype):
     a = np.ones((3, 2), dtype=dtype)
     for k in range(max_bits[dtype]):
@@ -79,3 +85,7 @@ def test_errors():
         BitRound(keepbits=10).encode(np.array([0]))
     with pytest.raises(ValueError):
         BitRound(-1)
+    with pytest.raises(ValueError):
+        BitRound(np.int32(-1))
+    with pytest.raises(TypeError):
+        BitRound(10.0)
