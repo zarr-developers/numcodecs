@@ -185,12 +185,17 @@ def ndarray_copy(src, dst) -> NDArrayLike:
     src = ensure_ndarray_like(src)
     dst = ensure_ndarray_like(dst)
 
-    # flatten source array
-    src = src.reshape(-1, order="A")
-
     # ensure same data type
     if dst.dtype != object:
         src = src.view(dst.dtype)
+
+    # preserve logical coordinates when equally shaped arrays use different memory orders
+    if src.shape == dst.shape:
+        np.copyto(dst, src)
+        return dst
+
+    # flatten source array
+    src = src.reshape(-1, order="A")
 
     # reshape source to match destination
     if src.shape != dst.shape:

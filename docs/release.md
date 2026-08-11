@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Preserve multidimensional array shapes in `FixedScaleOffset` and preserve logical
+  coordinates when copying equally shaped arrays across different memory orders.
+  By {user}`shixi-li <shixi-li>`, {issue}`852`
+
 ### Maintenance
 
 * **Migrate build system from setuptools/setup.py to meson-python.** This replaces the

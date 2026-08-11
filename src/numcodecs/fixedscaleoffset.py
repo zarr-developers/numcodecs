@@ -84,8 +84,9 @@ class FixedScaleOffset(Codec):
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
-        # flatten to simplify implementation
-        arr = arr.reshape(-1, order='A')
+        # preserve the historical one-element shape for scalar inputs
+        if arr.ndim == 0:
+            arr = arr.reshape(-1)
 
         # compute scale offset
         enc = (arr - self.offset) * self.scale
@@ -100,8 +101,9 @@ class FixedScaleOffset(Codec):
         # interpret buffer as numpy array
         enc = ensure_ndarray(buf).view(self.astype)
 
-        # flatten to simplify implementation
-        enc = enc.reshape(-1, order='A')
+        # preserve the historical one-element shape for scalar inputs
+        if enc.ndim == 0:
+            enc = enc.reshape(-1)
 
         # decode scale offset
         dec = (enc / self.scale) + self.offset
