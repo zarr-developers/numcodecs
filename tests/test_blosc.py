@@ -75,6 +75,14 @@ def test_encode_decode(array, codec):
     check_encode_decode(array, codec)
 
 
+def test_empty_encode_decode(use_threads):
+    blosc.use_threads = use_threads
+    try:
+        check_encode_decode(np.empty(0, dtype='u1'), Blosc())
+    finally:
+        blosc.use_threads = None
+
+
 def test_config():
     codec = Blosc(cname='zstd', clevel=3, shuffle=1)
     check_config(codec)

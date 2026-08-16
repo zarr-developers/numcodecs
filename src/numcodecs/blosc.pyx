@@ -49,6 +49,7 @@ cdef extern from "blosc.h":
                            int numinternalthreads) nogil
     int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
                              int numinternalthreads) nogil
+    int blosc_cbuffer_validate(const void* cbuffer, size_t cbytes, size_t* nbytes)
     void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
                              size_t* blocksize)
     char* blosc_cbuffer_complib(const void* cbuffer)
@@ -350,7 +351,7 @@ def decompress(source, dest=None):
         memoryview dest_mv
         Py_buffer* dest_pb
         char* dest_ptr
-        size_t nbytes, cbytes, blocksize
+        size_t nbytes
 
     # obtain source memoryview
     source_mv = ensure_contiguous_memoryview(source)
@@ -359,8 +360,10 @@ def decompress(source, dest=None):
     # get source pointer
     source_ptr = <const char*>source_pb.buf
 
-    # determine buffer size
-    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    # validate source and determine decompressed buffer size
+    ret = blosc_cbuffer_validate(source_ptr, <size_t>source_pb.len, &nbytes)
+    if ret != 0:
+        raise RuntimeError('error during blosc decompression: %d' % ret)
 
     # setup destination buffer
     if dest is None:
@@ -381,6 +384,11 @@ def decompress(source, dest=None):
         if dest_nbytes < nbytes:
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nbytes, dest_nbytes))
+
+        # Blosc reports the number of decompressed bytes, so zero is successful
+        # for a validated empty frame rather than an error.
+        if nbytes == 0:
+            return dest
 
         # perform decompression
         if _get_use_threads():
