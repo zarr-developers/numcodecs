@@ -42,7 +42,6 @@ codecs = [
 # mix of shapes: 1D, 2D, 3D
 # mix of orders: C, F
 arrays = [
-    np.empty(0, dtype='u1'),
     np.arange(1000, dtype='i4'),
     np.linspace(1000, 1001, 1000, dtype='f8'),
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
@@ -56,6 +55,7 @@ arrays = [
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.empty(0, dtype='u1'),
 ]
 
 
