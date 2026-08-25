@@ -19,6 +19,7 @@ from .abc import Codec
 
 cdef extern from "blosc.h":
     cdef enum:
+        BLOSC_MIN_HEADER_LENGTH,
         BLOSC_MAX_OVERHEAD,
         BLOSC_VERSION_STRING,
         BLOSC_VERSION_DATE,
@@ -49,6 +50,7 @@ cdef extern from "blosc.h":
                            int numinternalthreads) nogil
     int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
                              int numinternalthreads) nogil
+    int blosc_cbuffer_validate(const void* cbuffer, size_t cbytes, size_t* nbytes)
     void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
                              size_t* blocksize)
     char* blosc_cbuffer_complib(const void* cbuffer)
@@ -332,7 +334,8 @@ def decompress(source, dest=None):
     ----------
     source : bytes-like
         Compressed data, including blosc header. Can be any object supporting the buffer
-        protocol.
+        protocol. Bytes after the first complete Blosc frame are ignored for backward
+        compatibility.
     dest : array-like, optional
         Object to decompress into.
 
@@ -359,8 +362,16 @@ def decompress(source, dest=None):
     # get source pointer
     source_ptr = <const char*>source_pb.buf
 
-    # determine buffer size
+    # Read the declared frame size only after proving the complete header is present.
+    # Validate exactly that frame so trailing bytes remain backward compatible.
+    if source_pb.len < BLOSC_MIN_HEADER_LENGTH:
+        raise RuntimeError('invalid blosc frame: buffer is too small')
     blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    if cbytes > <size_t>source_pb.len:
+        raise RuntimeError('invalid blosc frame: buffer is truncated')
+    ret = blosc_cbuffer_validate(source_ptr, cbytes, &nbytes)
+    if ret != 0:
+        raise RuntimeError('invalid blosc frame: header validation failed')
 
     # setup destination buffer
     if dest is None:
@@ -382,6 +393,12 @@ def decompress(source, dest=None):
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nbytes, dest_nbytes))
 
+        # Preserve the previous loud failure for a non-empty destination paired
+        # with an empty frame instead of returning an untouched output buffer.
+        if nbytes == 0 and dest_nbytes != 0:
+            raise RuntimeError('cannot decompress an empty blosc frame into a '
+                               'non-empty destination buffer')
+
         # perform decompression
         if _get_use_threads():
             # allow blosc to use threads internally
@@ -395,7 +412,7 @@ def decompress(source, dest=None):
         pass
 
     # handle errors
-    if ret <= 0:
+    if ret < 0 or <size_t>ret != nbytes:
         raise RuntimeError('error during blosc decompression: %d' % ret)
 
     return dest

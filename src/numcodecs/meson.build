@@ -153,7 +153,11 @@ zlib_dep = declare_dependency(
 )
 
 # --- Vendored blosc ---
-blosc_dep = dependency('blosc', required: get_option('system_blosc'))
+blosc_dep = dependency(
+  'blosc',
+  version: '>=1.16.0',
+  required: get_option('system_blosc'),
+)
 
 if not blosc_dep.found()
   blosc_sources = files(

@@ -55,6 +55,7 @@ arrays = [
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.empty(0, dtype='u1'),
 ]
 
 
@@ -73,6 +74,35 @@ def use_threads(request):
 def test_encode_decode(array, codec):
     _skip_null(codec)
     check_encode_decode(array, codec)
+
+
+def test_empty_encode_decode(use_threads):
+    blosc.use_threads = use_threads
+    try:
+        check_encode_decode(np.empty(0, dtype='u1'), Blosc())
+    finally:
+        blosc.use_threads = None
+
+
+def test_empty_decode_rejects_nonempty_destination():
+    codec = Blosc()
+    encoded = codec.encode(b'')
+    with pytest.raises(RuntimeError, match='non-empty destination buffer'):
+        codec.decode(encoded, out=bytearray(1))
+
+
+def test_decompress_allows_trailing_bytes():
+    codec = Blosc()
+    original = b'some data to compress'
+    encoded = codec.encode(original)
+    assert codec.decode(encoded + b'padding') == original
+
+
+def test_decompress_rejects_truncated_frame():
+    codec = Blosc()
+    encoded = codec.encode(b'some data to compress')
+    with pytest.raises(RuntimeError, match='buffer is truncated'):
+        codec.decode(encoded[:-1])
 
 
 def test_config():

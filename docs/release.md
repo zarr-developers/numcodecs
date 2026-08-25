@@ -14,6 +14,13 @@
 
 ## Unreleased
 
+### Fixes
+
+* Validate Blosc frames before decompression, allowing valid zero-length frames to round-trip
+  while rejecting truncation and invalid frame headers and preserving support for trailing bytes.
+  System Blosc builds now require version 1.16.0 or newer. By
+  {user}`Igor Stadnyk <fallenmi>`, {issue}`831`.
+
 ### Maintenance
 
 * **Migrate build system from setuptools/setup.py to meson-python.** This replaces the
