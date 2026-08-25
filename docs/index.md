@@ -52,6 +52,8 @@ instead of the vendored copies::
         --config-settings=setup-args=-Dsystem_zstd=enabled \
         --config-settings=setup-args=-Dsystem_lz4=enabled
 
+System Blosc builds require Blosc 1.16.0 or newer.
+
 
 To work with Numcodecs source code in development, see the
 `contributing guide <contributing.html>`_ for instructions on setting up a

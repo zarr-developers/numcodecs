@@ -42,6 +42,7 @@ codecs = [
 # mix of shapes: 1D, 2D, 3D
 # mix of orders: C, F
 arrays = [
+    np.empty(0, dtype='u1'),
     np.arange(1000, dtype='i4'),
     np.linspace(1000, 1001, 1000, dtype='f8'),
     np.random.normal(loc=1000, scale=1, size=(100, 10)),
@@ -81,6 +82,27 @@ def test_empty_encode_decode(use_threads):
         check_encode_decode(np.empty(0, dtype='u1'), Blosc())
     finally:
         blosc.use_threads = None
+
+
+def test_empty_decode_rejects_nonempty_destination():
+    codec = Blosc()
+    encoded = codec.encode(b'')
+    with pytest.raises(RuntimeError, match='non-empty destination buffer'):
+        codec.decode(encoded, out=bytearray(1))
+
+
+def test_decompress_allows_trailing_bytes():
+    codec = Blosc()
+    original = b'some data to compress'
+    encoded = codec.encode(original)
+    assert codec.decode(encoded + b'padding') == original
+
+
+def test_decompress_rejects_truncated_frame():
+    codec = Blosc()
+    encoded = codec.encode(b'some data to compress')
+    with pytest.raises(RuntimeError, match='buffer is truncated'):
+        codec.decode(encoded[:-1])
 
 
 def test_config():
