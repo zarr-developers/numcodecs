@@ -14,7 +14,7 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13", "3.14", "3.14t"]
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm, macos-15-large, macos-14]
 
     defaults:
       run:

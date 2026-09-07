@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
-        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
+        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm, macos-15-large, macos-14]
     env:
       # on free-threaded builds also check that no extension re-enables the GIL
       CIBW_TEST_COMMAND: python -c "import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())"
