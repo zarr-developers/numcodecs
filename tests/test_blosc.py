@@ -252,7 +252,7 @@ def test_set_nthreads_races_global_context():
             while not stop.is_set():
                 enc = blosc.compress(data, b'lz4', 5)
                 assert blosc.decompress(enc) == data.tobytes()
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             errors.append(e)
 
     def toggler():
