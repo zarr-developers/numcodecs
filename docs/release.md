@@ -21,7 +21,7 @@
   free-threaded wheels are now built and 3.14t is part of the test matrix. Building from
   source now requires Cython 3.1 or newer.
 
-  Two behavioural changes in `numcodecs.blosc` accompany this: the undocumented
+  Two behavioral changes in `numcodecs.blosc` accompany this: the undocumented
   `numcodecs.blosc.get_mutex` function is removed, replaced by a private
   `threading.Lock` that also guards `set_nthreads`, `_init`, `_destroy` and the
   global-context decompression path; and on platforms where `multiprocessing.Lock()`
