@@ -3,6 +3,7 @@
 # cython: linetrace=False
 # cython: binding=False
 # cython: language_level=3
+# cython: freethreading_compatible=True
 
 
 from libc.stdint cimport uint8_t, uint32_t

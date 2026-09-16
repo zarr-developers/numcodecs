@@ -12,13 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.12", "3.13", "3.14"]
+        python-version: ["3.12", "3.13", "3.14", "3.14t"]
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
         platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
-        shell: bash -el {0}
+        shell: bash -e {0}
 
     steps:
       - name: Checkout source
@@ -34,13 +34,18 @@ jobs:
           cache: 'pip'
 
       - name: Install numcodecs
+        if: ${{ !endsWith(matrix.python-version, 't') }}
         run: python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+
+      - name: Install numcodecs (free-threaded)
+        # pcodec, zfpy and google_crc32c do not ship free-threaded wheels yet
+        if: ${{ endsWith(matrix.python-version, 't') }}
+        run: python -m pip install -v ".[test,test_extras,msgpack,crc32c]"
 
       - name: List installed packages
         run: python -m pip list
 
       - name: Run tests
-        shell: "bash -l {0}"
         run: pytest -v
 
       - uses: codecov/codecov-action@v6
