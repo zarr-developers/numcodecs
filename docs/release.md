@@ -14,6 +14,22 @@
 
 ## Unreleased
 
+### Enhancements
+
+* Add support for free-threaded CPython (3.14t). All Cython extensions are declared
+  `freethreading_compatible`, so importing `numcodecs` no longer re-enables the GIL;
+  free-threaded wheels are now built and 3.14t is part of the test matrix. Building from
+  source now requires Cython 3.1 or newer.
+
+  Two behavioral changes in `numcodecs.blosc` accompany this: the undocumented
+  `numcodecs.blosc.get_mutex` function is removed, replaced by a private
+  `threading.Lock` that also guards `set_nthreads`, `_init`, `_destroy` and the
+  global-context decompression path; and on platforms where `multiprocessing.Lock()`
+  raises (no `sem_open`), Blosc's internal threads are now used from the main thread
+  instead of always falling back to the single-threaded context functions.
+
+  By {user}`Kumar Aditya <kumaraditya303>`, {issue}`858`
+
 ### Maintenance
 
 * **Migrate build system from setuptools/setup.py to meson-python.** This replaces the

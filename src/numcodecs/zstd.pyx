@@ -3,6 +3,7 @@
 # cython: linetrace=False
 # cython: binding=False
 # cython: language_level=3
+# cython: freethreading_compatible=True
 
 
 from cpython.bytes cimport PyBytes_AS_STRING, PyBytes_FromStringAndSize

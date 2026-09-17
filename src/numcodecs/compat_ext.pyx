@@ -3,6 +3,7 @@
 # cython: linetrace=False
 # cython: binding=False
 # cython: language_level=3
+# cython: freethreading_compatible=True
 
 from cpython.buffer cimport PyBuffer_IsContiguous
 from cpython.memoryview cimport PyMemoryView_GET_BUFFER

@@ -3,6 +3,7 @@
 # cython: linetrace=False
 # cython: binding=False
 # cython: language_level=3
+# cython: freethreading_compatible=True
 import threading
 import multiprocessing
 import os
@@ -72,22 +73,20 @@ AUTOSHUFFLE = -1
 # automatic block size - let blosc decide
 AUTOBLOCKS = 0
 
-# synchronization
-_MUTEX = None
-_MUTEX_IS_INIT = False
+# computed once at import; blosc_list_compressors() fills a static buffer without locking
+_COMPRESSORS = tuple(blosc_list_compressors().decode('ascii').split(','))
 
-def get_mutex():
-    global _MUTEX_IS_INIT, _MUTEX
-    if not _MUTEX_IS_INIT:
-        try:
-            mutex = multiprocessing.Lock()
-        except OSError:
-            mutex = None
-        except ImportError:
-            mutex = None
-        _MUTEX = mutex
-        _MUTEX_IS_INIT = True
-    return _MUTEX
+# serializes access to blosc's global context
+_MUTEX = threading.Lock()
+
+
+def _reset_mutex_after_fork():
+    global _MUTEX
+    _MUTEX = threading.Lock()
+
+
+if hasattr(os, 'register_at_fork'):
+    os.register_at_fork(after_in_child=_reset_mutex_after_fork)
 
 # store ID of process that first loads the module, so we can detect a fork later
 _importer_pid = os.getpid()
@@ -95,31 +94,34 @@ _importer_pid = os.getpid()
 
 def _init():
     """Initialize the Blosc library environment."""
-    blosc_init()
+    with _MUTEX:
+        blosc_init()
 
 
 def _destroy():
     """Destroy the Blosc library environment."""
-    blosc_destroy()
+    with _MUTEX:
+        blosc_destroy()
 
 
 def list_compressors():
     """Get a list of compressors supported in the current build."""
-    s = blosc_list_compressors()
-    s = s.decode('ascii')
-    return s.split(',')
+    return list(_COMPRESSORS)
 
 
 def get_nthreads():
     """Get the number of threads that Blosc uses internally for compression and
     decompression."""
-    return blosc_get_nthreads()
+    with _MUTEX:
+        return blosc_get_nthreads()
 
 
 def set_nthreads(int nthreads):
     """Set the number of threads that Blosc uses internally for compression and
     decompression."""
-    return blosc_set_nthreads(nthreads)
+    # blosc_set_nthreads re-creates the global context
+    with _MUTEX:
+        return blosc_set_nthreads(nthreads)
 
 
 def _cbuffer_sizes(source):
@@ -247,7 +249,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
 
     # check valid cname early
     cname_str = cname.decode('ascii')
-    if cname_str not in list_compressors():
+    if cname_str not in _COMPRESSORS:
         _err_bad_cname(cname_str)
 
     # obtain source memoryview
@@ -288,8 +290,8 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
 
             # N.B., we are using blosc's global context, and so we need to use a lock
             # to ensure no-one else can modify the global context while we're setting it
-            # up and using it.
-            with get_mutex():
+            # up and using it (including set_nthreads/_destroy re-initializing it).
+            with _MUTEX:
 
                 # set compressor
                 compressor_set = blosc_set_compressor(cname)
@@ -385,8 +387,9 @@ def decompress(source, dest=None):
         # perform decompression
         if _get_use_threads():
             # allow blosc to use threads internally
-            with nogil:
-                ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
+            with _MUTEX:
+                with nogil:
+                    ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
         else:
             with nogil:
                 ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
@@ -409,10 +412,6 @@ use_threads = None
 def _get_use_threads():
     global use_threads
     proc = multiprocessing.current_process()
-
-    # check if locks are available, and if not no threads
-    if not get_mutex():
-        return False
 
     # check for fork
     if proc.pid != _importer_pid:
