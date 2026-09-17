@@ -1,0 +1,54 @@
+# numcodecs#810 investigation findings
+
+Env: numcodecs 0.15.1, blosc clib 1.21.6, zarr 2.18.2, xarray 2026.4.0, dask 2026.3.0.
+Source codec: `Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0)`, float32, chunk (1080,1440).
+
+## Error
+`RuntimeError: error during blosc decompression: -1` (numcodecs/blosc.pyx:414),
+intermittent, during distributed (coiled) reads of a blosc-compressed zarr on S3.
+Reported mitigations BLOSC_NTHREADS=1 / BLOSC_NOLOCK=1 / NUMEXPR_NUM_THREADS=1 did not help.
+
+## What did NOT reproduce it
+Standalone `Blosc.decode()` hammered concurrently (no S3, no dask, no zarr):
+- 48 threads x 3000 iters x 8 chunks = 144k concurrent decodes, blosc nthreads=1: clean.
+- 32 threads x 2000 iters, blosc internal nthreads=4 and =8: clean.
+=> Concurrent in-memory decode of intact buffers is thread-safe here. The race
+theory (numcodecs/blosc thread-safety) is not supported by these runs.
+
+## What DID reproduce the exact error (deterministic)
+Feeding blosc a **truncated** compressed buffer reproduces the identical error:
+    enc = codec.encode(float32 (1080,1440))         # len 4,944,670 bytes
+    codec.decode(enc[:int(len*0.99)])  -> RuntimeError: error during blosc decompression: -1
+    codec.decode(enc[:int(len*0.50)])  -> same
+    codec.decode(enc[:int(len*0.999)]) -> same
+
+## Hypothesis
+The `-1` is blosc correctly rejecting an **incomplete/truncated input buffer**. The bug
+is therefore upstream of the codec: under high read concurrency, the chunk bytes handed
+to blosc are occasionally short (a partial / mis-retried S3 range request, or a
+connection-pool race in s3fs/fsspec/zarr). This explains:
+  - BLOSC_NTHREADS=1 not helping (not a blosc thread bug),
+  - failures clustering near completion of large jobs (more chunk reads = more chances),
+  - the absence of any pure-codec reproducer.
+
+## Real-world traceback captured
+
+Confirms the failure is on the READ/decode path during a distributed write
+(`to_zarr` reading & decompressing source chunks from S3), exactly matching the
+truncation finding above:
+
+```
+  File ".../dask/array/core.py", line 1220, in store
+    dask.compute(arrays, **kwargs)
+  ...
+  File ".../zarr/core.py", line 2187, in _chunk_getitems
+  File ".../zarr/core.py", line 2100, in _process_chunk
+  File ".../zarr/core.py", line 2356, in _decode_chunk
+  File "numcodecs/blosc.pyx", line 585, in numcodecs.blosc.Blosc.decode
+  File "numcodecs/blosc.pyx", line 414, in numcodecs.blosc.decompress
+RuntimeError: error during blosc decompression: -1
+```
+
+The error is raised inside `_decode_chunk` (a read) -- blosc was handed the bytes of
+a chunk just fetched from the store -> consistent with a truncated read from the
+storage/transport layer (s3fs/fsspec/zarr), not a codec thread-safety race.
