@@ -14,56 +14,132 @@
 
 ## Unreleased
 
+(release_0.17.0)=
+
+## 0.17.0
+
+### Breaking changes
+
+* The minimum supported Python version is now 3.12, and the minimum supported NumPy
+  version is now 2.0, following
+  [SPEC-0](https://scientific-python.org/specs/spec-0000/).
+  By {user}`Max Jones <maxrjones>`, {issue}`834`
+
+* Tests are no longer installed as part of the `numcodecs` package. They have moved from
+  `numcodecs/tests/` to a top-level `tests/` directory, so `numcodecs.tests` (including
+  `numcodecs.tests.common`) can no longer be imported from an installed copy of
+  `numcodecs`. Downstream packages that reused the test helpers should vendor the
+  helpers they need. The tests and the `fixture/` data are still shipped in the source
+  distribution, so downstream packagers can continue to run the suite from an unpacked
+  sdist.
+  By {user}`Max Jones <maxrjones>`, {issue}`829`
+
+* The `DISABLE_NUMCODECS_CEXT` environment variable is no longer supported, as a
+  consequence of the migration to meson-python (see Maintenance below).
+  By {user}`Max Jones <maxrjones>`, {issue}`826`
+
+* The `pcodec` optional dependency now requires `pcodec>=1,<2`, up from
+  `pcodec>=0.3,<0.4`.
+  By {user}`Martin Loncaric <mwlon>`, {issue}`817`
+
+* Two behavioral changes in `numcodecs.blosc` accompany the free-threading work (see
+  Enhancements below): the undocumented `numcodecs.blosc.get_mutex` function is removed,
+  replaced by a private `threading.Lock` that also guards `set_nthreads`, `_init`,
+  `_destroy` and the global-context decompression path; and on platforms where
+  `multiprocessing.Lock()` raises (no `sem_open`), Blosc's internal threads are now used
+  from the main thread instead of always falling back to the single-threaded context
+  functions.
+  By {user}`Kumar Aditya <kumaraditya303>`, {issue}`858`
+
+### Deprecations
+
+* `PCodec(delta_spec="none")` is deprecated in favor of `PCodec(delta_spec="no_op")` and
+  now emits a `DeprecationWarning`. The `"none"` spelling still works and produces
+  identical output, but it will be removed in a future version.
+  By {user}`Martin Loncaric <mwlon>`, {issue}`817`
+
 ### Enhancements
 
 * Add support for free-threaded CPython (3.14t). All Cython extensions are declared
   `freethreading_compatible`, so importing `numcodecs` no longer re-enables the GIL;
   free-threaded wheels are now built and 3.14t is part of the test matrix. Building from
-  source now requires Cython 3.1 or newer.
-
-  Two behavioral changes in `numcodecs.blosc` accompany this: the undocumented
-  `numcodecs.blosc.get_mutex` function is removed, replaced by a private
-  `threading.Lock` that also guards `set_nthreads`, `_init`, `_destroy` and the
-  global-context decompression path; and on platforms where `multiprocessing.Lock()`
-  raises (no `sem_open`), Blosc's internal threads are now used from the main thread
-  instead of always falling back to the single-threaded context functions.
-
+  source now requires Cython 3.1 or newer. See Breaking changes above for the
+  accompanying `numcodecs.blosc` changes.
   By {user}`Kumar Aditya <kumaraditya303>`, {issue}`858`
 
 ### Maintenance
 
-* **Migrate build system from setuptools/setup.py to meson-python.** This replaces the
-  386-line ``setup.py`` with declarative ``meson.build`` files. Benefits include correct
-  SIMD detection for cross-compilation, native support for linking against system-installed
-  Blosc/Zstd/LZ4 libraries (via ``-Dsystem_blosc=enabled`` etc.), and alignment with the
-  build system used by numpy, scipy, and scikit-learn.
+* **Migrate the build system from setuptools/`setup.py` to meson-python.** This replaces
+  the 386-line `setup.py` with declarative `meson.build` files. Benefits include correct
+  SIMD detection for cross-compilation, native support for linking against
+  system-installed Blosc/Zstd/LZ4 libraries (via `-Dsystem_blosc=enabled` etc.), and
+  alignment with the build system used by numpy, scipy, and scikit-learn.
 
-  The ``DISABLE_NUMCODECS_AVX2`` and ``DISABLE_NUMCODECS_SSE2`` environment variables
+  The `DISABLE_NUMCODECS_AVX2` and `DISABLE_NUMCODECS_SSE2` environment variables
   continue to work for backwards compatibility. The preferred way to control SIMD is now
-  via meson options::
+  via meson options:
 
-      pip install numcodecs --no-binary numcodecs \
-          --config-settings=setup-args=-Davx2=disabled
+  ```
+  pip install numcodecs --no-binary numcodecs \
+      --config-settings=setup-args=-Davx2=disabled
+  ```
 
-  The ``DISABLE_NUMCODECS_CEXT`` environment variable is no longer supported.
+  By {user}`Max Jones <maxrjones>`, {issue}`826`
 
-  By :user:`Max Jones <maxrjones>`.
+* Move source code from `numcodecs/` to `src/numcodecs/` (src layout). This avoids import
+  shadowing issues where the source tree's `numcodecs/` package (without compiled C
+  extensions) would shadow the installed package.
+  By {user}`Max Jones <maxrjones>`, {issue}`826`
 
-* Move source code from ``numcodecs/`` to ``src/numcodecs/`` (src layout). This avoids
-  import shadowing issues where the source tree's ``numcodecs/`` package (without compiled
-  C extensions) would shadow the installed package.
-
-  By :user:`Max Jones <maxrjones>`.
-
-* Rewrite contributing guide with uv development environment instructions.
-
-  By :user:`Max Jones <maxrjones>`.
+* Rewrite the contributing guide with uv development environment instructions.
+  By {user}`Max Jones <maxrjones>`, {issue}`826`
 
 * Convert documentation from reStructuredText to Markdown using MyST.
-  By {user}`Max Jones <maxrjones>`, :issue:`830`
+  By {user}`Max Jones <maxrjones>`, {issue}`830`
 
-* Move tests out of installable package into top-level ``tests/`` directory.
-  By :user:`Max Jones <maxrjones>`, :issue:`829`
+* Convert the README to Markdown and fix the badges.
+  By {user}`Max Jones <maxrjones>`, {issue}`827`
+
+* Build the documentation with a pinned readthedocs build image.
+  By {user}`Max Jones <maxrjones>`, {issue}`833`
+
+* Suppress a NumPy 2.4 `VisibleDeprecationWarning` for `align=0` dtype descriptors in the
+  backwards compatibility tests.
+  By {user}`Max Jones <maxrjones>`, {issue}`822`
+
+* Exclude the tests directory from coverage reporting.
+  By {user}`Max Jones <maxrjones>`, {issue}`803`, {issue}`823`
+
+* Drop `crc32c` from the test extras, as zarr-python no longer depends on it.
+  By {user}`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, {issue}`840`
+
+* Fix a Meson mixup between Conda and system Python headers in CI.
+  By {user}`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, {issue}`839`
+
+* Update the macOS Intel CI runner.
+  By {user}`Ian Hunt-Isaak <ianhi>`, {issue}`819`
+
+* Bump ruff and update the pre-commit legacy alias.
+  By {user}`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, {issue}`791`
+
+* Fix typos throughout the codebase.
+  By {user}`Dimitri Papadopoulos Orfanos <DimitriPapadopoulos>`, {issue}`832`
+
+* Pin pytest and deduplicate the dependency groups.
+  By {user}`Davis Bennett <d-v-b>`, {issue}`844`
+
+* Skip `test_pyzstd` when `pyzstd` cannot be imported.
+  By {user}`Davis Bennett <d-v-b>`, {issue}`845`
+
+* Add `pytest-cov` to the dev dependency group.
+  By {user}`Davis Bennett <d-v-b>`, {issue}`846`
+
+* Set an explicit python-version for the test-crc32c and test-zarr CI jobs.
+  By {user}`Max Jones <maxrjones>`, {issue}`856`
+
+* Bump GitHub actions.
+  By {user}`dependabot <dependabot>`, {issue}`838`
+
 
 (release_0.16.5)=
 
