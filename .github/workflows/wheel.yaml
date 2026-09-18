@@ -26,7 +26,10 @@ jobs:
       CIBW_TEST_COMMAND: python -c "import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())"
       CIBW_BUILD: "cp312-* cp313-* cp314-* cp314t-*"
       CIBW_ENABLE: cpython-freethreading
-      CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
+      # Free-threaded win_arm64 is skipped because CPython's _Py_ThreadId()
+      # tries calling __getReg() that CLANGARM64 clang does not provide.
+      # https://github.com/python/cpython/issues/157212
+      CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x cp314t-win_arm64"
       # note: cibuildwheel config-settings are set in pyproject.toml
 
     steps:

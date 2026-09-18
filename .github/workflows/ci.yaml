@@ -15,6 +15,12 @@ jobs:
         python-version: ["3.12", "3.13", "3.14", "3.14t"]
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
         platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm, macos-15-large, macos-14]
+        exclude:
+          # Free-threaded win_arm64 is skipped because CPython's _Py_ThreadId()
+          # tries calling __getReg() that CLANGARM64 clang does not provide.
+          # https://github.com/python/cpython/issues/157212
+          - python-version: "3.14t"
+            platform: windows-11-arm
 
     defaults:
       run:
