@@ -207,7 +207,7 @@ endif
 # Extensions with C library dependencies
 py.extension_module('blosc',
   'blosc.pyx',
-  dependencies: [blosc_dep, lz4_dep, zlib_dep, zstd_dep],
+  dependencies: [blosc_dep],
   c_args: c_args,
   link_args: link_args,
   install: true,
