@@ -35,6 +35,25 @@ jobs:
           submodules: true
           fetch-depth: 0  # required for version resolution for nightly wheels
 
+      - name: Set up MSYS2
+        if: runner.os == 'Windows'
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ runner.arch == 'ARM64' && 'CLANGARM64' || 'CLANG64' }}
+          pacboy: clang:p
+
+      # Prepended to PATH so clang wins over the x86_64 MinGW gcc in the runner image
+      - name: Select the MSYS2 clang toolchain
+        if: runner.os == 'Windows'
+        shell: bash
+        env:
+          MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+          MSYS2_PREFIX: ${{ runner.arch == 'ARM64' && 'clangarm64' || 'clang64' }}
+        run: |
+          echo "$MSYS2_LOCATION/$MSYS2_PREFIX/bin" >> $GITHUB_PATH
+          echo "CC=clang" >> $GITHUB_ENV
+
       - uses: pypa/cibuildwheel@v3.4.1
 
       - uses: actions/upload-artifact@v7
