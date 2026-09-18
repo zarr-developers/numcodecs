@@ -14,7 +14,13 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13", "3.14", "3.14t"]
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm, macos-15-large, macos-14]
+        exclude:
+          # Free-threaded win_arm64 is skipped because CPython's _Py_ThreadId()
+          # tries calling __getReg() that CLANGARM64 clang does not provide.
+          # https://github.com/python/cpython/issues/157212
+          - python-version: "3.14t"
+            platform: windows-11-arm
 
     defaults:
       run:
@@ -33,9 +39,30 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
 
+      - name: Set up MSYS2
+        if: runner.os == 'Windows'
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ runner.arch == 'ARM64' && 'CLANGARM64' || 'CLANG64' }}
+          pacboy: clang:p
+
+      # Prepended to PATH so clang wins over the x86_64 MinGW gcc in the runner image
+      - name: Select the MSYS2 clang toolchain
+        if: runner.os == 'Windows'
+        env:
+          MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+          MSYS2_PREFIX: ${{ runner.arch == 'ARM64' && 'clangarm64' || 'clang64' }}
+        run: |
+          echo "$MSYS2_LOCATION/$MSYS2_PREFIX/bin" >> $GITHUB_PATH
+          echo "CC=clang" >> $GITHUB_ENV
+
       - name: Install numcodecs
+        # zfpy does not have a win_arm64 wheel
         if: ${{ !endsWith(matrix.python-version, 't') }}
-        run: python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]"
+        env:
+          ZFPY_EXTRA: ${{ matrix.platform != 'windows-11-arm' && ',zfpy' || '' }}
+        run: python -m pip install -v ".[test,test_extras,msgpack,google_crc32c,crc32c,pcodec$ZFPY_EXTRA]"
 
       - name: Install numcodecs (free-threaded)
         # pcodec, zfpy and google_crc32c do not ship free-threaded wheels yet

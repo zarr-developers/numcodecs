@@ -20,13 +20,16 @@ jobs:
       fail-fast: false
       matrix:
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
-        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
+        os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, windows-11-arm, macos-15-large, macos-14]
     env:
       # on free-threaded builds also check that no extension re-enables the GIL
       CIBW_TEST_COMMAND: python -c "import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())"
       CIBW_BUILD: "cp312-* cp313-* cp314-* cp314t-*"
       CIBW_ENABLE: cpython-freethreading
-      CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
+      # Free-threaded win_arm64 is skipped because CPython's _Py_ThreadId()
+      # tries calling __getReg() that CLANGARM64 clang does not provide.
+      # https://github.com/python/cpython/issues/157212
+      CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x cp314t-win_arm64"
       # note: cibuildwheel config-settings are set in pyproject.toml
 
     steps:
@@ -34,6 +37,25 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0  # required for version resolution for nightly wheels
+
+      - name: Set up MSYS2
+        if: runner.os == 'Windows'
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ runner.arch == 'ARM64' && 'CLANGARM64' || 'CLANG64' }}
+          pacboy: clang:p
+
+      # Prepended to PATH so clang wins over the x86_64 MinGW gcc in the runner image
+      - name: Select the MSYS2 clang toolchain
+        if: runner.os == 'Windows'
+        shell: bash
+        env:
+          MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+          MSYS2_PREFIX: ${{ runner.arch == 'ARM64' && 'clangarm64' || 'clang64' }}
+        run: |
+          echo "$MSYS2_LOCATION/$MSYS2_PREFIX/bin" >> $GITHUB_PATH
+          echo "CC=clang" >> $GITHUB_ENV
 
       - uses: pypa/cibuildwheel@v3.4.1
 
