@@ -16,6 +16,10 @@
 
 (release_0.17.0)=
 
+* Allow building against a system Zlib. Note, this is only required if blosc is still
+  vendored, and a vendored Zlib is no longer built if blosc is not.
+  By {user}`Elliott Sales de Andrade <QuLogic>`, {issue}`860`
+
 ## 0.17.0
 
 ### Breaking changes

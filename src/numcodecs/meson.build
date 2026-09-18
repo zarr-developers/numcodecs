@@ -123,39 +123,43 @@ if not lz4_dep.found()
   )
 endif
 
-# --- Vendored zlib (always vendored, used by blosc) ---
-zlib_sources = files(
-  '../../c-blosc/internal-complibs/zlib-1.3.1/adler32.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/compress.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/crc32.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/deflate.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/gzclose.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/gzlib.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/gzread.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/gzwrite.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/infback.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/inffast.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/inflate.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/inftrees.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/trees.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/uncompr.c',
-  '../../c-blosc/internal-complibs/zlib-1.3.1/zutil.c',
-)
-zlib_inc = include_directories('../../c-blosc/internal-complibs/zlib-1.3.1')
-
-zlib_lib = static_library('zlib_vendored', zlib_sources,
-  include_directories: zlib_inc,
-  c_args: c_args,
-)
-zlib_dep = declare_dependency(
-  link_with: zlib_lib,
-  include_directories: zlib_inc,
-)
-
 # --- Vendored blosc ---
 blosc_dep = dependency('blosc', required: get_option('system_blosc'))
 
 if not blosc_dep.found()
+  # --- Vendored zlib ---
+  zlib_dep = dependency('zlib', required: get_option('system_zlib'))
+
+  if not zlib_dep.found()
+    zlib_sources = files(
+      '../../c-blosc/internal-complibs/zlib-1.3.1/adler32.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/compress.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/crc32.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/deflate.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/gzclose.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/gzlib.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/gzread.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/gzwrite.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/infback.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/inffast.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/inflate.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/inftrees.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/trees.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/uncompr.c',
+      '../../c-blosc/internal-complibs/zlib-1.3.1/zutil.c',
+    )
+    zlib_inc = include_directories('../../c-blosc/internal-complibs/zlib-1.3.1')
+
+    zlib_lib = static_library('zlib_vendored', zlib_sources,
+      include_directories: zlib_inc,
+      c_args: c_args,
+    )
+    zlib_dep = declare_dependency(
+      link_with: zlib_lib,
+      include_directories: zlib_inc,
+    )
+  endif
+
   blosc_sources = files(
     '../../c-blosc/blosc/blosc.c',
     '../../c-blosc/blosc/blosclz.c',
