@@ -166,6 +166,8 @@ def decompress(source, dest=None):
             dest_1d = dest = PyBytes_FromStringAndSize(NULL, dest_size)
         else:
             dest_1d = ensure_contiguous_ndarray(dest)
+            if not dest_1d.flags.writeable:
+                raise ValueError("destination buffer is read-only")
 
         # obtain dest memoryview
         dest_mv = memoryview(dest_1d)

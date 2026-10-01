@@ -102,6 +102,17 @@ def ensure_contiguous_ndarray_like(buf, max_buffer_size=None, flatten=True) -> N
     if arr.dtype.kind in "Mm":
         arr = arr.view(np.int64)  # type: ignore[arg-type]
 
+    # NumPy cannot export the buffer format of some structured dtypes, including
+    # datetime/timedelta fields. Keep each record's itemsize (used by Blosc's
+    # shuffle filter) and expose its bytes without copying or changing the input.
+    if isinstance(arr, np.ndarray) and arr.dtype.fields is not None:
+        if arr.dtype.hasobject:
+            raise TypeError("object arrays are not supported")
+        try:
+            memoryview(arr)
+        except ValueError:
+            arr = arr.view(np.dtype((np.void, arr.dtype.itemsize)))
+
     # check memory is contiguous, if so flatten
     if arr.flags.c_contiguous or arr.flags.f_contiguous:
         if flatten:
