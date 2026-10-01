@@ -14,6 +14,10 @@
 
 ## Unreleased
 
+* Fix compression and decompression of structured arrays containing datetime or
+  timedelta fields with Zstd, LZ4, and Blosc ({issue}`755`). Preserve record sizes
+  and reject object-containing records and read-only destination buffers.
+
 (release_0.17.0)=
 
 * Allow building against a system Zlib. Note, this is only required if blosc is still
