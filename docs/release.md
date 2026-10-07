@@ -19,6 +19,10 @@
 * Allow building against a system Zlib. Note, this is only required if blosc is still
   vendored, and a vendored Zlib is no longer built if blosc is not.
   By {user}`Elliott Sales de Andrade <QuLogic>`, {issue}`860`
+* The `JSON` codec now keeps the fields of structured dtypes, so structured arrays
+  (including ones with object fields) can be decoded. Before, the dtype was stored as
+  `|V<n>` and decoding failed.
+  By {user}`Raashish Aggarwal <raashish1601>`, {issue}`518`
 
 ## 0.17.0
 
