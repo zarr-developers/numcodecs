@@ -267,6 +267,11 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         itemsize = typesize
     else:
         itemsize = source_pb.itemsize
+        if itemsize == 0:
+            # blosc does not accept a typesize of 0 (older versions crashed on it),
+            # which zero-size dtypes such as a structured dtype with a zero-length
+            # field give; the buffer is empty in that case, so any typesize works
+            itemsize = 1
 
     # determine shuffle
     if shuffle == AUTOSHUFFLE:

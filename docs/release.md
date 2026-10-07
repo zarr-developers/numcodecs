@@ -19,6 +19,10 @@
 * Allow building against a system Zlib. Note, this is only required if blosc is still
   vendored, and a vendored Zlib is no longer built if blosc is not.
   By {user}`Elliott Sales de Andrade <QuLogic>`, {issue}`860`
+* `Blosc` can now encode an array whose dtype has an itemsize of 0 (e.g. a structured
+  dtype with a zero-length field), which failed with a `RuntimeError` (or crashed with a
+  floating point exception with older bundled c-blosc versions).
+  By {user}`Raashish Aggarwal <raashish1601>`, {issue}`516`
 
 ## 0.17.0
 
