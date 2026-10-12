@@ -1,5 +1,6 @@
 import itertools
 import sys
+import platform
 
 import numpy as np
 import pytest
@@ -60,7 +61,7 @@ def test_repr():
 # https://stackoverflow.com/questions/58194852/modulenotfounderror-no-module-named-numpy-core-multiarray-r
 @pytest.mark.skipif(sys.byteorder != "little", reason="Pickle does not restore byte orders")
 @pytest.mark.xfail(
-    sys.platform == "win32",
+    sys.platform == "win32" and platform.machine().lower() != "arm64",
     reason=(
         "Pickle fails to read w/ Windows carriage return "
         "( https://github.com/zarr-developers/numcodecs/issues/271 )"
