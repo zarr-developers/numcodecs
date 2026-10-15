@@ -22,8 +22,10 @@ jobs:
         # macos-15-large is an intel runner, macos-14 is an arm64 runner
         os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
     env:
-      CIBW_TEST_COMMAND: python -c "import numcodecs"
-      CIBW_BUILD: "cp312-* cp313-* cp314-*"
+      # on free-threaded builds also check that no extension re-enables the GIL
+      CIBW_TEST_COMMAND: python -c "import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())"
+      CIBW_BUILD: "cp312-* cp313-* cp314-* cp314t-*"
+      CIBW_ENABLE: cpython-freethreading
       CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
       # note: cibuildwheel config-settings are set in pyproject.toml
 

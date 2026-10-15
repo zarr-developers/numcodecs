@@ -1,3 +1,5 @@
+import threading
+import time
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 
@@ -236,6 +238,45 @@ def test_multiprocessing(use_threads, pool):
 
     finally:
         blosc.use_threads = None  # restore default
+
+
+def test_set_nthreads_races_global_context():
+    # Regression test: blosc_set_nthreads re-creates Blosc's global context, so it must
+    # be serialized against compress/decompress calls that use that context.
+    data = np.arange(200_000, dtype='i4')
+    stop = threading.Event()
+    errors = []
+
+    def worker():
+        try:
+            while not stop.is_set():
+                enc = blosc.compress(data, b'lz4', 5)
+                assert blosc.decompress(enc) == data.tobytes()
+        except Exception as e:
+            errors.append(e)
+
+    def toggler():
+        n = 1
+        while not stop.is_set():
+            n = 1 + (n % 4)
+            blosc.set_nthreads(n)
+
+    # force every thread onto the global-context path
+    blosc.use_threads = True
+    original_nthreads = blosc.get_nthreads()
+    try:
+        threads = [threading.Thread(target=worker) for _ in range(8)]
+        threads.append(threading.Thread(target=toggler))
+        for t in threads:
+            t.start()
+        time.sleep(1)
+        stop.set()
+        for t in threads:
+            t.join()
+    finally:
+        blosc.use_threads = None  # restore default
+        blosc.set_nthreads(original_nthreads)
+    assert not errors
 
 
 def test_err_decode_object_buffer():

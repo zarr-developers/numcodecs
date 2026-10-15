@@ -187,6 +187,9 @@ def ndarray_copy(src, dst) -> NDArrayLike:
 
     # ensure same data type
     if dst.dtype != object:
+        # a different itemsize requires a contiguous last axis for the dtype view
+        if src.dtype.itemsize != dst.dtype.itemsize:
+            src = src.reshape(-1, order="A")
         src = src.view(dst.dtype)
 
     # preserve logical coordinates when equally shaped arrays use different memory orders

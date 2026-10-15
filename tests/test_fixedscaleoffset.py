@@ -57,7 +57,8 @@ def test_encode(offset: float, scale: float, expected: list[int]):
 
 
 @pytest.mark.parametrize("order", ["C", "F"])
-def test_preserves_dimensions(order: Literal["C", "F"]):
+@pytest.mark.parametrize("input_type", ["ndarray", "memoryview"])
+def test_preserves_dimensions(order: Literal["C", "F"], input_type):
     shape = (8, 4, 5)
     arr = 200.0 + np.arange(np.prod(shape), dtype="<f4").reshape(shape, order=order) * 0.001
     codec = FixedScaleOffset(
@@ -67,11 +68,13 @@ def test_preserves_dimensions(order: Literal["C", "F"]):
         astype="<u2",
     )
 
-    encoded = codec.encode(arr)
-    decoded = codec.decode(encoded)
+    encoded = codec.encode(memoryview(arr) if input_type == "memoryview" else arr)
+    decoded = codec.decode(memoryview(encoded) if input_type == "memoryview" else encoded)
 
     assert encoded.shape == shape
+    assert encoded.dtype == codec.astype
     assert decoded.shape == shape
+    assert decoded.dtype == arr.dtype
     assert_array_almost_equal(arr, decoded, decimal=3)
 
     serialized = encoded.tobytes(order="A")
@@ -124,6 +127,104 @@ def test_scalar_preserves_legacy_shape():
     assert encoded.shape == (1,)
     assert decoded.shape == (1,)
     assert_array_equal(decoded, arr.reshape(-1))
+
+
+@pytest.mark.parametrize("out_shape", [None, (), (1,), (1, 1)])
+def test_decode_scalar_preserves_legacy_shape(out_shape):
+    codec = FixedScaleOffset(offset=1, scale=10, dtype="<f4", astype="<i2")
+    encoded = np.array(25, dtype=codec.astype)
+    out = None if out_shape is None else np.empty(out_shape, dtype=codec.dtype)
+
+    decoded = codec.decode(encoded, out=out)
+
+    expected_shape = (1,) if out is None else out.shape
+    assert decoded.shape == expected_shape
+    assert decoded.dtype == codec.dtype
+    assert_array_equal(decoded, np.full(expected_shape, 3.5, dtype=codec.dtype))
+    if out is not None:
+        assert decoded is out
+
+
+@pytest.mark.parametrize("shape", [(0,), (0, 3), (2, 0, 3)])
+@pytest.mark.parametrize("order", ["C", "F"])
+def test_empty_array_preserves_dimensions(shape, order):
+    codec = FixedScaleOffset(offset=0, scale=10, dtype="<f4", astype="<i2")
+    arr = np.empty(shape, dtype=codec.dtype, order=order)
+
+    encoded = codec.encode(arr)
+    decoded = codec.decode(encoded)
+    out = np.empty_like(arr)
+
+    assert encoded.shape == shape
+    assert encoded.dtype == codec.astype
+    assert decoded.shape == shape
+    assert decoded.dtype == arr.dtype
+    assert_array_equal(decoded, arr)
+    assert codec.decode(encoded, out=out) is out
+    assert_array_equal(out, arr)
+    assert codec.decode(encoded.tobytes()).shape == (0,)
+
+
+@pytest.mark.parametrize(("input_order", "out_order"), [("C", "F"), ("F", "C")])
+def test_decode_different_output_shape(input_order, out_order):
+    codec = FixedScaleOffset(offset=0, scale=1, dtype="<f4", astype="<i2")
+    arr = np.arange(24, dtype=codec.dtype).reshape(2, 3, 4, order=input_order)
+    out = np.empty((4, 6), dtype=codec.dtype, order=out_order)
+
+    decoded = codec.decode(codec.encode(arr), out=out)
+
+    assert decoded is out
+    assert_array_equal(decoded, np.arange(24, dtype=codec.dtype).reshape(4, 6, order=out_order))
+
+
+@pytest.mark.parametrize("order", ["C", "F"])
+def test_decode_memoryview_to_bytearray(order):
+    codec = FixedScaleOffset(offset=0, scale=1, dtype="<f4", astype="<i2")
+    arr = np.arange(6, dtype=codec.dtype).reshape(2, 3, order=order)
+    encoded = codec.encode(arr)
+    out = bytearray(arr.nbytes)
+
+    decoded = codec.decode(memoryview(encoded), out=out)
+
+    assert decoded.shape == (arr.nbytes,)
+    assert decoded.dtype == np.dtype("u1")
+    assert np.shares_memory(decoded, np.asarray(memoryview(out)))
+    assert bytes(out) == arr.tobytes(order="A")
+
+
+@pytest.mark.parametrize("order", ["C", "F"])
+def test_noncontiguous_input_preserves_legacy_bytes(order):
+    codec = FixedScaleOffset(offset=0, scale=10, dtype="<f4", astype="<i2")
+    arr = np.arange(24, dtype=codec.dtype).reshape(4, 6, order=order)[::2, :]
+    encoded = codec.encode(arr)
+    legacy_encoded = np.around((arr.reshape(-1, order="A") - codec.offset) * codec.scale).astype(
+        codec.astype
+    )
+
+    assert encoded.shape == arr.shape
+    assert encoded.dtype == codec.astype
+    assert encoded.tobytes(order="A") == legacy_encoded.tobytes()
+    assert_array_equal(codec.decode(encoded), arr)
+    assert_array_equal(codec.decode(encoded.tobytes(order="A")), arr.reshape(-1, order="A"))
+    out = np.empty(arr.shape, dtype=codec.dtype)
+    assert codec.decode(encoded.tobytes(order="A"), out=out) is out
+    assert_array_equal(out, arr)
+
+
+@pytest.mark.parametrize("order", ["C", "F"])
+def test_decode_noncontiguous_input_preserves_legacy_order(order):
+    codec = FixedScaleOffset(offset=1, scale=2, dtype="<f4", astype="<i2")
+    encoded = np.arange(24, dtype=codec.astype).reshape(4, 6, order=order)[::2, :]
+    expected = (encoded / codec.scale + codec.offset).astype(codec.dtype)
+
+    decoded = codec.decode(encoded)
+
+    assert decoded.shape == encoded.shape
+    assert decoded.dtype == codec.dtype
+    assert_array_equal(decoded, expected)
+    out = np.empty(encoded.size, dtype=codec.dtype)
+    assert codec.decode(memoryview(encoded), out=out) is out
+    assert_array_equal(out, expected.reshape(-1, order="C"))
 
 
 def test_config():

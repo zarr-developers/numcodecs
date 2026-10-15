@@ -1,6 +1,7 @@
 # cython: language_level=3
 # cython: overflowcheck=False
 # cython: cdivision=True
+# cython: freethreading_compatible=True
 
 """
 Cython implementation of Bob Jenkin's hashlittle from lookup3.c.

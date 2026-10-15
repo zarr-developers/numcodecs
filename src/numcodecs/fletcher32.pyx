@@ -1,6 +1,7 @@
 # cython: language_level=3
 # cython: overflowcheck=False
 # cython: cdivision=True
+# cython: freethreading_compatible=True
 
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t
