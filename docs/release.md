@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Preserve multidimensional array shapes in `FixedScaleOffset` and preserve logical
+  coordinates when copying equally shaped arrays across different memory orders.
+  By {user}`shixi-li <shixi-li>`, {issue}`852`
+
 (release_0.17.0)=
 
 * Allow building against a system Zlib. Note, this is only required if blosc is still

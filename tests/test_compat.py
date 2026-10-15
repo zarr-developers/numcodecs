@@ -4,7 +4,7 @@ import mmap
 import numpy as np
 import pytest
 
-from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text
+from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text, ndarray_copy
 
 
 def test_ensure_text():
@@ -109,3 +109,43 @@ def test_ensure_contiguous_ndarray_max_buffer_size():
         for buf in buffers:
             with pytest.raises(ValueError):
                 ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)
+
+
+@pytest.mark.parametrize(("source_order", "destination_order"), [("C", "F"), ("F", "C")])
+@pytest.mark.parametrize("destination_type", ["ndarray", "memoryview"])
+def test_ndarray_copy_same_shape_preserves_logical_coordinates(
+    source_order, destination_order, destination_type
+):
+    shape = (2, 3, 4)
+    source = np.arange(np.prod(shape), dtype="<f4").reshape(shape, order=source_order)
+    destination_array = np.empty(shape, dtype="<f4", order=destination_order)
+    destination = (
+        memoryview(destination_array) if destination_type == "memoryview" else destination_array
+    )
+
+    ndarray_copy(source, destination)
+
+    np.testing.assert_array_equal(destination_array, source)
+
+
+@pytest.mark.parametrize("source_layout", ["F", "sliced"])
+@pytest.mark.parametrize("destination_order", ["C", "F"])
+@pytest.mark.parametrize("destination_type", ["ndarray", "memoryview"])
+def test_ndarray_copy_different_itemsize_preserves_bytes(
+    source_layout, destination_order, destination_type
+):
+    if source_layout == "F":
+        source = np.arange(12, dtype="<u2").reshape(3, 4, order="F")
+    else:
+        source = np.arange(48, dtype="<u2").reshape(6, 8)[::2, ::2]
+    destination_array = np.empty((3, 8), dtype="u1", order=destination_order)
+    destination = (
+        memoryview(destination_array) if destination_type == "memoryview" else destination_array
+    )
+
+    result = ndarray_copy(source, destination)
+
+    assert result.shape == destination_array.shape
+    assert result.dtype == destination_array.dtype
+    assert np.shares_memory(result, destination_array)
+    assert destination_array.tobytes(order="A") == source.tobytes(order="A")
