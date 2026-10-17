@@ -105,17 +105,23 @@ jobs:
           verbose: true
 
   test-zarr:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - zarr-version: "308"
             zarr-pkg: "zarr==3.0.8"
+            platform: ubuntu-latest
           - zarr-version: "316"
             zarr-pkg: "zarr==3.1.6"
+            platform: ubuntu-latest
           - zarr-version: "main"
             zarr-pkg: "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main"
+            platform: ubuntu-latest
+          - zarr-version: "316"
+            zarr-pkg: "zarr==3.1.6"
+            platform: ubuntu-22.04-arm
 
     defaults:
       run:
