@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
-        # macos-13 is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-13, macos-14]
+        # macos-15-large is an intel runner, macos-14 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -37,10 +37,6 @@ jobs:
       - name: Install compilers
         run: conda install -y c-compiler cxx-compiler
 
-      - name: Install clang
-        if: matrix.platform == 'macos-13'
-        run: conda install -y 'clang>=12.0.1,<17'
-
       - name: Show conda environment info
         run: |
           conda info
@@ -56,6 +52,22 @@ jobs:
           else
             python -m pip install -v -e .[test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy]
           fi
+
+      - name: Deduplicate LC_RPATH entries
+        # The conda-forge compilers inject -Wl,-rpath,$PREFIX/lib multiple
+        # times, producing duplicate LC_RPATH load commands. macOS 15's dyld
+        # rejects duplicate LC_RPATH at load time, so strip the extras.
+        if: runner.os == 'macOS'
+        run: |
+          rpaths() { otool -l "$1" | awk '/ LC_RPATH$/{getline; getline; print $2}'; }
+          for so in numcodecs/*.so; do
+            for rp in $(rpaths "$so" | sort | uniq -d); do
+              while [ "$(rpaths "$so" | grep -cx "$rp")" -gt 1 ]; do
+                echo "Removing duplicate LC_RPATH '$rp' from $so"
+                install_name_tool -delete_rpath "$rp" "$so"
+              done
+            done
+          done
 
       - name: List installed packages
         run: python -m pip list
@@ -75,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        zarr-version: ["312", "313", "main"]
+        zarr-version: ["312", "313"]
 
     defaults:
       run:

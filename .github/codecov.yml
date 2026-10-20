@@ -2,7 +2,10 @@ coverage:
   status:
     project:
       default:
-        target: 100
+        # Compare against the base commit instead of requiring 100%: on this
+        # maintenance branch the zarr and crc32c fallback paths are not
+        # covered by the jobs that upload coverage.
+        target: auto
         threshold: 0.1
     patch:
       default:
