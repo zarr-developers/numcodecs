@@ -14,6 +14,16 @@
 
 ## Unreleased
 
+### Enhancements
+
+* Blosc byte-shuffle and unshuffle now use NEON SIMD on aarch64 (Apple Silicon, AWS
+  Graviton, etc). c-blosc 1.x only ships SSE2/AVX2 kernels, so on ARM it previously fell
+  back to a scalar loop that dominated Blosc runtime. The NEON kernels are taken from
+  c-blosc2 and produce byte-identical output. On an Apple M5, decoding 1 MiB lz4+shuffle
+  chunks is ~5-6x faster and encoding ~2x faster. Controlled by the new `neon` meson
+  option (default `auto`).
+  By {user}`Davis Bennett <d-v-b>`.
+
 (release_0.17.1)=
 
 ## 0.17.1
