@@ -24,11 +24,28 @@
   option (default `auto`).
   By {user}`Davis Bennett <d-v-b>`.
 
-(release_0.17.0)=
+(release_0.17.1)=
+
+## 0.17.1
+
+### Security
+
+* `Pickle.decode` now refuses to unpickle data unless the process opts in, because
+  unpickling can execute arbitrary code and the `pickle` codec can be selected by
+  untrusted array metadata. Decoding raises `numcodecs.errors.UnsafeDecodeError` by
+  default. To read trusted pickle-encoded data, set
+  `numcodecs.pickles.ALLOW_UNSAFE_PICKLE_DECODE = True`, or set the environment variable
+  `NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE=1` (or `"yes"` / `"true"`) before importing numcodecs.
+  These settings only affect decoding. Encoding with the pickle codec remains allowed by default.
+  See [GHSA-jqc8-qjfv-5m6r](https://github.com/zarr-developers/numcodecs/security/advisories/GHSA-jqc8-qjfv-5m6r).
+
+### Maintenance
 
 * Allow building against a system Zlib. Note, this is only required if blosc is still
   vendored, and a vendored Zlib is no longer built if blosc is not.
   By {user}`Elliott Sales de Andrade <QuLogic>`, {issue}`860`
+
+(release_0.17.0)=
 
 ## 0.17.0
 
