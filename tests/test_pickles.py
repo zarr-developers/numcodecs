@@ -4,7 +4,10 @@ import sys
 import numpy as np
 import pytest
 
-from numcodecs.pickles import Pickle
+import numcodecs.pickles
+from numcodecs.errors import UnsafeDecodeError
+from numcodecs.pickles import _ENV_VAR, Pickle, _read_opt_in_from_env
+from numcodecs.registry import get_codec
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -29,6 +32,12 @@ arrays = [
     np.array(greetings * 100),
     np.array(greetings * 100, dtype=object),
 ]
+
+
+@pytest.fixture(autouse=True)
+def opt_in_to_pickle_decode(monkeypatch):
+    """Opt in to unpickling for tests that round-trip trusted data."""
+    monkeypatch.setattr(numcodecs.pickles, "ALLOW_UNSAFE_PICKLE_DECODE", True)
 
 
 def test_encode_decode():
@@ -59,3 +68,36 @@ def test_repr():
 )
 def test_backwards_compatibility():
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)
+
+
+def test_decode_refused_without_opt_in(monkeypatch):
+    monkeypatch.setattr(numcodecs.pickles, "ALLOW_UNSAFE_PICKLE_DECODE", False)
+    # get_codec is the path by which array metadata selects this codec
+    codec = get_codec({"id": "pickle"})
+    enc = codec.encode(arrays[0])
+    with pytest.raises(UnsafeDecodeError, match="ALLOW_UNSAFE_PICKLE_DECODE"):
+        codec.decode(enc)
+
+
+@pytest.mark.parametrize(
+    ("env_value", "expected"),
+    [
+        (None, False),
+        ("", False),
+        ("0", False),
+        ("false", False),
+        ("no", False),
+        ("1", True),
+        ("true", True),
+        ("TRUE", True),
+        (" yes ", True),
+    ],
+)
+def test_allow_unsafe_pickle_decode_from_env(monkeypatch, env_value, expected):
+    # The environment variable is read once, when numcodecs.pickles is imported, so
+    # test the parsing helper rather than the module-level flag.
+    if env_value is None:
+        monkeypatch.delenv(_ENV_VAR, raising=False)
+    else:
+        monkeypatch.setenv(_ENV_VAR, env_value)
+    assert _read_opt_in_from_env() is expected
