@@ -174,8 +174,22 @@ def ensure_text(s, encoding="utf-8"):
     return s
 
 
-def ndarray_copy(src, dst) -> NDArrayLike:
-    """Copy the contents of the array from `src` to `dst`."""
+def ndarray_copy(src, dst, order='A') -> NDArrayLike:
+    """Copy the contents of the array from `src` to `dst`.
+
+    Parameters
+    ----------
+    src : array-like
+        Source array, flattened before copying.
+    dst : array-like
+        Destination array.
+    order : {'A', 'C', 'F'}, optional
+        Memory layout used to interpret the flattened source data when
+        reshaping it to the destination's shape. The default 'A' preserves
+        the historical behavior of matching the destination's memory layout.
+        Pass 'C' when the source holds elements in logical (C) order,
+        regardless of the destination's memory layout (see issue #850).
+    """
 
     if dst is None:
         # no-op
@@ -194,10 +208,8 @@ def ndarray_copy(src, dst) -> NDArrayLike:
 
     # reshape source to match destination
     if src.shape != dst.shape:
-        if dst.flags.f_contiguous:
-            order = "F"
-        else:
-            order = "C"
+        if order == 'A':
+            order = 'F' if dst.flags.f_contiguous else 'C'
         src = src.reshape(dst.shape, order=order)
 
     # copy via numpy

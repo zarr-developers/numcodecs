@@ -33,8 +33,10 @@ class PackBits(Codec):
         # normalise input
         arr = ensure_ndarray(buf).view(bool)
 
-        # flatten to simplify implementation
-        arr = arr.reshape(-1, order='A')
+        # flatten to simplify implementation, normalising to C order so the
+        # encoded stream holds elements in logical order regardless of the
+        # input's memory layout (see issue #850)
+        arr = np.ascontiguousarray(arr).reshape(-1)
 
         # determine size of packed data
         n = arr.size
@@ -78,5 +80,6 @@ class PackBits(Codec):
         # view as boolean array
         dec = dec.view(bool)
 
-        # handle destination
-        return ndarray_copy(dec, out)
+        # handle destination; the decoded stream holds elements in logical
+        # (C) order, so copy them into the destination in C order (see #850)
+        return ndarray_copy(dec, out, order='C')

@@ -53,8 +53,10 @@ class Categorize(Codec):
         else:
             arr = ensure_ndarray(buf).view(self.dtype)
 
-        # flatten to simplify implementation
-        arr = arr.reshape(-1, order='A')
+        # flatten to simplify implementation, normalising to C order so the
+        # encoded stream holds elements in logical order regardless of the
+        # input's memory layout (see issue #850)
+        arr = np.ascontiguousarray(arr).reshape(-1)
 
         # setup output array
         enc = np.zeros_like(arr, dtype=self.astype)
@@ -79,8 +81,9 @@ class Categorize(Codec):
         for i, label in enumerate(self.labels):
             dec[enc == (i + 1)] = label
 
-        # handle output
-        return ndarray_copy(dec, out)
+        # handle output; the decoded stream holds elements in logical (C)
+        # order, so copy them into the destination in C order (see #850)
+        return ndarray_copy(dec, out, order='C')
 
     def get_config(self):
         return {
