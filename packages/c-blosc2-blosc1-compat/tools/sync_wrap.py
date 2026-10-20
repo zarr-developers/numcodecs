@@ -5,6 +5,7 @@ Meson wraps only look for `patch_directory` and `diff_files` in subprojects/pack
 so that directory holds copies of what lives here. Run without arguments to update the
 copies, or with --check (used in CI) to fail if they are out of date.
 """
+
 import argparse
 import filecmp
 import shutil
@@ -28,7 +29,11 @@ def main():
     check = ap.parse_args().check
     expected = {dst for _, dst in sources()}
     stale = [d for d in DEST.rglob("*") if d.is_file() and d not in expected]
-    bad = [dst for src, dst in sources() if not dst.exists() or not filecmp.cmp(src, dst, shallow=False)]
+    bad = [
+        dst
+        for src, dst in sources()
+        if not dst.exists() or not filecmp.cmp(src, dst, shallow=False)
+    ]
     if check:
         for f in bad + stale:
             print(f"out of sync: {f}", file=sys.stderr)

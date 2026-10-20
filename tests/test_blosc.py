@@ -39,9 +39,7 @@ codecs = [
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=2**8),
 ]
 # compressors can be left out of a build (e.g. -Dblosc_zstd=disabled with c-blosc2)
-codecs = [
-    c if c is None or c.cname in blosc.list_compressors() else None for c in codecs
-]
+codecs = [c if c is None or c.cname in blosc.list_compressors() else None for c in codecs]
 
 
 # mix of dtypes: integer, float, bool, string
@@ -365,7 +363,9 @@ def test_typesize_less_than_1():
         compressor.encode(arr.tobytes())
 
 
-@pytest.mark.parametrize("shuffle", [Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE, Blosc.AUTOSHUFFLE])
+@pytest.mark.parametrize(
+    "shuffle", [Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE, Blosc.AUTOSHUFFLE]
+)
 def test_zero_itemsize(shuffle):
     # a structured dtype with a zero-length field has itemsize 0, which blosc
     # rejects as a typesize (and older versions crashed on, #516)

@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
   int ok = 0, bad = 0;
   for (int c = 0; c < 5; c++) for (int s = 0; s < 3; s++) for (int t = 0; t < 7; t++) for (int z = 0; z < 7; z++) {
     size_t nb = sizes[z]; int ts = typesizes[t];
-    
+
     char fn[256]; snprintf(fn, sizeof fn, "out/%s_%s_s%d_t%d_n%zu.bin", mode, cnames[c], shuffles[s], ts, nb);
     FILE *f = fopen(fn, "rb"); if (!f) { printf("missing %s\n", fn); continue; }
     uint8_t *cbuf = malloc(nb + 1024); size_t cb = fread(cbuf, 1, nb + 1024, f); fclose(f);

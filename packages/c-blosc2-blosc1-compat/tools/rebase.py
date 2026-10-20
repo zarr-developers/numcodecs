@@ -3,6 +3,7 @@
 
 Usage: rebase.py [REF]   (default: the commit in UPSTREAM)
 """
+
 import subprocess
 import sys
 import tarfile
@@ -14,9 +15,15 @@ PKG = Path(__file__).resolve().parents[1]
 
 
 def main():
-    ref = sys.argv[1] if len(sys.argv) > 1 else dict(
-        line.split(" = ") for line in (PKG / "UPSTREAM").read_text().split("\n") if " = " in line
-    )["commit"]
+    ref = (
+        sys.argv[1]
+        if len(sys.argv) > 1
+        else dict(
+            line.split(" = ")
+            for line in (PKG / "UPSTREAM").read_text().split("\n")
+            if " = " in line
+        )["commit"]
+    )
     url = f"https://github.com/Blosc/c-blosc2/archive/{ref}.tar.gz"
     with tempfile.TemporaryDirectory() as tmp:
         tar = Path(tmp) / "src.tar.gz"
@@ -28,7 +35,10 @@ def main():
         for patch in sorted((PKG / "patches").glob("*.patch")):
             r = subprocess.run(
                 ["patch", "-p1", "--no-backup-if-mismatch", "-i", str(patch)],
-                cwd=src, capture_output=True, text=True,
+                cwd=src,
+                check=False,
+                capture_output=True,
+                text=True,
             )
             print(f"{'ok  ' if r.returncode == 0 else 'FAIL'} {patch.name}")
             if r.returncode:

@@ -1,4 +1,4 @@
-exclude: ^fixture/  # files with trailing whitespaces on purpose
+exclude: ^fixture/|\.patch$  # trailing whitespace on purpose (fixtures, patch context lines)
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autoupdate_schedule: "monthly"

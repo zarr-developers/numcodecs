@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
   int n = 0;
   for (int c = 0; c < 5; c++) for (int s = 0; s < 3; s++) for (int t = 0; t < 7; t++) for (int z = 0; z < 7; z++) {
     size_t nb = sizes[z]; int ts = typesizes[t];
-    
+
     uint8_t *src = malloc(nb), *dst = malloc(nb + BLOSC2_MAX_OVERHEAD);
     fill(src, nb, ts, 1234);
     int cb;

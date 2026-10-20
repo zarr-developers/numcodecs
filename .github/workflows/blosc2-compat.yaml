@@ -41,11 +41,18 @@ jobs:
           meson setup b && meson compile -C b
       - name: Run the compatibility check
         run: |
-          B=/tmp/probe/b/subprojects
+          B=/tmp/probe/b
+          # c-blosc2 uses a system zstd/lz4/zlib when it finds one, otherwise the wrap's
+          # static build; link whichever is there
+          LIBS="$(find $B/subprojects -name libblosc2.a | head -n 1)"
+          for l in zstd lz4 z; do
+            a="$(find $B/subprojects -name lib$l.a | head -n 1)"
+            LIBS="$LIBS ${a:--l$l}"
+          done
           python packages/c-blosc2-blosc1-compat/tests/run.py \
             --blosc1-include /tmp/c-blosc/blosc --blosc1-lib /tmp/b1/blosc \
             --blosc2-include "$(echo /tmp/probe/subprojects/c-blosc2-*/include)" \
-            --blosc2-ldflags "$(echo $B/c-blosc2-*/libblosc2.a) $(echo $B/zstd-*/build/meson/lib/libzstd.a) $(echo $B/lz4-*/build/meson/meson/lib/liblz4.a) $(echo $B/zlib-*/libz.a)"
+            --blosc2-ldflags "$LIBS"
 
   rebase:
     # Informational: does the series still apply to upstream main? Fails only on the schedule.
