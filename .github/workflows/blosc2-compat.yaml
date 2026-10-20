@@ -72,6 +72,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          # pyproject.toml's license-files still lists the c-blosc submodule's licenses
+          submodules: recursive
           fetch-depth: 0 # required for version resolution
       - uses: actions/setup-python@v6
         with:
