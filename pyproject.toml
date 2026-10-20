@@ -253,3 +253,9 @@ conflicts = [
         { group = "test-zarr-main" }
     ]
 ]
+
+[tool.meson-python.args]
+# Wrapped subprojects (c-blosc2, zstd, lz4, zlib) are static build dependencies:
+# do not install their artifacts, but ship their sources in the sdist.
+install = ['--skip-subprojects']
+dist = ['--include-subprojects']
