@@ -1,0 +1,95 @@
+From: numcodecs contributors
+Subject: [PATCH] Add an opt-in switch to write Blosc1 (format version 2) chunks
+
+A compression context gets a blosc1_format flag. When set, the chunk header is
+the 16-byte Blosc1 header with format version 2. The flag is set with the new
+blosc2_ctx_set_blosc1_format(), and for the global context by the existing
+BLOSC_BLOSC1_COMPAT environment variable. Off by default; no change to the
+default Blosc2 output. The filter and block-split changes that the version-2
+format also requires follow in the next patches.
+---
+diff -ruN a/blosc/context.h b/blosc/context.h
+--- a/blosc/context.h
++++ b/blosc/context.h
+@@ -40,6 +40,7 @@
+   uint8_t header_flags;  /* Flags for header */
+   uint8_t blosc2_flags;  /* Flags specific for blosc2 */
+   uint8_t blosc2_flags2;  /* Secondary flags specific for blosc2 */
++  bool blosc1_format;  /* Write Blosc1 (format version 2) chunks, readable by C-Blosc 1.x */
+   int32_t sourcesize;  /* Number of bytes in source buffer */
+   int32_t header_overhead;  /* The number of bytes in chunk header */
+   int32_t nblocks;  /* Number of total blocks in buffer */
+diff -ruN a/include/blosc2.h b/include/blosc2.h
+--- a/include/blosc2.h
++++ b/include/blosc2.h
+@@ -2719,6 +2719,20 @@
+  */
+ BLOSC_EXPORT void blosc1_set_splitmode(int splitmode);
+ 
++/**
++ * @brief Make a compression context write Blosc1 chunks.
++ *
++ * The chunks use format version 2 and the 16-byte header, so that they can also be
++ * decoded by C-Blosc 1.x.  Only plain shuffle/bitshuffle filters and the blosclz,
++ * lz4, lz4hc, zlib and zstd codecs can be used.  Contexts are not Blosc1 by default.
++ *
++ * @param context A compression context.
++ * @param enable Whether to write Blosc1 chunks.
++ *
++ * @return 0 on success, a negative error code otherwise.
++ */
++BLOSC_EXPORT int blosc2_ctx_set_blosc1_format(blosc2_context* context, bool enable);
++
+ 
+ /**
+  * @brief Get the offsets of a frame in a super-chunk.
+diff -ruN a/blosc/blosc2.c b/blosc/blosc2.c
+--- a/blosc/blosc2.c
++++ b/blosc/blosc2.c
+@@ -1008,6 +1008,9 @@
+   header->version = (context->blosc2_flags2 & BLOSC2_VL_BLOCKS) ?
+                     BLOSC2_VERSION_FORMAT_VL_BLOCKS :
+                     BLOSC2_VERSION_FORMAT_STABLE;
++  if (context->blosc1_format) {
++    header->version = BLOSC1_VERSION_FORMAT;
++  }
+   header->versionlz = compcode_to_compversion(context->compcode);
+   header->flags = context->header_flags;
+   header->typesize = (uint8_t)context->typesize;
+@@ -3153,6 +3161,15 @@
+ }
+ 
+ 
++int blosc2_ctx_set_blosc1_format(blosc2_context* context, bool enable) {
++  if (context == NULL || context->do_compress != 1) {
++    return BLOSC2_ERROR_INVALID_PARAM;
++  }
++  context->blosc1_format = enable;
++  return BLOSC2_ERROR_SUCCESS;
++}
++
++
+ /* The public secure routine for compression with context. */
+ int blosc2_compress_ctx(blosc2_context* context, const void* src, int32_t srcsize,
+                         void* dest, int32_t destsize) {
+@@ -3173,8 +3190,8 @@
+     return error;
+   }
+ 
+-  /* Write the extended header */
+-  error = write_compression_header(context, true);
++  /* Write the extended header, or the Blosc1 header if requested */
++  error = write_compression_header(context, !context->blosc1_format);
+   if (error < 0) {
+     return error;
+   }
+@@ -3896,6 +3913,9 @@
+   }
+ 
+   blosc2_pthread_mutex_lock(&global_comp_mutex);
++
++  /* Blosc1 compatibility mode is read before anything depends on it (e.g. block splitting) */
++  g_global_context->blosc1_format = (getenv("BLOSC_BLOSC1_COMPAT") != NULL);
+ 
+   /* Initialize a context compression */
+   uint8_t* filters = calloc(1, BLOSC2_MAX_FILTERS);

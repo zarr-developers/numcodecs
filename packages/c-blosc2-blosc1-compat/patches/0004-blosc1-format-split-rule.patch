@@ -1,0 +1,33 @@
+From: numcodecs contributors
+Subject: [PATCH] Use the C-Blosc 1.x block split rule when writing Blosc1 chunks
+
+A C-Blosc 1.x reader recomputes whether a block is split from the typesize and
+blocksize (typesize <= 16 and at least 128 elements); Blosc2 uses a smaller
+minimum, so it could write split blocks the reader treats as unsplit.
+---
+diff -ruN a/blosc/stune.c b/blosc/stune.c
+--- a/blosc/stune.c
++++ b/blosc/stune.c
+@@ -184,6 +184,22 @@
+ }
+ 
+ int split_block(blosc2_context *context, int32_t typesize, int32_t blocksize) {
++  if (context->blosc1_format) {
++    // C-Blosc 1.x readers infer splitting from these sizes (and the "dont split" flag),
++    // so a split is only possible if this condition holds.
++    int blosc1_splittable = (typesize <= MAX_STREAMS) && (blocksize / typesize) >= 128;
++    switch (context->splitmode) {
++      case BLOSC_ALWAYS_SPLIT:
++        return blosc1_splittable;
++      case BLOSC_NEVER_SPLIT:
++        return 0;
++      case BLOSC_AUTO_SPLIT:
++        return blosc1_splittable && context->compcode == BLOSC_BLOSCLZ;
++      default:
++        // The zstd support was introduced at the same time than the split flag
++        return blosc1_splittable && context->compcode != BLOSC_ZSTD;
++    }
++  }
+   switch (context->splitmode) {
+     case BLOSC_ALWAYS_SPLIT:
+       return 1;

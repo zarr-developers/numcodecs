@@ -1,0 +1,21 @@
+From: numcodecs contributors
+Subject: [PATCH] Copy the leftover bytes when bit-unshuffling a version 2 block
+
+A Blosc1 (format version 2) block whose element count is a multiple of 8
+stores the bytes that do not fill a whole element after the shuffled part.
+The reader skipped them, so chunks written by C-Blosc 1.x with a typesize
+that does not divide the block size were decoded with garbage at the end.
+---
+diff -ruN a/blosc/shuffle.c b/blosc/shuffle.c
+--- a/blosc/shuffle.c
++++ b/blosc/shuffle.c
+@@ -498,6 +498,9 @@
+         BLOSC_TRACE_ERROR("the impossible happened: the bitunshuffle filter failed!");
+         return ret;
+       }
++      /* Copy the leftovers, as Blosc1 does */
++      size_t offset = size * typesize;
++      memcpy((uint8_t *) dest + offset, (const uint8_t *) src + offset, blocksize - offset);
+     }
+     else {
+       memcpy(dest, src, blocksize);

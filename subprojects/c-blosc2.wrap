@@ -1,0 +1,10 @@
+[wrap-file]
+directory = c-blosc2-38258631914de7f6ca2cf55c9675d771796ab96c
+source_url = https://github.com/Blosc/c-blosc2/archive/38258631914de7f6ca2cf55c9675d771796ab96c.tar.gz
+source_filename = c-blosc2-38258631914de7f6ca2cf55c9675d771796ab96c.tar.gz
+source_hash = c5556a00d8fc6a6a7be17e8f54e5c2aae2d304e740ac1aeb245db0f5731950a6
+patch_directory = c-blosc2
+diff_files = c-blosc2/patches/0001-reader-bitunshuffle-v2-leftovers.patch, c-blosc2/patches/0002-blosc1-format-flag.patch, c-blosc2/patches/0003-blosc1-format-bitshuffle.patch, c-blosc2/patches/0004-blosc1-format-split-rule.patch
+
+[provide]
+dependency_names = blosc2
