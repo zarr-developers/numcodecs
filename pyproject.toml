@@ -36,8 +36,7 @@ maintainers = [
 license = "MIT"
 license-files = [
     "LICENSE.txt",
-    "c-blosc/LICENSE.txt",
-    "c-blosc/LICENSES/*",
+    "LICENSES/*",
 ]
 
 [project.urls]
@@ -237,6 +236,13 @@ warn_unreachable = false
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+[tool.meson-python.args]
+# C libraries are built as static subprojects and linked into the extension
+# modules; don't install their headers, static libraries or pkg-config files.
+install = ["--skip-subprojects"]
+# Ship the subproject sources in the sdist so it builds without network access.
+dist = ["--include-subprojects"]
 
 [tool.uv]
 # meson-python editable installs require build deps (ninja, meson) at runtime for
