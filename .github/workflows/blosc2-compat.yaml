@@ -54,6 +54,36 @@ jobs:
             --blosc2-include "$(echo /tmp/probe/subprojects/c-blosc2-*/include)" \
             --blosc2-ldflags "$LIBS"
 
+  test-blosc2-backend:
+    # the numcodecs test suite with Blosc built on c-blosc2 instead of c-blosc 1.x
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {platform: ubuntu-latest, python-version: "3.13"}
+          - {platform: ubuntu-latest, python-version: "3.14t"}
+          - {platform: ubuntu-22.04-arm, python-version: "3.13"}
+          - {platform: macos-14, python-version: "3.13"}
+          - {platform: windows-latest, python-version: "3.13"}
+    defaults:
+      run:
+        shell: bash -e {0}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # required for version resolution
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Install numcodecs with the c-blosc2 backend
+        run: python -m pip install -v ".[test,test_extras]" -Csetup-args=-Dblosc_backend=blosc2
+      - name: Check the backend
+        run: python -c "import numcodecs.blosc as b; print(b.LIBRARY, b.VERSION_STRING, b.list_compressors()); assert b.LIBRARY == 'c-blosc2'"
+      - name: Run tests
+        run: pytest -v
+
   rebase:
     # Informational: does the series still apply to upstream main? Fails only on the schedule.
     if: github.event_name == 'schedule'
