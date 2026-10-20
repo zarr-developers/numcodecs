@@ -14,6 +14,16 @@
 
 ## Unreleased
 
+### Fixes
+
+* Improve error handling in the Zstandard codec. Empty frames can now be decoded, so
+  `Zstd().decode(Zstd().encode(b""))` round-trips. Fix a double free and a free of an
+  uninitialized pointer when stream decompression failed during initialization, check for
+  failed allocations, no longer leak the compression context when setting parameters fails,
+  and report zstd error names as text rather than as the `repr` of a `bytes` object.
+  Streaming decompression now grows its output buffer geometrically. `Zstd.__repr__` now
+  includes `checksum` when it is enabled.
+
 (release_0.17.1)=
 
 ## 0.17.1
