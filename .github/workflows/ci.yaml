@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-        # macos-13 is an intel runner, macos-14 is a arm64 runner
-        platform: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        # macos-15-large is an intel runner, macos-14 is a arm64 runner
+        platform: [ubuntu-latest, windows-latest, macos-15-large, macos-14]
 
     defaults:
       run:
@@ -37,9 +37,11 @@ jobs:
       - name: Install compilers
         run: conda install -y c-compiler cxx-compiler
 
-      - name: Install clang
-        if: matrix.platform == 'macos-13'
-        run: conda install -y 'clang>=12.0.1,<17'
+      - name: Install GCC 14
+        # GCC 15 defaults to C23, where `bool` is a keyword, and the c-blosc
+        # version bundled on this branch still defines `bool` with a typedef.
+        if: runner.os == 'Linux'
+        run: conda install -y 'gcc<15' 'gxx<15'
 
       - name: Show conda environment info
         run: |
@@ -49,15 +51,36 @@ jobs:
 
       - name: Install numcodecs
         run: |
-          export DISABLE_NUMCODECS_AVX2=""
+          # On this branch setup.py adds -mno-avx2 whenever this variable is set, and
+          # recent clang rejects that flag on arm64, so only set it on x86_64.
+          if [[ "$(uname -m)" == "x86_64" ]]; then
+            export DISABLE_NUMCODECS_AVX2=""
+          fi
           python -m pip install -v -e .[test,test_extras,msgpack,crc32c,pcodec,zfpy]
+
+      - name: Deduplicate LC_RPATH entries
+        # The conda-forge compilers inject -Wl,-rpath,$PREFIX/lib multiple
+        # times, producing duplicate LC_RPATH load commands. macOS 15's dyld
+        # rejects duplicate LC_RPATH at load time, so strip the extras.
+        if: runner.os == 'macOS'
+        run: |
+          rpaths() { otool -l "$1" | awk '/ LC_RPATH$/{getline; getline; print $2}'; }
+          for so in numcodecs/*.so; do
+            for rp in $(rpaths "$so" | sort | uniq -d); do
+              while [ "$(rpaths "$so" | grep -cx "$rp")" -gt 1 ]; do
+                echo "Removing duplicate LC_RPATH '$rp' from $so"
+                install_name_tool -delete_rpath "$rp" "$so"
+              done
+            done
+          done
 
       - name: Install zarr-python
         # Since zarr v3 requires numpy >= 1.25, on Python 3.11 leave it out
         # so we can have some tests of our minimum version of numpy (1.24)
         if: matrix.python-version != '3.11'
-        # TODO: remove --pre option when zarr v3 is out
-        run: python -m pip install --pre zarr>=3.0.0b2
+        # numcodecs.zarr3 in this branch targets the zarr 3.0.x API; zarr 3.1+
+        # moved these codecs into zarr itself and changed internal APIs.
+        run: python -m pip install "zarr>=3.0,<3.1"
 
       - name: List installed packages
         run: python -m pip list

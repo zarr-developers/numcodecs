@@ -117,6 +117,9 @@ write_to = "numcodecs/version.py"
 skip = "./.git,fixture"
 ignore-words-list = "ba, compiletime, hist, nd, unparseable"
 
+[tool.coverage.run]
+omit = ["numcodecs/tests/*"]
+
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
@@ -156,6 +159,10 @@ filterwarnings = [
 
 [tool.cibuildwheel]
 environment = { DISABLE_NUMCODECS_AVX2=1 }
+[tool.cibuildwheel.linux]
+# Only install NumPy from wheels when building. Recent NumPy releases have no manylinux2014
+# wheels, and building them from source fails with the GCC in the manylinux2014 image.
+environment = { DISABLE_NUMCODECS_AVX2=1, PIP_ONLY_BINARY="numpy" }
 [tool.cibuildwheel.macos]
 environment = { MACOSX_DEPLOYMENT_TARGET=10.9, DISABLE_NUMCODECS_AVX2=1, CFLAGS="$CFLAGS -Wno-implicit-function-declaration" }
 [[tool.cibuildwheel.overrides]]
