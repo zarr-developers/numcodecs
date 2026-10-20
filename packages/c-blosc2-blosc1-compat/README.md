@@ -19,6 +19,7 @@ deleted if upstream accepts the patches.
 | `meson/` | `meson.build` and `meson.options` for c-blosc2 (upstream only has CMake) |
 | `tests/` | the forward-compatibility check, see below |
 | `tools/` | `sync_wrap.py`, `rebase.py` |
+| `TODO.md` | upstream items to check |
 
 ## The patches
 
@@ -67,5 +68,5 @@ that `UPSTREAM` pins:
 
 | Patch | Upstream |
 |---|---|
-| 0001 | not yet submitted |
+| 0001 | [issue #812](https://github.com/Blosc/c-blosc2/issues/812), [PR #813](https://github.com/Blosc/c-blosc2/pull/813) (see `TODO.md`) |
 | 0002–0004 | not yet submitted |
