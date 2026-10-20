@@ -1,3 +1,4 @@
+import struct
 import threading
 import time
 from multiprocessing import Pool
@@ -402,3 +403,47 @@ def test_output_is_blosc1_format(cname, shuffle, typesize):
     src = np.arange(4096, dtype='u1').tobytes()
     enc = Blosc(cname=cname, shuffle=shuffle, typesize=typesize).encode(src)
     assert enc[0] == 2
+
+
+def _blosc1_header(nbytes, cbytes, typesize=1, blocksize=1):
+    # version 2, lz4, no flags, then nbytes, blocksize, cbytes (little endian)
+    return struct.pack('<BBBBIII', 2, 1, 0, typesize, nbytes, blocksize, cbytes)
+
+
+def test_decompress_rejects_short_buffer():
+    with pytest.raises(RuntimeError, match='buffer is too small'):
+        blosc.decompress(b'\x02\x01\x00')
+
+
+def test_decompress_rejects_invalid_header():
+    # a declared size above the maximum buffer size
+    header = _blosc1_header(nbytes=2**31 - 1, cbytes=16)
+    with pytest.raises(RuntimeError, match='header validation failed'):
+        blosc.decompress(header)
+
+
+def test_decompress_rejects_truncated_header_size():
+    # the header says there are more compressed bytes than were given
+    header = _blosc1_header(nbytes=10, cbytes=1000)
+    with pytest.raises(RuntimeError, match='buffer is truncated'):
+        blosc.decompress(header)
+
+
+@pytest.mark.parametrize('blocksize', [10, 255, 10**6])
+@pytest.mark.parametrize('typesize', [1, 3, 8])
+def test_blocksize_larger_than_buffer_or_not_multiple_of_typesize(blocksize, typesize):
+    # c-blosc 1.x adjusts the blocksize itself; c-blosc2 needs to be given a valid one
+    src = np.arange(1000, dtype='u1').tobytes()
+    for shuffle in (Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE):
+        codec = Blosc(cname='lz4', shuffle=shuffle, blocksize=blocksize, typesize=typesize)
+        assert bytes(codec.decode(codec.encode(src))) == src
+
+
+def test_library():
+    assert blosc.LIBRARY in ('c-blosc', 'c-blosc2')
+    assert blosc.VERSION_STRING
+
+
+def test_compressors_listed():
+    # these are built into Blosc whichever library it is built on
+    assert {'blosclz', 'lz4', 'lz4hc'} <= set(blosc.list_compressors())
