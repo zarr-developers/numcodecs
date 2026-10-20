@@ -17,6 +17,29 @@ Release notes
 Unreleased
 ----------
 
+.. _release_0.15.2:
+
+0.15.2
+------
+
+Security
+~~~~~~~~
+
+* ``Pickle.decode`` now refuses to unpickle data unless the process opts in, because
+  unpickling can execute arbitrary code and the ``pickle`` codec can be selected by
+  untrusted array metadata. Decoding raises ``numcodecs.errors.UnsafeDecodeError`` by
+  default. To read trusted pickle-encoded data, set
+  ``numcodecs.pickles.ALLOW_UNSAFE_PICKLE_DECODE = True``, or set the environment variable
+  ``NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE=1`` (or ``"yes"`` / ``"true"``) before importing
+  numcodecs. These settings only affect decoding. Encoding with the pickle codec remains
+  allowed by default.
+  See `GHSA-jqc8-qjfv-5m6r <https://github.com/zarr-developers/numcodecs/security/advisories/GHSA-jqc8-qjfv-5m6r>`_.
+
+.. _release_0.15.1:
+
+0.15.1
+------
+
 Improvements
 ~~~~~~~~~~~~
 * Raise a custom `UnknownCodecError` when trying to retrieve an unavailable codec.
