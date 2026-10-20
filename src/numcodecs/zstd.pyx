@@ -240,7 +240,8 @@ def decompress(source, dest=None):
             return stream_decompress(source_pb)
         # dest_size is set based on dest below
         dest_size = 0
-    elif content_size > (<unsigned long long>SIZE_MAX):
+    elif content_size > ((<unsigned long long>SIZE_MAX) >> 1):
+        # larger than any Python buffer (PY_SSIZE_T_MAX) can be
         raise RuntimeError('Zstd decompression error: content size too large for platform')
     else:
         # note that a content size of 0 is valid: it is an empty frame
