@@ -187,3 +187,63 @@ def test_multi_frame():
     assert codec.decode(bytes_val + hola + mundo) == b"Hello World!Hola Mundo!"
     # unknown size frame in the middle
     assert codec.decode(hola + bytes_val + mundo) == b"Hola Hello World!Mundo!"
+
+
+def test_empty_frame():
+    codec = Zstd()
+    encoded = codec.encode(b"")
+    assert codec.decode(encoded) == b""
+    # decode into an empty destination buffer
+    out = bytearray()
+    codec.decode(encoded, out=out)
+    assert out == b""
+    # an empty frame can be concatenated with other frames
+    assert codec.decode(encoded + codec.encode(b"abc") + encoded) == b"abc"
+
+
+def test_decode_empty_input():
+    with pytest.raises(RuntimeError, match='Zstd decompression error: invalid input data'):
+        Zstd().decode(b"")
+
+
+def test_truncated_input():
+    codec = Zstd()
+    known = codec.encode(b"Hello world!" * 100)
+    unknown = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'
+    for data in (known[:-3], unknown[:-3], known + known[:-3]):
+        with pytest.raises(RuntimeError, match='invalid input data'):
+            codec.decode(data)
+
+
+def test_error_messages_are_text():
+    # error names from zstd must be formatted as text, not as the repr of bytes
+    codec = Zstd()
+    encoded = bytearray(Zstd(checksum=True).encode(b"abc" * 10))
+    encoded[-1] ^= 0xFF
+    with pytest.raises(RuntimeError) as excinfo:
+        codec.decode(bytes(encoded))
+    assert "b'" not in str(excinfo.value)
+    assert "b\"" not in str(excinfo.value)
+    assert "checksum" in str(excinfo.value)
+
+
+def test_decode_unknown_size_into_out():
+    codec = Zstd()
+    unknown = b'(\xb5/\xfd\x00Xa\x00\x00Hello World!'
+    out = bytearray(12)
+    codec.decode(unknown, out=out)
+    assert out == b"Hello World!"
+
+
+def test_repr_checksum():
+    check_repr("Zstd(level=3)")
+    check_repr("Zstd(level=3, checksum=True)")
+
+
+def test_stream_decompress_growth():
+    # Highly compressible data with unknown content size requires the output
+    # buffer to grow many times.
+    codec = Zstd()
+    frame = b'(\xb5/\xfd\x00X$\x02\x00\xa4\x03ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz\x01\x00:\xfc\xdfs\x05\x05L\x00\x00\x08s\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08k\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08c\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08[\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08S\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08K\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08C\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08u\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08m\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08e\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08]\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08U\x01\x00\xfc\xff9\x10\x02L\x00\x00\x08M\x01\x00\xfc\xff9\x10\x02M\x00\x00\x08E\x01\x00\xfc\x7f\x1d\x08\x01'
+    expected = b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz' * 1024 * 32
+    assert codec.decode(frame * 3) == expected * 3
