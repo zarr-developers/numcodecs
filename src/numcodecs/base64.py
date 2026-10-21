@@ -5,7 +5,16 @@ from .compat import ensure_contiguous_ndarray, ndarray_copy
 
 
 class Base64(Codec):
-    """Codec providing base64 compression via the Python standard library."""
+    """Codec providing Base64 encoding via the Python standard library.
+
+    Examples
+    --------
+    >>> codec = Base64()
+    >>> codec.encode(b'hello')
+    b'aGVsbG8='
+    >>> codec.decode(b'aGVsbG8=')
+    b'hello'
+    """
 
     codec_id = "base64"
 
