@@ -158,8 +158,17 @@ filterwarnings = [
 # AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
 config-settings = "setup-args=-Davx2=disabled"
 
+[tool.cibuildwheel.windows]
+# Vendor any MSYS2 clang runtime DLLs the extensions end up linking against
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
+config-settings = {setup-args = ["-Davx2=disabled", "-Dsse2=disabled"]}
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
 config-settings = {setup-args = ["-Davx2=disabled", "-Dsse2=disabled"]}
 
 [tool.ruff]
