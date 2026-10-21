@@ -31,6 +31,9 @@
 
 ### Maintenance
 
+* Add fixed BitRound compatibility data and test decoding with a codec restored
+  from its JSON configuration through the registry, contributing to {issue}`348`.
+
 * Allow building against a system Zlib. Note, this is only required if blosc is still
   vendored, and a vendored Zlib is no longer built if blosc is not.
   By {user}`Elliott Sales de Andrade <QuLogic>`, {issue}`860`

@@ -1,7 +1,11 @@
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from numcodecs.bitround import BitRound, max_bits
+from numcodecs.registry import get_codec
 
 # adapted from https://github.com/milankl/BitInformation.jl/blob/main/test/round_nearest.jl
 
@@ -79,3 +83,36 @@ def test_errors():
         BitRound(keepbits=10).encode(np.array([0]))
     with pytest.raises(ValueError):
         BitRound(-1)
+
+
+@pytest.mark.parametrize(('array_index', 'dtype'), [(0, '<f4'), (1, '<f8')])
+@pytest.mark.parametrize(
+    ('codec_index', 'keepbits', 'expected'),
+    [
+        (0, 2, [1.25, -1.25, 2.5, -2.5]),
+        (1, 3, [1.125, -1.125, 2.75, -2.75]),
+    ],
+)
+def test_backwards_compatibility(array_index, dtype, codec_index, keepbits, expected):
+    # Read fixed data only: the common helper can generate missing fixtures and
+    # decodes with the original codec rather than the registry-restored instance.
+    codec_dir = (
+        Path(__file__).resolve().parents[1] / 'fixture' / 'bitround' / f'codec.{codec_index:02d}'
+    )
+    config = json.loads((codec_dir / 'config.json').read_text())
+    codec = get_codec(json.loads(json.dumps(config)))
+    assert isinstance(codec, BitRound)
+    # decode does not use keepbits, so check configuration separately from data.
+    assert codec.keepbits == keepbits
+
+    # Raw BitRound data has no dtype or shape header. Supply the stored signed
+    # integer dtype, including byte order, and check the resulting flat array.
+    encoded = np.frombuffer(
+        (codec_dir / f'encoded.{array_index:02d}.dat').read_bytes(),
+        dtype=dtype.replace('f', 'i'),
+    )
+    decoded = codec.decode(encoded)
+    expected = np.array(expected, dtype=dtype)
+    assert decoded.dtype == expected.dtype
+    assert decoded.shape == expected.shape
+    np.testing.assert_array_equal(decoded, expected)
