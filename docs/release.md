@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Documentation
+
+* Add the Base64 codec to the filter API reference, with an encoding and decoding example.
+  By {user}`Wentao Tong <tongwentao>`, {issue}`587`
+
 (release_0.17.1)=
 
 ## 0.17.1
