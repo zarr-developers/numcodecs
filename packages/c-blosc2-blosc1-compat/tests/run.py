@@ -38,7 +38,9 @@ def main():
         "--blosc1-lib", required=True, help="directory with the C-Blosc 1.x shared library"
     )
     ap.add_argument(
-        "--blosc2-include", required=True, help="directory with blosc2.h (c-blosc2 with Blosc1 format support)"
+        "--blosc2-include",
+        required=True,
+        help="directory with blosc2.h (c-blosc2 with Blosc1 format support)",
     )
     ap.add_argument(
         "--blosc2-ldflags", required=True, help="libraries to link c-blosc2 and its codecs"

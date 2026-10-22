@@ -55,6 +55,31 @@ cases in three directions (see its docstring for the command line): c-blosc2 glo
 to C-Blosc 1.x, c-blosc2 context API to C-Blosc 1.x, and C-Blosc 1.x to c-blosc2. All must
 decode. The c-blosc2 branch has its own unit tests (`tests/test_blosc1_format.c`).
 
+## Compatibility CI
+
+`tests/test_blosc1_compat.py` (repository `tests/`, not this directory) checks that chunks
+written by numcodecs decode with C-Blosc 1.x and the reverse, with python-blosc, which
+bundles C-Blosc 1.x, as the reference. It combines property-based tests (hypothesis) over
+compressors, levels, shuffles, typesizes up to 300, buffer sizes around the edges that
+matter (32 bytes, multiples of 8 and 128 elements, bytes left over after the last item),
+block sizes and data kinds, with an exhaustive grid. Both numcodecs code paths are checked:
+the one through blosc's global context and the one through a context of its own. The
+compressed bytes are not expected to equal what C-Blosc 1.x writes (the libraries pick
+different default block sizes); the decoded bytes are.
+
+`.github/workflows/blosc1-compat.yaml` runs it on the c-blosc2 backend on Linux (x86_64 and
+arm64), macOS and Windows, and on the default c-blosc 1.x backend as a control. It runs 300
+examples per property on a pull request and 5000 weekly. It is independent of everything
+else and can be turned off by
+
+- setting the repository variable `BLOSC1_COMPAT_CI` to `false` (no code change),
+- deleting the workflow file (the test module skips itself when python-blosc or hypothesis
+  is not installed, so no other workflow changes), or
+- `pytest -m "not blosc1_compat"` anywhere else.
+
+To run it locally: `pip install blosc hypothesis`, then
+`pytest tests/test_blosc1_compat.py` (`BLOSC1_COMPAT_EXAMPLES` sets the examples).
+
 ## Updating c-blosc2
 
 Edit `UPSTREAM` and the `revision` (and `url`, if the branch moves) in
