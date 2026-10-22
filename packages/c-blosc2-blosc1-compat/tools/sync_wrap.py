@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Copy this package's build overlay and patches into subprojects/packagefiles/c-blosc2.
+"""Copy this package's build overlay into subprojects/packagefiles/c-blosc2.
 
-Meson wraps only look for `patch_directory` and `diff_files` in subprojects/packagefiles,
+Meson wraps only look for `patch_directory` in subprojects/packagefiles,
 so that directory holds copies of what lives here. Run without arguments to update the
 copies, or with --check (used in CI) to fail if they are out of date.
 """
@@ -19,8 +19,6 @@ DEST = PKG.parents[1] / "subprojects" / "packagefiles" / "c-blosc2"
 def sources():
     for f in sorted((PKG / "meson").iterdir()):
         yield f, DEST / f.name
-    for f in sorted((PKG / "patches").glob("*.patch")):
-        yield f, DEST / "patches" / f.name
 
 
 def main():

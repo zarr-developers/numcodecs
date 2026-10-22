@@ -6,8 +6,6 @@ on:
     paths: ['packages/c-blosc2-blosc1-compat/**', 'subprojects/**', 'src/numcodecs/blosc.pyx', 'src/numcodecs/_blosc_shim.h']
   pull_request:
     paths: ['packages/c-blosc2-blosc1-compat/**', 'subprojects/**', 'src/numcodecs/blosc.pyx', 'src/numcodecs/_blosc_shim.h']
-  schedule:
-    - cron: '0 6 * * 1'  # weekly: does the series still apply to upstream c-blosc2 main?
   workflow_dispatch:
 
 jobs:
@@ -32,7 +30,7 @@ jobs:
           cmake -S /tmp/c-blosc -B /tmp/b1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBUILD_TESTS=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_STATIC=OFF -DCMAKE_BUILD_TYPE=Release
           cmake --build /tmp/b1 -j
-      - name: Build the patched c-blosc2 through the wrap
+      - name: Build c-blosc2 through the wrap
         run: |
           mkdir /tmp/probe && cd /tmp/probe
           ln -s "$GITHUB_WORKSPACE/subprojects" subprojects
@@ -51,7 +49,7 @@ jobs:
           done
           python packages/c-blosc2-blosc1-compat/tests/run.py \
             --blosc1-include /tmp/c-blosc/blosc --blosc1-lib /tmp/b1/blosc \
-            --blosc2-include "$(echo /tmp/probe/subprojects/c-blosc2-*/include)" \
+            --blosc2-include "/tmp/probe/subprojects/c-blosc2/include" \
             --blosc2-ldflags "$LIBS"
 
   test-blosc2-backend:
@@ -85,14 +83,3 @@ jobs:
         run: python -c "import numcodecs.blosc as b; print(b.LIBRARY, b.VERSION_STRING, b.list_compressors()); assert b.LIBRARY == 'c-blosc2'"
       - name: Run tests
         run: pytest -v
-
-  rebase:
-    # Informational: does the series still apply to upstream main? Fails only on the schedule.
-    if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-      - run: python packages/c-blosc2-blosc1-compat/tools/rebase.py main

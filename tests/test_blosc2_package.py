@@ -1,7 +1,6 @@
 """Checks on packages/c-blosc2-blosc1-compat, which only exist in a source checkout."""
 
 import importlib.util
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -36,18 +35,6 @@ def test_wrap_copies_are_in_sync():
     assert result.returncode == 0, result.stderr
 
 
-def test_wrap_diff_files_match_patch_series():
-    expected = _run("make_wrap_diff_files.py").stdout.strip()
-    assert expected in WRAP.read_text()
-
-
-def test_patches_are_numbered_in_order():
-    names = sorted(p.name for p in (PACKAGE / "patches").glob("*.patch"))
-    assert names
-    numbers = [int(re.match(r"(\d{4})-", n).group(1)) for n in names]
-    assert numbers == list(range(1, len(names) + 1))
-
-
 def test_wrap_matches_upstream_pin():
     pin = dict(
         line.split(" = ")
@@ -55,17 +42,15 @@ def test_wrap_matches_upstream_pin():
         if " = " in line
     )
     wrap = WRAP.read_text()
-    assert pin["commit"] in wrap
-    assert pin["sha256"] in wrap
+    assert f"url = {pin['repository']}.git" in wrap
+    assert f"revision = {pin['commit']}" in wrap
 
 
 def test_sync_wrap_detects_a_stale_copy(tmp_path, monkeypatch):
     sync_wrap = _load("sync_wrap")
     package = tmp_path / "packages" / "pkg"
     (package / "meson").mkdir(parents=True)
-    (package / "patches").mkdir()
     (package / "meson" / "meson.build").write_text("project('x')\n")
-    (package / "patches" / "0001-a.patch").write_text("a\n")
     dest = tmp_path / "subprojects" / "packagefiles" / "c-blosc2"
     monkeypatch.setattr(sync_wrap, "PKG", package)
     monkeypatch.setattr(sync_wrap, "DEST", dest)
@@ -77,7 +62,7 @@ def test_sync_wrap_detects_a_stale_copy(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["sync_wrap.py", "--check"])
     assert sync_wrap.main() == 0
 
-    (dest / "patches" / "0001-a.patch").write_text("changed\n")
+    (dest / "meson.build").write_text("changed\n")
     (dest / "stale.txt").write_text("left over\n")
     assert sync_wrap.main() == 1
     monkeypatch.setattr(sys, "argv", ["sync_wrap.py"])

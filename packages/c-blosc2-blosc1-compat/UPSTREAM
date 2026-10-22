@@ -1,4 +1,5 @@
-repository = https://github.com/Blosc/c-blosc2
-commit = 38258631914de7f6ca2cf55c9675d771796ab96c
+repository = https://github.com/mkitti/c-blosc2
+branch = blosc1-format-writer
+commit = a4995c38d1250790ce7f7e4a6debcda41404fb4b
 version = 3.3.6.dev
-sha256 = c5556a00d8fc6a6a7be17e8f54e5c2aae2d304e740ac1aeb245db0f5731950a6
+pull_request = https://github.com/Blosc/c-blosc2/pull/815

@@ -1,20 +1,23 @@
 # TODO
 
-## Check upstream c-blosc2 status of patch 0001
+## Move the wrap off the fork once Blosc/c-blosc2#815 is released
 
-Patch `0001-reader-bitunshuffle-v2-leftovers.patch` is submitted upstream:
+`subprojects/c-blosc2.wrap` clones the `blosc1-format-writer` branch of
+https://github.com/mkitti/c-blosc2 (see `UPSTREAM`). The change is proposed upstream in
+https://github.com/Blosc/c-blosc2/pull/815 (it builds on #812 / #813, already merged).
 
-- issue: https://github.com/Blosc/c-blosc2/issues/812
-- pull request: https://github.com/Blosc/c-blosc2/pull/813
+Check periodically whether #815 has been merged and which c-blosc2 release contains it.
+When there is such a release:
 
-Check periodically whether #813 has been merged and which c-blosc2 release contains it.
-When `UPSTREAM` pins a release that includes it:
+1. point the wrap at it: `url = https://github.com/Blosc/c-blosc2.git`, `revision = <tag or
+   commit>` (or switch back to a `[wrap-file]` with `source_url` and `source_hash`);
+2. update `UPSTREAM` to match, and check that `meson/meson.build` still lists the right
+   source files;
+3. run `python tools/sync_wrap.py` and `tests/run.py`;
+4. update `docs/release.md` and `README.md`.
 
-1. delete `patches/0001-reader-bitunshuffle-v2-leftovers.patch`;
-2. run `python tools/sync_wrap.py` and update `diff_files` in `subprojects/c-blosc2.wrap`
-   (`python tools/make_wrap_diff_files.py` prints the line);
-3. update the upstream table in `README.md`.
+If upstream asks for changes (for example to the `BLOSC_BLOSC1_COMPAT` behavior) or rejects
+it, update the branch, `UPSTREAM` and the wrap's `revision` to match.
 
-If upstream asks for changes or rejects it, update the patch and this note to match.
-
-Patches `0002`-`0004` (the opt-in Blosc1 writer) have not been submitted upstream.
+Do not release numcodecs with the wrap pointing at the fork: a personal branch is not a
+stable build dependency.

@@ -22,7 +22,7 @@
 
 * Add an optional c-blosc2 backend for the `Blosc` codec, selected at build time with
   `-Dblosc_backend=blosc2` (default is still c-blosc 1.x). c-blosc2 is built from a meson
-  wrap (`subprojects/c-blosc2.wrap`) with a small patch so that it writes Blosc1-format
+  wrap (`subprojects/c-blosc2.wrap`) of a c-blosc2 branch that can write Blosc1-format
   chunks that C-Blosc 1.x can decode (stock c-blosc2 output is not readable by C-Blosc 1.x).
   zstd, lz4 and zlib are resolved separately from Blosc (system libraries or WrapDB wraps,
   `-Dsystem_*`) and can be left out of Blosc with `-Dblosc_zstd=disabled` and
