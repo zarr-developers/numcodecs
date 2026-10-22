@@ -1,8 +1,8 @@
 [wrap-git]
 directory = c-blosc2
-url = https://github.com/mkitti/c-blosc2.git
-# Branch blosc1-format-writer of the fork (Blosc/c-blosc2#815); pinned to its head commit.
-revision = c919bfe6834cd05ca853a4b63340b693bed9892f
+url = https://github.com/Blosc/c-blosc2.git
+# Head of c-blosc2 main when Blosc/c-blosc2#815 was merged; move to a release that has it.
+revision = a98177412d3f9004d8cd1e2ed02bb385b4a29529
 patch_directory = c-blosc2
 
 [provide]

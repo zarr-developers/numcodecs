@@ -1,23 +1,18 @@
 # TODO
 
-## Move the wrap off the fork once Blosc/c-blosc2#815 is released
+## Move the wrap to a c-blosc2 release
 
-`subprojects/c-blosc2.wrap` clones the `blosc1-format-writer` branch of
-https://github.com/mkitti/c-blosc2 (see `UPSTREAM`). The change is proposed upstream in
-https://github.com/Blosc/c-blosc2/pull/815 (it builds on #812 / #813, already merged).
+`subprojects/c-blosc2.wrap` clones https://github.com/Blosc/c-blosc2 at a commit on `main`
+(see `UPSTREAM`) that includes the Blosc1 format writer, merged in
+https://github.com/Blosc/c-blosc2/pull/815 (it builds on #812 / #813).
 
-Check periodically whether #815 has been merged and which c-blosc2 release contains it.
-When there is such a release:
+Check which c-blosc2 release first contains #815. When there is one:
 
-1. point the wrap at it: `url = https://github.com/Blosc/c-blosc2.git`, `revision = <tag or
-   commit>` (or switch back to a `[wrap-file]` with `source_url` and `source_hash`);
+1. point the wrap's `revision` at its tag (or switch to a `[wrap-file]` with `source_url` and
+   `source_hash`);
 2. update `UPSTREAM` to match, and check that `meson/meson.build` still lists the right
    source files;
 3. run `python tools/sync_wrap.py` and `tests/run.py`;
 4. update `docs/release.md` and `README.md`.
 
-If upstream asks for changes (for example to the `BLOSC_BLOSC1_COMPAT` behavior) or rejects
-it, update the branch, `UPSTREAM` and the wrap's `revision` to match.
-
-Do not release numcodecs with the wrap pointing at the fork: a personal branch is not a
-stable build dependency.
+Do not release numcodecs with the wrap pointing at an unreleased commit of `main`.
