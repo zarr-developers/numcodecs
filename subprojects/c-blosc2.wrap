@@ -2,7 +2,7 @@
 directory = c-blosc2
 url = https://github.com/mkitti/c-blosc2.git
 # Branch blosc1-format-writer of the fork (Blosc/c-blosc2#815); pinned to its head commit.
-revision = a4995c38d1250790ce7f7e4a6debcda41404fb4b
+revision = c919bfe6834cd05ca853a4b63340b693bed9892f
 patch_directory = c-blosc2
 
 [provide]
