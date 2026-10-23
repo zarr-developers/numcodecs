@@ -14,6 +14,14 @@
 
 ## Unreleased
 
+### Enhancements
+
+* `numcodecs.blosc.compress` and `numcodecs.blosc.decompress` accept an optional
+  `nthreads` argument. When given, the call uses Blosc's context functions with that
+  many threads, without Blosc's global context or `_MUTEX`, and ignores `use_threads`.
+  The default (`None`) leaves the behavior unchanged. Values outside 1 to
+  `numcodecs.blosc.MAX_THREADS` raise `ValueError`.
+
 (release_0.17.1)=
 
 ## 0.17.1

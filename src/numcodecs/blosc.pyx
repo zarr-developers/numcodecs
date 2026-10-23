@@ -210,8 +210,15 @@ def _err_bad_cname(cname):
                      '%s' % (cname, list_compressors()))
 
 
+def _check_nthreads(nthreads):
+    if not isinstance(nthreads, int) or not 1 <= nthreads <= BLOSC_MAX_THREADS:
+        raise ValueError(
+            f'nthreads must be an integer between 1 and {BLOSC_MAX_THREADS}, got {nthreads!r}'
+        )
+
+
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
-             int blocksize=AUTOBLOCKS, typesize=None):
+             int blocksize=AUTOBLOCKS, typesize=None, nthreads=None):
     """Compress data.
 
     Parameters
@@ -230,6 +237,29 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     blocksize : int
         The requested size of the compressed blocks.  If 0, an automatic blocksize will
         be used.
+    nthreads : int, optional
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`.
+
+        If given, the call uses Blosc's context functions with that many threads. It
+        does not use Blosc's global context, so `set_nthreads` has no effect, and
+        `use_threads` is ignored.
+
+        If None (default), `use_threads` decides how many threads are used:
+
+        * True: the number set with `set_nthreads` (8, or the number of cores if
+          lower, until `set_nthreads` is called).
+        * False: one.
+        * None: the number set with `set_nthreads` in the main thread of the main
+          process, and one in any other thread or process.
+
+        Each call creates its own threads. A value above 1 has no effect on a buffer of
+        one block, and it is meant for large buffers: for a buffer of only a few blocks,
+        creating the threads can take longer than the time saved by splitting the work
+        between them.
+
+        With a value above 1, the order of the compressed blocks can differ between
+        calls. The decompressed data, the compressed size and the bytes of each block
+        do not change, and `nthreads=1` always gives the same output.
 
     Returns
     -------
@@ -244,8 +274,13 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         const char* source_ptr
         size_t nbytes, itemsize
         int cbytes
+        int ctx_nthreads = 1
         bytes dest
         char* dest_ptr
+
+    if nthreads is not None:
+        _check_nthreads(nthreads)
+        ctx_nthreads = nthreads
 
     # check valid cname early
     cname_str = cname.decode('ascii')
@@ -285,7 +320,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         dest_ptr = PyBytes_AS_STRING(dest)
 
         # perform compression
-        if _get_use_threads():
+        if nthreads is None and _get_use_threads():
             # allow blosc to use threads internally
 
             # N.B., we are using blosc's global context, and so we need to use a lock
@@ -312,7 +347,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
             with nogil:
                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
-                                            cname, blocksize, 1)
+                                            cname, blocksize, ctx_nthreads)
 
     finally:
         pass
@@ -327,7 +362,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     return dest
 
 
-def decompress(source, dest=None):
+def decompress(source, dest=None, nthreads=None):
     """Decompress data.
 
     Parameters
@@ -337,6 +372,25 @@ def decompress(source, dest=None):
         protocol.
     dest : array-like, optional
         Object to decompress into.
+    nthreads : int, optional
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`.
+
+        If given, the call uses Blosc's context functions with that many threads. It
+        does not use Blosc's global context, so `set_nthreads` has no effect, and
+        `use_threads` is ignored.
+
+        If None (default), `use_threads` decides how many threads are used:
+
+        * True: the number set with `set_nthreads` (8, or the number of cores if
+          lower, until `set_nthreads` is called).
+        * False: one.
+        * None: the number set with `set_nthreads` in the main thread of the main
+          process, and one in any other thread or process.
+
+        Each call creates its own threads. A value above 1 has no effect on a buffer of
+        one block, and it is meant for large buffers: for a buffer of only a few blocks,
+        creating the threads can take longer than the time saved by splitting the work
+        between them.
 
     Returns
     -------
@@ -353,6 +407,11 @@ def decompress(source, dest=None):
         Py_buffer* dest_pb
         char* dest_ptr
         size_t nbytes, cbytes, blocksize
+        int ctx_nthreads = 1
+
+    if nthreads is not None:
+        _check_nthreads(nthreads)
+        ctx_nthreads = nthreads
 
     # obtain source memoryview
     source_mv = ensure_contiguous_memoryview(source)
@@ -385,14 +444,14 @@ def decompress(source, dest=None):
                              'got %s' % (nbytes, dest_nbytes))
 
         # perform decompression
-        if _get_use_threads():
+        if nthreads is None and _get_use_threads():
             # allow blosc to use threads internally
             with _MUTEX:
                 with nogil:
                     ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
         else:
             with nogil:
-                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, ctx_nthreads)
 
     finally:
         pass
