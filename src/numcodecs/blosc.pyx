@@ -237,15 +237,29 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     blocksize : int
         The requested size of the compressed blocks.  If 0, an automatic blocksize will
         be used.
-
     nthreads : int, optional
-        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`. If
-        given, the call uses Blosc's context functions, ignores `use_threads` and does
-        not use Blosc's global context. If None (default), the behavior is unchanged.
-        A value above 1 has no effect on a buffer of one block, and each call creates
-        and joins its own threads. For a buffer of several blocks and a value above 1,
-        the compressed bytes can differ between calls (the blocks can appear in a
-        different order); the decompressed data is the same.
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`.
+
+        If given, the call uses Blosc's context functions with that many threads. It
+        does not use Blosc's global context, so `set_nthreads` has no effect, and
+        `use_threads` is ignored.
+
+        If None (default), `use_threads` decides how many threads are used:
+
+        * True: the number set with `set_nthreads` (8, or the number of cores if
+          lower, until `set_nthreads` is called).
+        * False: one.
+        * None: the number set with `set_nthreads` in the main thread of the main
+          process, and one in any other thread or process.
+
+        Each call creates its own threads. A value above 1 has no effect on a buffer of
+        one block, and it is meant for large buffers: for a buffer of only a few blocks,
+        creating the threads can take longer than the time saved by splitting the work
+        between them.
+
+        With a value above 1, the order of the compressed blocks can differ between
+        calls. The decompressed data, the compressed size and the bytes of each block
+        do not change, and `nthreads=1` always gives the same output.
 
     Returns
     -------
@@ -359,13 +373,24 @@ def decompress(source, dest=None, nthreads=None):
     dest : array-like, optional
         Object to decompress into.
     nthreads : int, optional
-        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`. If
-        given, the call uses Blosc's context functions, ignores `use_threads` and does
-        not use Blosc's global context. If None (default), the behavior is unchanged.
-        Each call creates and joins its own threads, so a value above 1 has no effect on
-        a buffer of one block and can be slower than 1 for a buffer of a few blocks. Calls
-        running at the same time each create their own threads, so the total is the sum
-        over the calls.
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`.
+
+        If given, the call uses Blosc's context functions with that many threads. It
+        does not use Blosc's global context, so `set_nthreads` has no effect, and
+        `use_threads` is ignored.
+
+        If None (default), `use_threads` decides how many threads are used:
+
+        * True: the number set with `set_nthreads` (8, or the number of cores if
+          lower, until `set_nthreads` is called).
+        * False: one.
+        * None: the number set with `set_nthreads` in the main thread of the main
+          process, and one in any other thread or process.
+
+        Each call creates its own threads. A value above 1 has no effect on a buffer of
+        one block, and it is meant for large buffers: for a buffer of only a few blocks,
+        creating the threads can take longer than the time saved by splitting the work
+        between them.
 
     Returns
     -------
