@@ -18,50 +18,57 @@ from .compat import ensure_contiguous_ndarray
 from .abc import Codec
 
 
-cdef extern from "blosc.h":
+cdef extern from "_blosc_shim.h":
     cdef enum:
-        BLOSC_MAX_OVERHEAD,
-        BLOSC_VERSION_STRING,
-        BLOSC_VERSION_DATE,
+        NC_BLOSC_MAX_OVERHEAD,
+        NC_BLOSC_DEST_OVERHEAD,
+        NC_BLOSC_MIN_HEADER_LENGTH,
+        NC_BLOSC_VERSION_STRING,
+        NC_BLOSC_VERSION_DATE,
+        NC_BLOSC_MAX_BUFFERSIZE,
+        NC_BLOSC_MAX_THREADS,
+        NC_BLOSC_MAX_TYPESIZE,
         BLOSC_NOSHUFFLE,
         BLOSC_SHUFFLE,
         BLOSC_BITSHUFFLE,
-        BLOSC_MAX_BUFFERSIZE,
-        BLOSC_MAX_THREADS,
-        BLOSC_MAX_TYPESIZE,
         BLOSC_DOSHUFFLE,
         BLOSC_DOBITSHUFFLE,
         BLOSC_MEMCPYED
 
-    void blosc_init()
-    void blosc_destroy()
-    int blosc_get_nthreads()
-    int blosc_set_nthreads(int nthreads)
-    int blosc_set_compressor(const char *compname)
-    void blosc_set_blocksize(size_t blocksize)
-    char* blosc_list_compressors()
-    int blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                       void* src, void* dest, size_t destsize) nogil
-    int blosc_decompress(void *src, void *dest, size_t destsize) nogil
-    int blosc_getitem(void* src, int start, int nitems, void* dest)
-    int blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
-                           const void* src, void* dest, size_t destsize,
-                           const char* compressor, size_t blocksize,
-                           int numinternalthreads) nogil
-    int blosc_decompress_ctx(const void* src, void* dest, size_t destsize,
-                             int numinternalthreads) nogil
-    void blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
-                             size_t* blocksize)
-    char* blosc_cbuffer_complib(const void* cbuffer)
-    void blosc_cbuffer_metainfo(const void* cbuffer, size_t* typesize, int* flags)
+    const char* NC_BLOSC_LIBRARY
+
+    void nc_blosc_setup()
+    void nc_blosc_init()
+    void nc_blosc_destroy()
+    int nc_blosc_get_nthreads()
+    int nc_blosc_set_nthreads(int nthreads)
+    int nc_blosc_set_compressor(const char *compname)
+    void nc_blosc_set_blocksize(size_t blocksize)
+    char* nc_blosc_list_compressors()
+    int nc_blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
+                          void* src, void* dest, size_t destsize) nogil
+    int nc_blosc_decompress(void *src, void *dest, size_t destsize) nogil
+    int nc_blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
+                              const void* src, void* dest, size_t destsize,
+                              const char* compressor, size_t blocksize,
+                              int numinternalthreads) nogil
+    int nc_blosc_decompress_ctx(const void* src, size_t srcsize, void* dest,
+                                size_t destsize, int numinternalthreads) nogil
+    int nc_blosc_cbuffer_validate(const void* cbuffer, size_t cbytes, size_t* nbytes)
+    void nc_blosc_cbuffer_sizes(const void* cbuffer, size_t* nbytes, size_t* cbytes,
+                                size_t* blocksize)
+    const char* nc_blosc_cbuffer_complib(const void* cbuffer)
+    void nc_blosc_cbuffer_metainfo(const void* cbuffer, size_t* typesize, int* flags)
 
 
-MAX_OVERHEAD = BLOSC_MAX_OVERHEAD
-MAX_BUFFERSIZE = BLOSC_MAX_BUFFERSIZE
-MAX_THREADS = BLOSC_MAX_THREADS
-MAX_TYPESIZE = BLOSC_MAX_TYPESIZE
-VERSION_STRING = <char *> BLOSC_VERSION_STRING
-VERSION_DATE = <char *> BLOSC_VERSION_DATE
+MAX_OVERHEAD = NC_BLOSC_MAX_OVERHEAD
+MAX_BUFFERSIZE = NC_BLOSC_MAX_BUFFERSIZE
+MAX_THREADS = NC_BLOSC_MAX_THREADS
+MAX_TYPESIZE = NC_BLOSC_MAX_TYPESIZE
+VERSION_STRING = <char *> NC_BLOSC_VERSION_STRING
+VERSION_DATE = <char *> NC_BLOSC_VERSION_DATE
+# name of the C library this module is built against: "c-blosc" or "c-blosc2"
+LIBRARY = (<bytes> NC_BLOSC_LIBRARY).decode()
 VERSION_STRING = VERSION_STRING.decode()
 VERSION_DATE = VERSION_DATE.decode()
 __version__ = VERSION_STRING
@@ -74,7 +81,8 @@ AUTOSHUFFLE = -1
 AUTOBLOCKS = 0
 
 # computed once at import; blosc_list_compressors() fills a static buffer without locking
-_COMPRESSORS = tuple(blosc_list_compressors().decode('ascii').split(','))
+nc_blosc_setup()
+_COMPRESSORS = tuple(nc_blosc_list_compressors().decode('ascii').split(','))
 
 # serializes access to blosc's global context
 _MUTEX = threading.Lock()
@@ -95,13 +103,13 @@ _importer_pid = os.getpid()
 def _init():
     """Initialize the Blosc library environment."""
     with _MUTEX:
-        blosc_init()
+        nc_blosc_init()
 
 
 def _destroy():
     """Destroy the Blosc library environment."""
     with _MUTEX:
-        blosc_destroy()
+        nc_blosc_destroy()
 
 
 def list_compressors():
@@ -113,7 +121,7 @@ def get_nthreads():
     """Get the number of threads that Blosc uses internally for compression and
     decompression."""
     with _MUTEX:
-        return blosc_get_nthreads()
+        return nc_blosc_get_nthreads()
 
 
 def set_nthreads(int nthreads):
@@ -121,7 +129,7 @@ def set_nthreads(int nthreads):
     decompression."""
     # blosc_set_nthreads re-creates the global context
     with _MUTEX:
-        return blosc_set_nthreads(nthreads)
+        return nc_blosc_set_nthreads(nthreads)
 
 
 def _cbuffer_sizes(source):
@@ -146,7 +154,7 @@ def _cbuffer_sizes(source):
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # determine buffer size
-    blosc_cbuffer_sizes(source_pb.buf, &nbytes, &cbytes, &blocksize)
+    nc_blosc_cbuffer_sizes(source_pb.buf, &nbytes, &cbytes, &blocksize)
 
     return nbytes, cbytes, blocksize
 
@@ -162,7 +170,7 @@ def cbuffer_complib(source):
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # determine buffer size
-    complib = blosc_cbuffer_complib(source_pb.buf)
+    complib = nc_blosc_cbuffer_complib(source_pb.buf)
 
     complib = complib.decode('ascii')
 
@@ -192,7 +200,7 @@ def _cbuffer_metainfo(source):
     source_pb = PyMemoryView_GET_BUFFER(source_mv)
 
     # determine buffer size
-    blosc_cbuffer_metainfo(source_pb.buf, &typesize, &flags)
+    nc_blosc_cbuffer_metainfo(source_pb.buf, &typesize, &flags)
 
     # decompose flags
     if flags & BLOSC_DOSHUFFLE:
@@ -267,6 +275,20 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         itemsize = typesize
     else:
         itemsize = source_pb.itemsize
+        if itemsize == 0:
+            # blosc does not accept a typesize of 0, which zero-size dtypes such as a
+            # structured dtype with a zero-length field give; the buffer is empty in
+            # that case, so any typesize works
+            itemsize = 1
+
+    # A requested blocksize must not exceed the buffer and must be a multiple of the
+    # typesize. c-blosc 1.x enforces this itself; c-blosc2 does not and then writes
+    # chunks it cannot read back.
+    if blocksize > 0:
+        if <size_t>blocksize > nbytes and nbytes > 0:
+            blocksize = <int>nbytes
+        if blocksize > <int>itemsize:
+            blocksize -= blocksize % <int>itemsize
 
     # determine shuffle
     if shuffle == AUTOSHUFFLE:
@@ -281,7 +303,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     try:
 
         # setup destination
-        dest = PyBytes_FromStringAndSize(NULL, nbytes + BLOSC_MAX_OVERHEAD)
+        dest = PyBytes_FromStringAndSize(NULL, nbytes + NC_BLOSC_DEST_OVERHEAD)
         dest_ptr = PyBytes_AS_STRING(dest)
 
         # perform compression
@@ -294,24 +316,24 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
             with _MUTEX:
 
                 # set compressor
-                compressor_set = blosc_set_compressor(cname)
+                compressor_set = nc_blosc_set_compressor(cname)
                 if compressor_set < 0:
                     # shouldn't happen if we checked against list of compressors
                     # already, but just in case
                     _err_bad_cname(cname_str)
 
                 # set blocksize
-                blosc_set_blocksize(blocksize)
+                nc_blosc_set_blocksize(blocksize)
 
                 # perform compression
                 with nogil:
-                    cbytes = blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD)
+                    cbytes = nc_blosc_compress(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + NC_BLOSC_DEST_OVERHEAD)
 
         else:
             with nogil:
-                cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
-                                            dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
+                cbytes = nc_blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
+                                            dest_ptr, nbytes + NC_BLOSC_DEST_OVERHEAD,
                                             cname, blocksize, 1)
 
     finally:
@@ -334,7 +356,8 @@ def decompress(source, dest=None):
     ----------
     source : bytes-like
         Compressed data, including blosc header. Can be any object supporting the buffer
-        protocol.
+        protocol. Bytes after the first complete Blosc frame are ignored for backward
+        compatibility.
     dest : array-like, optional
         Object to decompress into.
 
@@ -361,8 +384,16 @@ def decompress(source, dest=None):
     # get source pointer
     source_ptr = <const char*>source_pb.buf
 
-    # determine buffer size
-    blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    # Read the declared frame size only after proving the complete header is present.
+    # Validate exactly that frame so trailing bytes remain backward compatible.
+    if source_pb.len < NC_BLOSC_MIN_HEADER_LENGTH:
+        raise RuntimeError('invalid blosc frame: buffer is too small')
+    nc_blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
+    if cbytes > <size_t>source_pb.len:
+        raise RuntimeError('invalid blosc frame: buffer is truncated')
+    ret = nc_blosc_cbuffer_validate(source_ptr, cbytes, &nbytes)
+    if ret != 0:
+        raise RuntimeError('invalid blosc frame: header validation failed')
 
     # setup destination buffer
     if dest is None:
@@ -384,21 +415,27 @@ def decompress(source, dest=None):
             raise ValueError('destination buffer too small; expected at least %s, '
                              'got %s' % (nbytes, dest_nbytes))
 
+        # Preserve the previous loud failure for a non-empty destination paired
+        # with an empty frame instead of returning an untouched output buffer.
+        if nbytes == 0 and dest_nbytes != 0:
+            raise RuntimeError('cannot decompress an empty blosc frame into a '
+                               'non-empty destination buffer')
+
         # perform decompression
         if _get_use_threads():
             # allow blosc to use threads internally
             with _MUTEX:
                 with nogil:
-                    ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
+                    ret = nc_blosc_decompress(source_ptr, dest_ptr, nbytes)
         else:
             with nogil:
-                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+                ret = nc_blosc_decompress_ctx(source_ptr, cbytes, dest_ptr, nbytes, 1)
 
     finally:
         pass
 
     # handle errors
-    if ret <= 0:
+    if ret < 0 or <size_t>ret != nbytes:
         raise RuntimeError('error during blosc decompression: %d' % ret)
 
     return dest

@@ -1,5 +1,11 @@
+option('blosc_backend', type: 'combo', choices: ['blosc1', 'blosc2'], value: 'blosc1',
+       description: 'C library behind the Blosc codec. Both write Blosc1-format chunks.')
 option('system_blosc', type: 'feature', value: 'disabled',
-       description: 'Use system-installed Blosc library')
+       description: 'Use system-installed Blosc library (c-blosc 1.x for blosc_backend=blosc1, c-blosc2 for blosc2)')
+option('blosc_zstd', type: 'feature', value: 'enabled',
+       description: 'blosc_backend=blosc2 only: build Zstandard support into Blosc')
+option('blosc_zlib', type: 'feature', value: 'enabled',
+       description: 'blosc_backend=blosc2 only: build zlib support into Blosc')
 option('system_lz4', type: 'feature', value: 'disabled',
        description: 'Use system-installed LZ4 library')
 option('system_zlib', type: 'feature', value: 'disabled',
