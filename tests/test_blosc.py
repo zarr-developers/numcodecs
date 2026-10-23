@@ -293,9 +293,13 @@ def test_nthreads_matches_default(dtype, size, nthreads):
     for use in (True, False, None):
         blosc.use_threads = use
         try:
-            enc = blosc.compress(data, b'lz4', 5)
+            enc = blosc.compress(data, b'lz4', 5, nthreads=nthreads)
             assert blosc.decompress(enc, nthreads=nthreads) == data.tobytes()
-            assert blosc.decompress(enc, nthreads=nthreads) == blosc.decompress(enc)
+            # buffers are interchangeable with the ones from the default path
+            assert blosc.decompress(enc) == data.tobytes()
+            assert blosc.decompress(blosc.compress(data, b'lz4', 5), nthreads=nthreads) == (
+                data.tobytes()
+            )
         finally:
             blosc.use_threads = None  # restore default
 
@@ -313,19 +317,21 @@ def test_nthreads_invalid(nthreads):
     data = np.arange(100_000, dtype='i4')
     enc = blosc.compress(data, b'lz4', 5)
     with pytest.raises(ValueError, match='nthreads'):
+        blosc.compress(data, b'lz4', 5, nthreads=nthreads)
+    with pytest.raises(ValueError, match='nthreads'):
         blosc.decompress(enc, nthreads=nthreads)
 
 
 def test_nthreads_max_threads():
     data = np.arange(100_000, dtype='i4')
-    enc = blosc.compress(data, b'lz4', 5)
+    enc = blosc.compress(data, b'lz4', 5, nthreads=blosc.MAX_THREADS)
     assert blosc.decompress(enc, nthreads=blosc.MAX_THREADS) == data.tobytes()
 
 
 def test_nthreads_does_not_touch_global_state():
     nthreads_before = blosc.get_nthreads()
     data = np.arange(500_000, dtype='i4')
-    enc = blosc.compress(data, b'lz4', 5)
+    enc = blosc.compress(data, b'lz4', 5, nthreads=4)
     blosc.decompress(enc, nthreads=4)
     assert blosc.get_nthreads() == nthreads_before
 
@@ -340,6 +346,8 @@ def test_nthreads_concurrent_threads():
         try:
             for _ in range(20):
                 assert blosc.decompress(enc, nthreads=nthreads) == expected
+                enc2 = blosc.compress(data, b'lz4', 5, nthreads=nthreads)
+                assert blosc.decompress(enc2) == expected
         except Exception as e:
             errors.append(e)
 

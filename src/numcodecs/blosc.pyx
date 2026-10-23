@@ -218,7 +218,7 @@ def _check_nthreads(nthreads):
 
 
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
-             int blocksize=AUTOBLOCKS, typesize=None):
+             int blocksize=AUTOBLOCKS, typesize=None, nthreads=None):
     """Compress data.
 
     Parameters
@@ -238,6 +238,15 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         The requested size of the compressed blocks.  If 0, an automatic blocksize will
         be used.
 
+    nthreads : int, optional
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`. If
+        given, the call uses Blosc's context functions, ignores `use_threads` and does
+        not use Blosc's global context. If None (default), the behavior is unchanged.
+        A value above 1 has no effect on a buffer of one block, and each call creates
+        and joins its own threads. For a buffer of several blocks and a value above 1,
+        the compressed bytes can differ between calls (the blocks can appear in a
+        different order); the decompressed data is the same.
+
     Returns
     -------
     dest : bytes
@@ -251,8 +260,13 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         const char* source_ptr
         size_t nbytes, itemsize
         int cbytes
+        int ctx_nthreads = 1
         bytes dest
         char* dest_ptr
+
+    if nthreads is not None:
+        _check_nthreads(nthreads)
+        ctx_nthreads = nthreads
 
     # check valid cname early
     cname_str = cname.decode('ascii')
@@ -292,7 +306,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
         dest_ptr = PyBytes_AS_STRING(dest)
 
         # perform compression
-        if _get_use_threads():
+        if nthreads is None and _get_use_threads():
             # allow blosc to use threads internally
 
             # N.B., we are using blosc's global context, and so we need to use a lock
@@ -319,7 +333,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
             with nogil:
                 cbytes = blosc_compress_ctx(clevel, shuffle, itemsize, nbytes, source_ptr,
                                             dest_ptr, nbytes + BLOSC_MAX_OVERHEAD,
-                                            cname, blocksize, 1)
+                                            cname, blocksize, ctx_nthreads)
 
     finally:
         pass
