@@ -210,6 +210,13 @@ def _err_bad_cname(cname):
                      '%s' % (cname, list_compressors()))
 
 
+def _check_nthreads(nthreads):
+    if not isinstance(nthreads, int) or not 1 <= nthreads <= BLOSC_MAX_THREADS:
+        raise ValueError(
+            f'nthreads must be an integer between 1 and {BLOSC_MAX_THREADS}, got {nthreads!r}'
+        )
+
+
 def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
              int blocksize=AUTOBLOCKS, typesize=None):
     """Compress data.
@@ -327,7 +334,7 @@ def compress(source, char* cname, int clevel, int shuffle=SHUFFLE,
     return dest
 
 
-def decompress(source, dest=None):
+def decompress(source, dest=None, nthreads=None):
     """Decompress data.
 
     Parameters
@@ -337,6 +344,14 @@ def decompress(source, dest=None):
         protocol.
     dest : array-like, optional
         Object to decompress into.
+    nthreads : int, optional
+        Number of threads Blosc uses for this call, between 1 and `MAX_THREADS`. If
+        given, the call uses Blosc's context functions, ignores `use_threads` and does
+        not use Blosc's global context. If None (default), the behavior is unchanged.
+        Each call creates and joins its own threads, so a value above 1 has no effect on
+        a buffer of one block and can be slower than 1 for a buffer of a few blocks. Calls
+        running at the same time each create their own threads, so the total is the sum
+        over the calls.
 
     Returns
     -------
@@ -353,6 +368,11 @@ def decompress(source, dest=None):
         Py_buffer* dest_pb
         char* dest_ptr
         size_t nbytes, cbytes, blocksize
+        int ctx_nthreads = 1
+
+    if nthreads is not None:
+        _check_nthreads(nthreads)
+        ctx_nthreads = nthreads
 
     # obtain source memoryview
     source_mv = ensure_contiguous_memoryview(source)
@@ -385,14 +405,14 @@ def decompress(source, dest=None):
                              'got %s' % (nbytes, dest_nbytes))
 
         # perform decompression
-        if _get_use_threads():
+        if nthreads is None and _get_use_threads():
             # allow blosc to use threads internally
             with _MUTEX:
                 with nogil:
                     ret = blosc_decompress(source_ptr, dest_ptr, nbytes)
         else:
             with nogil:
-                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, 1)
+                ret = blosc_decompress_ctx(source_ptr, dest_ptr, nbytes, ctx_nthreads)
 
     finally:
         pass

@@ -1,3 +1,5 @@
+import multiprocessing
+import os
 import threading
 import time
 from multiprocessing import Pool
@@ -202,6 +204,10 @@ def test_backwards_compatibility():
     check_backwards_compatibility(Blosc.codec_id, arrays, codecs)
 
 
+def _decode_nthreads_worker(enc, nthreads):
+    return blosc.decompress(enc, nthreads=nthreads)
+
+
 def _encode_worker(data):
     compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
     return compressor.encode(data)
@@ -277,6 +283,84 @@ def test_set_nthreads_races_global_context():
         blosc.use_threads = None  # restore default
         blosc.set_nthreads(original_nthreads)
     assert not errors
+
+
+@pytest.mark.parametrize('nthreads', [1, 4, 8])
+@pytest.mark.parametrize('dtype', ['u1', 'i4', 'f8'])
+@pytest.mark.parametrize('size', [100, 100_000, 2_000_000])
+def test_nthreads_matches_default(dtype, size, nthreads):
+    data = np.arange(size).astype(dtype)
+    for use in (True, False, None):
+        blosc.use_threads = use
+        try:
+            enc = blosc.compress(data, b'lz4', 5)
+            assert blosc.decompress(enc, nthreads=nthreads) == data.tobytes()
+            assert blosc.decompress(enc, nthreads=nthreads) == blosc.decompress(enc)
+        finally:
+            blosc.use_threads = None  # restore default
+
+
+def test_nthreads_decompress_into_dest():
+    data = np.arange(500_000, dtype='i4')
+    enc = blosc.compress(data, b'lz4', 5)
+    out = np.empty_like(data)
+    blosc.decompress(enc, out, nthreads=4)
+    np.testing.assert_array_equal(out, data)
+
+
+@pytest.mark.parametrize('nthreads', [0, -1, blosc.MAX_THREADS + 1, 1.5, '4'])
+def test_nthreads_invalid(nthreads):
+    data = np.arange(100_000, dtype='i4')
+    enc = blosc.compress(data, b'lz4', 5)
+    with pytest.raises(ValueError, match='nthreads'):
+        blosc.decompress(enc, nthreads=nthreads)
+
+
+def test_nthreads_max_threads():
+    data = np.arange(100_000, dtype='i4')
+    enc = blosc.compress(data, b'lz4', 5)
+    assert blosc.decompress(enc, nthreads=blosc.MAX_THREADS) == data.tobytes()
+
+
+def test_nthreads_does_not_touch_global_state():
+    nthreads_before = blosc.get_nthreads()
+    data = np.arange(500_000, dtype='i4')
+    enc = blosc.compress(data, b'lz4', 5)
+    blosc.decompress(enc, nthreads=4)
+    assert blosc.get_nthreads() == nthreads_before
+
+
+def test_nthreads_concurrent_threads():
+    data = np.arange(500_000, dtype='i4')
+    expected = data.tobytes()
+    enc = blosc.compress(data, b'lz4', 5)
+    errors = []
+
+    def worker(nthreads):
+        try:
+            for _ in range(20):
+                assert blosc.decompress(enc, nthreads=nthreads) == expected
+        except Exception as e:
+            errors.append(e)
+
+    threads = [threading.Thread(target=worker, args=(n,)) for n in (1, 2, 4, 8) * 4]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert not errors
+
+
+@pytest.mark.skipif(not hasattr(os, 'fork'), reason='requires fork')
+def test_nthreads_after_fork():
+    data = np.arange(500_000, dtype='i4')
+    enc = blosc.compress(data, b'lz4', 5)
+    # call once in the parent so that blosc's global state exists before the fork
+    assert blosc.decompress(enc) == data.tobytes()
+    ctx = multiprocessing.get_context('fork')
+    with ctx.Pool(2) as pool:
+        results = pool.starmap(_decode_nthreads_worker, [(enc, 4)] * 4)
+    assert all(r == data.tobytes() for r in results)
 
 
 def test_err_decode_object_buffer():
