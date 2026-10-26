@@ -77,7 +77,11 @@ class Delta(Codec):
         dec = np.empty_like(enc, dtype=self.dtype)
 
         # decode differences
-        np.cumsum(enc, out=dec)
+        if self.dtype.kind == 'b':
+            # Boolean differences record transitions, so reconstruct their parity.
+            np.logical_xor.accumulate(enc, out=dec)
+        else:
+            np.cumsum(enc, out=dec)
 
         # handle output
         return ndarray_copy(dec, out)
