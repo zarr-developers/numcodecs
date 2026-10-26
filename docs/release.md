@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Fix Boolean `Delta` decoding so transitions from `True` to `False` round-trip
+  correctly, including when using a wider encoded dtype. Encoded bytes and codec
+  configuration remain unchanged. See {issue}`883`.
+
 (release_0.17.1)=
 
 ## 0.17.1
