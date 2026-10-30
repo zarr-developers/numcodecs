@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Fix decoding LZMA container streams encoded with custom filters, while retaining
+  explicit filters for raw streams.
+  By {user}`Oikantik Basu <Golden007-prog>`, {issue}`188`
+
 (release_0.17.1)=
 
 ## 0.17.1
