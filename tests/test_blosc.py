@@ -330,3 +330,15 @@ def test_config_no_typesize():
     codec = Blosc(shuffle=Blosc.SHUFFLE, typesize=5)
     config = codec.get_config()
     assert "typesize" not in config
+
+
+@pytest.mark.parametrize('shuffle', [Blosc.SHUFFLE, Blosc.BITSHUFFLE])
+@pytest.mark.parametrize('blocksize', [0, 2**8, 4097])
+@pytest.mark.parametrize('nbytes', [1, 31, 33, 127, 1000, 65537])
+@pytest.mark.parametrize('typesize', [1, 2, 3, 4, 7, 8, 12, 16, 17, 32])
+def test_shuffle_roundtrip_typesizes(typesize, nbytes, blocksize, shuffle):
+    # Exercises the SIMD (un)shuffle kernels, including the scalar tail used when a
+    # block is not a multiple of the vector width or the typesize.
+    src = np.random.default_rng(0).integers(0, 64, nbytes, dtype='u1').tobytes()
+    codec = Blosc(cname='lz4', clevel=5, shuffle=shuffle, blocksize=blocksize, typesize=typesize)
+    assert bytes(codec.decode(codec.encode(src))) == src

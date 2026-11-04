@@ -12,6 +12,7 @@ endif
 # Correct for cross-compilation: checks what the *target* supports.
 have_sse2 = false
 have_avx2 = false
+have_neon = false
 
 if host_machine.cpu_family() == 'x86_64'
   # Honor legacy environment variables for backwards compatibility with
@@ -36,6 +37,17 @@ if host_machine.cpu_family() == 'x86_64'
   else
     have_avx2 = cc.has_argument('-mavx2')
   endif
+endif
+
+# NEON is mandatory on aarch64, so no runtime detection is needed.
+if host_machine.cpu_family() == 'aarch64' and not get_option('neon').disabled()
+  have_neon = cc.compiles('''
+    #if !defined(__ARM_NEON) && !defined(_M_ARM64)
+    #error "no NEON"
+    #endif
+    #include <arm_neon.h>
+    int main(void) { uint8x16_t v = vdupq_n_u8(0); return vgetq_lane_u8(v, 0); }
+  ''', name: 'NEON intrinsics')
 endif
 
 # --- Vendored zstd ---
@@ -165,9 +177,16 @@ if not blosc_dep.found()
     '../../c-blosc/blosc/blosclz.c',
     '../../c-blosc/blosc/fastcopy.c',
     '../../c-blosc/blosc/shuffle.c',
-    '../../c-blosc/blosc/shuffle-generic.c',
     '../../c-blosc/blosc/bitshuffle-generic.c',
   )
+
+  # c-blosc 1.x has no ARM SIMD shuffle; on aarch64 swap in a NEON
+  # implementation of the generic (un)shuffle routines.
+  if have_neon
+    blosc_sources += files('_blosc_neon/shuffle-generic-neon.c')
+  else
+    blosc_sources += files('../../c-blosc/blosc/shuffle-generic.c')
+  endif
 
   blosc_c_args = c_args + ['-DHAVE_LZ4', '-DHAVE_ZLIB', '-DHAVE_ZSTD']
 
