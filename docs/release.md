@@ -24,6 +24,11 @@
   option (default `auto`).
   By {user}`Davis Bennett <d-v-b>`.
 
+### Maintenance
+
+* Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
+  and run the test suite on both. {issue}`874`
+
 (release_0.17.1)=
 
 ## 0.17.1
