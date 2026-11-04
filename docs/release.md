@@ -8,6 +8,10 @@
 (unreleased)=
 
 ## Unreleased
+
+* Encode F-contiguous arrays in logical order for the vlen codecs and for delta, fixedscaleoffset, packbits, and categorize. They used to walk memory order, which did not match the logical layout.
+  By {user}`Corey Tasz <ceedot-rock>`, {issue}`850`, {pr}`863`
+
 -->
 
 (unreleased)=

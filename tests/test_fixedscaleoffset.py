@@ -33,7 +33,7 @@ codecs = [
 def test_encode_decode():
     for arr, codec in itertools.product(arrays, codecs):
         precision = int(np.log10(codec.scale))
-        check_encode_decode(arr, codec, precision=precision)
+        check_encode_decode(arr, codec, precision=precision, order='C')
 
 
 @pytest.mark.parametrize(
@@ -75,3 +75,22 @@ def test_errors():
         FixedScaleOffset(dtype=object, astype='i4', scale=10, offset=100)
     with pytest.raises(ValueError):
         FixedScaleOffset(dtype='f8', astype=object, scale=10, offset=100)
+
+
+def test_encode_f_contiguous_logical_order():
+    # regression test for https://github.com/zarr-developers/numcodecs/issues/850
+    # the encoded stream must hold elements in logical (C) order, so encoding
+    # an F-contiguous array produces the same bytes as its C-ordered equivalent
+    arr_f = np.asfortranarray(np.arange(12, dtype='<i4').reshape(3, 4))
+    arr_c = np.ascontiguousarray(arr_f)
+    codec = FixedScaleOffset(offset=0, scale=1, dtype='<i4', astype='<i4')
+    assert_array_equal(codec.encode(arr_f), codec.encode(arr_c))
+
+    # a consumer reshaping the decoded 1-D stream in C order gets the array back
+    dec = codec.decode(codec.encode(arr_f)).reshape(arr_f.shape)
+    assert_array_equal(dec, arr_f)
+
+    # decoding into an F-ordered output buffer lands values in the right places
+    out = np.empty(arr_f.shape, dtype='<i4', order='F')
+    codec.decode(codec.encode(arr_f), out=out)
+    assert_array_equal(out, arr_f)
