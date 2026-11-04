@@ -10,3 +10,5 @@ option('sse2', type: 'feature', value: 'auto',
        description: 'Enable SSE2 SIMD optimizations')
 option('avx2', type: 'feature', value: 'auto',
        description: 'Enable AVX2 SIMD optimizations')
+option('neon', type: 'feature', value: 'auto',
+       description: 'Enable NEON SIMD shuffle on aarch64')

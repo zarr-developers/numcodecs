@@ -31,7 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          submodules: true
           fetch-depth: 0  # required for version resolution for nightly wheels
 
       - uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e  # v4.3.5
@@ -47,7 +46,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          submodules: true
           fetch-depth: 0
 
       - uses: actions/setup-python@v6

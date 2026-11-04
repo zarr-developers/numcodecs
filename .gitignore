@@ -100,3 +100,7 @@ ENV/
 *.egg-info
 pixi.lock
 uv.lock
+# meson subprojects: only wraps and our overlays are tracked
+/subprojects/*
+!/subprojects/*.wrap
+!/subprojects/packagefiles/

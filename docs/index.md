@@ -58,13 +58,10 @@ To work with Numcodecs source code in development, see the
 development environment with venv or uv.
 
 ```
-$ git clone --recursive https://github.com/zarr-developers/numcodecs.git
+$ git clone https://github.com/zarr-developers/numcodecs.git
 $ cd numcodecs
 $ pip install -e .[test,msgpack,zfpy]
 ```
-
-Note: if you prefer to use the GitHub CLI `gh` you will need to append `-- --recurse-submodules`
-to the clone command to everything works properly.
 
 To verify that Numcodecs has been fully installed (including the Blosc
 extension) run the test suite:
