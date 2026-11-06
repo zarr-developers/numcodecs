@@ -143,8 +143,34 @@ def test_error():
     assert "Bob Jenkin's lookup3 checksum" in str(e.value)
 
 
-def test_out():
-    data = np.frombuffer(bytearray(b"Hello World"), dtype="uint8")
-    j = JenkinsLookup3()
-    result = j.encode(data)
-    j.decode(result, out=data)
+@pytest.mark.parametrize("order", ["C", "F"])
+def test_out(order):
+    data = np.arange(6, dtype=">u2").reshape((2, 3), order=order)
+    out = np.zeros_like(data)
+    codec = JenkinsLookup3()
+    assert codec.decode(codec.encode(data), out=out) is out
+    np.testing.assert_array_equal(out, data)
+
+
+def test_out_bytearray():
+    out = bytearray(4)
+    codec = JenkinsLookup3()
+    assert codec.decode(codec.encode(b"data"), out=out) is out
+    assert out == b"data"
+
+
+def test_out_strided():
+    backing = np.zeros(8, dtype="u1")
+    out = backing[::2]
+    codec = JenkinsLookup3()
+    codec.decode(codec.encode(b"data"), out=out)
+    assert out.tobytes() == b"data"
+    assert not backing[1::2].any()
+
+
+def test_out_wrong_size():
+    out = np.zeros(4, dtype="u1")
+    codec = JenkinsLookup3()
+    with pytest.raises(ValueError):
+        codec.decode(codec.encode(b"x"), out=out)
+    assert not out.any()

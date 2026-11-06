@@ -9,7 +9,7 @@ from typing import Literal
 import numpy as np
 
 from .abc import Codec
-from .compat import ensure_contiguous_ndarray, ndarray_copy
+from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 
 crc32c_checksum: Callable[[Buffer, int], int] | None
@@ -185,7 +185,16 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out.view("uint8")[:] = b[:-4]
+            dest = ensure_ndarray(out)
+            payload = b[:-4]
+            if dest.nbytes != payload.size:
+                raise ValueError("Output buffer must have the same byte size as the decoded data.")
+            # Match the memory order used by encode.
+            if dest.flags.f_contiguous:
+                dest = dest.T
+            # View each element as bytes so strided arrays and dtype padding are preserved.
+            dest_bytes = dest.view((np.uint8, (dest.itemsize,)))
+            dest_bytes[...] = payload.reshape(dest_bytes.shape)
             return out
         return memoryview(b[:-4])
 
