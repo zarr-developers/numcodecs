@@ -1,0 +1,5 @@
+repository = https://github.com/Blosc/c-blosc2
+branch = main
+commit = d77f4b9167c72ac97bc3f4c0644bf46f77c8d71f
+version = 3.3.6.dev
+pull_request = https://github.com/Blosc/c-blosc2/pull/815

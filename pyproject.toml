@@ -148,6 +148,9 @@ norecursedirs = [
 ]
 log_cli_level = "INFO"
 xfail_strict = true
+markers = [
+    "blosc1_compat: compatibility of Blosc with C-Blosc 1.x (needs python-blosc and hypothesis; see .github/workflows/blosc1-compat.yaml)",
+]
 filterwarnings = [
     "error",
     "ignore:As the c extension couldn't be imported:RuntimeWarning", # Ignore warning about pure python google_crc32c (on Python 3.14)
@@ -253,3 +256,9 @@ conflicts = [
         { group = "test-zarr-main" }
     ]
 ]
+
+[tool.meson-python.args]
+# Wrapped subprojects (c-blosc2, zstd, lz4, zlib) are static build dependencies:
+# do not install their artifacts, but ship their sources in the sdist.
+install = ['--skip-subprojects']
+dist = ['--include-subprojects']

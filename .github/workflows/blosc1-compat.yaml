@@ -1,0 +1,97 @@
+name: Blosc1 compatibility
+
+# Property-based and exhaustive tests (tests/test_blosc1_compat.py) that chunks written by
+# numcodecs' Blosc decode with C-Blosc 1.x, and the reverse, using python-blosc (which
+# bundles C-Blosc 1.x) as the reference.
+#
+# This workflow is self-contained and optional. To turn it off, any of:
+#   * set the repository variable BLOSC1_COMPAT_CI to 'false'
+#     (Settings > Secrets and variables > Actions > Variables), without a code change;
+#   * delete this file; nothing else refers to it. tests/test_blosc1_compat.py skips itself
+#     when python-blosc or hypothesis is missing, so the other workflows are unaffected;
+#   * run pytest elsewhere with -m "not blosc1_compat".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/blosc1-compat.yaml'
+      - 'tests/test_blosc1_compat.py'
+      - 'src/numcodecs/blosc.pyx'
+      - 'src/numcodecs/_blosc_shim.h'
+      - 'src/numcodecs/meson.build'
+      - 'subprojects/**'
+      - 'packages/c-blosc2-blosc1-compat/**'
+      - 'c-blosc'
+  pull_request:
+    paths:
+      - '.github/workflows/blosc1-compat.yaml'
+      - 'tests/test_blosc1_compat.py'
+      - 'src/numcodecs/blosc.pyx'
+      - 'src/numcodecs/_blosc_shim.h'
+      - 'src/numcodecs/meson.build'
+      - 'subprojects/**'
+      - 'packages/c-blosc2-blosc1-compat/**'
+      - 'c-blosc'
+  schedule:
+    - cron: '0 5 * * 1'  # weekly, with many more examples than a pull request
+  workflow_dispatch:
+    inputs:
+      examples:
+        description: 'Hypothesis examples per property'
+        default: '1000'
+
+permissions:
+  contents: read
+
+jobs:
+  compat:
+    # the repository variable is the off switch
+    if: vars.BLOSC1_COMPAT_CI != 'false'
+    name: ${{ matrix.backend }} backend, ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # the c-blosc 1.x backend is the control: the tests must pass on it too, which
+          # shows that they test the format and not an implementation detail
+          - {backend: blosc1, platform: ubuntu-latest}
+          - {backend: blosc2, platform: ubuntu-latest}
+          - {backend: blosc2, platform: ubuntu-22.04-arm}
+          - {backend: blosc2, platform: macos-14}
+          - {backend: blosc2, platform: windows-latest}
+    defaults:
+      run:
+        shell: bash -e {0}
+    env:
+      BLOSC1_COMPAT_EXAMPLES: ${{ inputs.examples || (github.event_name == 'schedule' && '5000') || '300' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # pyproject.toml's license-files lists the c-blosc submodule's licenses, and the
+          # blosc1 backend builds it
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      - name: Install numcodecs with the ${{ matrix.backend }} backend
+        run: python -m pip install -v ".[test]" -Csetup-args=-Dblosc_backend=${{ matrix.backend }}
+      - name: Install the C-Blosc 1.x reference
+        # python-blosc has wheels for most platforms and builds from source (with cmake)
+        # for the rest
+        run: python -m pip install blosc hypothesis cmake
+      - name: Versions
+        run: |
+          python - <<'EOF'
+          import blosc, hypothesis, numcodecs.blosc as nb
+          print("numcodecs backend:", nb.LIBRARY, nb.VERSION_STRING, nb.list_compressors())
+          print("reference:", "python-blosc", blosc.__version__, "C-Blosc", blosc.VERSION_STRING)
+          print("hypothesis:", hypothesis.__version__)
+          assert nb.LIBRARY == ("c-blosc2" if "${{ matrix.backend }}" == "blosc2" else "c-blosc")
+          EOF
+      - name: Run the compatibility tests
+        run: pytest tests/test_blosc1_compat.py -m blosc1_compat --no-cov -v -p no:cacheprovider
