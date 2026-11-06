@@ -14,7 +14,7 @@ description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme = "README.md"
-dependencies = ["numpy>=2.0", "typing_extensions"]
+dependencies = ["numpy>=2.0", "packaging", "typing_extensions"]
 requires-python = ">=3.12"
 dynamic = [
   "version",
