@@ -14,6 +14,13 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* CRC32, CRC32C, and Adler32 now check the size of encoded buffers in bytes when
+  decoding typed or multidimensional views. {issue}`890`
+* JenkinsLookup3 now decodes into correctly sized multidimensional arrays and byte
+  buffers and rejects an output buffer with the wrong byte count. {issue}`894`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
