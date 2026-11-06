@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* CRC32, CRC32C, and Adler32 now check the size of encoded buffers in bytes when
+  decoding typed or multidimensional views. {issue}`890`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,

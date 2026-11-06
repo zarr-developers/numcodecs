@@ -67,12 +67,12 @@ class Checksum32(Codec, abc.ABC):
         return enc
 
     def decode(self, buf, out=None):
-        if len(buf) < 4:
+        arr = ensure_contiguous_ndarray(buf).view('u1')
+        if arr.nbytes < 4:
             raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
         if out is not None:
             ensure_contiguous_ndarray(out)  # check that out is a valid ndarray
 
-        arr = ensure_contiguous_ndarray(buf).view('u1')
         if self.location == 'start':
             checksum_view = arr[:4]
             payload_view = arr[4:]
