@@ -26,12 +26,15 @@ cdef uint32_t _fletcher32(const uint8_t[::1] _data):
     # converted from
     # https://github.com/Unidata/netcdf-c/blob/main/plugins/H5checksum.c#L109
     cdef:
-        const uint8_t *data = &_data[0]
+        const uint8_t *data
         size_t _len = _data.shape[0]
         size_t len = _len / 2
         size_t tlen
         uint32_t sum1 = 0, sum2 = 0;
 
+    if _len == 0:
+        return 0
+    data = &_data[0]
 
     while len:
         tlen = 360 if len > 360 else len
@@ -77,14 +80,14 @@ class Fletcher32(Codec):
         """Return buffer plus a footer with the fletcher checksum (4-bytes)"""
         buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         cdef const uint8_t[::1] b_mv = buf
-        cdef const uint8_t* b_ptr = &b_mv[0]
         cdef Py_ssize_t b_len = len(b_mv)
 
         cdef Py_ssize_t out_len = b_len + FOOTER_LENGTH
         cdef bytes out = PyBytes_FromStringAndSize(NULL, out_len)
         cdef uint8_t* out_ptr = <uint8_t*>out
 
-        memcpy(out_ptr, b_ptr, b_len)
+        if b_len > 0:
+            memcpy(out_ptr, &b_mv[0], b_len)
         store_le32(out_ptr + b_len, _fletcher32(b_mv))
 
         return out
@@ -109,8 +112,9 @@ class Fletcher32(Codec):
         cdef uint8_t* out_ptr
         if out is not None:
             out_mv = ensure_contiguous_ndarray(out).view("uint8")
-            out_ptr = &out_mv[0]
-            memcpy(out_ptr, b_ptr, b_len - FOOTER_LENGTH)
+            if b_len > FOOTER_LENGTH:
+                out_ptr = &out_mv[0]
+                memcpy(out_ptr, b_ptr, b_len - FOOTER_LENGTH)
         else:
             out = b_mv[:-FOOTER_LENGTH]
         return out

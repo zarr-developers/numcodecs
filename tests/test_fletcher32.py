@@ -53,3 +53,12 @@ def test_out():
     f = Fletcher32()
     result = f.encode(data)
     f.decode(result, out=data)
+
+
+def test_empty():
+    f = Fletcher32()
+    enc = f.encode(b"")
+    assert enc == b"\x00\x00\x00\x00"
+    assert bytes(f.decode(enc)) == b""
+    out = np.empty(0, dtype="uint8")
+    assert f.decode(enc, out=out) is out

@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Fixes
+
+* `Fletcher32` now encodes and decodes empty buffers instead of raising `IndexError`.
+  By {user}`Raphael Fakhri <RaphaelFakhri>`, {issue}`888`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
