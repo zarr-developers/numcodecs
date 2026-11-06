@@ -19,6 +19,11 @@
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
   and run the test suite on both. {issue}`874`
 
+### Compatibility
+
+* NumCodecs can be imported with zfpy post-releases such as 1.0.1.post0 installed.
+  {issue}`892`
+
 (release_0.17.1)=
 
 ## 0.17.1

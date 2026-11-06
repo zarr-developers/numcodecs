@@ -1,3 +1,4 @@
+import runpy
 from types import ModuleType
 from typing import cast
 
@@ -6,6 +7,7 @@ import pytest
 
 try:
     # noinspection PyProtectedMember
+    from numcodecs import zfpy as zfpy_module
     from numcodecs.zfpy import ZFPY, _zfpy
 except ImportError:  # pragma: no cover
     pytest.skip("ZFPY not available", allow_module_level=True)
@@ -43,6 +45,21 @@ arrays = [
     np.random.randint(-(2**31), -(2**31) + 20, size=1000, dtype="i4").reshape(100, 10),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype="i8").reshape(10, 10, 10),
 ]
+
+
+def test_post_release_versions(monkeypatch):
+    versions = {"zfpy": "1.0.1.post0", "numpy": "2.5.4+local"}
+    monkeypatch.setattr("importlib.metadata.version", versions.__getitem__)
+    module = runpy.run_path(zfpy_module.__file__, run_name="numcodecs.zfpy")
+    assert module["_zfpy"] is _zfpy
+
+
+def test_incompatible_zfpy_version(monkeypatch):
+    versions = {"zfpy": "1.0.0.post1", "numpy": "2.0.0"}
+    monkeypatch.setattr("importlib.metadata.version", versions.__getitem__)
+    with pytest.warns(UserWarning, match="incompatible"):
+        module = runpy.run_path(zfpy_module.__file__, run_name="numcodecs.zfpy")
+    assert module["_zfpy"] is None
 
 
 def test_encode_decode():
