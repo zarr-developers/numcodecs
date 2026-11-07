@@ -11,4 +11,5 @@ packbits
 categorize
 astype
 shuffle
+base64
 ```
