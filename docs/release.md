@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Fixes
+
+* `Fletcher32.decode` now raises `ValueError` when a user-provided `out` buffer is not
+  exactly the size of the decoded payload, instead of writing past the end of a smaller
+  buffer or leaving the tail of a larger one untouched.
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
