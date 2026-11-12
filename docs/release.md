@@ -20,6 +20,11 @@
   explicit filters for raw streams.
   By {user}`Oikantik Basu <Golden007-prog>`, {issue}`188`
 
+### Maintenance
+
+* Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
+  and run the test suite on both. {issue}`874`
+
 (release_0.17.1)=
 
 ## 0.17.1
