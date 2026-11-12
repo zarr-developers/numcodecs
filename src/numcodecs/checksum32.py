@@ -185,7 +185,13 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out.view("uint8")[:] = b[:-4]
+            payload = b[:-4]
+            if memoryview(out).nbytes != payload.nbytes:
+                raise ValueError(
+                    f"Output buffer has {memoryview(out).nbytes} bytes, but the"
+                    f" decoded payload has {payload.nbytes} bytes."
+                )
+            np.frombuffer(memoryview(out), dtype="uint8")[:] = payload
             return out
         return memoryview(b[:-4])
 

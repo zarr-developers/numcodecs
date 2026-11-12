@@ -148,3 +148,28 @@ def test_out():
     j = JenkinsLookup3()
     result = j.encode(data)
     j.decode(result, out=data)
+
+
+def test_out_too_large_is_rejected():
+    j = JenkinsLookup3()
+    enc = j.encode(b"x")
+    out = np.zeros(4, dtype="u1")
+    with pytest.raises(ValueError, match="decoded payload has 1 bytes"):
+        j.decode(enc, out=out)
+    assert out.tobytes() == b"\x00\x00\x00\x00"
+
+
+def test_out_with_other_dtype_is_filled():
+    payload = bytes(range(12))
+    j = JenkinsLookup3()
+    out = np.zeros((2, 3), dtype="uint16")
+    j.decode(j.encode(payload), out=out)
+    assert out.view("uint8").tobytes() == payload
+
+
+def test_out_bytearray_is_filled():
+    payload = b"Hello World"
+    j = JenkinsLookup3()
+    out = bytearray(len(payload))
+    j.decode(j.encode(payload), out=out)
+    assert bytes(out) == payload
