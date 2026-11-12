@@ -13,6 +13,7 @@ except ImportError as e:  # pragma: no cover
     raise unittest.SkipTest("LZMA not available") from e
 
 
+from numcodecs.registry import get_codec
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -61,6 +62,33 @@ def test_encode_decode():
 def test_config():
     codec = LZMA(preset=1, format=_lzma.FORMAT_XZ, check=_lzma.CHECK_NONE, filters=None)
     check_config(codec)
+
+
+@pytest.mark.parametrize(
+    ('format', 'filters'),
+    [
+        (
+            _lzma.FORMAT_XZ,
+            [{'id': _lzma.FILTER_DELTA, 'dist': 4}, {'id': _lzma.FILTER_LZMA2, 'preset': 1}],
+        ),
+        (_lzma.FORMAT_ALONE, [{'id': _lzma.FILTER_LZMA1, 'preset': 1}]),
+        (
+            _lzma.FORMAT_RAW,
+            [{'id': _lzma.FILTER_DELTA, 'dist': 4}, {'id': _lzma.FILTER_LZMA2, 'preset': 1}],
+        ),
+    ],
+    ids=['xz', 'alone', 'raw'],
+)
+def test_custom_filters_roundtrip(format, filters):
+    codec = LZMA(format=format, filters=filters)
+    arr = np.arange(32, dtype='i4')
+    check_config(codec)
+    check_encode_decode(arr, codec)
+    check_encode_decode(arr, get_codec(codec.get_config()))
+    decode_filters = filters if format == _lzma.FORMAT_RAW else None
+    assert (
+        _lzma.decompress(codec.encode(arr), format=format, filters=decode_filters) == arr.tobytes()
+    )
 
 
 def test_repr():

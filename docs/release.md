@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Fix decoding LZMA container streams encoded with custom filters, while retaining
+  explicit filters for raw streams.
+  By {user}`Oikantik Basu <Golden007-prog>`, {issue}`188`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
