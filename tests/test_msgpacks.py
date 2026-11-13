@@ -94,6 +94,30 @@ def test_encode_decode_shape_dtype_preserved():
         assert arr.dtype == actual.dtype
 
 
+@pytest.mark.parametrize(
+    ('value', 'dtype'),
+    [(value, dtype) for value in [0, 1.25, 'hello', b'hello'] for dtype in [None, object]]
+    + [([], object), ([1, 2], object), ({'a': 2}, object)],
+)
+@pytest.mark.parametrize('use_out', [False, True])
+def test_scalar_roundtrip(value, dtype, use_out):
+    if isinstance(value, (list, dict)):
+        arr = np.empty((), dtype=object)
+        arr[()] = value.copy()
+    else:
+        arr = np.array(value, dtype=dtype)
+    codec = MsgPack()
+    encoded = codec.encode(arr)
+    assert arr.tolist() == value
+    out = np.empty_like(arr) if use_out else None
+    actual = codec.decode(encoded, out=out)
+    assert actual.shape == arr.shape
+    assert actual.dtype == arr.dtype
+    assert actual.tolist() == value
+    if use_out:
+        assert actual is out
+
+
 def test_bytes():
     # test msgpack behaviour with bytes and str (unicode)
     bytes_arr = np.array([b'foo', b'bar', b'baz'], dtype=object)
