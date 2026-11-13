@@ -13,6 +13,17 @@ endif
 have_sse2 = false
 have_avx2 = false
 
+# MSVC does not accept -msse2/-mavx2. It enables SSE2 by default on x86_64 and
+# opts into AVX2 with /arch:AVX2, so probe the flag each compiler accepts.
+msvc = cc.get_id() == 'msvc'
+if msvc
+  sse2_flag = '/arch:SSE2'
+  avx2_flag = '/arch:AVX2'
+else
+  sse2_flag = '-msse2'
+  avx2_flag = '-mavx2'
+endif
+
 if host_machine.cpu_family() == 'x86_64'
   # Honor legacy environment variables for backwards compatibility with
   # existing build scripts and packaging recipes.
@@ -28,13 +39,14 @@ if host_machine.cpu_family() == 'x86_64'
   if get_option('sse2').disabled() or disable_sse2_env
     have_sse2 = false
   else
-    have_sse2 = cc.has_argument('-msse2')
+    # x86_64 MSVC enables SSE2 by default, so there is nothing to probe.
+    have_sse2 = msvc or cc.has_argument(sse2_flag)
   endif
 
   if get_option('avx2').disabled() or disable_avx2_env
     have_avx2 = false
   else
-    have_avx2 = cc.has_argument('-mavx2')
+    have_avx2 = cc.has_argument(avx2_flag)
   endif
 endif
 
@@ -176,7 +188,10 @@ if not blosc_dep.found()
       '../../c-blosc/blosc/shuffle-sse2.c',
       '../../c-blosc/blosc/bitshuffle-sse2.c',
     )
-    blosc_c_args += ['-DSHUFFLE_SSE2_ENABLED', '-msse2']
+    blosc_c_args += ['-DSHUFFLE_SSE2_ENABLED']
+    if not msvc
+      blosc_c_args += [sse2_flag]
+    endif
     if host_machine.system() == 'windows'
       blosc_c_args += ['-D__SSE2__']
     endif
@@ -187,7 +202,7 @@ if not blosc_dep.found()
       '../../c-blosc/blosc/shuffle-avx2.c',
       '../../c-blosc/blosc/bitshuffle-avx2.c',
     )
-    blosc_c_args += ['-DSHUFFLE_AVX2_ENABLED', '-mavx2']
+    blosc_c_args += ['-DSHUFFLE_AVX2_ENABLED', avx2_flag]
     if host_machine.system() == 'windows'
       blosc_c_args += ['-D__AVX2__']
     endif
