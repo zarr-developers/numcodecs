@@ -53,3 +53,44 @@ def test_out():
     f = Fletcher32()
     result = f.encode(data)
     f.decode(result, out=data)
+
+
+def test_out_too_large():
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    enc = f.encode(data)
+    out = np.full(data.size + 4, 0xAA, dtype="uint8")
+    with pytest.raises(ValueError, match="Output buffer has 20 bytes"):
+        f.decode(enc, out=out)
+    # the destination buffer must be left untouched
+    assert (out == 0xAA).all()
+
+
+def test_out_too_small():
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    enc = f.encode(data)
+    out = np.full(data.size - 1, 0xAA, dtype="uint8")
+    with pytest.raises(ValueError, match="Output buffer has 15 bytes"):
+        f.decode(enc, out=out)
+    assert (out == 0xAA).all()
+
+
+def test_out_correct_size():
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    enc = f.encode(data)
+    out = np.empty(data.size, dtype="uint8")
+    result = f.decode(enc, out=out)
+    assert result is out
+    assert (out == data).all()
+
+
+def test_out_bytearray():
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    enc = f.encode(data)
+    out = bytearray(data.size)
+    result = f.decode(enc, out=out)
+    assert result is out
+    assert out == data.tobytes()
