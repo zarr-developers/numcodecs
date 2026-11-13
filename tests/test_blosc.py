@@ -326,6 +326,19 @@ def test_typesize_less_than_1():
         compressor.encode(arr.tobytes())
 
 
+@pytest.mark.parametrize(
+    "shuffle", [Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE, Blosc.AUTOSHUFFLE]
+)
+def test_zero_itemsize(shuffle):
+    # a structured dtype with a zero-length field has itemsize 0, which blosc
+    # rejects as a typesize (and older versions crashed on, #516)
+    arr = np.zeros((5,), dtype=[("foo", int, (0,))])
+    assert arr.dtype.itemsize == 0
+    enc = Blosc(shuffle=shuffle).encode(arr)
+    nbytes, _, _ = blosc._cbuffer_sizes(enc)
+    assert nbytes == 0
+
+
 def test_config_no_typesize():
     codec = Blosc(shuffle=Blosc.SHUFFLE, typesize=5)
     config = codec.get_config()
