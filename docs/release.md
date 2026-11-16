@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Fixes
+
+* {class}`numcodecs.bitround.BitRound` now leaves NaN values unchanged. Previously, rounding
+  with `keepbits=0` turned the default NaN into `-0.0`, and NaNs with low payload bits set
+  became infinity when those bits were discarded ({issue}`900`).
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,

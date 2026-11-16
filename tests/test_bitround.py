@@ -43,6 +43,13 @@ def test_round_minus_one_to_minus_one(dtype):
         np.testing.assert_equal(a, ar)
 
 
+def test_nan_preserved(dtype):
+    a = np.array([np.nan, -np.nan, 1.0], dtype=dtype)
+    for k in range(max_bits[dtype]):
+        ar = round(a, k)
+        np.testing.assert_equal(a, ar)
+
+
 def test_no_rounding(dtype):
     a = np.random.random_sample((300, 200)).astype(dtype)
     keepbits = max_bits[dtype]

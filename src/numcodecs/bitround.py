@@ -66,6 +66,8 @@ class BitRound(Codec):
         half_quantum1 = (1 << (maskbits - 1)) - 1
         b += ((b >> maskbits) & 1) + half_quantum1
         b &= mask
+        # rounding would carry NaN bits into the exponent or sign, keep NaNs unchanged
+        np.copyto(b, a.view(a_int_dtype), where=np.isnan(a))
         return b
 
     def decode(self, buf, out=None):
