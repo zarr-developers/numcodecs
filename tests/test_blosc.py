@@ -429,6 +429,65 @@ def test_decompress_rejects_truncated_header_size():
         blosc.decompress(header)
 
 
+def _blosc2_special_chunk(version, flags, nbytes=1024):
+    # a 32-byte chunk with the Blosc2 extended header (used by c-blosc2 whenever both
+    # the shuffle and bitshuffle flag bits are set), marked as an uninitialized
+    # special chunk: c-blosc2 would decode it without writing the output at all
+    header = struct.pack('<BBBBiii', version, 1, flags, 1, nbytes, nbytes, 32)
+    blosc2_flags = 0x4 << 4  # BLOSC2_SPECIAL_UNINIT
+    return header + bytes(15) + bytes([blosc2_flags])
+
+
+@pytest.mark.skipif(blosc.LIBRARY != 'c-blosc2', reason='c-blosc2 backend only')
+@pytest.mark.parametrize(
+    'chunk',
+    [
+        # Blosc2 format versions with a plain 16-byte header
+        struct.pack('<BBBBiii', 3, 1, 0, 1, 16, 16, 32) + bytes(16),
+        struct.pack('<BBBBiii', 6, 1, 0, 1, 16, 16, 32) + bytes(16),
+        # extended (Blosc2) header with a Blosc2 or a Blosc1 format version
+        _blosc2_special_chunk(version=5, flags=0x5),
+        _blosc2_special_chunk(version=2, flags=0x5),
+    ],
+    ids=['v3', 'v6', 'v5-extended-uninit', 'v2-extended-uninit'],
+)
+def test_decompress_rejects_non_blosc1_format(chunk, use_threads):
+    # this codec only writes Blosc1-format chunks and C-Blosc 1.x reads nothing else,
+    # so the c-blosc2 backend must not decode other chunks either
+    blosc.use_threads = use_threads
+    try:
+        with pytest.raises(RuntimeError, match='not a Blosc1-format frame'):
+            blosc.decompress(chunk)
+    finally:
+        blosc.use_threads = None
+
+
+def test_decompress_reads_only_within_frame(use_threads):
+    # Point the first block at a copy of its own compressed data placed after the
+    # frame. Bytes after the frame are allowed (and ignored), but must never be read
+    # as part of it, whichever decompression path is taken.
+    src = np.tile(np.arange(64, dtype='u1'), 2**12).tobytes()
+    codec = Blosc(cname='lz4', clevel=5, shuffle=Blosc.NOSHUFFLE, blocksize=2**16)
+    enc = bytearray(codec.encode(src))
+    nbytes, cbytes, blocksize = blosc._cbuffer_sizes(enc)
+    assert enc[0] == 2  # Blosc1 format
+    assert not enc[2] & 0x2  # not memcpyed
+    nblocks = nbytes // blocksize
+    assert nblocks > 1
+    bstarts = struct.unpack_from(f'<{nblocks}i', enc, 16)
+    block0 = enc[bstarts[0] : bstarts[1]]
+    struct.pack_into('<i', enc, 16, cbytes)
+    tampered = bytes(enc) + bytes(block0)
+
+    blosc.use_threads = use_threads
+    try:
+        assert bytes(blosc.decompress(bytes(codec.encode(src)) + bytes(block0))) == src
+        with pytest.raises(RuntimeError):
+            blosc.decompress(tampered)
+    finally:
+        blosc.use_threads = None
+
+
 @pytest.mark.parametrize('blocksize', [10, 255, 10**6])
 @pytest.mark.parametrize('typesize', [1, 3, 8])
 def test_blocksize_larger_than_buffer_or_not_multiple_of_typesize(blocksize, typesize):

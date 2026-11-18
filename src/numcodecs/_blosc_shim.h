@@ -35,7 +35,6 @@
 #define nc_blosc_set_blocksize blosc1_set_blocksize
 #define nc_blosc_list_compressors blosc2_list_compressors
 #define nc_blosc_compress blosc1_compress
-#define nc_blosc_decompress blosc1_decompress
 #define nc_blosc_cbuffer_sizes blosc1_cbuffer_sizes
 #define nc_blosc_cbuffer_validate blosc1_cbuffer_validate
 #define nc_blosc_cbuffer_complib blosc2_cbuffer_complib
@@ -88,6 +87,15 @@ static inline int nc_blosc_compress_ctx(
   return rc;
 }
 
+/* Equivalent of blosc_decompress (global context); `srcsize` is the number of valid
+ * source bytes. blosc1_decompress() is not used because it passes INT32_MAX as the
+ * source size, and c-blosc2 bounds its reads by the source size it is given rather
+ * than by the header's `cbytes`. */
+static inline int nc_blosc_decompress(const void* src, size_t srcsize, void* dest,
+                                      size_t destsize) {
+  return blosc2_decompress(src, (int32_t)srcsize, dest, (int32_t)destsize);
+}
+
 /* Equivalent of blosc_decompress_ctx; `srcsize` is the number of valid source bytes. */
 static inline int nc_blosc_decompress_ctx(
     const void* src, size_t srcsize, void* dest, size_t destsize,
@@ -125,7 +133,6 @@ static inline int nc_blosc_decompress_ctx(
 #define nc_blosc_set_blocksize blosc_set_blocksize
 #define nc_blosc_list_compressors blosc_list_compressors
 #define nc_blosc_compress blosc_compress
-#define nc_blosc_decompress blosc_decompress
 #define nc_blosc_cbuffer_sizes blosc_cbuffer_sizes
 #define nc_blosc_cbuffer_validate blosc_cbuffer_validate
 #define nc_blosc_cbuffer_complib blosc_cbuffer_complib
@@ -133,6 +140,14 @@ static inline int nc_blosc_decompress_ctx(
 #define nc_blosc_compress_ctx blosc_compress_ctx
 
 static inline void nc_blosc_setup(void) {}
+
+/* c-blosc 1.x bounds its reads by the header's `cbytes`, which the caller has checked
+ * against the source size, so `srcsize` is not needed. */
+static inline int nc_blosc_decompress(const void* src, size_t srcsize, void* dest,
+                                      size_t destsize) {
+  (void)srcsize;
+  return blosc_decompress(src, dest, destsize);
+}
 
 static inline int nc_blosc_decompress_ctx(
     const void* src, size_t srcsize, void* dest, size_t destsize,

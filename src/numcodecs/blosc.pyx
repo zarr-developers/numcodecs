@@ -47,7 +47,8 @@ cdef extern from "_blosc_shim.h":
     char* nc_blosc_list_compressors()
     int nc_blosc_compress(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                           void* src, void* dest, size_t destsize) nogil
-    int nc_blosc_decompress(void *src, void *dest, size_t destsize) nogil
+    int nc_blosc_decompress(const void* src, size_t srcsize, void* dest,
+                            size_t destsize) nogil
     int nc_blosc_compress_ctx(int clevel, int doshuffle, size_t typesize, size_t nbytes,
                               const void* src, void* dest, size_t destsize,
                               const char* compressor, size_t blocksize,
@@ -69,6 +70,7 @@ VERSION_STRING = <char *> NC_BLOSC_VERSION_STRING
 VERSION_DATE = <char *> NC_BLOSC_VERSION_DATE
 # name of the C library this module is built against: "c-blosc" or "c-blosc2"
 LIBRARY = (<bytes> NC_BLOSC_LIBRARY).decode()
+cdef bint _IS_BLOSC2 = LIBRARY == 'c-blosc2'
 VERSION_STRING = VERSION_STRING.decode()
 VERSION_DATE = VERSION_DATE.decode()
 __version__ = VERSION_STRING
@@ -372,6 +374,7 @@ def decompress(source, dest=None):
         memoryview source_mv
         const Py_buffer* source_pb
         const char* source_ptr
+        const unsigned char* header
         memoryview dest_mv
         Py_buffer* dest_pb
         char* dest_ptr
@@ -388,6 +391,18 @@ def decompress(source, dest=None):
     # Validate exactly that frame so trailing bytes remain backward compatible.
     if source_pb.len < NC_BLOSC_MIN_HEADER_LENGTH:
         raise RuntimeError('invalid blosc frame: buffer is too small')
+
+    # c-blosc2 also reads Blosc2-format chunks, which this codec never writes and
+    # C-Blosc 1.x cannot read. Accept only what C-Blosc 1.x accepts: format version 2,
+    # and not both shuffle flag bits, which c-blosc2 takes to mean a 32-byte Blosc2
+    # extended header. This also keeps out Blosc2 special-value chunks, which can
+    # leave the output uninitialized.
+    if _IS_BLOSC2:
+        header = <const unsigned char*>source_ptr
+        if header[0] != 2 or (header[2] & BLOSC_DOSHUFFLE and
+                              header[2] & BLOSC_DOBITSHUFFLE):
+            raise RuntimeError('invalid blosc frame: not a Blosc1-format frame')
+
     nc_blosc_cbuffer_sizes(source_ptr, &nbytes, &cbytes, &blocksize)
     if cbytes > <size_t>source_pb.len:
         raise RuntimeError('invalid blosc frame: buffer is truncated')
@@ -426,7 +441,7 @@ def decompress(source, dest=None):
             # allow blosc to use threads internally
             with _MUTEX:
                 with nogil:
-                    ret = nc_blosc_decompress(source_ptr, dest_ptr, nbytes)
+                    ret = nc_blosc_decompress(source_ptr, cbytes, dest_ptr, nbytes)
         else:
             with nogil:
                 ret = nc_blosc_decompress_ctx(source_ptr, cbytes, dest_ptr, nbytes, 1)
