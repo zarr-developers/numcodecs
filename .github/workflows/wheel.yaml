@@ -2,6 +2,9 @@ name: Wheels
 
 on:
   push:
+    branches: [main]
+    # upload_pypi publishes on version tags
+    tags: ['v*']
   pull_request:
   schedule:
     # Run at 2:00 AM UTC daily
