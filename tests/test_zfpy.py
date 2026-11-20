@@ -6,7 +6,7 @@ import pytest
 
 try:
     # noinspection PyProtectedMember
-    from numcodecs.zfpy import ZFPY, _release_version, _zfpy
+    from numcodecs.zfpy import ZFPY, _zfpy
 except ImportError:  # pragma: no cover
     pytest.skip("ZFPY not available", allow_module_level=True)
 
@@ -102,17 +102,3 @@ def test_err_encode_fortran_array():
     for codec in codecs:
         with pytest.raises(ValueError):
             codec.encode(arr)
-
-
-@pytest.mark.parametrize(
-    ('version_string', 'expected'),
-    [
-        ('1.0.1', (1, 0, 1)),
-        ('1.0.1.post0', (1, 0, 1)),
-        ('2.5.0.dev0', (2, 5, 0)),
-        ('2.5.0rc1', (2, 5)),
-        ('unknown', ()),
-    ],
-)
-def test_release_version(version_string, expected):
-    assert _release_version(version_string) == expected

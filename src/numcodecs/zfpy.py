@@ -1,35 +1,38 @@
 import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
-from itertools import takewhile
 from types import ModuleType
+
+from packaging.version import InvalidVersion, Version
+
+_MIN_ZFPY_VERSION = Version("1.0.1")  # first release that supports NumPy >= 2
+
+
+def _zfpy_version_supported(zfpy_version: str) -> bool:
+    """Return whether ``zfpy_version`` is a parseable version >= 1.0.1."""
+    try:
+        return Version(zfpy_version) >= _MIN_ZFPY_VERSION
+    except InvalidVersion:
+        return False
+
 
 _zfpy: ModuleType | None = None
 
-
-def _release_version(version_string: str) -> tuple[int, ...]:
-    """Return the leading numeric components of a version, e.g. 1.0.1.post0 -> (1, 0, 1)."""
-    return tuple(map(int, takewhile(str.isdigit, version_string.split("."))))
-
-
-_zfpy_version: tuple = ()
+_zfpy_version: str | None = None
 with suppress(PackageNotFoundError):
-    _zfpy_version = _release_version(version("zfpy"))
+    _zfpy_version = version("zfpy")
 
-if _zfpy_version:
-    # Check NumPy version
-    _numpy_version: tuple = _release_version(version("numpy"))
-    if _numpy_version >= (2, 0, 0) and _zfpy_version < (1, 0, 1):  # pragma: no cover
-        _zfpy_version = ()
+if _zfpy_version is not None:
+    if _zfpy_version_supported(_zfpy_version):
+        with suppress(ImportError):
+            import zfpy as _zfpy  # type: ignore[no-redef]
+    else:  # pragma: no cover
         warnings.warn(
-            "NumPy version >= 2.0.0 detected. The zfpy library is incompatible with this version of NumPy. "
-            "Please downgrade to NumPy < 2.0.0 or wait for an update from zfpy.",
+            f"zfpy {_zfpy_version!r} is installed, but the ZFPY codec requires "
+            f"zfpy >= {_MIN_ZFPY_VERSION}. The ZFPY codec will be unavailable.",
             UserWarning,
             stacklevel=2,
         )
-    else:
-        with suppress(ImportError):
-            import zfpy as _zfpy  # type: ignore[no-redef]
 
 if _zfpy:
     import numpy as np

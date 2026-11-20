@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.12", "3.13", "3.14", "3.14t", "3.15", "3.15t"]
-        # macos-15-large is an intel runner, macos-14 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-large, macos-14]
+        # macos-15-intel is an intel runner, macos-15 is an arm64 runner
+        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-intel, macos-15]
 
     defaults:
       run:
@@ -52,7 +52,8 @@ jobs:
 
       - uses: codecov/codecov-action@v6
         with:
-          fail_ci_if_error: true
+          # forks have no CODECOV_TOKEN; only fail on upload errors in the upstream repo
+          fail_ci_if_error: ${{ github.repository == 'zarr-developers/numcodecs' }}
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
@@ -102,7 +103,8 @@ jobs:
 
       - uses: codecov/codecov-action@v6
         with:
-          fail_ci_if_error: true
+          # forks have no CODECOV_TOKEN; only fail on upload errors in the upstream repo
+          fail_ci_if_error: ${{ github.repository == 'zarr-developers/numcodecs' }}
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
@@ -147,6 +149,7 @@ jobs:
 
       - uses: codecov/codecov-action@v6
         with:
-          fail_ci_if_error: true
+          # forks have no CODECOV_TOKEN; only fail on upload errors in the upstream repo
+          fail_ci_if_error: ${{ github.repository == 'zarr-developers/numcodecs' }}
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
