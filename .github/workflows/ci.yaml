@@ -131,10 +131,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - zarr-version: "308"
-            zarr-pkg: "zarr==3.0.8"
-          - zarr-version: "316"
-            zarr-pkg: "zarr==3.1.6"
+          # oldest release numcodecs.zarr3 supports
+          - zarr-version: "313"
+            zarr-pkg: "zarr==3.1.3"
+          # latest release, unpinned so it never goes stale
+          - zarr-version: "latest"
+            zarr-pkg: "zarr"
           - zarr-version: "main"
             zarr-pkg: "zarr @ git+https://github.com/zarr-developers/zarr-python.git@main"
 

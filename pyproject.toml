@@ -90,14 +90,14 @@ dev = [
     "pytest==9.0.3",
     "pytest-cov",
 ]
-test-zarr-308 = [
+test-zarr-313 = [
     {include-group="dev"},
-    "zarr==3.0.8",
+    "zarr==3.1.3",
     "crc32c",
 ]
-test-zarr-316 = [
+test-zarr-latest = [
     {include-group="dev"},
-    "zarr==3.1.6",
+    "zarr",
     "crc32c",
 ]
 test-zarr-main = [
@@ -259,8 +259,8 @@ no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
     [
-        { group = "test-zarr-308" },
-        { group = "test-zarr-316" },
+        { group = "test-zarr-313" },
+        { group = "test-zarr-latest" },
         { group = "test-zarr-main" }
     ]
 ]
