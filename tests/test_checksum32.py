@@ -78,8 +78,15 @@ def test_config(codec):
 
 
 @pytest.mark.parametrize("codec", all_codecs)
-def test_err_input_too_small(codec):
-    buf = b'000'  # 3 bytes are too little for a 32-bit checksum
+@pytest.mark.parametrize(("dtype", "shape"), [("u4", (2,)), ("u1", (2, 4)), ("u8", ())])
+def test_decode_buffer_view(codec, dtype, shape):
+    encoded = codec.encode(b"data").view(dtype).reshape(shape)
+    assert codec.decode(encoded).tobytes() == b"data"
+
+
+@pytest.mark.parametrize("codec", all_codecs)
+@pytest.mark.parametrize("buf", [b'000', np.empty((4, 0), dtype='u1')])
+def test_err_input_too_small(codec, buf):
     with pytest.raises(ValueError):
         codec.decode(buf)
 
