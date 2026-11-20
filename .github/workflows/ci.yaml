@@ -16,9 +16,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Every Python version runs on ubuntu-latest (which also uploads coverage).
+        # The other platforms run the oldest supported GIL build and a free-threaded
+        # build: failures have almost always hit every platform or one Python
+        # version. The wheels cover every version on every platform (see wheel.yaml).
         python-version: ["3.12", "3.13", "3.14", "3.14t", "3.15", "3.15t"]
-        # macos-15-intel is an intel runner, macos-15 is an arm64 runner
-        platform: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-intel, macos-15]
+        platform: [ubuntu-latest]
+        include:
+          # macos-15-intel is an intel runner, macos-15 is an arm64 runner
+          - {platform: ubuntu-22.04-arm, python-version: "3.12"}
+          - {platform: ubuntu-22.04-arm, python-version: "3.14t"}
+          - {platform: windows-latest, python-version: "3.12"}
+          - {platform: windows-latest, python-version: "3.14t"}
+          - {platform: macos-15-intel, python-version: "3.12"}
+          - {platform: macos-15-intel, python-version: "3.14t"}
+          - {platform: macos-15, python-version: "3.12"}
+          - {platform: macos-15, python-version: "3.14t"}
 
     defaults:
       run:
