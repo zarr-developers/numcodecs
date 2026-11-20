@@ -157,6 +157,17 @@ filterwarnings = [
 [tool.cibuildwheel]
 # AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
 config-settings = "setup-args=-Davx2=disabled"
+# Run the test suite against each built wheel, so the SIMD configuration that ships
+# to PyPI is tested. test-sources copies the tests and their data fixtures (looked
+# up relative to the working directory) into the temporary directory the tests run
+# in; the source tree (src/) is not copied, so numcodecs is imported from the wheel.
+test-sources = ["tests", "fixture", "pyproject.toml"]
+test-extras = ["test", "test_extras", "msgpack", "crc32c"]
+test-command = [
+    # on free-threaded builds, check that no extension re-enables the GIL
+    "python -c \"import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())\"",
+    "pytest tests -p no:cacheprovider --no-cov",
+]
 
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"

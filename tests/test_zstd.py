@@ -153,9 +153,14 @@ def view_zstd_streaming_bytes():
 
 
 def zstd_cli_available() -> bool:
-    return not subprocess.run(
-        ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    ).returncode
+    # The zstd CLI is missing from some test environments, such as the manylinux
+    # images cibuildwheel tests wheels in.
+    try:
+        return not subprocess.run(
+            ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        ).returncode
+    except FileNotFoundError:
+        return False
 
 
 def test_multi_frame():
