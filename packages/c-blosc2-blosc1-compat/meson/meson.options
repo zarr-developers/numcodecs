@@ -1,0 +1,12 @@
+option('zstd', type: 'feature', value: 'enabled',
+       description: 'Build Zstandard support into Blosc2')
+option('zlib', type: 'feature', value: 'enabled',
+       description: 'Build zlib support into Blosc2')
+option('sse2', type: 'feature', value: 'auto',
+       description: 'Enable SSE2 shuffle kernels')
+option('avx2', type: 'feature', value: 'auto',
+       description: 'Enable AVX2 shuffle kernels')
+option('avx512', type: 'feature', value: 'auto',
+       description: 'Enable AVX512 bitshuffle kernels')
+option('neon', type: 'feature', value: 'auto',
+       description: 'Enable NEON shuffle kernels')

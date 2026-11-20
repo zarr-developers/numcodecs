@@ -100,3 +100,8 @@ ENV/
 *.egg-info
 pixi.lock
 uv.lock
+# Wrapped subprojects: only the .wrap files and packagefiles are tracked
+/subprojects/*/
+!/subprojects/packagefiles/
+/subprojects/packagecache/
+/subprojects/.wraplock

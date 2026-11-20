@@ -1,0 +1,85 @@
+name: c-blosc2 Blosc1 compatibility
+
+on:
+  push:
+    branches: [main]
+    paths: ['packages/c-blosc2-blosc1-compat/**', 'subprojects/**', 'src/numcodecs/blosc.pyx', 'src/numcodecs/_blosc_shim.h']
+  pull_request:
+    paths: ['packages/c-blosc2-blosc1-compat/**', 'subprojects/**', 'src/numcodecs/blosc.pyx', 'src/numcodecs/_blosc_shim.h']
+  workflow_dispatch:
+
+jobs:
+  wrap-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python packages/c-blosc2-blosc1-compat/tools/sync_wrap.py --check
+
+  forward-compat:
+    # c-blosc2 chunks must be readable by C-Blosc 1.x
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install meson ninja cmake
+      - name: Build C-Blosc 1.x
+        run: |
+          git clone --depth 1 --branch v1.21.6 https://github.com/Blosc/c-blosc.git /tmp/c-blosc
+          cmake -S /tmp/c-blosc -B /tmp/b1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DBUILD_TESTS=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_STATIC=OFF -DCMAKE_BUILD_TYPE=Release
+          cmake --build /tmp/b1 -j
+      - name: Build c-blosc2 through the wrap
+        run: |
+          mkdir /tmp/probe && cd /tmp/probe
+          ln -s "$GITHUB_WORKSPACE/subprojects" subprojects
+          printf "project('probe','c')\nb = dependency('blosc2')\nexecutable('probe', files('p.c'), dependencies: b)\n" > meson.build
+          printf '#include <blosc2.h>\nint main(void){return 0;}\n' > p.c
+          meson setup b && meson compile -C b
+      - name: Run the compatibility check
+        run: |
+          B=/tmp/probe/b
+          # c-blosc2 uses a system zstd/lz4/zlib when it finds one, otherwise the wrap's
+          # static build; link whichever is there
+          LIBS="$(find $B/subprojects -name libblosc2.a | head -n 1)"
+          for l in zstd lz4 z; do
+            a="$(find $B/subprojects -name lib$l.a | head -n 1)"
+            LIBS="$LIBS ${a:--l$l}"
+          done
+          python packages/c-blosc2-blosc1-compat/tests/run.py \
+            --blosc1-include /tmp/c-blosc/blosc --blosc1-lib /tmp/b1/blosc \
+            --blosc2-include "/tmp/probe/subprojects/c-blosc2/include" \
+            --blosc2-ldflags "$LIBS"
+
+  test-blosc2-backend:
+    # the numcodecs test suite with Blosc built on c-blosc2 instead of c-blosc 1.x
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {platform: ubuntu-latest, python-version: "3.13"}
+          - {platform: ubuntu-latest, python-version: "3.14t"}
+          - {platform: ubuntu-22.04-arm, python-version: "3.13"}
+          - {platform: macos-14, python-version: "3.13"}
+          - {platform: windows-latest, python-version: "3.13"}
+    defaults:
+      run:
+        shell: bash -e {0}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # pyproject.toml's license-files still lists the c-blosc submodule's licenses
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Install numcodecs with the c-blosc2 backend
+        run: python -m pip install -v ".[test,test_extras]" -Csetup-args=-Dblosc_backend=blosc2
+      - name: Check the backend
+        run: python -c "import numcodecs.blosc as b; print(b.LIBRARY, b.VERSION_STRING, b.list_compressors()); assert b.LIBRARY == 'c-blosc2'"
+      - name: Run tests
+        run: pytest -v
