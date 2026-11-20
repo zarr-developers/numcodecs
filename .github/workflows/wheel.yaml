@@ -66,25 +66,6 @@ jobs:
           name: sdist
           path: dist/*.tar.gz
 
-  test_dist_pypi:
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v6
-        with:
-          name: sdist
-          path: dist
-      - uses: actions/download-artifact@v6
-        with:
-          pattern: wheels-*
-          path: dist
-          merge-multiple: true
-
-      - name: test
-        run: |
-          ls
-          ls dist
-
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
