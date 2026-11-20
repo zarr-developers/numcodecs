@@ -30,7 +30,9 @@ if _lzma:
             level.
         filters : list, optional
             A list of dictionaries specifying compression filters. If
-            filters are provided, 'preset' must be None.
+            filters are provided, 'preset' must be None. Container formats
+            store the filters needed for decoding in their headers; raw
+            streams require the filters to be supplied again when decoding.
 
         """
 
@@ -62,7 +64,8 @@ if _lzma:
                 out = ensure_contiguous_ndarray(out)
 
             # do decompression
-            dec = _lzma.decompress(buf, format=self.format, filters=self.filters)
+            filters = self.filters if self.format == _lzma.FORMAT_RAW else None
+            dec = _lzma.decompress(buf, format=self.format, filters=filters)
 
             # handle destination
             return ndarray_copy(dec, out)
