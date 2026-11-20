@@ -19,7 +19,9 @@
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
   and run the test suite on both. {issue}`874`
 * Build and test on the macos-15 and macos-15-intel runners, replacing the retired
-  macos-14 runner, and run the i386 tests on ubuntu-24.04. {pr}`878`
+  macos-14 runner. {pr}`878`
+* Run the i386 tests in a 32-bit Alpine Docker container instead of through the
+  `jirutka/setup-alpine` action, which broke on the Ubuntu 26.04 `ubuntu-latest` image.
 
 ### Fixes
 
