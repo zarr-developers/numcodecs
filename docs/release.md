@@ -22,6 +22,8 @@
   macos-14 runner. {pr}`878`
 * Run the i386 tests in a 32-bit Alpine Docker container instead of through the
   `jirutka/setup-alpine` action, which broke on the Ubuntu 26.04 `ubuntu-latest` image.
+* Only fail CI on Codecov upload errors in the upstream repository, so test runs on
+  forks without a `CODECOV_TOKEN` can pass.
 
 ### Fixes
 
