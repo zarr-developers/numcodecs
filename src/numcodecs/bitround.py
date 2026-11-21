@@ -1,7 +1,17 @@
+from typing import cast, overload
+
 import numpy as np
 
-from .abc import Codec
+from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray_like, ndarray_copy
+from .ndarray_like import BufferLike, NDArrayLike
+
+
+class BitRoundConfig(CodecConfig):
+    """The configuration of a `BitRound` codec, as returned by `BitRound.get_config`."""
+
+    keepbits: int
+
 
 # The size in bits of the mantissa/significand for the various floating types
 # You cannot keep more bits of data than you have available
@@ -37,12 +47,15 @@ class BitRound(Codec):
 
     codec_id = 'bitround'
 
-    def __init__(self, keepbits: int):
+    def __init__(self, keepbits: int) -> None:
         if keepbits < 0:
             raise ValueError("keepbits must be zero or positive")
         self.keepbits = keepbits
 
-    def encode(self, buf):
+    def get_config(self) -> BitRoundConfig:
+        return cast(BitRoundConfig, super().get_config())
+
+    def encode(self, buf: BufferLike) -> NDArrayLike:
         """Create int array by rounding floating-point data
 
         The itemsize will be preserved, but the output should be much more
@@ -68,7 +81,11 @@ class BitRound(Codec):
         b &= mask
         return b
 
-    def decode(self, buf, out=None):
+    @overload
+    def decode(self, buf: BufferLike, out: None = None) -> NDArrayLike: ...
+    @overload
+    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
         """Remake floats from ints
 
         As with ``encode``, preserves itemsize.
