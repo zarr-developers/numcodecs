@@ -59,7 +59,7 @@ if _lzma:
             # normalise inputs
             buf = ensure_contiguous_ndarray(buf)
             if out is not None:
-                out = ensure_contiguous_ndarray(out)
+                ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
 
             # do decompression
             dec = _lzma.decompress(buf, format=self.format, filters=self.filters)

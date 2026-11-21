@@ -148,3 +148,10 @@ def test_out():
     j = JenkinsLookup3()
     result = j.encode(data)
     j.decode(result, out=data)
+
+
+def test_out_wrong_size():
+    j = JenkinsLookup3()
+    enc = j.encode(np.arange(8, dtype="uint8"))
+    with pytest.raises(ValueError, match="out has 4 bytes, but the decoded data has 8"):
+        j.decode(enc, out=bytearray(4))

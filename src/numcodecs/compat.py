@@ -175,11 +175,17 @@ def ensure_text(s, encoding="utf-8"):
 
 
 def ndarray_copy(src, dst) -> NDArrayLike:
-    """Copy the contents of the array from `src` to `dst`."""
+    """Copy the contents of the array from `src` to `dst`, and return `dst`.
+
+    If `dst` is `None`, return `src` unchanged. Otherwise `dst` itself is returned, not
+    a view of it, so callers that pass a `bytearray` get that `bytearray` back.
+    """
 
     if dst is None:
         # no-op
         return src
+
+    out = dst
 
     # ensure ndarray like
     src = ensure_ndarray_like(src)
@@ -203,4 +209,4 @@ def ndarray_copy(src, dst) -> NDArrayLike:
     # copy via numpy
     np.copyto(dst, src)
 
-    return dst
+    return out

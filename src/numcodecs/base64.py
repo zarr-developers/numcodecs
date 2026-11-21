@@ -19,7 +19,7 @@ class Base64(Codec):
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
         if out is not None:
-            out = ensure_contiguous_ndarray(out)
+            ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
         # do decompression
         decompressed = _base64.standard_b64decode(buf)
         # handle destination
