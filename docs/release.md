@@ -47,6 +47,22 @@
   ndarray, and raises `ValueError` when `out` has the wrong size.
 * `Fletcher32.decode` without `out` returns a `uint8` ndarray, like the other checksum
   codecs, instead of a Cython memoryview slice.
+* Correct type annotations that described something other than what the code does:
+  `numcodecs.registry.codec_registry` holds codec classes (`dict[str, type[Codec]]`) and
+  `entries` holds single entry points (`dict[str, EntryPoint]`). `numcodecs.compat`
+  functions now annotate their parameters, and `ndarray_copy` returns the type of `dst`
+  (or of `src` when `dst` is `None`). The `NDArrayLike`, `DType` and `FlagsObj` protocols
+  declare read-only properties, so `numpy.ndarray` now satisfies `NDArrayLike` for type
+  checkers, and `numcodecs.ndarray_like.BufferLike` names "a buffer or an ndarray-like".
+* `numcodecs` defines `__all__`, so type checkers treat its re-exported codec classes as
+  public. `from numcodecs import *` now imports only those names.
+* `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
+  given, instead of registering it under `None`.
+
+### Deprecations
+
+* Loading a codec through the `numcodecs.codecs` entry point group whose class does not
+  subclass `numcodecs.abc.Codec` now emits a `DeprecationWarning`.
 
 (release_0.17.1)=
 
