@@ -24,6 +24,23 @@
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
   and run the test suite on both. {issue}`874`
+* Build and test on the macos-15 and macos-15-intel runners, replacing the retired
+  macos-14 runner. {pr}`878`
+* Run the i386 tests in a 32-bit Alpine Docker container instead of through the
+  `jirutka/setup-alpine` action, which broke on the Ubuntu 26.04 `ubuntu-latest` image.
+* Only fail CI on Codecov upload errors in the upstream repository, so test runs on
+  forks without a `CODECOV_TOKEN` can pass.
+* Trim CI: run the test suite against every built wheel, test non-Linux-x86 platforms
+  on Python 3.12 and 3.14t only, run workflows on pushes to `main` (and tags for
+  wheels) rather than every branch, test the oldest supported and latest Zarr
+  releases, use Alpine's numpy in the i386 job, and remove the unused release-notes
+  labeler.
+
+### Fixes
+
+* `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
+  installed. zfpy versions are now parsed with `packaging`, which becomes a dependency,
+  and the `zfpy` extra now requires zfpy >= 1.0.1. {issue}`892`
 
 (release_0.17.1)=
 
