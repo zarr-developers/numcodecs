@@ -41,7 +41,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v6
         with:
-          submodules: recursive
           fetch-depth: 0 # required for version resolution
 
       - name: Set up Python
@@ -95,7 +94,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v6
         with:
-          submodules: recursive
           fetch-depth: 0
 
       - name: Set up Python
@@ -148,7 +146,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v6
         with:
-          submodules: recursive
           fetch-depth: 0 # required for version resolution
 
       - name: Set up Python

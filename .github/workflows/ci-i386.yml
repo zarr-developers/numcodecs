@@ -20,7 +20,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v6
         with:
-          submodules: recursive
           fetch-depth: 0 # required for version resolution
 
       - name: Build and test in an i386 Alpine container

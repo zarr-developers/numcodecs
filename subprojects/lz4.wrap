@@ -1,0 +1,13 @@
+[wrap-file]
+directory = lz4-1.10.0
+source_url = https://github.com/lz4/lz4/archive/v1.10.0.tar.gz
+source_filename = lz4-1.10.0.tgz
+source_hash = 537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b
+patch_filename = lz4_1.10.0-2_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/lz4_1.10.0-2/get_patch
+patch_hash = ce568b4e1a7a593bb233f3ec97af88ceb850524cef802fe3f916b21d8a79b6b6
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/lz4_1.10.0-2/lz4-1.10.0.tgz
+wrapdb_version = 1.10.0-2
+
+[provide]
+liblz4 = liblz4_dep
