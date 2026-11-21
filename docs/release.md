@@ -45,6 +45,12 @@
   already written into `out`; only the returned object changes.
 * `JenkinsLookup3.decode` accepts any contiguous writable buffer as `out`, not only an
   ndarray, and raises `ValueError` when `out` has the wrong size.
+* `JenkinsLookup3.get_config()` reports `prefix` as a list of ints, so a configuration
+  with a prefix can be serialized to JSON and passed back to `get_codec`. It held a numpy
+  array, which `json.dumps` rejected and `get_codec` could not compare. The constructor
+  accepts a list of ints as well as a bytes-like `prefix`.
+* CRC32, Adler32 and CRC32C check the byte length of the input to `decode`, not its
+  length along the first axis, before looking for the checksum.
 * `Fletcher32.decode` without `out` returns a `uint8` ndarray, like the other checksum
   codecs, instead of a Cython memoryview slice.
 * Correct type annotations that described something other than what the code does:
@@ -77,6 +83,7 @@
   `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as
   read-only JSON values (PEP 728 `extra_items`). `numcodecs.abc.JSON` names a
   JSON-serializable value. Compressors: Zlib, GZip, BZ2, LZMA, Base64, Blosc, Zstd and LZ4.
+  Checksums: CRC32, Adler32, CRC32C, JenkinsLookup3 and Fletcher32.
   `typing_extensions` >= 4.13 is now required.
 * Ship `.pyi` type stubs for the Cython extension modules (`blosc`, `zstd`, `lz4`, `vlen`,
   `fletcher32`, `jenkins`, `compat_ext` and `_shuffle`), checked against the compiled
