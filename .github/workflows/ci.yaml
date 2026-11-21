@@ -28,6 +28,9 @@ jobs:
           - {platform: ubuntu-22.04-arm, python-version: "3.14t"}
           - {platform: windows-latest, python-version: "3.12"}
           - {platform: windows-latest, python-version: "3.14t"}
+          # The other Windows jobs build with the MinGW gcc on the runner's PATH;
+          # this one builds with MSVC, as conda-forge does.
+          - {platform: windows-latest, python-version: "3.13", msvc: true}
           - {platform: macos-15-intel, python-version: "3.12"}
           - {platform: macos-15-intel, python-version: "3.14t"}
           - {platform: macos-15, python-version: "3.12"}
@@ -59,7 +62,14 @@ jobs:
             3.15) extras="test,test_extras,msgpack,google_crc32c,crc32c" ;;
             *) extras="test,test_extras,msgpack,google_crc32c,crc32c,pcodec,zfpy" ;;
           esac
-          python -m pip install -v ".[$extras]"
+          if [[ "${{ matrix.msvc }}" == "true" ]]; then
+            set -o pipefail
+            python -m pip install -v ".[$extras]" -Csetup-args=--vsenv 2>&1 | tee install.log
+            # fail if meson picked a compiler other than MSVC
+            grep -E "C compiler for the host machine: .*msvc" install.log
+          else
+            python -m pip install -v ".[$extras]"
+          fi
 
       - name: List installed packages
         run: python -m pip list

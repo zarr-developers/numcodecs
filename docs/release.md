@@ -35,6 +35,10 @@
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
   installed. zfpy versions are now parsed with `packaging`, which becomes a dependency,
   and the `zfpy` extra now requires zfpy >= 1.0.1. {issue}`892`
+* Source builds with MSVC no longer fail at `meson setup` on zstd's assembly file, and
+  now build the vendored Blosc's SSE2 shuffle, which was never enabled with MSVC.
+  AVX2 stays off with MSVC, because the AVX2 flags apply to all of Blosc and would
+  produce a binary that only runs on CPUs with AVX2. {issue}`866`
 
 (release_0.17.1)=
 

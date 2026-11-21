@@ -13,16 +13,8 @@ endif
 have_sse2 = false
 have_avx2 = false
 
-# MSVC does not accept -msse2/-mavx2. It enables SSE2 by default on x86_64 and
-# opts into AVX2 with /arch:AVX2, so probe the flag each compiler accepts.
-msvc = cc.get_id() == 'msvc'
-if msvc
-  sse2_flag = '/arch:SSE2'
-  avx2_flag = '/arch:AVX2'
-else
-  sse2_flag = '-msse2'
-  avx2_flag = '-mavx2'
-endif
+# MSVC-style compilers (cl.exe, clang-cl) don't accept -msse2/-mavx2.
+msvc = cc.get_argument_syntax() == 'msvc'
 
 if host_machine.cpu_family() == 'x86_64'
   # Honor legacy environment variables for backwards compatibility with
@@ -39,14 +31,20 @@ if host_machine.cpu_family() == 'x86_64'
   if get_option('sse2').disabled() or disable_sse2_env
     have_sse2 = false
   else
-    # x86_64 MSVC enables SSE2 by default, so there is nothing to probe.
-    have_sse2 = msvc or cc.has_argument(sse2_flag)
+    # SSE2 is part of the x86_64 baseline, and MSVC compiles SSE2 intrinsics
+    # without a flag, so there is nothing to probe there.
+    have_sse2 = msvc or cc.has_argument('-msse2')
   endif
 
-  if get_option('avx2').disabled() or disable_avx2_env
+  # The AVX2 flags below apply to every Blosc source, and fastcopy.c and
+  # blosclz.c use AVX2 unconditionally when __AVX2__ is defined, so the result
+  # only runs on CPUs with AVX2. MSVC would need /arch:AVX2 or -D__AVX2__ for
+  # the same effect; keep AVX2 off there rather than build a binary that
+  # crashes on older CPUs.
+  if get_option('avx2').disabled() or disable_avx2_env or msvc
     have_avx2 = false
   else
-    have_avx2 = cc.has_argument(avx2_flag)
+    have_avx2 = cc.has_argument('-mavx2')
   endif
 endif
 
@@ -90,8 +88,9 @@ if not zstd_dep.found()
     '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/zdict.c',
   )
 
-  # Assembly files — meson handles .S natively
-  if host_machine.cpu_family() == 'x86_64'
+  # Assembly files — meson handles .S natively, but MSVC can't compile them.
+  # zstd turns its assembly paths off under MSVC anyway (ZSTD_ASM_SUPPORTED).
+  if host_machine.cpu_family() == 'x86_64' and not msvc
     zstd_sources += files(
       '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress_amd64.S',
     )
@@ -189,11 +188,11 @@ if not blosc_dep.found()
       '../../c-blosc/blosc/bitshuffle-sse2.c',
     )
     blosc_c_args += ['-DSHUFFLE_SSE2_ENABLED']
-    if not msvc
-      blosc_c_args += [sse2_flag]
-    endif
-    if host_machine.system() == 'windows'
+    if msvc
+      # MSVC never defines __SSE2__, which bitshuffle-sse2.c requires.
       blosc_c_args += ['-D__SSE2__']
+    else
+      blosc_c_args += ['-msse2']
     endif
   endif
 
@@ -202,10 +201,7 @@ if not blosc_dep.found()
       '../../c-blosc/blosc/shuffle-avx2.c',
       '../../c-blosc/blosc/bitshuffle-avx2.c',
     )
-    blosc_c_args += ['-DSHUFFLE_AVX2_ENABLED', avx2_flag]
-    if host_machine.system() == 'windows'
-      blosc_c_args += ['-D__AVX2__']
-    endif
+    blosc_c_args += ['-DSHUFFLE_AVX2_ENABLED', '-mavx2']
   endif
 
   blosc_inc = include_directories('../../c-blosc/blosc')
