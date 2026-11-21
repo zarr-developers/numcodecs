@@ -1,6 +1,6 @@
 from typing import Final, overload
 
-from .abc import Codec
+from .abc import Codec, CodecConfig
 from .ndarray_like import BufferLike
 
 NOSHUFFLE: Final[int]
@@ -42,6 +42,12 @@ def decompress(source: BufferLike, dest: None = None) -> bytes: ...
 @overload
 def decompress[OutT: BufferLike](source: BufferLike, dest: OutT) -> OutT: ...
 
+class BloscConfig(CodecConfig):
+    cname: str
+    clevel: int
+    shuffle: int
+    blocksize: int
+
 class Blosc(Codec):
     codec_id: str
     NOSHUFFLE: int
@@ -61,6 +67,7 @@ class Blosc(Codec):
         blocksize: int = ...,
         typesize: int | None = None,
     ) -> None: ...
+    def get_config(self) -> BloscConfig: ...
     def encode(self, buf: BufferLike) -> bytes: ...
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> bytes: ...

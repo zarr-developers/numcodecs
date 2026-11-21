@@ -11,5 +11,6 @@
   "reportUnknownVariableType": "none",
   "reportUnknownMemberType": "none",
   "reportUnknownArgumentType": "none",
-  "reportMissingModuleSource": "none"
+  "reportMissingModuleSource": "none",
+  "enableTypeIgnoreComments": false
 }

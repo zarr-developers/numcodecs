@@ -72,6 +72,12 @@
 * Add structural protocols `numcodecs.abc.CodecProtocol`, `BytesBytesCodec`,
   `ArrayArrayCodec` and `ArrayBytesCodec` for code that accepts any object implementing the
   codec interface.
+* Annotate the concrete codecs. Each `get_config` returns a TypedDict naming the codec's
+  parameters (`ZlibConfig`, `BloscConfig`, ...), all subclasses of
+  `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as
+  read-only JSON values (PEP 728 `extra_items`). `numcodecs.abc.JSON` names a
+  JSON-serializable value. Compressors: Zlib, GZip, BZ2, LZMA, Base64, Blosc, Zstd and LZ4.
+  `typing_extensions` >= 4.13 is now required.
 * Ship `.pyi` type stubs for the Cython extension modules (`blosc`, `zstd`, `lz4`, `vlen`,
   `fletcher32`, `jenkins`, `compat_ext` and `_shuffle`), checked against the compiled
   modules with `mypy.stubtest` in CI. Type checkers previously saw the Blosc, Zstd, LZ4,

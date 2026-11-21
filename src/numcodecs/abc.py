@@ -29,18 +29,42 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Buffer, Mapping
+from collections.abc import Buffer, Mapping, Sequence
 from typing import Any, Protocol, Self, overload
+
+from typing_extensions import ReadOnly, TypedDict
 
 from .ndarray_like import BufferLike, NDArrayLike
 
 __all__ = [
+    "JSON",
     "ArrayArrayCodec",
     "ArrayBytesCodec",
     "BytesBytesCodec",
     "Codec",
+    "CodecConfig",
     "CodecProtocol",
 ]
+
+type JSON = int | float | bool | str | Sequence[JSON] | Mapping[str, JSON] | None
+"""A JSON-serializable value. `Sequence` and `Mapping` rather than `list` and `dict`, so
+that tuples, TypedDicts and lists of narrower types count (the same definition as
+`zarr_metadata`'s `JSONValue`)."""
+
+
+# `extra_items` (PEP 728) says that any further keys hold JSON values and are read-only. It
+# lets type checkers that implement PEP 728 (pyright) treat every codec configuration as a
+# `Mapping[str, JSON]`, and as Zarr v2 codec metadata. mypy does not implement PEP 728 yet,
+# so it rejects the keyword and treats `CodecConfig` as a plain TypedDict.
+class CodecConfig(TypedDict, extra_items=ReadOnly[JSON]):  # type: ignore[call-arg]
+    """The configuration every codec returns from `Codec.get_config`: its `id`, plus any
+    further JSON-serializable parameters.
+
+    Concrete codecs return a subclass that declares their own parameters. This is the shape
+    of a Zarr version 2 compressor or filter.
+    """
+
+    id: str
 
 
 class Codec(ABC):
