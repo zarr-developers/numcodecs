@@ -106,11 +106,17 @@ class Fletcher32(Codec):
             )
 
         cdef uint8_t[::1] out_mv
-        cdef uint8_t* out_ptr
+        cdef Py_ssize_t payload_len
         if out is not None:
             out_mv = ensure_contiguous_ndarray(out).view("uint8")
-            out_ptr = &out_mv[0]
-            memcpy(out_ptr, b_ptr, b_len - FOOTER_LENGTH)
+            payload_len = b_len - FOOTER_LENGTH
+            if out_mv.size != payload_len:
+                raise ValueError(
+                    f"Output buffer has {out_mv.size} bytes, but the"
+                    f" decoded payload has {payload_len} bytes."
+                )
+            if payload_len:
+                memcpy(&out_mv[0], b_ptr, payload_len)
         else:
             out = b_mv[:-FOOTER_LENGTH]
         return out
