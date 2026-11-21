@@ -90,6 +90,10 @@ dev = [
     "pytest==9.0.3",
     "pytest-cov",
 ]
+typing = [
+    "mypy==2.4.1",
+    "pyright==1.1.414",
+]
 test-zarr-313 = [
     {include-group="dev"},
     "zarr==3.1.3",
