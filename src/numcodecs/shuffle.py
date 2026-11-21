@@ -38,24 +38,20 @@ class Shuffle(Codec):
         return buf, out
 
     def encode(self, buf, out=None):
-        buf, out = self._prepare_arrays(buf, out)
+        buf, out_arr = self._prepare_arrays(buf, out)
 
-        if self.elementsize <= 1:
-            return out  # no shuffling needed
+        if self.elementsize > 1:
+            _doShuffle(buf.view("uint8"), out_arr.view("uint8"), self.elementsize)
 
-        _doShuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
-
-        return out
+        return out_arr if out is None else out
 
     def decode(self, buf, out=None):
-        buf, out = self._prepare_arrays(buf, out)
+        buf, out_arr = self._prepare_arrays(buf, out)
 
-        if self.elementsize <= 1:
-            return out  # no shuffling needed
+        if self.elementsize > 1:
+            _doUnshuffle(buf.view("uint8"), out_arr.view("uint8"), self.elementsize)
 
-        _doUnshuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
-
-        return out
+        return out_arr if out is None else out
 
     def __repr__(self):
         return f'{type(self).__name__}(elementsize={self.elementsize})'

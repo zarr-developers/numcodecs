@@ -112,5 +112,5 @@ class Fletcher32(Codec):
             out_ptr = &out_mv[0]
             memcpy(out_ptr, b_ptr, b_len - FOOTER_LENGTH)
         else:
-            out = b_mv[:-FOOTER_LENGTH]
+            out = b[:-FOOTER_LENGTH]
         return out

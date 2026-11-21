@@ -85,36 +85,8 @@ NO_BYTEARRAY_OUT = frozenset({"pcodec"})
 
 # Known violations of the `out` contract. Each entry is a bug; remove it when fixed.
 # `strict=True` makes a fixed entry fail, so this list cannot go stale.
-OUT_NDARRAY_XFAIL: set[str] = {
-    "zlib",
-    "bz2",
-    "lzma",
-    "base64",
-    "shuffle",
-    "zfpy",
-    "pcodec",
-    "vlen-utf8",
-    "vlen-bytes",
-    "vlen-array",
-}
-OUT_BYTEARRAY_XFAIL: set[str] = {
-    "zlib",
-    "bz2",
-    "lzma",
-    "base64",
-    "shuffle",
-    "crc32",
-    "adler32",
-    "crc32c",
-    "jenkins_lookup3",
-    "astype",
-    "delta",
-    "quantize",
-    "fixedscaleoffset",
-    "bitround",
-    "packbits",
-    "zfpy",
-}
+OUT_NDARRAY_XFAIL: set[str] = set()
+OUT_BYTEARRAY_XFAIL: set[str] = set()
 DECODE_RETURNS_BUFFER_XFAIL: set[str] = set()
 
 
