@@ -22,10 +22,8 @@ if importlib.util.find_spec("google_crc32c") is not None:
     import google_crc32c
 
     def crc32c_checksum(data: Buffer, value: int = 0) -> int:
-        if value == 0:
-            return google_crc32c.value(data)
-        else:
-            return google_crc32c.extend(value, data)
+        result: int = google_crc32c.value(data) if value == 0 else google_crc32c.extend(value, data)
+        return result
 
 elif importlib.util.find_spec("crc32c") is not None:
     warnings.warn(
@@ -132,7 +130,7 @@ class CRC32(Checksum32):
     """
 
     codec_id = 'crc32'
-    location = 'start'
+    location: CHECKSUM_LOCATION = 'start'
 
     @staticmethod
     def checksum(data: Buffer, value: int = 0) -> int:
@@ -152,7 +150,7 @@ class Adler32(Checksum32):
     """
 
     codec_id = 'adler32'
-    location = 'start'
+    location: CHECKSUM_LOCATION = 'start'
 
     @staticmethod
     def checksum(data: Buffer, value: int = 1) -> int:
@@ -250,7 +248,7 @@ if crc32c_checksum is not None:
         """
 
         codec_id = 'crc32c'
-        location = 'end'
+        location: CHECKSUM_LOCATION = 'end'
 
         @staticmethod
         def checksum(data: Buffer, value: int = 0) -> int:

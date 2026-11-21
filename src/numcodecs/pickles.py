@@ -80,7 +80,7 @@ class Pickle(Codec):
     def decode(self, buf: BufferLike, out: None = None) -> Any: ...
     @overload
     def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> Any:
         if not ALLOW_UNSAFE_PICKLE_DECODE:
             raise UnsafeDecodeError(
                 "Pickle.decode is disabled because unpickling data can execute arbitrary "

@@ -84,7 +84,7 @@ from numcodecs.blosc import Blosc
 register_codec(Blosc)
 # initialize blosc
 try:
-    ncores = multiprocessing.cpu_count()
+    ncores: int = multiprocessing.cpu_count()
 except OSError:  # pragma: no cover
     ncores = 1
 blosc._init()

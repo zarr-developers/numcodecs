@@ -71,11 +71,12 @@ class MsgPack(Codec):
             buf = np.asarray(buf, dtype=object)
         items = buf.tolist()
         items.extend((buf.dtype.str, buf.shape))
-        return msgpack.packb(
+        packed: bytes = msgpack.packb(
             items,
             use_bin_type=self.use_bin_type,
             use_single_float=self.use_single_float,
         )
+        return packed
 
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...

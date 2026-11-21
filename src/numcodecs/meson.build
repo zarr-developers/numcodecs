@@ -286,6 +286,8 @@ py.install_sources(
   'zarr3.py',
   'zfpy.py',
   'zlib.py',
+  # PEP 561 marker: numcodecs ships its own type information
+  'py.typed',
   # type stubs for the Cython extension modules
   '_shuffle.pyi',
   'blosc.pyi',

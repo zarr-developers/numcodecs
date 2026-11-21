@@ -52,9 +52,9 @@ class Delta(Codec):
     codec_id = 'delta'
 
     def __init__(self, dtype: npt.DTypeLike, astype: npt.DTypeLike | None = None) -> None:
-        self.dtype = np.dtype(dtype)
+        self.dtype: np.dtype[Any] = np.dtype(dtype)
         if astype is None:
-            self.astype = self.dtype
+            self.astype: np.dtype[Any] = self.dtype
         else:
             self.astype = np.dtype(astype)
         if self.dtype == np.dtype(object) or self.astype == np.dtype(object):

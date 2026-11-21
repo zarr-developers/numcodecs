@@ -29,6 +29,8 @@
   wheels) rather than every branch, test the oldest supported and latest Zarr
   releases, use Alpine's numpy in the i386 job, and remove the unused release-notes
   labeler.
+* Run mypy in strict mode over `src`, in CI as well as in pre-commit (now mypy 2.4.1), and
+  stop ignoring missing imports globally.
 * Check the behavior every codec promises through `numcodecs.abc.Codec` in a new
   `tests/test_codec_contract.py`, and add strict static type tests in `tests/typing`, run by
   mypy and pyright in a new `typing` CI job.
@@ -78,6 +80,12 @@
 * Add structural protocols `numcodecs.abc.CodecProtocol`, `BytesBytesCodec`,
   `ArrayArrayCodec` and `ArrayBytesCodec` for code that accepts any object implementing the
   codec interface.
+* numcodecs now ships a `py.typed` marker (PEP 561), so type checkers use its annotations
+  and stubs instead of treating the package as untyped. Downstream projects can drop
+  `ignore_missing_imports` for numcodecs. Third-party codecs that subclass `Codec` are
+  type-checked against it for the first time, which may surface two one-line fixes: a
+  `# type: ignore[misc]` on `class X(Codec)` that is no longer needed, and a
+  `from_config(cls, config: dict[...])` override that must accept a `Mapping`.
 * Annotate the concrete codecs. Each `get_config` returns a TypedDict naming the codec's
   parameters (`ZlibConfig`, `BloscConfig`, ...), all subclasses of
   `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as

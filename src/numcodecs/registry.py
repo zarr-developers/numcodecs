@@ -10,7 +10,7 @@ from typing import Any
 from numcodecs.abc import Codec
 from numcodecs.errors import UnknownCodecError
 
-logger = logging.getLogger("numcodecs")
+logger: logging.Logger = logging.getLogger("numcodecs")
 codec_registry: dict[str, type[Codec]] = {}
 """Codec classes by codec id."""
 entries: dict[str, EntryPoint] = {}

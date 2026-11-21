@@ -153,6 +153,15 @@ jobs:
           python -m pip install -v ".[test,msgpack,crc32c]"
           python -m pip install --group typing
 
+      - name: The installed package carries py.typed and the stubs
+        run: |
+          python - <<'PY'
+          from importlib.resources import files
+          pkg = files("numcodecs")
+          missing = [n for n in ("py.typed", "blosc.pyi", "vlen.pyi") if not (pkg / n).is_file()]
+          assert not missing, missing
+          PY
+
       - name: mypy (repository configuration)
         run: mypy --config-file pyproject.toml src tests
 
@@ -163,10 +172,6 @@ jobs:
         run: pyright -p tests/typing
 
       - name: stubtest (Cython stubs against the built extensions)
-        # Read the stubs from src/: mypy ignores the installed copies until numcodecs
-        # ships a py.typed marker.
-        env:
-          MYPYPATH: src
         run: |
           python -m mypy.stubtest --mypy-config-file pyproject.toml \
             --allowlist tests/typing/stubtest-allowlist.txt \

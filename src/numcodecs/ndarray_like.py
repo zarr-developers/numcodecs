@@ -1,5 +1,7 @@
+# `typing._ProtocolMeta` is private, but typeshed declares it, so type checkers see the
+# metaclass's real type instead of the `Any` that `Protocol.__class__` gives them.
 from collections.abc import Buffer
-from typing import Any, Protocol, Self, runtime_checkable
+from typing import Any, Protocol, Self, _ProtocolMeta, runtime_checkable
 
 from typing_extensions import TypeIs  # in `typing` from Python 3.13
 
@@ -9,7 +11,7 @@ from typing_extensions import TypeIs  # in `typing` from Python 3.13
 _instancecheck_cache: dict[tuple[type, type], bool] = {}
 
 
-class _CachedProtocolMeta(Protocol.__class__):  # type: ignore[name-defined]
+class _CachedProtocolMeta(_ProtocolMeta):
     """Custom implementation of @runtime_checkable
 
     The native implementation of @runtime_checkable is slow,

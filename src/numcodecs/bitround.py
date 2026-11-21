@@ -16,7 +16,7 @@ class BitRoundConfig(CodecConfig):
 # The size in bits of the mantissa/significand for the various floating types
 # You cannot keep more bits of data than you have available
 # https://en.wikipedia.org/wiki/IEEE_754
-max_bits = {
+max_bits: dict[str, int] = {
     "float16": 10,
     "float32": 23,
     "float64": 52,
@@ -79,7 +79,8 @@ class BitRound(Codec):
         half_quantum1 = (1 << (maskbits - 1)) - 1
         b += ((b >> maskbits) & 1) + half_quantum1
         b &= mask
-        return b
+        result: NDArrayLike = b
+        return result
 
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> NDArrayLike: ...

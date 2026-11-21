@@ -138,7 +138,8 @@ class PCodec(Codec):
     def encode(self, buf: BufferLike) -> bytes:
         buf = ensure_contiguous_ndarray(buf)
         config = self._get_chunk_config()
-        return standalone.simple_compress(buf, config)
+        compressed: bytes = standalone.simple_compress(buf, config)
+        return compressed
 
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
@@ -150,4 +151,5 @@ class PCodec(Codec):
             standalone.simple_decompress_into(buf, ensure_contiguous_ndarray(out))
             return out
         else:
-            return standalone.simple_decompress(buf)
+            dec: npt.NDArray[Any] = standalone.simple_decompress(buf)
+            return dec

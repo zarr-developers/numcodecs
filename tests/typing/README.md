@@ -26,7 +26,7 @@ The Cython extension modules carry their types in `.pyi` stubs next to the `.pyx
 (non-editable) build:
 
 ```bash
-MYPYPATH=src python -m mypy.stubtest --mypy-config-file pyproject.toml \
+python -m mypy.stubtest --mypy-config-file pyproject.toml \
   --allowlist tests/typing/stubtest-allowlist.txt \
   numcodecs.blosc numcodecs.zstd numcodecs.lz4 numcodecs.vlen \
   numcodecs.fletcher32 numcodecs.jenkins numcodecs.compat_ext numcodecs._shuffle

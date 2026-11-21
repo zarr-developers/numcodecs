@@ -56,11 +56,11 @@ class Categorize(Codec):
         dtype: npt.DTypeLike,
         astype: npt.DTypeLike = 'u1',
     ) -> None:
-        self.dtype = np.dtype(dtype)
+        self.dtype: np.dtype[Any] = np.dtype(dtype)
         if self.dtype.kind not in 'UO':
             raise TypeError("only unicode ('U') and object ('O') dtypes are supported")
-        self.labels = [ensure_text(label) for label in labels]
-        self.astype = np.dtype(astype)
+        self.labels: list[str] = [ensure_text(label) for label in labels]
+        self.astype: np.dtype[Any] = np.dtype(astype)
         if self.astype == np.dtype(object):
             raise TypeError('encoding as object array not supported')
 

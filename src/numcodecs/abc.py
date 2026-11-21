@@ -138,7 +138,7 @@ class Codec(ABC):
         return config
 
     @classmethod
-    def from_config(cls, config: Mapping[str, Any], /) -> Self:
+    def from_config(cls, config: Mapping[str, Any]) -> Self:
         """Instantiate codec from a configuration object, without its 'id' field."""
         # N.B., assume at this point the 'id' field has been removed from
         # the config object
@@ -184,7 +184,7 @@ class CodecProtocol(Protocol):
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 
     @classmethod
-    def from_config(cls, config: Mapping[str, Any], /) -> Self: ...  # pragma: no cover
+    def from_config(cls, config: Mapping[str, Any]) -> Self: ...  # pragma: no cover
 
 
 class BytesBytesCodec(CodecProtocol, Protocol):

@@ -52,8 +52,8 @@ class AsType(Codec):
     codec_id = 'astype'
 
     def __init__(self, encode_dtype: npt.DTypeLike, decode_dtype: npt.DTypeLike) -> None:
-        self.encode_dtype = np.dtype(encode_dtype)
-        self.decode_dtype = np.dtype(decode_dtype)
+        self.encode_dtype: np.dtype[Any] = np.dtype(encode_dtype)
+        self.decode_dtype: np.dtype[Any] = np.dtype(decode_dtype)
 
     def encode(self, buf: BufferLike) -> npt.NDArray[Any]:
         # normalise input

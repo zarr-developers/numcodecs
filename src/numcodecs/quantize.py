@@ -62,9 +62,9 @@ class Quantize(Codec):
         self, digits: int, dtype: npt.DTypeLike, astype: npt.DTypeLike | None = None
     ) -> None:
         self.digits = digits
-        self.dtype = np.dtype(dtype)
+        self.dtype: np.dtype[Any] = np.dtype(dtype)
         if astype is None:
-            self.astype = self.dtype
+            self.astype: np.dtype[Any] = self.dtype
         else:
             self.astype = np.dtype(astype)
         if self.dtype.kind != 'f' or self.astype.kind != 'f':

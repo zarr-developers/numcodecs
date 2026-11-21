@@ -68,13 +68,14 @@ if _lzma:
             arr = ensure_contiguous_ndarray(buf)
 
             # do compression
-            return _lzma_module.compress(
+            compressed: bytes = _lzma_module.compress(
                 arr,
                 format=self.format,
                 check=self.check,
                 preset=self.preset,
                 filters=self.filters,
             )
+            return compressed
 
         @overload
         def decode(self, buf: BufferLike, out: None = None) -> bytes: ...

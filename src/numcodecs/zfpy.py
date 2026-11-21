@@ -88,7 +88,7 @@ if _zfpy:
         ) -> None:
             self.mode = mode
             if mode == _zfpy_module.mode_fixed_accuracy:
-                self.compression_kwargs = {"tolerance": tolerance}
+                self.compression_kwargs: dict[str, float] = {"tolerance": tolerance}
             elif mode == _zfpy_module.mode_fixed_rate:
                 self.compression_kwargs = {"rate": rate}
             elif mode == _zfpy_module.mode_fixed_precision:
@@ -119,7 +119,10 @@ if _zfpy:
             buf = ensure_contiguous_ndarray(buf, flatten=flatten)
 
             # do compression
-            return _zfpy_module.compress_numpy(buf, write_header=True, **self.compression_kwargs)
+            compressed: bytes = _zfpy_module.compress_numpy(
+                buf, write_header=True, **self.compression_kwargs
+            )
+            return compressed
 
         @overload
         def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
@@ -132,7 +135,7 @@ if _zfpy:
                 ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
 
             # do decompression
-            dec = _zfpy_module.decompress_numpy(buf)
+            dec: npt.NDArray[Any] = _zfpy_module.decompress_numpy(buf)
 
             # handle destination
             if out is not None:
