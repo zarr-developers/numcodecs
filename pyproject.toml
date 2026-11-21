@@ -90,14 +90,14 @@ dev = [
     "pytest==9.0.3",
     "pytest-cov",
 ]
-test-zarr-308 = [
+test-zarr-313 = [
     {include-group="dev"},
-    "zarr==3.0.8",
+    "zarr==3.1.3",
     "crc32c",
 ]
-test-zarr-316 = [
+test-zarr-latest = [
     {include-group="dev"},
-    "zarr==3.1.6",
+    "zarr",
     "crc32c",
 ]
 test-zarr-main = [
@@ -157,6 +157,17 @@ filterwarnings = [
 [tool.cibuildwheel]
 # AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
 config-settings = "setup-args=-Davx2=disabled"
+# Run the test suite against each built wheel, so the SIMD configuration that ships
+# to PyPI is tested. test-sources copies the tests and their data fixtures (looked
+# up relative to the working directory) into the temporary directory the tests run
+# in; the source tree (src/) is not copied, so numcodecs is imported from the wheel.
+test-sources = ["tests", "fixture", "pyproject.toml"]
+test-extras = ["test", "test_extras", "msgpack", "crc32c"]
+test-command = [
+    # on free-threaded builds, check that no extension re-enables the GIL
+    "python -c \"import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())\"",
+    "pytest tests -p no:cacheprovider --no-cov",
+]
 
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
@@ -248,8 +259,8 @@ no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
     [
-        { group = "test-zarr-308" },
-        { group = "test-zarr-316" },
+        { group = "test-zarr-313" },
+        { group = "test-zarr-latest" },
         { group = "test-zarr-main" }
     ]
 ]

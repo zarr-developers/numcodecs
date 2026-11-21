@@ -2,6 +2,9 @@ name: Wheels
 
 on:
   push:
+    branches: [main]
+    # upload_pypi publishes on version tags
+    tags: ['v*']
   pull_request:
   schedule:
     # Run at 2:00 AM UTC daily
@@ -22,11 +25,9 @@ jobs:
         # macos-15-intel is an intel runner, macos-15 is an arm64 runner
         os: [ubuntu-latest, ubuntu-22.04-arm, windows-latest, macos-15-intel, macos-15]
     env:
-      # on free-threaded builds also check that no extension re-enables the GIL
-      CIBW_TEST_COMMAND: python -c "import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())"
       CIBW_BUILD: "cp312-* cp313-* cp314-* cp314t-* cp315-* cp315t-*"
       CIBW_SKIP: "*-musllinux_* *win32 *_i686 *_s390x"
-      # note: cibuildwheel config-settings are set in pyproject.toml
+      # note: cibuildwheel config-settings and the test command are set in pyproject.toml
 
     steps:
       - uses: actions/checkout@v6
@@ -65,25 +66,6 @@ jobs:
         with:
           name: sdist
           path: dist/*.tar.gz
-
-  test_dist_pypi:
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v6
-        with:
-          name: sdist
-          path: dist
-      - uses: actions/download-artifact@v6
-        with:
-          pattern: wheels-*
-          path: dist
-          merge-multiple: true
-
-      - name: test
-        run: |
-          ls
-          ls dist
 
   upload_pypi:
     needs: [build_wheels, build_sdist]
