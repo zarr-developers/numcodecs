@@ -89,7 +89,8 @@ if not zstd_dep.found()
   )
 
   # Assembly files — meson handles .S natively, but MSVC can't compile them.
-  # zstd turns its assembly paths off under MSVC anyway (ZSTD_ASM_SUPPORTED).
+  # zstd only uses its assembly on Linux and macOS (ZSTD_ASM_SUPPORTED in
+  # common/portability_macros.h), so nothing is lost by skipping it here.
   if host_machine.cpu_family() == 'x86_64' and not msvc
     zstd_sources += files(
       '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress_amd64.S',
@@ -188,10 +189,8 @@ if not blosc_dep.found()
       '../../c-blosc/blosc/bitshuffle-sse2.c',
     )
     blosc_c_args += ['-DSHUFFLE_SSE2_ENABLED']
-    if msvc
-      # MSVC never defines __SSE2__, which bitshuffle-sse2.c requires.
-      blosc_c_args += ['-D__SSE2__']
-    else
+    # MSVC needs no flag: blosc-common.h defines __SSE2__ for x64 MSVC.
+    if not msvc
       blosc_c_args += ['-msse2']
     endif
   endif
