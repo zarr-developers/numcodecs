@@ -14,7 +14,7 @@ description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme = "README.md"
-dependencies = ["numpy>=2.0", "packaging", "typing_extensions"]
+dependencies = ["numpy>=2.0", "packaging", "typing_extensions>=4.13"]
 requires-python = ">=3.12"
 dynamic = [
   "version",
@@ -89,6 +89,10 @@ dev = [
     "numpy>=2",
     "pytest==9.0.3",
     "pytest-cov",
+]
+typing = [
+    "mypy==2.4.1",
+    "pyright==1.1.414",
 ]
 test-zarr-313 = [
     {include-group="dev"},
@@ -239,15 +243,41 @@ ignore = [
 quote-style = "preserve"
 
 [tool.mypy]
-ignore_errors = false
-ignore_missing_imports = true
+python_version = "3.12"
+mypy_path = "src"
+strict = true
+warn_unreachable = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
-# TODO: set options below to true
-strict = false
-warn_unreachable = false
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_unused_configs = true
+
+# Optional dependencies that ship no type information.
+[[tool.mypy.overrides]]
+module = [
+    "msgpack.*",
+    "pcodec.*",
+    "zfpy.*",
+    "crc32c.*",
+    "google_crc32c.*",
+    "backports.*",
+    # build-time and test-only dependencies
+    "setuptools_scm.*",
+    "importlib_metadata.*",
+    # optional: numcodecs.zarr3 forwards to zarr, which is not installed everywhere
+    "zarr.*",
+]
+ignore_missing_imports = true
+
+# The test suite predates type annotations, and many tests pass wrongly typed values on
+# purpose to check runtime errors. As before, annotated test functions are checked and
+# unannotated ones are not. tests/typing is checked strictly by its own configuration
+# (tests/typing/mypy.ini).
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+check_untyped_defs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+disallow_any_generics = false
+warn_return_any = false
 
 [tool.uv]
 # meson-python editable installs require build deps (ninja, meson) at runtime for

@@ -125,6 +125,59 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  typing:
+    # Static types: the repository's own mypy configuration over src and tests, and the
+    # strict type tests in tests/typing under both mypy and pyright (see its README).
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: 'pip'
+
+      - name: Install numcodecs and the type checkers
+        run: |
+          python -m pip install --upgrade pip  # --group needs pip >= 25.1
+          python -m pip install -v ".[test,msgpack,crc32c]"
+          python -m pip install --group typing
+
+      - name: The installed package carries py.typed and the stubs
+        run: |
+          python - <<'PY'
+          from importlib.resources import files
+          pkg = files("numcodecs")
+          missing = [n for n in ("py.typed", "blosc.pyi", "vlen.pyi") if not (pkg / n).is_file()]
+          assert not missing, missing
+          PY
+
+      - name: mypy (repository configuration)
+        run: mypy --config-file pyproject.toml src tests
+
+      - name: mypy (strict type tests)
+        run: mypy --config-file tests/typing/mypy.ini tests/typing
+
+      - name: pyright (strict type tests)
+        run: pyright -p tests/typing
+
+      - name: stubtest (Cython stubs against the built extensions)
+        run: |
+          python -m mypy.stubtest --mypy-config-file pyproject.toml \
+            --allowlist tests/typing/stubtest-allowlist.txt \
+            numcodecs.blosc numcodecs.zstd numcodecs.lz4 numcodecs.vlen \
+            numcodecs.fletcher32 numcodecs.jenkins numcodecs.compat_ext numcodecs._shuffle
+
   test-zarr:
     runs-on: ubuntu-latest
     strategy:
