@@ -29,6 +29,9 @@
   wheels) rather than every branch, test the oldest supported and latest Zarr
   releases, use Alpine's numpy in the i386 job, and remove the unused release-notes
   labeler.
+* Check the behavior every codec promises through `numcodecs.abc.Codec` in a new
+  `tests/test_codec_contract.py`, and add strict static type tests in `tests/typing`, run by
+  mypy and pyright in a new `typing` CI job.
 
 ### Fixes
 

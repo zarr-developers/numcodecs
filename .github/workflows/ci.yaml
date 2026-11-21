@@ -125,6 +125,43 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  typing:
+    # Static types: the repository's own mypy configuration over src and tests, and the
+    # strict type tests in tests/typing under both mypy and pyright (see its README).
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: 'pip'
+
+      - name: Install numcodecs and the type checkers
+        run: |
+          python -m pip install --upgrade pip  # --group needs pip >= 25.1
+          python -m pip install -v ".[test,msgpack,crc32c]"
+          python -m pip install --group typing
+
+      - name: mypy (repository configuration)
+        run: mypy --config-file pyproject.toml src tests
+
+      - name: mypy (strict type tests)
+        run: mypy --config-file tests/typing/mypy.ini tests/typing
+
+      - name: pyright (strict type tests)
+        run: pyright -p tests/typing
+
   test-zarr:
     runs-on: ubuntu-latest
     strategy:
