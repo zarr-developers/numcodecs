@@ -84,7 +84,9 @@
   read-only JSON values (PEP 728 `extra_items`). `numcodecs.abc.JSON` names a
   JSON-serializable value. Compressors: Zlib, GZip, BZ2, LZMA, Base64, Blosc, Zstd and LZ4.
   Checksums: CRC32, Adler32, CRC32C, JenkinsLookup3 and Fletcher32. Filters: AsType,
-  Delta, Quantize, FixedScaleOffset, BitRound, PackBits, Shuffle and Categorize.
+  Delta, Quantize, FixedScaleOffset, BitRound, PackBits, Shuffle and Categorize. Object
+  and array-to-bytes codecs: JSON, MsgPack, Pickle (whose `decode` returns `Any`), the VLen
+  codecs, ZFPY and PCodec.
   `typing_extensions` >= 4.13 is now required.
 * Ship `.pyi` type stubs for the Cython extension modules (`blosc`, `zstd`, `lz4`, `vlen`,
   `fletcher32`, `jenkins`, `compat_ext` and `_shuffle`), checked against the compiled
