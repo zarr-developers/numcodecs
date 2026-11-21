@@ -1,0 +1,3 @@
+from collections.abc import Buffer
+
+def ensure_contiguous_memoryview(obj: Buffer) -> memoryview: ...

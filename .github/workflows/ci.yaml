@@ -162,6 +162,17 @@ jobs:
       - name: pyright (strict type tests)
         run: pyright -p tests/typing
 
+      - name: stubtest (Cython stubs against the built extensions)
+        # Read the stubs from src/: mypy ignores the installed copies until numcodecs
+        # ships a py.typed marker.
+        env:
+          MYPYPATH: src
+        run: |
+          python -m mypy.stubtest --mypy-config-file pyproject.toml \
+            --allowlist tests/typing/stubtest-allowlist.txt \
+            numcodecs.blosc numcodecs.zstd numcodecs.lz4 numcodecs.vlen \
+            numcodecs.fletcher32 numcodecs.jenkins numcodecs.compat_ext numcodecs._shuffle
+
   test-zarr:
     runs-on: ubuntu-latest
     strategy:

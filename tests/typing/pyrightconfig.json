@@ -10,5 +10,6 @@
   "reportMissingTypeStubs": "none",
   "reportUnknownVariableType": "none",
   "reportUnknownMemberType": "none",
-  "reportUnknownArgumentType": "none"
+  "reportUnknownArgumentType": "none",
+  "reportMissingModuleSource": "none"
 }

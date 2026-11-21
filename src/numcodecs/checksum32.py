@@ -89,7 +89,7 @@ class Checksum32(Codec, abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def checksum(data: Buffer, value: int) -> int: ...
+    def checksum(data: Buffer, value: int, /) -> int: ...
 
 
 class CRC32(Checksum32):
@@ -151,7 +151,7 @@ class JenkinsLookup3(Checksum32):
         bytes prepended to the buffer before evaluating the hash, default: None
     """
 
-    checksum = jenkins_lookup3
+    checksum = staticmethod(jenkins_lookup3)
     codec_id = "jenkins_lookup3"
 
     def __init__(self, initval: int = 0, prefix=None):

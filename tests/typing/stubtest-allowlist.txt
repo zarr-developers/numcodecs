@@ -1,0 +1,10 @@
+# Entries for `python -m mypy.stubtest`, one regular expression per line.
+
+# Cython adds a `__test__` dict (collected doctests) to every module.
+numcodecs\..*\.__test__
+
+# Cython reports `def f():` module functions as `(self, /)` at runtime.
+numcodecs\.blosc\.(_init|_destroy|_get_use_threads|get_nthreads|list_compressors)
+
+# Cython's C-API capsule table for cimport-able functions.
+numcodecs\.compat_ext\.__pyx_capi__

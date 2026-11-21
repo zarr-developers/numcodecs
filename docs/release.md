@@ -72,6 +72,10 @@
 * Add structural protocols `numcodecs.abc.CodecProtocol`, `BytesBytesCodec`,
   `ArrayArrayCodec` and `ArrayBytesCodec` for code that accepts any object implementing the
   codec interface.
+* Ship `.pyi` type stubs for the Cython extension modules (`blosc`, `zstd`, `lz4`, `vlen`,
+  `fletcher32`, `jenkins`, `compat_ext` and `_shuffle`), checked against the compiled
+  modules with `mypy.stubtest` in CI. Type checkers previously saw the Blosc, Zstd, LZ4,
+  Fletcher32 and VLen codecs as unknown.
 
 ### Deprecations
 
