@@ -3,8 +3,8 @@ import subprocess
 
 import numpy as np
 import pytest
-from numcodecs.zstd import Zstd
 
+from numcodecs.zstd import Zstd
 from tests.common import (
     check_backwards_compatibility,
     check_config,
