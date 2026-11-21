@@ -82,7 +82,7 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
 
     """
     if codec_id is None:
-        codec_id = cls.codec_id
+        codec_id = getattr(cls, "codec_id", None)
     if codec_id is None:
         raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
     logger.debug("Registering codec '%s'", codec_id)

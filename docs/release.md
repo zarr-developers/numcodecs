@@ -58,6 +58,20 @@
   public. `from numcodecs import *` now imports only those names.
 * `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
   given, instead of registering it under `None`.
+* `Codec.codec_id` no longer defaults to `None`. Abstract intermediate classes such as
+  `Checksum32` leave it unset, so reading it raises `AttributeError`; every concrete codec
+  sets it.
+
+### Enhancements
+
+* Annotate `numcodecs.abc.Codec`. `encode` and `decode` take and return
+  `numcodecs.ndarray_like.BufferLike` (an object exporting the buffer protocol, or an
+  ndarray-like), with `buf` positional-only, and `decode(buf, out=out)` is typed to return
+  the type of `out`. `get_config` returns `Mapping[str, Any]` and `from_config` returns
+  `Self`. Previously pyright inferred that `encode` and `decode` return `None`.
+* Add structural protocols `numcodecs.abc.CodecProtocol`, `BytesBytesCodec`,
+  `ArrayArrayCodec` and `ArrayBytesCodec` for code that accepts any object implementing the
+  codec interface.
 
 ### Deprecations
 

@@ -29,17 +29,31 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
+from collections.abc import Buffer, Mapping
+from typing import Any, Protocol, Self, overload
+
+from .ndarray_like import BufferLike, NDArrayLike
+
+__all__ = [
+    "ArrayArrayCodec",
+    "ArrayBytesCodec",
+    "BytesBytesCodec",
+    "Codec",
+    "CodecProtocol",
+]
 
 
 class Codec(ABC):
     """Codec abstract base class."""
 
-    # override in sub-class
-    codec_id: str | None = None
-    """Codec identifier."""
+    # Declared without a value (abstract intermediate classes leave it unset) and without
+    # `ClassVar`, so that `Codec` instances match protocols that declare `codec_id` either
+    # as a plain attribute or as a read-only property.
+    codec_id: str
+    """Codec identifier. Every concrete codec class sets it as a class attribute."""
 
     @abstractmethod
-    def encode(self, buf):  # pragma: no cover
+    def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover
         """Encode data in `buf`.
 
         Parameters
@@ -55,8 +69,14 @@ class Codec(ABC):
             protocol.
         """
 
+    @overload
+    def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
+    @overload
+    def decode[OutT: BufferLike](self, buf: BufferLike, /, out: OutT) -> OutT: ...
     @abstractmethod
-    def decode(self, buf, out=None):  # pragma: no cover
+    def decode(
+        self, buf: BufferLike, /, out: BufferLike | None = None
+    ) -> BufferLike:  # pragma: no cover
         """Decode data in `buf`.
 
         Parameters
@@ -72,10 +92,10 @@ class Codec(ABC):
         -------
         dec : buffer-like
             Decoded data. May be any object supporting the new-style
-            buffer protocol.
+            buffer protocol. If `out` was provided, `out` itself.
         """
 
-    def get_config(self):
+    def get_config(self) -> Mapping[str, Any]:
         """Return a dictionary holding configuration parameters for this
         codec. Must include an 'id' field with the codec identifier. All
         values must be compatible with JSON encoding."""
@@ -83,7 +103,7 @@ class Codec(ABC):
         # override in sub-class if need special encoding of config values
 
         # setup config object
-        config = {'id': self.codec_id}
+        config: dict[str, Any] = {'id': self.codec_id}
 
         # by default, assume all non-private members are configuration
         # parameters - override this in sub-class if not the case
@@ -94,8 +114,8 @@ class Codec(ABC):
         return config
 
     @classmethod
-    def from_config(cls, config):
-        """Instantiate codec from a configuration object."""
+    def from_config(cls, config: Mapping[str, Any], /) -> Self:
+        """Instantiate codec from a configuration object, without its 'id' field."""
         # N.B., assume at this point the 'id' field has been removed from
         # the config object
 
@@ -105,14 +125,14 @@ class Codec(ABC):
         # keyword arguments without any special decoding
         return cls(**config)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         # override in sub-class if need special equality comparison
         try:
-            return self.get_config() == other.get_config()
+            return bool(self.get_config() == other.get_config())  # type: ignore[attr-defined]
         except AttributeError:
             return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # override in sub-class if need special representation
 
         # by default, assume all non-private members are configuration
@@ -124,3 +144,44 @@ class Codec(ABC):
         ]
         r += ', '.join(params) + ')'
         return r
+
+
+class CodecProtocol(Protocol):
+    """The structural interface of a codec, for code that accepts any object implementing
+    it, whether or not it subclasses `Codec`."""
+
+    @property
+    def codec_id(self) -> str: ...  # pragma: no cover
+
+    def encode(self, buf: BufferLike, /) -> BufferLike: ...  # pragma: no cover
+
+    def decode(self, buf: BufferLike, /, out: Any = None) -> BufferLike: ...  # pragma: no cover
+
+    def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
+
+    @classmethod
+    def from_config(cls, config: Mapping[str, Any], /) -> Self: ...  # pragma: no cover
+
+
+class BytesBytesCodec(CodecProtocol, Protocol):
+    """A codec that maps bytes to bytes, such as a compressor or a checksum."""
+
+    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
+
+    def decode(self, buf: BufferLike, /, out: Any = None) -> Buffer: ...  # pragma: no cover
+
+
+class ArrayArrayCodec(CodecProtocol, Protocol):
+    """A codec that maps an array to an array, such as a filter."""
+
+    def encode(self, buf: BufferLike, /) -> NDArrayLike: ...  # pragma: no cover
+
+    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover
+
+
+class ArrayBytesCodec(CodecProtocol, Protocol):
+    """A codec that serializes an array to bytes and back."""
+
+    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
+
+    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover

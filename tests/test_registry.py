@@ -35,8 +35,8 @@ def test_all_classes_registered():
         if (
             inspect.isclass(obj)
             and issubclass(obj, numcodecs.abc.Codec)
+            and not inspect.isabstract(obj)
             and obj.codec_id not in numcodecs.registry.codec_registry
-            and obj.codec_id is not None  # remove `None`
         )
     }
 
