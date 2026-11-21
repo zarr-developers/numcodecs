@@ -258,6 +258,9 @@ module = [
     "crc32c.*",
     "google_crc32c.*",
     "backports.*",
+    # build-time and test-only dependencies
+    "setuptools_scm.*",
+    "importlib_metadata.*",
     # optional: numcodecs.zarr3 forwards to zarr, which is not installed everywhere
     "zarr.*",
 ]
