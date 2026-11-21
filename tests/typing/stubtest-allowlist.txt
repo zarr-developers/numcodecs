@@ -8,3 +8,7 @@ numcodecs\.blosc\.(_init|_destroy|_get_use_threads|get_nthreads|list_compressors
 
 # Cython's C-API capsule table for cimport-able functions.
 numcodecs\.compat_ext\.__pyx_capi__
+
+# The config TypedDicts are created at runtime with `typing.TypedDict`, which adds these
+# PEP 705 attributes; stubtest does not expect them on the stubs' class-syntax TypedDicts.
+numcodecs\..*Config\.__(mutable|readonly)_keys__
