@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from numcodecs.fletcher32 import Fletcher32
 
 

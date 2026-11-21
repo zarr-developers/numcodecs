@@ -1,7 +1,20 @@
-import numpy as np
+from collections.abc import Iterable
+from typing import Any, overload
 
-from .abc import Codec
+import numpy as np
+import numpy.typing as npt
+
+from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray, ensure_text, ndarray_copy
+from .ndarray_like import BufferLike
+
+
+class CategorizeConfig(CodecConfig):
+    """The configuration of a `Categorize` codec, as returned by `Categorize.get_config`."""
+
+    labels: list[str]
+    dtype: str
+    astype: str
 
 
 class Categorize(Codec):
@@ -37,21 +50,27 @@ class Categorize(Codec):
 
     codec_id = 'categorize'
 
-    def __init__(self, labels, dtype, astype='u1'):
-        self.dtype = np.dtype(dtype)
+    def __init__(
+        self,
+        labels: Iterable[str | BufferLike],
+        dtype: npt.DTypeLike,
+        astype: npt.DTypeLike = 'u1',
+    ) -> None:
+        self.dtype: np.dtype[Any] = np.dtype(dtype)
         if self.dtype.kind not in 'UO':
             raise TypeError("only unicode ('U') and object ('O') dtypes are supported")
-        self.labels = [ensure_text(label) for label in labels]
-        self.astype = np.dtype(astype)
+        self.labels: list[str] = [ensure_text(label) for label in labels]
+        self.astype: np.dtype[Any] = np.dtype(astype)
         if self.astype == np.dtype(object):
             raise TypeError('encoding as object array not supported')
 
-    def encode(self, buf):
+    def encode(self, buf: BufferLike | Iterable[str]) -> npt.NDArray[Any]:
         # normalise input
         if self.dtype == np.dtype(object):
             arr = np.asarray(buf, dtype=object)
         else:
-            arr = ensure_ndarray(buf).view(self.dtype)
+            # only an object dtype accepts a plain iterable; anything else must be a buffer
+            arr = ensure_ndarray(buf).view(self.dtype)  # type: ignore[arg-type]
 
         # flatten to simplify implementation
         arr = arr.reshape(-1, order='A')
@@ -65,7 +84,11 @@ class Categorize(Codec):
 
         return enc
 
-    def decode(self, buf, out=None):
+    @overload
+    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
+    @overload
+    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
         # normalise input
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -82,7 +105,7 @@ class Categorize(Codec):
         # handle output
         return ndarray_copy(dec, out)
 
-    def get_config(self):
+    def get_config(self) -> CategorizeConfig:
         return {
             'id': self.codec_id,
             'labels': self.labels,
@@ -90,7 +113,7 @@ class Categorize(Codec):
             'astype': self.astype.str,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # make sure labels part is not too long
         labels = repr(self.labels[:3])
         if len(self.labels) > 3:

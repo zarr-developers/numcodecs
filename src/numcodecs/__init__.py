@@ -25,6 +25,42 @@ from importlib.metadata import version as _version
 from numcodecs.registry import get_codec as get_codec
 from numcodecs.registry import register_codec
 
+# Names listed here are the public API re-exported from submodules. Optional codecs are
+# appended below when their dependency imports.
+__all__ = [
+    "BZ2",
+    "CRC32",
+    "JSON",
+    "LZ4",
+    "LZMA",
+    "Adler32",
+    "AsType",
+    "Base64",
+    "BitRound",
+    "Blosc",
+    "Categorize",
+    "Delta",
+    "FixedScaleOffset",
+    "Fletcher32",
+    "GZip",
+    "JenkinsLookup3",
+    "PackBits",
+    "Pickle",
+    "Quantize",
+    "Shuffle",
+    "VLenArray",
+    "VLenBytes",
+    "VLenUTF8",
+    "Zlib",
+    "Zstd",
+    "blosc",
+    "get_codec",
+    "lz4",
+    "register_codec",
+    "vlen",
+    "zstd",
+]
+
 __version__: str = _version("numcodecs")
 from numcodecs.zlib import Zlib
 
@@ -48,7 +84,7 @@ from numcodecs.blosc import Blosc
 register_codec(Blosc)
 # initialize blosc
 try:
-    ncores = multiprocessing.cpu_count()
+    ncores: int = multiprocessing.cpu_count()
 except OSError:  # pragma: no cover
     ncores = 1
 blosc._init()
@@ -131,18 +167,22 @@ with suppress(ImportError):
     from numcodecs.zfpy import ZFPY
 
     register_codec(ZFPY)
+    __all__ += ["ZFPY"]
 
 with suppress(ImportError):
     from numcodecs.msgpacks import MsgPack
 
     register_codec(MsgPack)
+    __all__ += ["MsgPack"]
 
 with suppress(ImportError):
     from numcodecs.checksum32 import CRC32C
 
     register_codec(CRC32C)
+    __all__ += ["CRC32C"]
 
 with suppress(ImportError):
     from numcodecs.pcodec import PCodec
 
     register_codec(PCodec)
+    __all__ += ["PCodec"]
