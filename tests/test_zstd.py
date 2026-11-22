@@ -3,8 +3,8 @@ import subprocess
 
 import numpy as np
 import pytest
-from numcodecs.zstd import Zstd
 
+from numcodecs.zstd import Zstd
 from tests.common import (
     check_backwards_compatibility,
     check_config,
@@ -153,9 +153,14 @@ def view_zstd_streaming_bytes():
 
 
 def zstd_cli_available() -> bool:
-    return not subprocess.run(
-        ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    ).returncode
+    # The zstd CLI is missing from some test environments, such as the manylinux
+    # images cibuildwheel tests wheels in.
+    try:
+        return not subprocess.run(
+            ["zstd", "-V"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        ).returncode
+    except FileNotFoundError:
+        return False
 
 
 def test_multi_frame():

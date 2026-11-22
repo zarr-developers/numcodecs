@@ -1,2 +1,0 @@
-needs release notes:
-- all: ['!docs/release.rst']

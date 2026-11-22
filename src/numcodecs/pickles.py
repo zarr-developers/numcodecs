@@ -1,11 +1,13 @@
 import os
 import pickle
+from typing import Any, overload
 
 import numpy as np
 
-from .abc import Codec
-from .compat import ensure_contiguous_ndarray
+from .abc import Codec, CodecConfig
+from .compat import ensure_contiguous_ndarray, ensure_ndarray
 from .errors import UnsafeDecodeError
+from .ndarray_like import BufferLike
 
 _ENV_VAR = "NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE"
 
@@ -22,6 +24,12 @@ def _read_opt_in_from_env() -> bool:
 #: imported. This is deliberately a process-wide setting rather than a codec parameter,
 #: because codec parameters are read from array metadata, which may be untrusted.
 ALLOW_UNSAFE_PICKLE_DECODE = _read_opt_in_from_env()
+
+
+class PickleConfig(CodecConfig):
+    """The configuration of a `Pickle` codec, as returned by `Pickle.get_config`."""
+
+    protocol: int
 
 
 class Pickle(Codec):
@@ -62,13 +70,17 @@ class Pickle(Codec):
 
     codec_id = 'pickle'
 
-    def __init__(self, protocol=pickle.HIGHEST_PROTOCOL):
+    def __init__(self, protocol: int = pickle.HIGHEST_PROTOCOL) -> None:
         self.protocol = protocol
 
-    def encode(self, buf):
+    def encode(self, buf: object) -> bytes:
         return pickle.dumps(buf, protocol=self.protocol)
 
-    def decode(self, buf, out=None):
+    @overload
+    def decode(self, buf: BufferLike, out: None = None) -> Any: ...
+    @overload
+    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> Any:
         if not ALLOW_UNSAFE_PICKLE_DECODE:
             raise UnsafeDecodeError(
                 "Pickle.decode is disabled because unpickling data can execute arbitrary "
@@ -80,13 +92,13 @@ class Pickle(Codec):
         dec = pickle.loads(buf)
 
         if out is not None:
-            np.copyto(out, dec)
+            np.copyto(ensure_ndarray(out), dec)
             return out
         else:
             return dec
 
-    def get_config(self):
+    def get_config(self) -> PickleConfig:
         return {'id': self.codec_id, 'protocol': self.protocol}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Pickle(protocol={self.protocol})'

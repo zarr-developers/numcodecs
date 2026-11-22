@@ -1,0 +1,16 @@
+{
+  "include": [
+    "."
+  ],
+  "typeCheckingMode": "strict",
+  "pythonVersion": "3.12",
+  "extraPaths": [
+    "../../src"
+  ],
+  "reportMissingTypeStubs": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportMissingModuleSource": "none",
+  "enableTypeIgnoreComments": false
+}

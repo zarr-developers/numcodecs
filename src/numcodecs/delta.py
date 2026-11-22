@@ -1,7 +1,18 @@
-import numpy as np
+from typing import Any, overload
 
-from .abc import Codec
+import numpy as np
+import numpy.typing as npt
+
+from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray, ndarray_copy
+from .ndarray_like import BufferLike
+
+
+class DeltaConfig(CodecConfig):
+    """The configuration of a `Delta` codec, as returned by `Delta.get_config`."""
+
+    dtype: str
+    astype: str
 
 
 class Delta(Codec):
@@ -40,16 +51,16 @@ class Delta(Codec):
 
     codec_id = 'delta'
 
-    def __init__(self, dtype, astype=None):
-        self.dtype = np.dtype(dtype)
+    def __init__(self, dtype: npt.DTypeLike, astype: npt.DTypeLike | None = None) -> None:
+        self.dtype: np.dtype[Any] = np.dtype(dtype)
         if astype is None:
-            self.astype = self.dtype
+            self.astype: np.dtype[Any] = self.dtype
         else:
             self.astype = np.dtype(astype)
         if self.dtype == np.dtype(object) or self.astype == np.dtype(object):
             raise ValueError('object arrays are not supported')
 
-    def encode(self, buf):
+    def encode(self, buf: BufferLike) -> npt.NDArray[Any]:
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -66,7 +77,11 @@ class Delta(Codec):
         enc[1:] = np.diff(arr)
         return enc
 
-    def decode(self, buf, out=None):
+    @overload
+    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
+    @overload
+    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
         # normalise input
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -82,11 +97,11 @@ class Delta(Codec):
         # handle output
         return ndarray_copy(dec, out)
 
-    def get_config(self):
+    def get_config(self) -> DeltaConfig:
         # override to handle encoding dtypes
         return {'id': self.codec_id, 'dtype': self.dtype.str, 'astype': self.astype.str}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r = f'{type(self).__name__}(dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
             r += f', astype={self.astype.str!r}'

@@ -4,13 +4,15 @@
 import os
 
 
-def get_version():
+def get_version() -> str:
     try:
         from setuptools_scm import get_version
 
-        return get_version(root=os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+        version: str = get_version(root=os.path.join(os.path.dirname(__file__), '..', '..', '..'))
     except (ImportError, LookupError):
         pass
+    else:
+        return version
 
     # Fallback: read from pyproject.toml
     pyproject = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'pyproject.toml')
