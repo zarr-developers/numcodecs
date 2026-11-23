@@ -15,8 +15,7 @@ class NoId(Codec):
 
 
 def test_codec_without_codec_id():
-    """`codec_id` has no default on the class, but a codec that never set one keeps
-    working as it did when the default was `None`."""
+    """A codec that never set `codec_id` works, with the id `None`."""
     codec = NoId()
     assert codec.get_config() == {"id": None}
     assert codec == codec
@@ -26,9 +25,12 @@ def test_codec_without_codec_id():
 
 
 def test_abstract_codecs_have_no_codec_id():
-    for cls in (Codec, numcodecs.checksum32.Checksum32):
-        with pytest.raises(AttributeError):
-            cls.codec_id  # noqa: B018
+    """The annotation is `str`, but at runtime classes that set no id keep the `None`
+    default, and cannot be registered under it."""
+    for cls in (Codec, numcodecs.checksum32.Checksum32, NoId):
+        assert cls.codec_id is None
+    with pytest.raises(ValueError, match="has no codec_id and none was given"):
+        numcodecs.register_codec(NoId)
 
 
 def test_star_imports_do_not_shadow_the_json_codec():
@@ -52,8 +54,8 @@ class PropertyId(Codec):
 
 
 def test_error_inside_a_codec_id_property_is_not_swallowed():
-    """Only a codec whose class has no `codec_id` at all reports None. An AttributeError
-    from inside a `codec_id` property is a bug in that codec and must surface."""
+    """An AttributeError from inside a `codec_id` property is a bug in that codec and
+    must surface, not turn into the `None` default."""
     with pytest.raises(AttributeError, match="_name"):
         PropertyId().get_config()
     assert PropertyId() != PropertyId()
@@ -141,3 +143,35 @@ def test_register_codec_propagates_an_error_inside_a_codec_id_descriptor():
 
 def test_abc_exports():
     assert set(numcodecs.abc.__all__) == {"Codec", "CodecConfig", "CodecProtocol", "JSONValue"}
+
+
+class _PassThrough(NoId):
+    def __getattribute__(self, name):
+        return super().__getattribute__(name)
+
+
+class _DictCodec(NoId, dict):
+    pass
+
+
+@pytest.mark.parametrize("cls", [_PassThrough, _DictCodec])
+def test_codec_without_codec_id_and_with_its_own_attribute_lookup(cls):
+    assert cls().get_config() == {"id": None}
+    assert cls() == cls()
+    with pytest.raises(ValueError, match="has no codec_id and none was given"):
+        numcodecs.register_codec(cls)
+
+
+def test_register_codec_propagates_an_error_inside_a_metaclass_codec_id():
+    from abc import ABCMeta
+
+    class Meta(ABCMeta):
+        @property
+        def codec_id(cls):
+            return cls._prefix + "-x"
+
+    class MetaProperty(NoId, metaclass=Meta):
+        pass
+
+    with pytest.raises(AttributeError, match="_prefix"):
+        numcodecs.register_codec(MetaProperty)

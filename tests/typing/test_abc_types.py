@@ -113,6 +113,9 @@ def _consume(codec: CodecProtocol, level: int) -> CodecProtocol:
     buf = bytearray(data.nbytes)
     assert assert_type(codec.decode(enc, buf), BufferLike) is buf
     assert_type(codec.get_config(), Mapping[str, Any])
+    # from_config takes a dict or a TypedDict, as `Codec.from_config` does
+    typed: _ZlibLikeConfig = {"level": level}
+    assert_type(type(codec).from_config(typed), CodecProtocol)
     return assert_type(type(codec).from_config({"level": level}), CodecProtocol)
 
 
@@ -185,13 +188,29 @@ class _ZlibSubclass(numcodecs.Zlib):
     """A known limit. A subclass of a concrete codec that overrides `decode` with one
     plain signature does not fit the two overloads it inherits, so both type checkers
     report the override. (Unannotated, pyright alone reports it, because it infers the
-    return type.) Repeating the overloads, as `_Identity` does, avoids it. The ignore
-    comments are checked, so this fails if the limit goes away."""
+    return type, here `bytes`.) The ignore comments are checked, so this fails if the
+    limit goes away."""
 
     codec_id = "test-zlib-subclass"
 
     def decode(self, buf: BufferLike, out: Any = None) -> bytes:  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         return super().decode(buf)
+
+
+class _ZlibOverloaded(numcodecs.Zlib):
+    """The way around that limit: repeat the two overloads as `Zlib` declares them, with
+    `buf` an ordinary parameter (not positional-only, as it is in `Codec`)."""
+
+    codec_id = "test-zlib-overloaded"
+
+    @overload
+    def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
+    @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
+        if out is None:
+            return super().decode(buf)
+        return super().decode(buf, out)
 
 
 def test_subclasses() -> None:
@@ -209,6 +228,10 @@ def test_subclasses() -> None:
     assert_type(_AnyTyped.from_config({}), _AnyTyped)
 
     assert _ZlibSubclass().decode(numcodecs.Zlib().encode(b"abc")) == b"abc"
+    overloaded = _ZlibOverloaded()
+    assert assert_type(overloaded.decode(overloaded.encode(b"abc")), bytes) == b"abc"
+    buf = bytearray(3)
+    assert assert_type(overloaded.decode(overloaded.encode(b"abc"), buf), bytearray) is buf
 
 
 class _ZlibLikeConfig(TypedDict):
@@ -303,3 +326,7 @@ def test_json_value_covers_every_json_kind() -> None:
         json.dumps(_json(b"bytes"))
     with pytest.raises(TypeError):
         json.dumps(_json({1, 2}))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    # nested values are checked too; these are only type-checked, `_json` returns them as is
+    _json([{1, 2}])  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
+    _json({"a": object()})  # type: ignore[dict-item]  # pyright: ignore[reportArgumentType]
+    _json({1: "a"})  # type: ignore[dict-item]  # pyright: ignore[reportArgumentType]

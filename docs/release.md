@@ -71,10 +71,9 @@
   public. `from numcodecs import *` now imports only those names.
 * `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
   given, instead of registering it under `None`.
-* `Codec.codec_id` no longer defaults to `None`. Abstract intermediate classes such as
-  `Checksum32` leave it unset, so reading it from the class raises `AttributeError`; every
-  concrete codec sets it. A codec whose class never sets it still reports `'id': None`
-  from `get_config`.
+* `Codec.codec_id` is annotated `str`, which every concrete codec sets. At runtime the
+  class default is still `None`, so a codec whose class never sets it reports `'id': None`
+  from `get_config`, as before.
 
 ### Enhancements
 
@@ -99,8 +98,9 @@
   `encode` or `decode` overrides whose annotations do not fit the base signature, such as
   a narrower `buf` or `out`, or a return type that is not buffer-like. A subclass of one
   of numcodecs' own codecs that overrides `decode` with a single signature does not fit
-  the two overloads it inherits, and is reported even when it is unannotated (by pyright,
-  which infers the return type); repeat the two overloads, or ignore the error. Passing a codec's
+  the two overloads it inherits. mypy reports it when it is annotated; pyright also reports
+  an unannotated one for the codecs that decode to `bytes`, because it infers the return
+  type. Repeat the two overloads, or ignore the error. Passing a codec's
   `get_config()` to a parameter typed `dict[str, ...]` also needs `dict(...)`, because a
   TypedDict is not a `dict` to a type checker. At runtime every `get_config()` still
   returns a plain `dict`.

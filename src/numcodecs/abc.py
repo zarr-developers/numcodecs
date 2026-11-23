@@ -30,7 +30,7 @@ other and vice versa.
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-from typing import Any, Protocol, Self, overload
+from typing import TYPE_CHECKING, Any, Protocol, Self, overload
 
 from typing_extensions import ReadOnly, TypedDict
 
@@ -65,35 +65,19 @@ class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[c
     id: str
 
 
-def _codec_id_or_none(codec: object) -> str | None:
-    """Return the `codec_id` of a codec or codec class, or None if its class never set one.
-
-    `Codec.codec_id` used to default to None on the class. It no longer does, but a codec
-    that never set it keeps reporting None where numcodecs itself reads the id.
-
-    None is returned only when the attribute is plainly absent. When the class (or one of
-    its bases) defines `codec_id`, as a property or another descriptor, or customizes
-    `__getattribute__`, an `AttributeError` raised while reading it is a bug in that codec
-    and propagates.
-    """
-    try:
-        return codec.codec_id  # type: ignore[attr-defined, no-any-return]
-    except AttributeError:
-        cls = codec if isinstance(codec, type) else type(codec)
-        custom_lookup = getattr(cls, '__getattribute__') is not object.__getattribute__  # noqa: B009
-        if custom_lookup or any('codec_id' in vars(base) for base in cls.__mro__):
-            raise
-        return None
-
-
 class Codec(ABC):
     """Codec abstract base class."""
 
-    # Declared without a value (abstract intermediate classes leave it unset) and without
-    # `ClassVar`, so that `Codec` instances match protocols that declare `codec_id` either
-    # as a plain attribute or as a read-only property.
-    codec_id: str
-    """Codec identifier. Every concrete codec class sets it as a class attribute."""
+    # Type checkers see `str`, which every concrete codec sets as a class attribute (it is
+    # not `ClassVar`, so that `Codec` instances match protocols that declare `codec_id`
+    # either as a plain attribute or as a read-only property). At runtime the class keeps
+    # the default it has always had, None, for abstract intermediate classes and for
+    # codecs whose author never set an id: their `get_config()` reports `'id': None`.
+    if TYPE_CHECKING:  # pragma: no cover
+        codec_id: str
+        """Codec identifier. Every concrete codec class sets it as a class attribute."""
+    else:
+        codec_id = None
 
     @abstractmethod
     def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover
@@ -151,7 +135,7 @@ class Codec(ABC):
         # override in sub-class if need special encoding of config values
 
         # setup config object
-        config: dict[str, Any] = {'id': _codec_id_or_none(self)}
+        config: dict[str, Any] = {'id': self.codec_id}
 
         # by default, assume all non-private members are configuration
         # parameters - override this in sub-class if not the case

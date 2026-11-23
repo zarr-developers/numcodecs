@@ -88,6 +88,7 @@ def static_checks(
 ) -> None:
     # Zlib
     assert_type(Zlib().decode(enc), bytes)
+    assert_type(Zlib().decode(buf=enc), bytes)
     assert_type(Zlib().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Zlib().decode(enc, nd), npt.NDArray[Any])
     assert_type(Zlib().decode(enc, out=ba), bytearray)
@@ -98,6 +99,7 @@ def static_checks(
     Zlib().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # GZip
     assert_type(GZip().decode(enc), bytes)
+    assert_type(GZip().decode(buf=enc), bytes)
     assert_type(GZip().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(GZip().decode(enc, nd), npt.NDArray[Any])
     assert_type(GZip().decode(enc, out=ba), bytearray)
@@ -108,6 +110,7 @@ def static_checks(
     GZip().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # BZ2
     assert_type(BZ2().decode(enc), bytes)
+    assert_type(BZ2().decode(buf=enc), bytes)
     assert_type(BZ2().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(BZ2().decode(enc, nd), npt.NDArray[Any])
     assert_type(BZ2().decode(enc, out=ba), bytearray)
@@ -118,6 +121,7 @@ def static_checks(
     BZ2().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # LZMA
     assert_type(LZMA().decode(enc), bytes)
+    assert_type(LZMA().decode(buf=enc), bytes)
     assert_type(LZMA().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(LZMA().decode(enc, nd), npt.NDArray[Any])
     assert_type(LZMA().decode(enc, out=ba), bytearray)
@@ -128,6 +132,7 @@ def static_checks(
     LZMA().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Base64
     assert_type(Base64().decode(enc), bytes)
+    assert_type(Base64().decode(buf=enc), bytes)
     assert_type(Base64().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Base64().decode(enc, nd), npt.NDArray[Any])
     assert_type(Base64().decode(enc, out=ba), bytearray)
@@ -138,6 +143,7 @@ def static_checks(
     Base64().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Blosc
     assert_type(Blosc().decode(enc), bytes)
+    assert_type(Blosc().decode(buf=enc), bytes)
     assert_type(Blosc().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Blosc().decode(enc, nd), npt.NDArray[Any])
     assert_type(Blosc().decode(enc, out=ba), bytearray)
@@ -148,6 +154,7 @@ def static_checks(
     Blosc().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Zstd
     assert_type(Zstd().decode(enc), bytes)
+    assert_type(Zstd().decode(buf=enc), bytes)
     assert_type(Zstd().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Zstd().decode(enc, nd), npt.NDArray[Any])
     assert_type(Zstd().decode(enc, out=ba), bytearray)
@@ -158,6 +165,7 @@ def static_checks(
     Zstd().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # LZ4
     assert_type(LZ4().decode(enc), bytes)
+    assert_type(LZ4().decode(buf=enc), bytes)
     assert_type(LZ4().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(LZ4().decode(enc, nd), npt.NDArray[Any])
     assert_type(LZ4().decode(enc, out=ba), bytearray)
@@ -168,6 +176,7 @@ def static_checks(
     LZ4().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Shuffle
     assert_type(Shuffle().decode(enc), npt.NDArray[np.uint8])
+    assert_type(Shuffle().decode(buf=enc), npt.NDArray[np.uint8])
     assert_type(Shuffle().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Shuffle().decode(enc, nd), npt.NDArray[Any])
     assert_type(Shuffle().decode(enc, out=ba), bytearray)
@@ -178,6 +187,7 @@ def static_checks(
     Shuffle().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # CRC32
     assert_type(CRC32().decode(enc), npt.NDArray[np.uint8] | memoryview)
+    assert_type(CRC32().decode(buf=enc), npt.NDArray[np.uint8] | memoryview)
     assert_type(CRC32().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(CRC32().decode(enc, nd), npt.NDArray[Any])
     assert_type(CRC32().decode(enc, out=ba), bytearray)
@@ -188,6 +198,7 @@ def static_checks(
     CRC32().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Adler32
     assert_type(Adler32().decode(enc), npt.NDArray[np.uint8] | memoryview)
+    assert_type(Adler32().decode(buf=enc), npt.NDArray[np.uint8] | memoryview)
     assert_type(Adler32().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Adler32().decode(enc, nd), npt.NDArray[Any])
     assert_type(Adler32().decode(enc, out=ba), bytearray)
@@ -198,6 +209,7 @@ def static_checks(
     Adler32().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # CRC32C
     assert_type(CRC32C().decode(enc), npt.NDArray[np.uint8] | memoryview)
+    assert_type(CRC32C().decode(buf=enc), npt.NDArray[np.uint8] | memoryview)
     assert_type(CRC32C().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(CRC32C().decode(enc, nd), npt.NDArray[Any])
     assert_type(CRC32C().decode(enc, out=ba), bytearray)
@@ -208,6 +220,7 @@ def static_checks(
     CRC32C().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # JenkinsLookup3
     assert_type(JenkinsLookup3().decode(enc), memoryview)
+    assert_type(JenkinsLookup3().decode(buf=enc), memoryview)
     assert_type(JenkinsLookup3().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(JenkinsLookup3().decode(enc, nd), npt.NDArray[Any])
     assert_type(JenkinsLookup3().decode(enc, out=ba), bytearray)
@@ -218,6 +231,7 @@ def static_checks(
     JenkinsLookup3().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Fletcher32
     assert_type(Fletcher32().decode(enc), npt.NDArray[np.uint8])
+    assert_type(Fletcher32().decode(buf=enc), npt.NDArray[np.uint8])
     assert_type(Fletcher32().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Fletcher32().decode(enc, nd), npt.NDArray[Any])
     assert_type(Fletcher32().decode(enc, out=ba), bytearray)
@@ -228,6 +242,7 @@ def static_checks(
     Fletcher32().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # AsType
     assert_type(AsType("f4", "f8").decode(enc), npt.NDArray[Any])
+    assert_type(AsType("f4", "f8").decode(buf=enc), npt.NDArray[Any])
     assert_type(AsType("f4", "f8").decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(AsType("f4", "f8").decode(enc, nd), npt.NDArray[Any])
     assert_type(AsType("f4", "f8").decode(enc, out=ba), bytearray)
@@ -238,6 +253,7 @@ def static_checks(
     AsType("f4", "f8").decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Delta
     assert_type(Delta("f8").decode(enc), npt.NDArray[Any])
+    assert_type(Delta("f8").decode(buf=enc), npt.NDArray[Any])
     assert_type(Delta("f8").decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Delta("f8").decode(enc, nd), npt.NDArray[Any])
     assert_type(Delta("f8").decode(enc, out=ba), bytearray)
@@ -248,6 +264,7 @@ def static_checks(
     Delta("f8").decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Quantize
     assert_type(Quantize(1, "f8").decode(enc), npt.NDArray[Any])
+    assert_type(Quantize(1, "f8").decode(buf=enc), npt.NDArray[Any])
     assert_type(Quantize(1, "f8").decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Quantize(1, "f8").decode(enc, nd), npt.NDArray[Any])
     assert_type(Quantize(1, "f8").decode(enc, out=ba), bytearray)
@@ -258,6 +275,7 @@ def static_checks(
     Quantize(1, "f8").decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # FixedScaleOffset
     assert_type(FixedScaleOffset(0, 1, "f8").decode(enc), npt.NDArray[Any])
+    assert_type(FixedScaleOffset(0, 1, "f8").decode(buf=enc), npt.NDArray[Any])
     assert_type(FixedScaleOffset(0, 1, "f8").decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(FixedScaleOffset(0, 1, "f8").decode(enc, nd), npt.NDArray[Any])
     assert_type(FixedScaleOffset(0, 1, "f8").decode(enc, out=ba), bytearray)
@@ -268,6 +286,7 @@ def static_checks(
     FixedScaleOffset(0, 1, "f8").decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # BitRound
     assert_type(BitRound(10).decode(enc), NDArrayLike)
+    assert_type(BitRound(10).decode(buf=enc), NDArrayLike)
     assert_type(BitRound(10).decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(BitRound(10).decode(enc, nd), npt.NDArray[Any])
     assert_type(BitRound(10).decode(enc, out=ba), bytearray)
@@ -278,6 +297,7 @@ def static_checks(
     BitRound(10).decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # PackBits
     assert_type(PackBits().decode(enc), npt.NDArray[np.bool_])
+    assert_type(PackBits().decode(buf=enc), npt.NDArray[np.bool_])
     assert_type(PackBits().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(PackBits().decode(enc, nd), npt.NDArray[Any])
     assert_type(PackBits().decode(enc, out=ba), bytearray)
@@ -288,6 +308,7 @@ def static_checks(
     PackBits().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Categorize
     assert_type(Categorize(["a"], object).decode(enc), npt.NDArray[Any])
+    assert_type(Categorize(["a"], object).decode(buf=enc), npt.NDArray[Any])
     assert_type(Categorize(["a"], object).decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Categorize(["a"], object).decode(enc, nd), npt.NDArray[Any])
     assert_type(Categorize(["a"], object).decode(enc, out=ba), bytearray)
@@ -298,6 +319,7 @@ def static_checks(
     Categorize(["a"], object).decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # JSON
     assert_type(JSON().decode(enc), npt.NDArray[Any])
+    assert_type(JSON().decode(buf=enc), npt.NDArray[Any])
     assert_type(JSON().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(JSON().decode(enc, nd), npt.NDArray[Any])
     assert_type(JSON().decode(enc, out=ba), bytearray)
@@ -308,6 +330,7 @@ def static_checks(
     JSON().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # MsgPack
     assert_type(MsgPack().decode(enc), npt.NDArray[Any])
+    assert_type(MsgPack().decode(buf=enc), npt.NDArray[Any])
     assert_type(MsgPack().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(MsgPack().decode(enc, nd), npt.NDArray[Any])
     assert_type(MsgPack().decode(enc, out=ba), bytearray)
@@ -318,6 +341,7 @@ def static_checks(
     MsgPack().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Pickle
     assert_type(Pickle().decode(enc), Any)
+    assert_type(Pickle().decode(buf=enc), Any)
     assert_type(Pickle().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Pickle().decode(enc, nd), npt.NDArray[Any])
     assert_type(Pickle().decode(enc, out=ba), bytearray)
@@ -328,6 +352,7 @@ def static_checks(
     Pickle().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # VLenUTF8
     assert_type(VLenUTF8().decode(enc), npt.NDArray[np.object_])
+    assert_type(VLenUTF8().decode(buf=enc), npt.NDArray[np.object_])
     assert_type(VLenUTF8().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(VLenUTF8().decode(enc, nd), npt.NDArray[Any])
     assert_type(VLenUTF8().decode(enc, out=ba), bytearray)
@@ -338,6 +363,7 @@ def static_checks(
     VLenUTF8().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # VLenBytes
     assert_type(VLenBytes().decode(enc), npt.NDArray[np.object_])
+    assert_type(VLenBytes().decode(buf=enc), npt.NDArray[np.object_])
     assert_type(VLenBytes().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(VLenBytes().decode(enc, nd), npt.NDArray[Any])
     assert_type(VLenBytes().decode(enc, out=ba), bytearray)
@@ -348,6 +374,7 @@ def static_checks(
     VLenBytes().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # VLenArray
     assert_type(VLenArray("i4").decode(enc), npt.NDArray[np.object_])
+    assert_type(VLenArray("i4").decode(buf=enc), npt.NDArray[np.object_])
     assert_type(VLenArray("i4").decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(VLenArray("i4").decode(enc, nd), npt.NDArray[Any])
     assert_type(VLenArray("i4").decode(enc, out=ba), bytearray)
@@ -358,6 +385,7 @@ def static_checks(
     VLenArray("i4").decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # ZFPY
     assert_type(ZFPY().decode(enc), npt.NDArray[Any])
+    assert_type(ZFPY().decode(buf=enc), npt.NDArray[Any])
     assert_type(ZFPY().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(ZFPY().decode(enc, nd), npt.NDArray[Any])
     assert_type(ZFPY().decode(enc, out=ba), bytearray)
@@ -368,6 +396,7 @@ def static_checks(
     ZFPY().decode(enc, out=enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # PCodec
     assert_type(PCodec().decode(enc), npt.NDArray[Any])
+    assert_type(PCodec().decode(buf=enc), npt.NDArray[Any])
     assert_type(PCodec().decode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(PCodec().decode(enc, nd), npt.NDArray[Any])
     assert_type(PCodec().decode(enc, out=ba), bytearray)
@@ -411,6 +440,7 @@ def static_checks(
     lz4.decompress(enc, enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # Shuffle.encode also takes `out`
     assert_type(Shuffle().encode(enc), npt.NDArray[np.uint8])
+    assert_type(Shuffle().encode(buf=enc), npt.NDArray[np.uint8])
     assert_type(Shuffle().encode(enc, out=f8), npt.NDArray[np.float64])
     assert_type(Shuffle().encode(enc, nd), npt.NDArray[Any])
     assert_type(Shuffle().encode(enc, out=ba), bytearray)
@@ -426,6 +456,9 @@ def static_checks(
     assert_type(ndarray_copy(enc, ba), bytearray)
     assert_type(ndarray_copy(src=enc, dst=ba), bytearray)
     assert_type(ndarray_copy(src=enc, dst=None), bytes)
+    # `src` may be an ndarray-like that does not export a buffer
+    assert_type(ndarray_copy(like, ba), bytearray)
+    assert_type(ndarray_copy(like, None), NDArrayLike)
     assert_type(ndarray_copy(enc, mv), memoryview[float])
     assert_type(ndarray_copy(enc, maybe), bytes | bytearray)
     ndarray_copy(enc, enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]

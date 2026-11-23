@@ -9,7 +9,7 @@ from typing import Literal, NotRequired, cast, overload
 import numpy as np
 import numpy.typing as npt
 
-from .abc import Codec, CodecConfig, _codec_id_or_none
+from .abc import Codec, CodecConfig
 from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 from .ndarray_like import BufferLike, OutT, WritableBufferLike
@@ -109,7 +109,7 @@ class Checksum32(Codec, abc.ABC):
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
             raise RuntimeError(
-                f"Stored and computed {_codec_id_or_none(self)} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 

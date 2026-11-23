@@ -312,6 +312,20 @@ def test_vlen_decode_fills_a_non_contiguous_out(codec_id: str, layout: str) -> N
 
 
 @pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
+def test_vlen_decode_refuses_a_read_only_non_contiguous_out(codec_id: str) -> None:
+    """The decoded items cannot be copied back, and returning `out` unfilled would be
+    wrong data."""
+    codec = _codec(codec_id)
+    stale = object()
+    base = np.full((4, 2), stale, dtype=object)
+    out = base[::2]
+    out.setflags(write=False)
+    with pytest.raises(ValueError, match="read-only"):
+        codec.decode(codec.encode(np.resize(CASES[codec_id].data, out.size)), out=out)
+    assert all(item is stale for item in base.flat)
+
+
+@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
 def test_vlen_decode_into_an_empty_read_only_out(codec_id: str) -> None:
     """There is nothing to write, so a read-only `out` is not an error."""
     codec = _codec(codec_id)
