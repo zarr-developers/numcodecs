@@ -47,9 +47,9 @@ class _CachedProtocolMeta(_ProtocolMeta):
 # and friends as read-only properties, and a protocol declaring plain (settable) attributes
 # does not match a real ndarray.
 #
-# At runtime they are plain annotations, as they have always been, so that the members
-# `isinstance` checks for stay the same and a class that subclasses a protocol can still
-# assign them.
+# At runtime they are plain annotations. `isinstance` checks for the same members either
+# way, but a class that subclasses a protocol can assign a plain annotation, and could
+# not assign a property.
 
 
 @runtime_checkable

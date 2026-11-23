@@ -76,7 +76,7 @@ def test_register_codec_keeps_the_error_from_a_failing_codec_id():
 
 
 def test_register_codec_refuses_an_id_of_none():
-    """A class that sets `codec_id = None` (the old default, spelled out) has no id."""
+    """A class that sets `codec_id = None` has no id."""
 
     class ExplicitNone(NoId):
         codec_id = None

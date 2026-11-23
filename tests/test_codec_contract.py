@@ -240,8 +240,8 @@ def _refuses(codec_id: str, out_kind: str, itemsize: int) -> bool:
 def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
     """Decoding into a 2-D or non-contiguous `out` either fills `out` and returns it, or
     raises `ValueError` and leaves `out` untouched. Which of the two is fixed per codec
-    by `_refuses`, so a codec cannot pass by raising where it used to work, and it can
-    never return an `out` that does not hold the decoded data."""
+    by `_refuses`, so a codec cannot pass by raising for a layout it should fill, and it
+    can never return an `out` that does not hold the decoded data."""
     codec, case = _codec(codec_id), CASES[codec_id]
     enc = codec.encode(case.data)
     expected = ensure_ndarray(codec.decode(enc))
@@ -295,9 +295,9 @@ VLEN_NON_CONTIGUOUS_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
 @pytest.mark.parametrize("layout", VLEN_NON_CONTIGUOUS_OUTS)
 @pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
 def test_vlen_decode_fills_a_non_contiguous_out(codec_id: str, layout: str) -> None:
-    """The case that returned stale data: `out` cannot be flattened without a copy, so
-    the decoded items have to be copied back into it, in logical (C) order, and the
-    rest of the memory `out` is a view of stays as it was."""
+    """`out` cannot be flattened without a copy, so the decoded items have to be copied
+    back into it, in logical (C) order. The rest of the memory `out` is a view of is left
+    alone."""
     codec = _codec(codec_id)
     stale = object()
     base = np.full((6, 4), stale, dtype=object)

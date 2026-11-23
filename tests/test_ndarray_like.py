@@ -49,8 +49,8 @@ def test_cached_isinstance_check(module):
 
 
 class _Wrapper:
-    """Every member NDArrayLike has required since it was introduced, and nothing else:
-    in particular no `copy`, and a dtype without `str`."""
+    """Exactly the members NDArrayLike requires: in particular no `copy`, and a dtype
+    without `str`."""
 
     class _DType:
         itemsize = 1
@@ -252,7 +252,8 @@ def _protocol_members(protocol: str) -> tuple[dict[str, str], dict[str, str]]:
     return static, runtime
 
 
-# every member each protocol has required since it was introduced
+# The members of each protocol: data members, then methods. Adding one makes `isinstance`
+# reject objects that satisfy the protocol today.
 PROTOCOL_MEMBERS = {
     "DType": ({"itemsize", "name", "kind"}, set()),
     "FlagsObj": ({"c_contiguous", "f_contiguous", "owndata"}, set()),
@@ -266,7 +267,7 @@ PROTOCOL_MEMBERS = {
 @pytest.mark.parametrize("protocol", PROTOCOL_MEMBERS)
 def test_protocol_definitions_agree(protocol):
     """The data members are declared twice, for type checkers and for the runtime. Both
-    must name the same members, with the same types: those the protocol has always had,
+    must name the same members, with the same types: those listed in `PROTOCOL_MEMBERS`,
     and no others."""
     import numcodecs.ndarray_like as module
 
