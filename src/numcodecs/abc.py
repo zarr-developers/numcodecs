@@ -73,8 +73,9 @@ class Codec(ABC):
     # unset). Not `ClassVar`, so that `Codec` instances match protocols that declare
     # `codec_id` either as a plain attribute or as a read-only property.
     codec_id: str
-    """Codec identifier. Every concrete codec class must set it as a class attribute;
-    `get_config` and `register_codec` fail for a class that does not."""
+    """Codec identifier. Every concrete codec class must set it as a class attribute.
+    For a class that does not, `get_config` fails, and so does `register_codec` unless it
+    is given an id."""
 
     @abstractmethod
     def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover

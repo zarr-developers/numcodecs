@@ -108,3 +108,34 @@ def test_register_codec_reads_the_id_like_any_attribute():
 def test_checksum_codec_names_its_id_when_reporting_corruption():
     with pytest.raises(RuntimeError, match="Stored and computed crc32 checksum do not match"):
         numcodecs.CRC32().decode(bytes(8) + b"x")
+
+
+def test_checksum_codec_without_codec_id_is_not_special_cased():
+    """Like any codec without an id, it is incomplete: the corrupt-data message reads
+    `codec_id` like any attribute, and no stand-in name is made up."""
+
+    class MyChecksum(numcodecs.checksum32.Checksum32):
+        @staticmethod
+        def checksum(data, value=0):
+            return 1
+
+    with pytest.raises(AttributeError, match="codec_id"):
+        MyChecksum().decode(bytes(8))
+
+
+def test_register_codec_only_converts_attribute_errors():
+    """Any other error raised while reading `codec_id` is not a missing id."""
+    from abc import ABCMeta
+
+    class Meta(ABCMeta):
+        @property
+        def codec_id(cls):
+            raise RuntimeError("config file missing")
+
+    class Failing(NoId, metaclass=Meta):
+        pass
+
+    with pytest.raises(RuntimeError, match="config file missing"):
+        numcodecs.register_codec(Failing)
+    numcodecs.register_codec(Failing, "test-explicit-id")
+    assert numcodecs.registry.codec_registry.pop("test-explicit-id") is Failing
