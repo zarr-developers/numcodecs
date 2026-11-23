@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from numcodecs.compat import ensure_contiguous_ndarray
 from numcodecs.fletcher32 import Fletcher32
 
 
@@ -56,42 +57,30 @@ def test_out():
     f.decode(result, out=data)
 
 
-def test_out_too_large():
+@pytest.mark.parametrize(
+    "make_out",
+    [
+        lambda: np.empty(16, dtype="uint8"),
+        lambda: np.empty((2, 2), dtype="uint32", order="F"),
+        lambda: np.empty(2, dtype="float64"),
+        lambda: bytearray(16),
+        lambda: memoryview(bytearray(16)),
+    ],
+    ids=["uint8", "uint32-F-order", "float64", "bytearray", "memoryview"],
+)
+def test_decode_into_out(make_out):
     data = np.arange(16, dtype="uint8")
     f = Fletcher32()
-    enc = f.encode(data)
-    out = np.full(data.size + 4, 0xAA, dtype="uint8")
-    with pytest.raises(ValueError, match="Output buffer has 20 bytes"):
-        f.decode(enc, out=out)
-    # the destination buffer must be left untouched
+    out = make_out()
+    assert f.decode(f.encode(data), out=out) is out
+    assert ensure_contiguous_ndarray(out).view("uint8").tobytes() == data.tobytes()
+
+
+@pytest.mark.parametrize("shape", [(15,), (17,), ()], ids=["smaller", "larger", "0-d"])
+def test_decode_rejects_out_of_wrong_size(shape):
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    out = np.full(shape, 0xAA, dtype="uint8")
+    with pytest.raises(ValueError, match=f"out has {out.size} bytes, but the decoded data has 16"):
+        f.decode(f.encode(data), out=out)
     assert (out == 0xAA).all()
-
-
-def test_out_too_small():
-    data = np.arange(16, dtype="uint8")
-    f = Fletcher32()
-    enc = f.encode(data)
-    out = np.full(data.size - 1, 0xAA, dtype="uint8")
-    with pytest.raises(ValueError, match="Output buffer has 15 bytes"):
-        f.decode(enc, out=out)
-    assert (out == 0xAA).all()
-
-
-def test_out_correct_size():
-    data = np.arange(16, dtype="uint8")
-    f = Fletcher32()
-    enc = f.encode(data)
-    out = np.empty(data.size, dtype="uint8")
-    result = f.decode(enc, out=out)
-    assert result is out
-    assert (out == data).all()
-
-
-def test_out_bytearray():
-    data = np.arange(16, dtype="uint8")
-    f = Fletcher32()
-    enc = f.encode(data)
-    out = bytearray(data.size)
-    result = f.decode(enc, out=out)
-    assert result is out
-    assert out == data.tobytes()

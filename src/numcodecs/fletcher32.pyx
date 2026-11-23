@@ -90,7 +90,11 @@ class Fletcher32(Codec):
         return out
 
     def decode(self, buf, out=None):
-        """Check fletcher checksum, and return buffer without it"""
+        """Check fletcher checksum, and return buffer without it
+
+        If `out` is given, it must be a contiguous, writable buffer of exactly the
+        size of the decoded data; the data is copied into it and `out` is returned.
+        """
         b = ensure_contiguous_ndarray(buf).view('uint8')
         cdef const uint8_t[::1] b_mv = b
         cdef const uint8_t* b_ptr = &b_mv[0]
@@ -112,8 +116,7 @@ class Fletcher32(Codec):
             payload_len = b_len - FOOTER_LENGTH
             if out_mv.size != payload_len:
                 raise ValueError(
-                    f"Output buffer has {out_mv.size} bytes, but the"
-                    f" decoded payload has {payload_len} bytes."
+                    f"out has {out_mv.size} bytes, but the decoded data has {payload_len}"
                 )
             if payload_len:
                 memcpy(&out_mv[0], b_ptr, payload_len)
