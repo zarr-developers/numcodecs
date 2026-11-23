@@ -68,13 +68,15 @@ def _codec_id_or_none(codec: object) -> str | None:
     """Return `codec.codec_id`, or None for a codec whose class never set one.
 
     `Codec.codec_id` used to default to None on the class. It no longer does, but a codec
-    that never set it keeps reporting None where numcodecs itself reads the id. An
-    `AttributeError` raised inside a `codec_id` property is not that case and propagates.
+    that never set it keeps reporting None where numcodecs itself reads the id. When the
+    codec's class (or one of its bases) does define `codec_id`, as a property or another
+    descriptor, an `AttributeError` raised while reading it is a bug in that codec and
+    propagates.
     """
     try:
         return codec.codec_id  # type: ignore[attr-defined, no-any-return]
     except AttributeError:
-        if hasattr(type(codec), 'codec_id') or 'codec_id' in getattr(codec, '__dict__', {}):
+        if any('codec_id' in vars(cls) for cls in type(codec).__mro__):
             raise
         return None
 
@@ -158,6 +160,8 @@ class Codec(ABC):
     # type works for everyone: codecs that override this (to decode config values) declare
     # `dict[str, Any]`, which rules out `Mapping` here, and callers pass TypedDicts, which
     # are not dicts to a type checker.
+    # The cost is that type checkers accept any argument, including `None`, which
+    # fails at runtime.
     @classmethod
     def from_config(cls, config: Any) -> Self:
         """Instantiate codec from a configuration object, without its 'id' field."""

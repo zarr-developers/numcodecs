@@ -75,6 +75,25 @@ def test_codec_protocol_matches_structural_codecs() -> None:
     assert concrete.get_config()["id"] == "zlib"
 
 
+def _consume(codec: CodecProtocol, level: int) -> CodecProtocol:
+    """What code that accepts a `CodecProtocol` can call, and what it gets back."""
+    data = np.arange(4, dtype="f8")
+    assert_type(codec.codec_id, str)
+    enc = assert_type(codec.encode(data), BufferLike)
+    assert ensure_bytes(assert_type(codec.decode(enc), BufferLike)) == data.tobytes()
+    out = np.empty_like(data)
+    assert assert_type(codec.decode(enc, out=out), BufferLike) is out
+    buf = bytearray(data.nbytes)
+    assert assert_type(codec.decode(enc, buf), BufferLike) is buf
+    assert_type(codec.get_config(), Mapping[str, Any])
+    return assert_type(type(codec).from_config({"level": level}), CodecProtocol)
+
+
+def test_codec_protocol_as_a_consumer_uses_it() -> None:
+    codec = numcodecs.Zlib(level=1)
+    assert _consume(codec, 1) == codec
+
+
 class _Identity(Codec):
     """A third-party codec typed as precisely as numcodecs' own."""
 

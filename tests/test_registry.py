@@ -78,7 +78,8 @@ def test_register_codec_without_id():
 
 
 def test_get_codec_non_string_id(monkeypatch):
-    """Ids are normally strings, but a codec registered under another hashable id
-    stays reachable."""
+    """Ids are strings: the annotations say so, and type checkers reject anything else.
+    This only guards `get_codec` against starting to fail for a registry that already
+    holds another hashable id, which it has always looked up."""
     monkeypatch.setitem(numcodecs.registry.codec_registry, 7, numcodecs.Zlib)
     assert get_codec({"id": 7, "level": 3}) == numcodecs.Zlib(level=3)

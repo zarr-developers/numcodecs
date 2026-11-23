@@ -43,3 +43,14 @@ def test_jenkins_lookup3() -> None:
 
 def test_fletcher32() -> None:
     assert assert_type(Fletcher32().get_config(), CodecConfig) == {"id": "fletcher32"}
+
+
+def test_jenkins_lookup3_prefix_forms() -> None:
+    """`prefix` is bytes-like, or the list of ints `get_config` reports (or a tuple)."""
+    from_bytes = JenkinsLookup3(prefix=b"\x01\x02")
+    prefix: list[int] = [1, 2]
+    assert JenkinsLookup3(prefix=prefix) == from_bytes
+    pair: tuple[int, ...] = (1, 2)
+    assert JenkinsLookup3(prefix=pair) == from_bytes
+    assert JenkinsLookup3(prefix=bytearray(b"\x01\x02")) == from_bytes
+    assert JenkinsLookup3(prefix=None).prefix is None

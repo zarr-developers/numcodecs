@@ -1,8 +1,6 @@
 # `typing._ProtocolMeta` is private, but typeshed declares it, so type checkers see the
 # metaclass's real type instead of the `Any` that `Protocol.__class__` gives them.
 import array
-import ctypes
-import mmap
 import pickle
 from collections.abc import Buffer
 from typing import (
@@ -141,10 +139,19 @@ type BufferLike = Buffer | NDArrayLike
 as `bytes`, `bytearray`, `memoryview` or a numpy array, or an ndarray-like such as a cupy
 array."""
 
-# `memoryview[Any]` is what type checkers need (a bare `memoryview` means `memoryview[int]`
-# to them, which leaves out e.g. `memoryview(...).cast("d")`), but `memoryview` cannot be
-# subscripted at runtime before Python 3.14. Hence two definitions.
+# Two definitions, for two reasons:
+#
+# - `memoryview[Any]` is what type checkers need (a bare `memoryview` means
+#   `memoryview[int]` to them, which leaves out e.g. `memoryview(...).cast("d")`), but
+#   `memoryview` cannot be subscripted at runtime before Python 3.14.
+# - `ctypes` and `mmap` are optional parts of the standard library (a Python built without
+#   libffi has no `ctypes`), and importing numcodecs must not require them. The runtime
+#   definition imports them only when the alias is evaluated, and leaves out what is
+#   missing.
 if TYPE_CHECKING:  # pragma: no cover
+    import ctypes
+    import mmap
+
     type WritableBufferLike = (
         bytearray
         | memoryview[Any]
@@ -156,16 +163,19 @@ if TYPE_CHECKING:  # pragma: no cover
         | NDArrayLike
     )
 else:
-    type WritableBufferLike = (
-        bytearray
-        | memoryview
-        | array.array
-        | mmap.mmap
-        | np.ndarray
-        | ctypes.Array
-        | pickle.PickleBuffer
-        | NDArrayLike
-    )
+
+    def _writable_buffer_types():
+        """The runtime value of `WritableBufferLike`: the same types, unsubscripted."""
+        import contextlib
+        import importlib
+
+        union = bytearray | memoryview | array.array | np.ndarray | pickle.PickleBuffer
+        for module, name in (("mmap", "mmap"), ("ctypes", "Array")):
+            with contextlib.suppress(ImportError):
+                union |= getattr(importlib.import_module(module), name)
+        return union | NDArrayLike
+
+    type WritableBufferLike = _writable_buffer_types()
 """What `decode` accepts as `out`: a buffer that can be written to.
 
 Python's type system cannot say "a writable buffer", so this names writable buffer types
@@ -180,9 +190,9 @@ Two limits follow from that:
   `memoryview(...)`, which is accepted.
 
 Some codecs need more than a writable buffer and raise for anything else: JSON, MsgPack,
-Pickle, Categorize and the VLen codecs need an ndarray, and PCodec an ndarray of the
-decoded dtype. Type checkers cannot be told so without those codecs breaking the signature
-they inherit from `Codec`.
+Pickle, the VLen codecs, and Categorize when it decodes to an object dtype, need an
+ndarray; PCodec needs a buffer whose item type is the decoded dtype. Type checkers cannot
+be told so without those codecs breaking the signature they inherit from `Codec`.
 """
 
 OutT = TypeVar("OutT", bound=WritableBufferLike)

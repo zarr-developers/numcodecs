@@ -1,15 +1,18 @@
 """Checks of the `.pyi` stubs that `mypy.stubtest` does not make.
 
-stubtest compares module-level names and method signatures, but it accepts an attribute
-that a stub class declares and the runtime class does not have (it could be set in
-`__init__`). These tests instantiate each stubbed codec and look for every attribute its
-stub declares.
+stubtest compares module-level names and method signatures, but it does not look at
+instances. It accepts an attribute that a stub class declares and the runtime class does
+not have (it could be set in `__init__`), it does not notice an attribute that `__init__`
+sets and the stub leaves out, and it knows nothing about what `get_config()` returns.
+These tests instantiate each stubbed codec and compare it, and its configuration, with
+what the stub declares.
 """
 
 import ast
 import importlib
 from importlib.resources import files
 
+import numpy as np
 import pytest
 
 INSTANCES = {
@@ -39,8 +42,9 @@ def _declared_attributes(module: str, cls: str) -> dict[str, str]:
     }
 
 
-def _declared_config_keys(module: str, cls: str) -> set[str]:
-    """The keys of the TypedDict that the stub says `cls.get_config()` returns."""
+def _declared_config(module: str, cls: str) -> dict[str, str]:
+    """The keys of the TypedDict that the stub says `cls.get_config()` returns, with
+    their annotations as source text."""
     (get_config,) = [
         n
         for n in _stub_class(module, cls).body
@@ -48,12 +52,27 @@ def _declared_config_keys(module: str, cls: str) -> set[str]:
     ]
     assert isinstance(get_config.returns, ast.Name)
     if get_config.returns.id == "CodecConfig":
-        return {"id"}
-    return {"id", *_declared_attributes(module, get_config.returns.id)}
+        return {"id": "str"}
+    return {"id": "str", **_declared_attributes(module, get_config.returns.id)}
 
 
-# annotations that can be checked with isinstance
-SIMPLE_TYPES = {"int": int, "str": str, "bool": bool, "float": (int, float)}
+# How to check a value against each annotation the stubs use. Exact types, so that `bool`
+# does not pass for `int`. An annotation missing here fails the tests: add it.
+CHECKS = {
+    "int": lambda value: type(value) is int,
+    "str": lambda value: type(value) is str,
+    "bool": lambda value: type(value) is bool,
+    "np.dtype[Any]": lambda value: isinstance(value, np.dtype),
+}
+
+
+def _mistyped(declared: dict[str, str], values: dict[str, object]) -> dict[str, str]:
+    """The declared names whose value does not have the declared type."""
+    return {
+        name: f"declared {annotation}, is {type(values[name]).__name__}"
+        for name, annotation in declared.items()
+        if not CHECKS[annotation](values[name])
+    }
 
 
 def _codec(module: str, cls: str):
@@ -76,22 +95,25 @@ def test_every_stubbed_codec_class_is_checked():
 
 
 @pytest.mark.parametrize(("module", "cls"), INSTANCES, ids=[c for _, c in INSTANCES])
-def test_stub_class_attributes_exist(module, cls):
+def test_stub_class_attributes_match_the_instance(module, cls):
+    """The stub declares exactly the public data attributes an instance has, with their
+    types."""
     codec = _codec(module, cls)
     declared = _declared_attributes(module, cls)
-    assert declared, "expected the stub to declare at least codec_id"
-    missing = [name for name in declared if not hasattr(codec, name)]
-    assert not missing, f"{module}.pyi declares {cls} attributes that do not exist: {missing}"
-    wrong = {
-        name: annotation
-        for name, annotation in declared.items()
-        if annotation in SIMPLE_TYPES
-        and not isinstance(getattr(codec, name), SIMPLE_TYPES[annotation])
+    actual = {
+        name: getattr(codec, name)
+        for name in dir(codec)
+        if not name.startswith("_") and not callable(getattr(codec, name))
     }
-    assert not wrong, f"{module}.pyi declares the wrong type for {cls} attributes: {wrong}"
+    assert set(declared) == set(actual)
+    assert not _mistyped(declared, actual)
 
 
 @pytest.mark.parametrize(("module", "cls"), INSTANCES, ids=[c for _, c in INSTANCES])
 def test_stub_config_matches_get_config(module, cls):
-    """The TypedDict a stub declares for `get_config()` has exactly the keys returned."""
-    assert _declared_config_keys(module, cls) == set(_codec(module, cls).get_config())
+    """The TypedDict a stub declares for `get_config()` has exactly the keys returned,
+    with their types."""
+    declared = _declared_config(module, cls)
+    config = _codec(module, cls).get_config()
+    assert set(declared) == set(config)
+    assert not _mistyped(declared, config)

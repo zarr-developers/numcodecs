@@ -67,3 +67,56 @@ def test_checksum_codec_without_codec_id_reports_corruption():
 
     with pytest.raises(RuntimeError, match="Stored and computed None checksum do not match"):
         MyChecksum().decode(bytes(8))
+
+
+def test_checksum_codec_propagates_an_error_inside_a_codec_id_property():
+    class MyChecksum(numcodecs.checksum32.Checksum32):
+        @property
+        def codec_id(self):
+            return self._name.lower()
+
+        @staticmethod
+        def checksum(data, value=0):
+            return 1
+
+    with pytest.raises(AttributeError, match="_name"):
+        MyChecksum().decode(bytes(8))
+
+
+class _ClassProperty:
+    """A descriptor that also runs when read from the class, unlike `property`."""
+
+    def __get__(self, instance, owner):
+        return owner._prefix + "-x"
+
+
+class DescriptorId(NoId):
+    codec_id = _ClassProperty()
+
+
+def test_error_inside_a_codec_id_descriptor_is_not_swallowed():
+    with pytest.raises(AttributeError, match="_prefix"):
+        DescriptorId().get_config()
+    assert DescriptorId() != DescriptorId()
+
+
+def test_codec_id_on_a_metaclass_is_not_the_codec_id():
+    """Instances do not see metaclass attributes, so this class never set `codec_id`."""
+    from abc import ABCMeta
+
+    class Meta(ABCMeta):
+        codec_id = "meta"
+
+    class MetaId(NoId, metaclass=Meta):
+        pass
+
+    assert MetaId().get_config() == {"id": None}
+    assert MetaId() == MetaId()
+
+
+def test_codec_id_inherited_from_a_base_class_property_propagates():
+    class Child(PropertyId):
+        pass
+
+    with pytest.raises(AttributeError, match="_name"):
+        Child().get_config()

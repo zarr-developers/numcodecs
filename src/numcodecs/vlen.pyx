@@ -60,7 +60,7 @@ def _store_decoded(out, out_flat):
     is not contiguous it cannot be flattened without a copy, so `out_flat` is a copy (in C
     order) and the decoded items have to be copied back into `out`.
     """
-    if out_flat is not out and not np.may_share_memory(out_flat, out):
+    if out.size and out_flat is not out and not np.may_share_memory(out_flat, out):
         out[...] = out_flat.reshape(out.shape)
     return out
 

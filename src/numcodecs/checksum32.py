@@ -246,7 +246,8 @@ class JenkinsLookup3(Checksum32):
                 raise ValueError(
                     f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
                 )
-            out_view[...] = b[:-4]
+            # a non-contiguous `out` (of one-byte items) keeps its shape; fill it in C order
+            out_view[...] = b[:-4].reshape(out_view.shape)
             return out
         return memoryview(b[:-4])
 

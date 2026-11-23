@@ -49,7 +49,8 @@
   and leave `out` untouched. If such an `out` is read-only they now raise.
 * `JenkinsLookup3.decode` accepts a `bytearray`, a `memoryview` or another contiguous
   writable buffer as `out`, not only an ndarray, and raises `ValueError` when `out` has the
-  wrong size.
+  wrong size. It also fills a 2-D `out`, and a non-contiguous one that numpy can view as
+  bytes.
 * `JenkinsLookup3.get_config()` reports `prefix` as a list of ints, so a configuration
   with a prefix can be serialized to JSON and passed back to `get_codec`. It held a numpy
   array, which `json.dumps` rejected and `get_codec` could not compare. The constructor

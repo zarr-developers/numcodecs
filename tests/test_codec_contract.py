@@ -204,7 +204,6 @@ NEEDS_CONTIGUOUS_OUT = frozenset(
         "crc32",
         "adler32",
         "crc32c",
-        "jenkins_lookup3",
         "fletcher32",
         "zfpy",
         "pcodec",
@@ -213,13 +212,19 @@ NEEDS_CONTIGUOUS_OUT = frozenset(
 # Codecs that copy with `np.copyto(out, decoded)`, so `out` must have the decoded shape
 # (1-D for the case data used here).
 NEEDS_DECODED_SHAPE_OUT = frozenset({"json2", "msgpack2", "pickle"})
+# Codecs that assign bytes through a `uint8` view of `out`. numpy can take that view of a
+# non-contiguous array only when its items are one byte wide or its last axis is
+# contiguous ("strided-2d" skips rows, so its last axis is).
+NEEDS_UINT8_VIEW_OF_OUT = frozenset({"jenkins_lookup3"})
 
 
-def _refuses(codec_id: str, out_kind: str) -> bool:
+def _refuses(codec_id: str, out_kind: str, itemsize: int) -> bool:
     """Whether `codec_id` is expected to refuse an `out` of this kind. Every codec not
     named above must fill every kind of `out`."""
     if codec_id in NEEDS_CONTIGUOUS_OUT:
         return out_kind.startswith("strided")
+    if codec_id in NEEDS_UINT8_VIEW_OF_OUT:
+        return out_kind == "strided-1d" and itemsize != 1
     if codec_id in NEEDS_DECODED_SHAPE_OUT:
         return out_kind != "strided-1d"
     return False
@@ -240,7 +245,7 @@ def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
     out[...] = sentinel if case.is_object else np.zeros((), dtype=case.data.dtype)
     untouched = out.copy()
 
-    if _refuses(codec_id, out_kind):
+    if _refuses(codec_id, out_kind, case.data.dtype.itemsize):
         with pytest.raises(ValueError):
             codec.decode(enc, out=out)
         if case.is_object:
@@ -261,16 +266,53 @@ def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
         assert flat.tobytes() == expected.tobytes()
 
 
-def test_vlen_decode_fills_a_non_contiguous_out() -> None:
+@pytest.mark.parametrize("out_kind", ["strided-1d", "strided-2d"])
+def test_jenkins_decode_fills_a_non_contiguous_out_of_bytes(out_kind: str) -> None:
+    """The case data above is wider than one byte. With one-byte items a non-contiguous
+    `out` is filled, in logical (C) order."""
+    codec = numcodecs.JenkinsLookup3()
+    data = np.arange(8, dtype="u1")
+    out = AWKWARD_OUTS[out_kind](data)
+    out[...] = 255
+    assert codec.decode(codec.encode(data), out=out) is out
+    assert out.ravel().tolist() == data.tolist()
+
+
+VLEN_NON_CONTIGUOUS_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
+    "every other row": lambda base: base[::2],
+    "every other column": lambda base: base[:, ::2],
+    "rows reversed": lambda base: base[::-1],
+    "transposed and strided": lambda base: base.T[::2],
+    "3-D, strided on the last axis": lambda base: base.reshape(2, 3, 4)[:, :, ::2],
+}
+
+
+@pytest.mark.parametrize("layout", VLEN_NON_CONTIGUOUS_OUTS)
+@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
+def test_vlen_decode_fills_a_non_contiguous_out(codec_id: str, layout: str) -> None:
     """The case that returned stale data: `out` cannot be flattened without a copy, so
-    the decoded items have to be copied back into it. Checked in logical (C) order."""
-    codec = numcodecs.VLenUTF8()
-    enc = codec.encode(np.array(list("abcdef"), dtype=object))
-    base = np.full((4, 3), "stale", dtype=object)
-    out = base[::2]
-    assert codec.decode(enc, out=out) is out
-    assert out.tolist() == [["a", "b", "c"], ["d", "e", "f"]]
-    assert base[1::2].tolist() == [["stale"] * 3] * 2
+    the decoded items have to be copied back into it, in logical (C) order, and the
+    rest of the memory `out` is a view of stays as it was."""
+    codec = _codec(codec_id)
+    stale = object()
+    base = np.full((6, 4), stale, dtype=object)
+    out = VLEN_NON_CONTIGUOUS_OUTS[layout](base)
+    assert not out.flags.c_contiguous
+    assert not out.flags.f_contiguous
+    data = np.resize(CASES[codec_id].data, out.size)
+
+    assert codec.decode(codec.encode(data), out=out) is out
+    assert all(np.array_equal(a, b) for a, b in zip(out.ravel(), data, strict=True))
+    assert sum(item is stale for item in base.flat) == base.size - out.size
+
+
+@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
+def test_vlen_decode_into_an_empty_read_only_out(codec_id: str) -> None:
+    """There is nothing to write, so a read-only `out` is not an error."""
+    codec = _codec(codec_id)
+    out = np.empty(0, dtype=object)
+    out.setflags(write=False)
+    assert codec.decode(codec.encode(np.empty(0, dtype=object)), out=out) is out
 
 
 @pytest.mark.parametrize("codec_id", ["json2", "msgpack2", "pickle"])

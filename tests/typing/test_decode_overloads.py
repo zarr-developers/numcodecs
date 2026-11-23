@@ -30,7 +30,7 @@ import inspect
 import mmap
 import pickle
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, assert_type
+from typing import TYPE_CHECKING, Any, assert_type, get_overloads
 
 import numpy as np
 import numpy.typing as npt
@@ -392,8 +392,10 @@ def static_checks(
     ndarray_copy(enc, enc)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     # every kind of buffer WritableBufferLike names is accepted as `out`, and comes back
     assert_type(Zlib().decode(enc, array.array("B")), array.array[int])
+    assert_type(Zlib().decode(enc, array.array("d")), array.array[float])
     assert_type(Zlib().decode(enc, mmap.mmap(-1, 8)), mmap.mmap)
     assert_type(Zlib().decode(enc, (ctypes.c_ubyte * 8)()), ctypes.Array[ctypes.c_ubyte])
+    assert_type(Zlib().decode(enc, (ctypes.c_double * 1)()), ctypes.Array[ctypes.c_double])
     assert_type(Zlib().decode(enc, pickle.PickleBuffer(ba)), pickle.PickleBuffer)
     assert_type(
         Zlib().decode(enc, np.ma.masked_array(f8)),
@@ -411,3 +413,12 @@ def test_every_codec_is_checked() -> None:
         if f"{cls.__name__}(" not in source or f"# {cls.__name__}\n" not in source
     ]
     assert not missing
+
+
+def test_ndarray_copy_overload_order() -> None:
+    """The overload for `dst=None` comes first, as it does for every `decode`. Its result
+    is generic, so `_first_result` cannot show the order to a type checker; this reads
+    it at runtime instead."""
+    first, second = get_overloads(ndarray_copy)
+    assert inspect.get_annotations(first, eval_str=True)["dst"] is None
+    assert inspect.get_annotations(second, eval_str=True)["dst"] is not None

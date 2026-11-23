@@ -147,7 +147,8 @@ def test_writable_buffer_like_definitions_agree():
 
     import numcodecs.ndarray_like as module
 
-    assert set(module.WritableBufferLike.__value__.__args__) == {
+    runtime = set(module.WritableBufferLike.__value__.__args__)
+    assert runtime == {
         bytearray,
         memoryview,
         array.array,
@@ -172,10 +173,131 @@ def test_writable_buffer_like_definitions_agree():
                 names.add(ast.unparse(node))
         return names
 
-    definitions = [
+    # the definition type checkers read is the one that names its members
+    (static,) = [
         node
         for node in ast.walk(ast.parse(inspect.getsource(module)))
-        if isinstance(node, ast.TypeAlias) and node.name.id == "WritableBufferLike"
+        if isinstance(node, ast.TypeAlias)
+        and node.name.id == "WritableBufferLike"
+        and isinstance(node.value, ast.BinOp)
     ]
-    assert len(definitions) == 2
-    assert members(definitions[0]) == members(definitions[1])
+    namespace = {"array": array, "mmap": mmap, "np": np, "ctypes": ctypes, "pickle": pickle}
+    assert {eval(name, namespace, vars(module)) for name in members(static)} == runtime
+
+
+def test_writable_buffer_like_without_optional_stdlib_modules(monkeypatch):
+    """`ctypes` and `mmap` are optional parts of the standard library. Where one is
+    missing, `WritableBufferLike` leaves its type out."""
+    import ctypes
+    import mmap
+    import sys
+
+    from numcodecs.ndarray_like import _writable_buffer_types
+
+    monkeypatch.setitem(sys.modules, "ctypes", None)
+    monkeypatch.setitem(sys.modules, "mmap", None)
+    members = set(_writable_buffer_types().__args__)
+    assert not members & {ctypes.Array, mmap.mmap}
+    assert {bytearray, memoryview, NDArrayLike} <= members
+
+
+def test_import_does_not_need_ctypes():
+    """A Python built without libffi has no `ctypes`; numpy imports there, and so must
+    numcodecs."""
+    import subprocess
+    import sys
+
+    code = (
+        "import sys\n"
+        "sys.modules['ctypes'] = sys.modules['_ctypes'] = None\n"
+        "import numcodecs\n"
+        "from numcodecs.ndarray_like import WritableBufferLike\n"
+        "assert bytearray in WritableBufferLike.__value__.__args__\n"
+        "assert numcodecs.Zlib().decode(numcodecs.Zlib().encode(b'abc')) == b'abc'\n"
+    )
+    result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+
+
+def _protocol_members(protocol: str) -> tuple[set[str], set[str]]:
+    """The data members a protocol declares for type checkers (properties under `if
+    TYPE_CHECKING`) and at runtime (annotations under `else`)."""
+    import ast
+    import inspect
+
+    import numcodecs.ndarray_like as module
+
+    (class_def,) = [
+        node
+        for node in ast.parse(inspect.getsource(module)).body
+        if isinstance(node, ast.ClassDef) and node.name == protocol
+    ]
+    (branch,) = [node for node in class_def.body if isinstance(node, ast.If)]
+    static = {node.name for node in branch.body if isinstance(node, ast.FunctionDef)}
+    runtime = {
+        node.target.id
+        for node in branch.orelse
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    }
+    assert len(static) == len(branch.body)
+    assert len(runtime) == len(branch.orelse)
+    return static, runtime
+
+
+# every member each protocol has required since it was introduced
+PROTOCOL_MEMBERS = {
+    "DType": ({"itemsize", "name", "kind"}, set()),
+    "FlagsObj": ({"c_contiguous", "f_contiguous", "owndata"}, set()),
+    "NDArrayLike": (
+        {"dtype", "shape", "strides", "ndim", "size", "itemsize", "nbytes", "flags"},
+        {"__len__", "__getitem__", "__setitem__", "tobytes", "reshape", "view"},
+    ),
+}
+
+
+@pytest.mark.parametrize("protocol", PROTOCOL_MEMBERS)
+def test_protocol_definitions_agree(protocol):
+    """The data members are declared twice, for type checkers and for the runtime. Both
+    must name the same members: those the protocol has always had, and no others."""
+    import numcodecs.ndarray_like as module
+
+    data, methods = PROTOCOL_MEMBERS[protocol]
+    static, runtime = _protocol_members(protocol)
+    assert static == data
+    assert runtime == data
+    assert getattr(module, protocol).__protocol_attrs__ == data | methods
+
+
+@pytest.mark.parametrize(
+    ("protocol", "complete", "member"),
+    [
+        (protocol, complete, member)
+        for protocol, complete in (
+            (DType, _Wrapper._DType),
+            (FlagsObj, _Wrapper._Flags),
+            (NDArrayLike, _Wrapper),
+        )
+        for member in sorted(set().union(*PROTOCOL_MEMBERS[protocol.__name__]))
+    ],
+)
+def test_every_protocol_member_is_required(protocol, complete, member):
+    """An object lacking any one member is not an instance."""
+    attrs = {k: v for k, v in vars(complete).items() if k != member}
+    incomplete = type("Incomplete", (), attrs)
+    assert member not in dir(incomplete)
+    assert not isinstance(incomplete(), protocol)
+
+
+@pytest.mark.parametrize(
+    ("protocol", "member"),
+    [(DType, "itemsize"), (DType, "kind"), (FlagsObj, "owndata"), (NDArrayLike, "flags")],
+)
+def test_nominal_subclass_can_set_every_kind_of_member(protocol, member):
+    """A class that subclasses one of the protocols assigns its members in `__init__`,
+    which a property on the protocol would prevent."""
+
+    class Mine(protocol):
+        def __init__(self, value):
+            setattr(self, member, value)
+
+    assert getattr(Mine(8), member) == 8
