@@ -46,3 +46,68 @@ def test_cached_isinstance_check(module):
     assert isinstance(a, NDArrayLike)
     assert not isinstance(a, DType)
     assert not isinstance(a, FlagsObj)
+
+
+class _Wrapper:
+    """Every member NDArrayLike has required since it was introduced, and nothing else:
+    in particular no `copy`, and a dtype without `str`."""
+
+    class _DType:
+        itemsize = 1
+        name = "uint8"
+        kind = "u"
+
+    dtype = _DType()
+    shape = (3,)
+    strides = (1,)
+    ndim = 1
+    size = 3
+    itemsize = 1
+    nbytes = 3
+
+    class _Flags:
+        c_contiguous = True
+        f_contiguous = True
+        owndata = True
+
+    flags = _Flags()
+
+    def __len__(self):
+        return 3
+
+    def __getitem__(self, key):
+        return 0
+
+    def __setitem__(self, key, value):
+        pass
+
+    def tobytes(self, order=None):
+        return b"\x00\x00\x00"
+
+    def reshape(self, *shape, order="C"):
+        return self
+
+    def view(self, dtype=None):
+        return self
+
+
+def test_protocol_members_unchanged():
+    w = _Wrapper()
+    assert isinstance(w, NDArrayLike)
+    assert isinstance(w.dtype, DType)
+    assert isinstance(w.flags, FlagsObj)
+    from numcodecs.compat import ensure_ndarray_like
+
+    assert ensure_ndarray_like(w) is w
+
+
+def test_nominal_subclass_can_set_members():
+    class Mine(NDArrayLike):
+        def __init__(self):
+            self.dtype = _Wrapper._DType()
+            self.shape = (3,)
+
+    m = Mine()
+    assert m.shape == (3,)
+    with pytest.raises(AttributeError):
+        Mine.__new__(Mine).strides  # noqa: B018

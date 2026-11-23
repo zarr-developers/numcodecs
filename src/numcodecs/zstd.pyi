@@ -9,6 +9,7 @@ MINOR_VERSION_NUMBER: Final[int]
 MICRO_VERSION_NUMBER: Final[int]
 DEFAULT_CLEVEL: Final[int]
 MAX_CLEVEL: Final[int]
+__version__: Final[str]
 
 def compress(source: BufferLike, level: int = ..., checksum: bool = False) -> bytes: ...
 @overload
@@ -22,7 +23,6 @@ class ZstdConfig(CodecConfig):
 
 class Zstd(Codec):
     codec_id: str
-    max_buffer_size: int
     level: int
     checksum: bool
     def __init__(self, level: int = ..., checksum: bool = False) -> None: ...

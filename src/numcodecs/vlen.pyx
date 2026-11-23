@@ -53,6 +53,18 @@ def check_out_param(out, n_items):
     return out
 
 
+def _store_decoded(out, out_flat):
+    """Return `out`, holding the items that were decoded into `out_flat`.
+
+    `out_flat` is `check_out_param(out, ...)`, normally a flat view of `out`. When `out`
+    is not contiguous it cannot be flattened without a copy, so `out_flat` is a copy (in C
+    order) and the decoded items have to be copied back into `out`.
+    """
+    if out_flat is not out and not np.may_share_memory(out_flat, out):
+        out[...] = out_flat.reshape(out.shape)
+    return out
+
+
 class VLenUTF8(Codec):
     """Encode variable-length unicode string objects via UTF-8.
 
@@ -181,7 +193,7 @@ class VLenUTF8(Codec):
             out_flat[i] = PyUnicode_FromStringAndSize(data, L)
             data += L
 
-        return out
+        return _store_decoded(out, out_flat)
 
 
 class VLenBytes(Codec):
@@ -310,7 +322,7 @@ class VLenBytes(Codec):
             out_flat[i] = PyBytes_FromStringAndSize(data, L)
             data += L
 
-        return out
+        return _store_decoded(out, out_flat)
 
 
 class VLenArray(Codec):
@@ -473,4 +485,4 @@ class VLenArray(Codec):
             out_flat[i] = v
             data += L
 
-        return out
+        return _store_decoded(out, out_flat)

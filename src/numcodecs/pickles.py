@@ -5,7 +5,7 @@ from typing import Any, overload
 import numpy as np
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ensure_ndarray
+from .compat import ensure_contiguous_ndarray
 from .errors import UnsafeDecodeError
 from .ndarray_like import BufferLike
 
@@ -92,7 +92,8 @@ class Pickle(Codec):
         dec = pickle.loads(buf)
 
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            # np.copyto needs an ndarray destination and raises TypeError otherwise
+            np.copyto(out, dec)  # type: ignore[arg-type]
             return out
         else:
             return dec

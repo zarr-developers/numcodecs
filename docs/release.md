@@ -43,14 +43,16 @@
 * `decode(buf, out=out)` now returns `out` itself for every codec, as the `Codec`
   docstring describes. Zlib, BZ2, LZMA, Base64, Shuffle, ZFPY, PCodec, the three VLen
   codecs, and every codec built on `numcodecs.compat.ndarray_copy` returned a flattened view
-  of `out` instead, or a new ndarray when `out` was a `bytearray`. The decoded bytes were
-  already written into `out`; only the returned object changes.
-* `JenkinsLookup3.decode` accepts any contiguous writable buffer as `out`, not only an
-  ndarray, and raises `ValueError` when `out` has the wrong size.
+  of `out` instead, or a new ndarray when `out` was a `bytearray`. For a contiguous `out`
+  the decoded bytes were already written into it, and only the returned object changes.
+  The VLen codecs now also fill a non-contiguous `out`; they used to decode into a copy
+  and leave `out` untouched.
+* `JenkinsLookup3.decode` accepts any writable buffer as `out`, not only an ndarray, and
+  raises `ValueError` when `out` has the wrong size.
 * `JenkinsLookup3.get_config()` reports `prefix` as a list of ints, so a configuration
   with a prefix can be serialized to JSON and passed back to `get_codec`. It held a numpy
   array, which `json.dumps` rejected and `get_codec` could not compare. The constructor
-  accepts a list of ints as well as a bytes-like `prefix`.
+  accepts a list or tuple of ints as well as a bytes-like `prefix`.
 * CRC32, Adler32 and CRC32C check the byte length of the input to `decode`, not its
   length along the first axis, before looking for the checksum.
 * `Fletcher32.decode` without `out` returns a `uint8` ndarray, like the other checksum
@@ -60,15 +62,17 @@
   `entries` holds single entry points (`dict[str, EntryPoint]`). `numcodecs.compat`
   functions now annotate their parameters, and `ndarray_copy` returns the type of `dst`
   (or of `src` when `dst` is `None`). The `NDArrayLike`, `DType` and `FlagsObj` protocols
-  declare read-only properties, so `numpy.ndarray` now satisfies `NDArrayLike` for type
-  checkers, and `numcodecs.ndarray_like.BufferLike` names "a buffer or an ndarray-like".
+  declare read-only properties to type checkers, so `numpy.ndarray` now satisfies
+  `NDArrayLike` for them; the members that `isinstance` checks at runtime are unchanged.
+  `numcodecs.ndarray_like.BufferLike` names "a buffer or an ndarray-like".
 * `numcodecs` defines `__all__`, so type checkers treat its re-exported codec classes as
   public. `from numcodecs import *` now imports only those names.
 * `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
   given, instead of registering it under `None`.
 * `Codec.codec_id` no longer defaults to `None`. Abstract intermediate classes such as
-  `Checksum32` leave it unset, so reading it raises `AttributeError`; every concrete codec
-  sets it.
+  `Checksum32` leave it unset, so reading it from the class raises `AttributeError`; every
+  concrete codec sets it. A codec whose class never sets it still reports `'id': None`
+  from `get_config`.
 
 ### Enhancements
 
@@ -85,17 +89,18 @@
   `ignore_missing_imports` for numcodecs. Third-party codecs that subclass `Codec` are
   type-checked against it for the first time, which may surface two one-line fixes: a
   `# type: ignore[misc]` on `class X(Codec)` that is no longer needed, and a
-  `from_config(cls, config: dict[...])` override that must accept a `Mapping`.
+  `get_config` override that assigns `super().get_config()` to a `dict`-typed variable,
+  since the base method is typed as returning a `Mapping`.
 * Annotate the concrete codecs. Each `get_config` returns a TypedDict naming the codec's
   parameters (`ZlibConfig`, `BloscConfig`, ...), all subclasses of
   `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as
-  read-only JSON values (PEP 728 `extra_items`). `numcodecs.abc.JSON` names a
+  read-only JSON values (PEP 728 `extra_items`). `numcodecs.abc.JSONValue` names a
   JSON-serializable value. Compressors: Zlib, GZip, BZ2, LZMA, Base64, Blosc, Zstd and LZ4.
   Checksums: CRC32, Adler32, CRC32C, JenkinsLookup3 and Fletcher32. Filters: AsType,
   Delta, Quantize, FixedScaleOffset, BitRound, PackBits, Shuffle and Categorize. Object
   and array-to-bytes codecs: JSON, MsgPack, Pickle (whose `decode` returns `Any`), the VLen
   codecs, ZFPY and PCodec.
-  `typing_extensions` >= 4.13 is now required.
+  `typing_extensions` >= 4.14 is now required.
 * Ship `.pyi` type stubs for the Cython extension modules (`blosc`, `zstd`, `lz4`, `vlen`,
   `fletcher32`, `jenkins`, `compat_ext` and `_shuffle`), checked against the compiled
   modules with `mypy.stubtest` in CI. Type checkers previously saw the Blosc, Zstd, LZ4,

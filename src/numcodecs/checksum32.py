@@ -10,7 +10,7 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ndarray_copy
+from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 from .ndarray_like import BufferLike
 
@@ -175,9 +175,11 @@ class JenkinsLookup3(Checksum32):
     ----------
     initval : int
         initial seed passed to the hash algorithm, default: 0
-    prefix : bytes-like or list of int
+    prefix : bytes-like, or list or tuple of int
         bytes prepended to the buffer before evaluating the hash, default: None.
-        `get_config` reports them as a list of ints, so that the configuration is JSON.
+        A bytes-like object contributes its raw bytes; a list or tuple gives the byte
+        values. `get_config` reports them as a list of ints, so that the configuration
+        is JSON.
     """
 
     checksum = staticmethod(jenkins_lookup3)
@@ -185,12 +187,21 @@ class JenkinsLookup3(Checksum32):
 
     prefix: npt.NDArray[np.uint8] | None
 
-    def __init__(self, initval: int = 0, prefix: Buffer | list[int] | None = None) -> None:
+    def __init__(
+        self,
+        initval: int = 0,
+        prefix: Buffer | list[int] | tuple[int, ...] | None = None,
+    ) -> None:
         self.initval = initval
         if prefix is None:
             self.prefix = None
-        else:
+        elif isinstance(prefix, (list, tuple)):
+            # the form get_config() reports; bytes() rejects anything but ints in 0..255
             self.prefix = np.frombuffer(bytes(prefix), dtype='uint8')
+        else:
+            # Any buffer, read as its raw bytes. Not bytes(prefix): for an int that
+            # means "this many zero bytes", and a numpy scalar would be read as an int.
+            self.prefix = np.frombuffer(prefix, dtype='uint8')
 
     def get_config(self) -> "JenkinsLookup3Config":
         config = cast(JenkinsLookup3Config, dict(super().get_config()))
@@ -226,12 +237,16 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out_view = ensure_contiguous_ndarray(out).view("uint8")
+            out_arr = ensure_ndarray(out)
+            if out_arr.flags.c_contiguous or out_arr.flags.f_contiguous:
+                # flattening contiguous memory never copies, so this view writes to `out`
+                out_arr = out_arr.reshape(-1, order="A")
+            out_view = out_arr.view("uint8")
             if out_view.nbytes != b.nbytes - 4:
                 raise ValueError(
                     f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
                 )
-            out_view[:] = b[:-4]
+            out_view[...] = b[:-4]
             return out
         return memoryview(b[:-4])
 

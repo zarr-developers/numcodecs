@@ -37,16 +37,16 @@ from typing_extensions import ReadOnly, TypedDict
 from .ndarray_like import BufferLike, NDArrayLike
 
 __all__ = [
-    "JSON",
     "ArrayArrayCodec",
     "ArrayBytesCodec",
     "BytesBytesCodec",
     "Codec",
     "CodecConfig",
     "CodecProtocol",
+    "JSONValue",
 ]
 
-type JSON = int | float | bool | str | Sequence[JSON] | Mapping[str, JSON] | None
+type JSONValue = int | float | bool | str | Sequence[JSONValue] | Mapping[str, JSONValue] | None
 """A JSON-serializable value. `Sequence` and `Mapping` rather than `list` and `dict`, so
 that tuples, TypedDicts and lists of narrower types count (the same definition as
 `zarr_metadata`'s `JSONValue`)."""
@@ -54,9 +54,9 @@ that tuples, TypedDicts and lists of narrower types count (the same definition a
 
 # `extra_items` (PEP 728) says that any further keys hold JSON values and are read-only. It
 # lets type checkers that implement PEP 728 (pyright) treat every codec configuration as a
-# `Mapping[str, JSON]`, and as Zarr v2 codec metadata. mypy does not implement PEP 728 yet,
+# `Mapping[str, JSONValue]`, and as Zarr v2 codec metadata. mypy does not implement PEP 728 yet,
 # so it rejects the keyword and treats `CodecConfig` as a plain TypedDict.
-class CodecConfig(TypedDict, extra_items=ReadOnly[JSON]):  # type: ignore[call-arg]
+class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[call-arg]
     """The configuration every codec returns from `Codec.get_config`: its `id`, plus any
     further JSON-serializable parameters.
 
@@ -127,7 +127,9 @@ class Codec(ABC):
         # override in sub-class if need special encoding of config values
 
         # setup config object
-        config: dict[str, Any] = {'id': self.codec_id}
+        # a codec whose class never set `codec_id` reports None, as it did when the
+        # class attribute defaulted to None
+        config: dict[str, Any] = {'id': getattr(self, 'codec_id', None)}
 
         # by default, assume all non-private members are configuration
         # parameters - override this in sub-class if not the case
@@ -137,8 +139,12 @@ class Codec(ABC):
 
         return config
 
+    # `config` is typed `Any`, like the input of pydantic's `model_validate`. No narrower
+    # type works for everyone: codecs that override this (to decode config values) declare
+    # `dict[str, Any]`, which rules out `Mapping` here, and callers pass TypedDicts, which
+    # are not dicts to a type checker.
     @classmethod
-    def from_config(cls, config: Mapping[str, Any]) -> Self:
+    def from_config(cls, config: Any) -> Self:
         """Instantiate codec from a configuration object, without its 'id' field."""
         # N.B., assume at this point the 'id' field has been removed from
         # the config object
@@ -184,7 +190,7 @@ class CodecProtocol(Protocol):
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 
     @classmethod
-    def from_config(cls, config: Mapping[str, Any]) -> Self: ...  # pragma: no cover
+    def from_config(cls, config: Any) -> Self: ...  # pragma: no cover
 
 
 class BytesBytesCodec(CodecProtocol, Protocol):

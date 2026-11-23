@@ -165,6 +165,79 @@ def test_decode_into_bytearray_returns_out(codec_id: str) -> None:
     assert bytes(out) == ensure_ndarray(expected).tobytes()
 
 
+def _c_2d(data: np.ndarray) -> np.ndarray:
+    return np.empty((2, data.size // 2), dtype=data.dtype)
+
+
+def _f_2d(data: np.ndarray) -> np.ndarray:
+    return np.empty((2, data.size // 2), dtype=data.dtype, order="F")
+
+
+def _strided_1d(data: np.ndarray) -> np.ndarray:
+    return np.empty(data.size * 2, dtype=data.dtype)[::2]
+
+
+def _strided_2d(data: np.ndarray) -> np.ndarray:
+    return np.empty((4, data.size // 2), dtype=data.dtype)[::2]
+
+
+AWKWARD_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
+    "2d-C": _c_2d,
+    "2d-F": _f_2d,
+    "strided-1d": _strided_1d,
+    "strided-2d": _strided_2d,
+}
+
+
+@pytest.mark.parametrize("make_out", AWKWARD_OUTS.values(), ids=AWKWARD_OUTS.keys())
+@pytest.mark.parametrize("codec_id", _params(set()))
+def test_decode_into_awkward_out_fills_it_or_raises(
+    codec_id: str, make_out: Callable[[np.ndarray], np.ndarray]
+) -> None:
+    """A codec may refuse an `out` it cannot write into, but it must never return an
+    `out` that does not hold the decoded data."""
+    codec, case = _codec(codec_id), CASES[codec_id]
+    enc = codec.encode(case.data)
+    expected = ensure_ndarray(codec.decode(enc))
+    out = make_out(case.data)
+    sentinel = object()
+    out[...] = sentinel if case.is_object else np.zeros((), dtype=case.data.dtype)
+    try:
+        result = codec.decode(enc, out=out)
+    except Exception:
+        return
+    assert result is out
+    # numcodecs fills `out` in memory order for contiguous arrays and C order otherwise,
+    # which is what order="A" selects
+    flat = out.reshape(-1, order="A")
+    if case.is_object:
+        assert all(item is not sentinel for item in flat)
+        assert all(np.array_equal(a, b) for a, b in zip(flat, expected.ravel(), strict=True))
+    else:
+        assert flat.tobytes() == expected.tobytes()
+
+
+@pytest.mark.parametrize("codec_id", ["json2", "msgpack2", "pickle"])
+def test_object_codec_decode_rejects_non_ndarray_out(codec_id: str) -> None:
+    """These codecs copy with `np.copyto`, which needs an ndarray destination. A
+    `bytearray` must not be silently broadcast into."""
+    codec = _codec(codec_id)
+    enc = codec.encode(np.array([7], dtype="u1"))
+    with pytest.raises(TypeError):
+        codec.decode(enc, out=bytearray(8))
+
+
+def test_config_typeddicts_keep_their_required_keys() -> None:
+    """Guards the typing_extensions floor: with too old a version, subclasses of
+    `CodecConfig` silently lose their required keys on newer Pythons."""
+    from numcodecs.checksum32 import Checksum32Config
+    from numcodecs.zlib import ZlibConfig
+
+    assert ZlibConfig.__required_keys__ == {"id", "level"}
+    assert Checksum32Config.__required_keys__ == {"id"}
+    assert Checksum32Config.__optional_keys__ == {"location"}
+
+
 @pytest.mark.parametrize("codec_id", _params(set()))
 def test_config_round_trip(codec_id: str) -> None:
     codec = _codec(codec_id)

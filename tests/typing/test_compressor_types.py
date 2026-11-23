@@ -6,7 +6,7 @@ from typing import Any, assert_type
 
 import numpy as np
 
-from numcodecs.abc import JSON, ArrayArrayCodec, BytesBytesCodec, CodecConfig
+from numcodecs.abc import ArrayArrayCodec, BytesBytesCodec, CodecConfig, JSONValue
 from numcodecs.base64 import Base64
 from numcodecs.blosc import Blosc, BloscConfig
 from numcodecs.bz2 import BZ2, BZ2Config
@@ -65,13 +65,13 @@ def test_compressors_are_not_array_codecs() -> None:
     assert not isinstance(codec.encode(DATA), np.ndarray)
 
 
-def _json_mapping(config: Mapping[str, JSON]) -> Mapping[str, JSON]:
+def _json_mapping(config: Mapping[str, JSONValue]) -> Mapping[str, JSONValue]:
     return config
 
 
 def test_configs_are_json_mappings() -> None:
     # pyright implements PEP 728, so CodecConfig's read-only JSON `extra_items` make every
-    # codec configuration a `Mapping[str, JSON]`. mypy does not implement it yet.
+    # codec configuration a `Mapping[str, JSONValue]`. mypy does not implement it yet.
     zlib_config = _json_mapping(Zlib().get_config())  # type: ignore[arg-type]
     blosc_config = _json_mapping(Blosc().get_config())  # type: ignore[arg-type]
     for config in (zlib_config, blosc_config):

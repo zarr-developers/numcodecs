@@ -5,6 +5,7 @@ from .ndarray_like import BufferLike
 
 VERSION_STRING: Final[str]
 DEFAULT_ACCELERATION: Final[int]
+__version__: Final[str]
 
 def compress(source: BufferLike, acceleration: int = ...) -> bytes: ...
 @overload

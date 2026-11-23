@@ -49,7 +49,7 @@ def get_codec(config: Mapping[str, Any]) -> Codec:
     """
     config = dict(config)
     codec_id = config.pop('id', None)
-    cls = codec_registry.get(codec_id) if isinstance(codec_id, str) else None
+    cls = codec_registry.get(codec_id)
     if cls is None and codec_id in entries:
         logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
         cls = entries[codec_id].load()

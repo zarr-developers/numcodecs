@@ -7,7 +7,7 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_ndarray, ensure_text
+from .compat import ensure_text
 from .ndarray_like import BufferLike
 
 
@@ -105,7 +105,8 @@ class JSON(Codec):
         else:
             dec[:] = items[:-2]
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            # np.copyto needs an ndarray destination and raises TypeError otherwise
+            np.copyto(out, dec)  # type: ignore[arg-type]
             return out
         else:
             return dec

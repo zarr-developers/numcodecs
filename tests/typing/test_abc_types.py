@@ -1,7 +1,7 @@
 """Static types of `numcodecs.abc`, checked against runtime behavior."""
 
 from collections.abc import Mapping
-from typing import Any, Self, assert_type, overload
+from typing import Any, Self, TypedDict, assert_type, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -76,7 +76,7 @@ class _AnyTyped(Codec):
         return {"id": self.codec_id}
 
     @classmethod
-    def from_config(cls, config: Mapping[str, Any]) -> Self:
+    def from_config(cls, config: dict[str, Any]) -> Self:
         return cls()
 
 
@@ -90,3 +90,15 @@ def test_subclasses() -> None:
     any_typed = _AnyTyped()
     assert any_typed.decode(any_typed.encode(b"abc")) == b"abc"
     assert_type(_AnyTyped.from_config({}), _AnyTyped)
+
+
+class _ZlibLikeConfig(TypedDict):
+    level: int
+
+
+def test_from_config_accepts_dicts_and_typeddicts() -> None:
+    # codecs override from_config with a `dict` parameter (see _AnyTyped above), and callers
+    # pass TypedDicts; both must type-check
+    config: _ZlibLikeConfig = {"level": 3}
+    codec = assert_type(numcodecs.Zlib.from_config(config), numcodecs.Zlib)
+    assert codec == numcodecs.Zlib.from_config({"level": 3})
