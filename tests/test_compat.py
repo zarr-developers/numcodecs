@@ -4,7 +4,12 @@ import mmap
 import numpy as np
 import pytest
 
-from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray, ensure_text
+from numcodecs.compat import (
+    ensure_bytes,
+    ensure_contiguous_ndarray,
+    ensure_text,
+    ndarray_copy,
+)
 
 
 def test_ensure_text():
@@ -109,3 +114,12 @@ def test_ensure_contiguous_ndarray_max_buffer_size():
         for buf in buffers:
             with pytest.raises(ValueError):
                 ensure_contiguous_ndarray(buf, max_buffer_size=max_buffer_size)
+
+
+def test_ndarray_copy_into_an_object_array():
+    """An object-dtype destination receives the source's items; its dtype cannot be
+    viewed, so the source is copied as it is."""
+    src = np.arange(3, dtype="u1")
+    dst = np.empty(3, dtype=object)
+    assert ndarray_copy(src, dst) is dst
+    assert dst.tolist() == [0, 1, 2]

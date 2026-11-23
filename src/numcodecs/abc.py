@@ -77,7 +77,7 @@ class Codec(ABC):
         codec_id: str
         """Codec identifier. Every concrete codec class sets it as a class attribute."""
     else:
-        codec_id = None
+        codec_id: str | None = None
 
     @abstractmethod
     def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover

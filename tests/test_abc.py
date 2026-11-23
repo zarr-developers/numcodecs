@@ -175,3 +175,10 @@ def test_register_codec_propagates_an_error_inside_a_metaclass_codec_id():
 
     with pytest.raises(AttributeError, match="_prefix"):
         numcodecs.register_codec(MetaProperty)
+
+
+def test_codec_id_runtime_annotation():
+    """What `typing.get_type_hints` reports is the runtime truth, default included."""
+    import typing
+
+    assert typing.get_type_hints(Codec)["codec_id"] == str | None

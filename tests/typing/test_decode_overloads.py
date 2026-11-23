@@ -18,8 +18,9 @@ Known limits, not checked here:
 
 - With an `out` typed `Any`, mypy infers `Any` but pyright picks the first overload and
   infers the no-`out` type.
-- JSON, MsgPack, Pickle, Categorize, the VLen codecs and PCodec need an ndarray `out` and
-  raise for other buffers, which the inherited signature cannot express.
+- JSON, MsgPack, Pickle, the VLen codecs, and Categorize when it decodes to an object
+  dtype, need an ndarray `out`, and PCodec needs a buffer whose item type is the decoded
+  dtype. They raise for other buffers, which the inherited signature cannot express.
 """
 
 # `memoryview[float]` in the signature below cannot be evaluated before Python 3.14
