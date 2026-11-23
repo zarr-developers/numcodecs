@@ -56,13 +56,9 @@ class _Identity(Codec):
         return ensure_bytes(buf)
 
     @overload
-    def decode(self, buf: BufferLike, /, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, /, out: None = None) -> bytes: ...
     @overload
-    def decode(
-        self, buf: BufferLike, /, out: WritableBufferLike | None = None
-    ) -> bytes | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, /, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, /, out: WritableBufferLike | None = None) -> BufferLike:
         return ndarray_copy(ensure_bytes(buf), out)
 
@@ -147,16 +143,28 @@ def test_out_must_be_writable() -> None:
     with pytest.raises((TypeError, ValueError)):
         codec.decode(enc, out=b"xyz")  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
     with pytest.raises((TypeError, ValueError)):
-        _zlib().decode(enc, out=b"xyz")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        _zlib().decode(enc, out=b"xyz")  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue, reportArgumentType]
 
 
-def test_any_typed_out_is_not_mistaken_for_no_out() -> None:
-    def decode_into(out: Any) -> None:
-        # with `out: Any` the result may be `out`, so it must not be typed as bytes
-        result = assert_type(numcodecs.Zlib().decode(numcodecs.Zlib().encode(b"abc"), out), Any)
-        assert result is out
+def test_out_with_any_in_its_type_keeps_its_type() -> None:
+    """An `out` typed `NDArray[Any]` (what most numpy calls return) must come back as
+    `NDArray[Any]`, not degrade to `Any`."""
+    codec = numcodecs.Zlib()
+    enc = codec.encode(np.arange(4, dtype="f8"))
+    out: npt.NDArray[Any] = np.empty(4, dtype="f8")
+    assert assert_type(codec.decode(enc, out=out), npt.NDArray[Any]) is out
 
-    decode_into(bytearray(3))
+
+def test_optional_out_gives_the_union() -> None:
+    """Forwarding an optional `out` gives "decoded or `out`", nothing wider."""
+
+    def decode(out: bytearray | None = None) -> bytes | bytearray:
+        codec = numcodecs.Zlib()
+        return assert_type(codec.decode(codec.encode(b"abc"), out), bytes | bytearray)
+
+    assert decode() == b"abc"
+    buf = bytearray(3)
+    assert decode(buf) is buf
 
 
 def _apply(func: Callable[[npt.NDArray[Any]], bytes], data: npt.NDArray[Any]) -> bytes:

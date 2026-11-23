@@ -1,18 +1,20 @@
 # `typing._ProtocolMeta` is private, but typeshed declares it, so type checkers see the
 # metaclass's real type instead of the `Any` that `Protocol.__class__` gives them.
 import array
+import ctypes
 import mmap
+import pickle
 from collections.abc import Buffer
 from typing import (
     TYPE_CHECKING,
     Any,
-    ClassVar,
     Protocol,
     TypeVar,
     _ProtocolMeta,
     runtime_checkable,
 )
 
+import numpy as np
 from typing_extensions import TypeIs  # in `typing` from Python 3.13
 
 
@@ -26,10 +28,11 @@ class _CachedProtocolMeta(_ProtocolMeta):
     isinstance checks using the object's class as the cache key.
     """
 
-    # N.B., a protocol class using this metaclass must have annotations of its own.
-    # Without them it would find this class's `__annotations__`, and `runtime_checkable`
-    # would require instances to have `_instancecheck_cache` as an attribute.
-    _instancecheck_cache: ClassVar[dict[tuple[type, type], bool]] = {}
+    # Deliberately not annotated. A protocol class without annotations of its own would
+    # otherwise find this class's `__annotations__`, and `runtime_checkable` would then
+    # require instances to have `_instancecheck_cache` as an attribute (on Python 3.12
+    # and 3.13).
+    _instancecheck_cache = dict[tuple[type, type], bool]()  # noqa: RUF012  # see above
 
     def __instancecheck__(self, instance: object) -> bool:
         key = (self, instance.__class__)
@@ -138,25 +141,56 @@ type BufferLike = Buffer | NDArrayLike
 as `bytes`, `bytearray`, `memoryview` or a numpy array, or an ndarray-like such as a cupy
 array."""
 
-type WritableBufferLike = bytearray | memoryview | array.array[Any] | mmap.mmap | NDArrayLike
+# `memoryview[Any]` is what type checkers need (a bare `memoryview` means `memoryview[int]`
+# to them, which leaves out e.g. `memoryview(...).cast("d")`), but `memoryview` cannot be
+# subscripted at runtime before Python 3.14. Hence two definitions.
+if TYPE_CHECKING:  # pragma: no cover
+    type WritableBufferLike = (
+        bytearray
+        | memoryview[Any]
+        | array.array[Any]
+        | mmap.mmap
+        | np.ndarray[Any, Any]
+        | ctypes.Array[Any]
+        | pickle.PickleBuffer
+        | NDArrayLike
+    )
+else:
+    type WritableBufferLike = (
+        bytearray
+        | memoryview
+        | array.array
+        | mmap.mmap
+        | np.ndarray
+        | ctypes.Array
+        | pickle.PickleBuffer
+        | NDArrayLike
+    )
 """What `decode` accepts as `out`: a buffer that can be written to.
 
-Python's type system cannot say "a writable buffer", so this names the common writable
-ones, plus ndarray-likes (numpy and cupy arrays). Its purpose is to leave out `bytes`,
-which exports a buffer but is immutable. A read-only `memoryview` or ndarray still
-type-checks; codecs reject those at runtime.
+Python's type system cannot say "a writable buffer", so this names writable buffer types
+from the standard library and numpy, plus ndarray-likes such as cupy arrays. Its purpose is
+to leave out `bytes`, which exports a buffer but is immutable.
+
+Two limits follow from that:
+
+- It is not a guarantee of writability: a read-only `memoryview` or ndarray still
+  type-checks.
+- A writable buffer of a type not named here is rejected by type checkers. Wrap it in
+  `memoryview(...)`, which is accepted.
+
+Some codecs need more than a writable buffer and raise for anything else: JSON, MsgPack,
+Pickle, Categorize and the VLen codecs need an ndarray, and PCodec an ndarray of the
+decoded dtype. Type checkers cannot be told so without those codecs breaking the signature
+they inherit from `Codec`.
 """
 
 OutT = TypeVar("OutT", bound=WritableBufferLike)
 """The type of a caller's `out` argument, for `decode(buf, out: OutT) -> OutT`: a codec
 given `out` returns that same object.
 
-numcodecs' codecs overload `decode` three ways, in this order:
-
-1. `out: OutT -> OutT`. First, so that an `out` typed `Any` is not resolved to the next one.
-2. `out: None = None ->` what the codec decodes to.
-3. `out: WritableBufferLike | None = None ->` the union of both. This is the one that
-   matches the signature on `Codec`, which type checkers require of an override.
+numcodecs' codecs overload `decode` twice: `out: None = None` returns what the codec
+decodes to, and `out: OutT` returns `OutT`.
 """
 
 

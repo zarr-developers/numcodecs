@@ -35,3 +35,35 @@ def test_star_imports_do_not_shadow_the_json_codec():
     namespace: dict[str, object] = {}
     exec("from numcodecs import *\nfrom numcodecs.abc import *", namespace)
     assert namespace["JSON"] is numcodecs.JSON
+
+
+class PropertyId(Codec):
+    """A codec whose `codec_id` is a property that fails."""
+
+    @property
+    def codec_id(self):
+        return self._name.lower()
+
+    def encode(self, buf):
+        return buf
+
+    def decode(self, buf, out=None):
+        return buf
+
+
+def test_error_inside_a_codec_id_property_is_not_swallowed():
+    """Only a codec whose class has no `codec_id` at all reports None. An AttributeError
+    from inside a `codec_id` property is a bug in that codec and must surface."""
+    with pytest.raises(AttributeError, match="_name"):
+        PropertyId().get_config()
+    assert PropertyId() != PropertyId()
+
+
+def test_checksum_codec_without_codec_id_reports_corruption():
+    class MyChecksum(numcodecs.checksum32.Checksum32):
+        @staticmethod
+        def checksum(data, value=0):
+            return 1
+
+    with pytest.raises(RuntimeError, match="Stored and computed None checksum do not match"):
+        MyChecksum().decode(bytes(8))

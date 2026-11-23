@@ -53,13 +53,9 @@ class Shuffle(Codec):
         return buf, out
 
     @overload
-    def encode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def encode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8]: ...
     @overload
-    def encode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> npt.NDArray[np.uint8] | WritableBufferLike: ...
+    def encode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def encode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         buf, out_arr = self._prepare_arrays(buf, out)
 
@@ -72,13 +68,9 @@ class Shuffle(Codec):
         return out
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8]: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> npt.NDArray[np.uint8] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         buf, out_arr = self._prepare_arrays(buf, out)
 

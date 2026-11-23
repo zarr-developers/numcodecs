@@ -38,13 +38,9 @@ class Zlib(Codec):
         return _zlib.compress(arr, self.level)
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> bytes | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise inputs
         arr = ensure_contiguous_ndarray(buf)

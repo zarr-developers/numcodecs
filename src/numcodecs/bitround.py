@@ -86,13 +86,9 @@ class BitRound(Codec):
         return result
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> NDArrayLike: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> NDArrayLike | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Remake floats from ints
 

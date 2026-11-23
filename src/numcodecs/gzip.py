@@ -42,13 +42,9 @@ class GZip(Codec):
         return compressed.getvalue()
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> bytes | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise inputs
         # BytesIO only copies if the data is not of `bytes` type.

@@ -199,16 +199,10 @@ def ensure_text(s: str | BufferLike, encoding: str = "utf-8") -> str:
     return codecs.decode(ensure_contiguous_ndarray(s), encoding)
 
 
-# `dst` given: `dst` comes back. Listed first so that an `Any`-typed `dst` is not resolved
-# to the no-`dst` overload.
-@overload
-def ndarray_copy(src: BufferLike, dst: OutT) -> OutT: ...
 @overload
 def ndarray_copy[SrcT: BufferLike](src: SrcT, dst: None) -> SrcT: ...
 @overload
-def ndarray_copy[SrcT: BufferLike](
-    src: SrcT, dst: WritableBufferLike | None
-) -> SrcT | WritableBufferLike: ...
+def ndarray_copy(src: BufferLike, dst: OutT) -> OutT: ...
 def ndarray_copy(src: BufferLike, dst: WritableBufferLike | None) -> BufferLike:
     """Copy the contents of the array from `src` to `dst`, and return `dst`.
 

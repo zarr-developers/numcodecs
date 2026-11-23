@@ -30,7 +30,7 @@ other and vice versa.
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-from typing import Any, Protocol, Self
+from typing import Any, Protocol, Self, overload
 
 from typing_extensions import ReadOnly, TypedDict
 
@@ -64,6 +64,21 @@ class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[c
     id: str
 
 
+def _codec_id_or_none(codec: object) -> str | None:
+    """Return `codec.codec_id`, or None for a codec whose class never set one.
+
+    `Codec.codec_id` used to default to None on the class. It no longer does, but a codec
+    that never set it keeps reporting None where numcodecs itself reads the id. An
+    `AttributeError` raised inside a `codec_id` property is not that case and propagates.
+    """
+    try:
+        return codec.codec_id  # type: ignore[attr-defined, no-any-return]
+    except AttributeError:
+        if hasattr(type(codec), 'codec_id') or 'codec_id' in getattr(codec, '__dict__', {}):
+            raise
+        return None
+
+
 class Codec(ABC):
     """Codec abstract base class."""
 
@@ -90,9 +105,15 @@ class Codec(ABC):
             protocol.
         """
 
-    # Not overloaded on `out`: with overloads here, mypy rejects every subclass that
-    # annotates `decode` without repeating them. numcodecs' own codecs overload it, to say
-    # that they return `out` when it is given and what they decode to otherwise.
+    # Both overloads return `BufferLike`: the base class says nothing about which object
+    # comes back, so a subclass may annotate `decode` with one plain signature. (If the
+    # second overload returned the type of `out`, mypy would reject every subclass that
+    # did not repeat the overloads.) numcodecs' own codecs narrow both: what they decode
+    # to without `out`, and the type of `out` with it.
+    @overload
+    def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
+    @overload
+    def decode(self, buf: BufferLike, /, out: WritableBufferLike) -> BufferLike: ...
     @abstractmethod
     def decode(
         self, buf: BufferLike, /, out: WritableBufferLike | None = None
@@ -123,9 +144,7 @@ class Codec(ABC):
         # override in sub-class if need special encoding of config values
 
         # setup config object
-        # a codec whose class never set `codec_id` reports None, as it did when the
-        # class attribute defaulted to None
-        config: dict[str, Any] = {'id': getattr(self, 'codec_id', None)}
+        config: dict[str, Any] = {'id': _codec_id_or_none(self)}
 
         # by default, assume all non-private members are configuration
         # parameters - override this in sub-class if not the case
@@ -181,9 +200,10 @@ class CodecProtocol(Protocol):
 
     def encode(self, buf: BufferLike, /) -> BufferLike: ...  # pragma: no cover
 
-    def decode(
-        self, buf: BufferLike, /, out: WritableBufferLike | None = None
-    ) -> BufferLike: ...  # pragma: no cover
+    @overload
+    def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
+    @overload
+    def decode(self, buf: BufferLike, /, out: WritableBufferLike) -> BufferLike: ...
 
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 

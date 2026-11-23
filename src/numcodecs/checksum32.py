@@ -9,7 +9,7 @@ from typing import Literal, NotRequired, cast, overload
 import numpy as np
 import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec, CodecConfig, _codec_id_or_none
 from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
 from .ndarray_like import BufferLike, OutT, WritableBufferLike
@@ -89,13 +89,9 @@ class Checksum32(Codec, abc.ABC):
         return enc
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8] | memoryview: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> npt.NDArray[np.uint8] | memoryview | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         arr = ensure_contiguous_ndarray(buf).view('u1')
         if arr.nbytes < 4:
@@ -113,7 +109,7 @@ class Checksum32(Codec, abc.ABC):
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
             raise RuntimeError(
-                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {_codec_id_or_none(self)} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 
@@ -223,13 +219,9 @@ class JenkinsLookup3(Checksum32):
         return arr.tobytes() + struct.pack("<I", val)
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> memoryview: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> memoryview | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')

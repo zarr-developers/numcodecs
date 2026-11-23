@@ -46,9 +46,10 @@
   of `out` instead, or a new ndarray when `out` was a `bytearray`. For a contiguous `out`
   the decoded bytes were already written into it, and only the returned object changes.
   The VLen codecs now also fill a non-contiguous `out`; they used to decode into a copy
-  and leave `out` untouched.
-* `JenkinsLookup3.decode` accepts any writable buffer as `out`, not only an ndarray, and
-  raises `ValueError` when `out` has the wrong size.
+  and leave `out` untouched. If such an `out` is read-only they now raise.
+* `JenkinsLookup3.decode` accepts a `bytearray`, a `memoryview` or another contiguous
+  writable buffer as `out`, not only an ndarray, and raises `ValueError` when `out` has the
+  wrong size.
 * `JenkinsLookup3.get_config()` reports `prefix` as a list of ints, so a configuration
   with a prefix can be serialized to JSON and passed back to `get_codec`. It held a numpy
   array, which `json.dumps` rejected and `get_codec` could not compare. The constructor
@@ -81,7 +82,8 @@
   ndarray-like), with `buf` positional-only. `out` is a
   `numcodecs.ndarray_like.WritableBufferLike`, which leaves out immutable `bytes`. Each
   of numcodecs' own codecs types `decode(buf, out=out)` as returning the type of `out`,
-  and `decode(buf)` as returning what the codec decodes to. `get_config` returns `Mapping[str, Any]` and
+  and `decode(buf)` as returning what the codec decodes to; through a plain `Codec`
+  reference both are `BufferLike`. `get_config` returns `Mapping[str, Any]` and
   `from_config` returns `Self`. Previously pyright inferred that `encode` and `decode`
   return `None`.
 * Add the structural protocol `numcodecs.abc.CodecProtocol` for code that accepts any

@@ -111,3 +111,23 @@ def test_nominal_subclass_can_set_members():
     assert m.shape == (3,)
     with pytest.raises(AttributeError):
         Mine.__new__(Mine).strides  # noqa: B018
+
+
+def test_protocol_without_annotations_using_the_cached_metaclass():
+    """The isinstance cache lives on the metaclass. It must not turn into a member that
+    instances are required to have."""
+    from typing import Protocol, runtime_checkable
+
+    from numcodecs.ndarray_like import _CachedProtocolMeta
+
+    @runtime_checkable
+    class HasFoo(Protocol, metaclass=_CachedProtocolMeta):
+        def foo(self): ...
+
+    class Impl:
+        def foo(self):
+            return 1
+
+    assert isinstance(Impl(), HasFoo)
+    assert not isinstance(object(), HasFoo)
+    assert isinstance(NDArrayLike._instancecheck_cache, dict)

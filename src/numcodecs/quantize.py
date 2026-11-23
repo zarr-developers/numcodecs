@@ -89,13 +89,9 @@ class Quantize(Codec):
         return enc.astype(self.astype, copy=False)
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> npt.NDArray[Any] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # filter is lossy, decoding is no-op
         dec = ensure_ndarray(buf).view(self.astype)

@@ -94,13 +94,9 @@ class JSON(Codec):
         return self._encoder.encode(items).encode(self._text_encoding)
 
     @overload
-    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
-    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode(
-        self, buf: BufferLike, out: WritableBufferLike | None = None
-    ) -> npt.NDArray[Any] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
     def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         items = self._decoder.decode(ensure_text(buf, self._text_encoding))
         dec = np.empty(items[-1], dtype=items[-2])
