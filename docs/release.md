@@ -37,6 +37,8 @@
 
 ### Fixes
 
+* `Fletcher32.decode` raises `ValueError` when `out` is not exactly the size of the
+  decoded data, as `JenkinsLookup3.decode` does.
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
   installed. zfpy versions are now parsed with `packaging`, which becomes a dependency,
   and the `zfpy` extra now requires zfpy >= 1.0.1. {issue}`892`
