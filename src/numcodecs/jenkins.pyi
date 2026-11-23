@@ -1,0 +1,3 @@
+from collections.abc import Buffer
+
+def jenkins_lookup3(_data: Buffer, initval: int = 0) -> int: ...

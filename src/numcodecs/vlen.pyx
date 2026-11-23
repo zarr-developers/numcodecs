@@ -21,6 +21,8 @@ from numpy cimport ndarray
 from .compat_ext cimport ensure_contiguous_memoryview
 from ._utils cimport store_le32, load_le32
 
+from typing import TypedDict
+
 import numpy as np
 
 from .abc import Codec
@@ -33,6 +35,11 @@ cdef extern from *:
     const Py_ssize_t HEADER_LENGTH = sizeof(uint32_t);
     """
     const Py_ssize_t HEADER_LENGTH
+
+
+# The type of `VLenArray.get_config()`. Declared with the functional syntax because Cython does
+# not compile TypedDict class bodies; `vlen.pyi` declares the same type with the class syntax.
+VLenArrayConfig = TypedDict("VLenArrayConfig", {"id": str, "dtype": str})
 
 
 def check_out_param(out, n_items):
@@ -154,11 +161,11 @@ class VLenUTF8(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output: fill a flat view, but return the caller's own `out`
         if out is not None:
-            out = check_out_param(out, n_items)
+            out_flat = check_out_param(out, n_items)
         else:
-            out = np.empty(n_items, dtype=object)
+            out = out_flat = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -171,7 +178,7 @@ class VLenUTF8(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyUnicode_FromStringAndSize(data, L)
+            out_flat[i] = PyUnicode_FromStringAndSize(data, L)
             data += L
 
         return out
@@ -283,11 +290,11 @@ class VLenBytes(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output: fill a flat view, but return the caller's own `out`
         if out is not None:
-            out = check_out_param(out, n_items)
+            out_flat = check_out_param(out, n_items)
         else:
-            out = np.empty(n_items, dtype=object)
+            out = out_flat = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -300,7 +307,7 @@ class VLenBytes(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyBytes_FromStringAndSize(data, L)
+            out_flat[i] = PyBytes_FromStringAndSize(data, L)
             data += L
 
         return out
@@ -439,11 +446,11 @@ class VLenArray(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output: fill a flat view, but return the caller's own `out`
         if out is not None:
-            out = check_out_param(out, n_items)
+            out_flat = check_out_param(out, n_items)
         else:
-            out = np.empty(n_items, dtype=object)
+            out = out_flat = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -463,7 +470,7 @@ class VLenArray(Codec):
             v_pb = PyMemoryView_GET_BUFFER(v_mv)
             memcpy(v_pb.buf, data, L)
 
-            out[i] = v
+            out_flat[i] = v
             data += L
 
         return out

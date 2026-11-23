@@ -233,15 +233,15 @@ To test against specific Zarr-Python versions, use the dependency groups defined
 ``pyproject.toml``:
 
 ```
-$ uv run --group test-zarr-312 pytest tests/test_zarr3.py tests/test_zarr3_import.py
 $ uv run --group test-zarr-313 pytest tests/test_zarr3.py tests/test_zarr3_import.py
+$ uv run --group test-zarr-latest pytest tests/test_zarr3.py tests/test_zarr3_import.py
 $ uv run --group test-zarr-main pytest tests/test_zarr3.py tests/test_zarr3_import.py
 ```
 
 Or, if using venv/pip:
 
 ```
-$ pip install --group test-zarr-312
+$ pip install --group test-zarr-313
 $ pytest tests/test_zarr3.py tests/test_zarr3_import.py
 ```
 

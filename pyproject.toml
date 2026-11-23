@@ -14,7 +14,7 @@ description = """
 A Python package providing buffer compression and transformation codecs \
 for use in data storage and communication applications."""
 readme = "README.md"
-dependencies = ["numpy>=2.0", "typing_extensions"]
+dependencies = ["numpy>=2.0", "packaging", "typing_extensions>=4.13"]
 requires-python = ">=3.12"
 dynamic = [
   "version",
@@ -51,7 +51,7 @@ msgpack = [
     "msgpack",
 ]
 zfpy = [
-    "zfpy>=1.0.0"
+    "zfpy>=1.0.1"
 ]
 pcodec = [
     "pcodec>=1,<2",
@@ -90,14 +90,18 @@ dev = [
     "pytest==9.0.3",
     "pytest-cov",
 ]
-test-zarr-308 = [
+typing = [
+    "mypy==2.4.1",
+    "pyright==1.1.414",
+]
+test-zarr-313 = [
     {include-group="dev"},
-    "zarr==3.0.8",
+    "zarr==3.1.3",
     "crc32c",
 ]
-test-zarr-316 = [
+test-zarr-latest = [
     {include-group="dev"},
-    "zarr==3.1.6",
+    "zarr",
     "crc32c",
 ]
 test-zarr-main = [
@@ -157,6 +161,17 @@ filterwarnings = [
 [tool.cibuildwheel]
 # AVX2 disabled for portable wheels (not all x86_64 CPUs have it)
 config-settings = "setup-args=-Davx2=disabled"
+# Run the test suite against each built wheel, so the SIMD configuration that ships
+# to PyPI is tested. test-sources copies the tests and their data fixtures (looked
+# up relative to the working directory) into the temporary directory the tests run
+# in; the source tree (src/) is not copied, so numcodecs is imported from the wheel.
+test-sources = ["tests", "fixture", "pyproject.toml"]
+test-extras = ["test", "test_extras", "msgpack", "crc32c"]
+test-command = [
+    # on free-threaded builds, check that no extension re-enables the GIL
+    "python -c \"import sys, sysconfig, numcodecs; assert not (sysconfig.get_config_var('Py_GIL_DISABLED') and sys._is_gil_enabled())\"",
+    "pytest tests -p no:cacheprovider --no-cov",
+]
 
 [[tool.cibuildwheel.overrides]]
 select = "*-macosx_arm64"
@@ -228,15 +243,41 @@ ignore = [
 quote-style = "preserve"
 
 [tool.mypy]
-ignore_errors = false
-ignore_missing_imports = true
+python_version = "3.12"
+mypy_path = "src"
+strict = true
+warn_unreachable = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
-# TODO: set options below to true
-strict = false
-warn_unreachable = false
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_unused_configs = true
+
+# Optional dependencies that ship no type information.
+[[tool.mypy.overrides]]
+module = [
+    "msgpack.*",
+    "pcodec.*",
+    "zfpy.*",
+    "crc32c.*",
+    "google_crc32c.*",
+    "backports.*",
+    # build-time and test-only dependencies
+    "setuptools_scm.*",
+    "importlib_metadata.*",
+    # optional: numcodecs.zarr3 forwards to zarr, which is not installed everywhere
+    "zarr.*",
+]
+ignore_missing_imports = true
+
+# The test suite predates type annotations, and many tests pass wrongly typed values on
+# purpose to check runtime errors. As before, annotated test functions are checked and
+# unannotated ones are not. tests/typing is checked strictly by its own configuration
+# (tests/typing/mypy.ini).
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+check_untyped_defs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+disallow_any_generics = false
+warn_return_any = false
 
 [tool.uv]
 # meson-python editable installs require build deps (ninja, meson) at runtime for
@@ -248,8 +289,8 @@ no-build-isolation-package = ["numcodecs"]
 conflicts = [
     # Zarr versions conflict with each other
     [
-        { group = "test-zarr-308" },
-        { group = "test-zarr-316" },
+        { group = "test-zarr-313" },
+        { group = "test-zarr-latest" },
         { group = "test-zarr-main" }
     ]
 ]

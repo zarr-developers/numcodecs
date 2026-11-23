@@ -14,8 +14,15 @@ from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
 from .compat_ext cimport PyBytes_RESIZE, ensure_contiguous_memoryview
 
+from typing import TypedDict
+
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
+
+
+# The type of `Blosc.get_config()`. Declared with the functional syntax because Cython does not
+# compile TypedDict class bodies; `blosc.pyi` declares the same type with the class syntax.
+BloscConfig = TypedDict("BloscConfig", {"id": str, "cname": str, "clevel": int, "shuffle": int, "blocksize": int})
 
 
 cdef extern from "blosc.h":
