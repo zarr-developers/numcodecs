@@ -20,7 +20,7 @@ Known limits, not checked here:
 # `memoryview[float]` in the signature below cannot be evaluated before Python 3.14
 from __future__ import annotations
 
-from typing import Any, assert_type
+from typing import TYPE_CHECKING, Any, assert_type
 
 import numpy as np
 import numpy.typing as npt
@@ -41,49 +41,58 @@ from numcodecs.gzip import GZip
 from numcodecs.json import JSON
 from numcodecs.lz4 import LZ4
 from numcodecs.lzma import LZMA
-from numcodecs.msgpacks import MsgPack
 from numcodecs.ndarray_like import NDArrayLike
 from numcodecs.packbits import PackBits
-from numcodecs.pcodec import PCodec
 from numcodecs.pickles import Pickle
 from numcodecs.quantize import Quantize
 from numcodecs.registry import codec_registry
 from numcodecs.shuffle import Shuffle
 from numcodecs.vlen import VLenArray, VLenBytes, VLenUTF8
-from numcodecs.zfpy import ZFPY
 from numcodecs.zlib import Zlib
 from numcodecs.zstd import Zstd
 
-# every codec class checked below; test_every_codec_is_checked keeps this complete
-CHECKED = (
-    Zlib,
-    GZip,
-    BZ2,
-    LZMA,
-    Base64,
-    Blosc,
-    Zstd,
-    LZ4,
-    Shuffle,
-    CRC32,
-    Adler32,
-    JenkinsLookup3,
-    Fletcher32,
-    AsType,
-    Delta,
-    Quantize,
-    FixedScaleOffset,
-    BitRound,
-    PackBits,
-    Categorize,
-    JSON,
-    MsgPack,
-    Pickle,
-    VLenUTF8,
-    VLenBytes,
-    VLenArray,
-    ZFPY,
-    PCodec,
+if TYPE_CHECKING:
+    # These need optional dependencies at runtime. `static_checks` is never run, so the
+    # names are only needed by the type checkers.
+    from numcodecs.msgpacks import MsgPack
+    from numcodecs.pcodec import PCodec
+    from numcodecs.zfpy import ZFPY
+
+# The codec ids checked in `static_checks`; test_every_codec_is_checked keeps this
+# complete. CRC32C shares its `decode` with CRC32 and is only defined when a crc32c
+# package is installed, so it is listed here without lines of its own.
+CHECKED_IDS = frozenset(
+    {
+        "zlib",
+        "gzip",
+        "bz2",
+        "lzma",
+        "base64",
+        "blosc",
+        "zstd",
+        "lz4",
+        "shuffle",
+        "crc32",
+        "adler32",
+        "crc32c",
+        "jenkins_lookup3",
+        "fletcher32",
+        "astype",
+        "delta",
+        "quantize",
+        "fixedscaleoffset",
+        "bitround",
+        "packbits",
+        "categorize",
+        "json2",
+        "msgpack2",
+        "pickle",
+        "vlen-utf8",
+        "vlen-bytes",
+        "vlen-array",
+        "zfpy",
+        "pcodec",
+    }
 )
 
 
@@ -351,7 +360,5 @@ def static_checks(
 
 
 def test_every_codec_is_checked() -> None:
-    """A codec added to numcodecs must be added to `static_checks`. CRC32C is the same
-    class body as CRC32 and is only defined when a crc32c package is installed."""
-    checked = {cls.codec_id for cls in CHECKED} | {"crc32c"}
-    assert set(codec_registry) <= checked
+    """A codec added to numcodecs must be added to `static_checks` and `CHECKED_IDS`."""
+    assert set(codec_registry) <= CHECKED_IDS
