@@ -4,7 +4,7 @@ import numpy as np
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray_like, ndarray_copy
-from .ndarray_like import BufferLike, NDArrayLike
+from .ndarray_like import BufferLike, NDArrayLike, OutT, WritableBufferLike
 
 
 class BitRoundConfig(CodecConfig):
@@ -86,10 +86,14 @@ class BitRound(Codec):
         return result
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> NDArrayLike: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> NDArrayLike | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Remake floats from ints
 
         As with ``encode``, preserves itemsize.

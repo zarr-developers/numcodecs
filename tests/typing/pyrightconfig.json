@@ -12,5 +12,6 @@
   "reportUnknownMemberType": "none",
   "reportUnknownArgumentType": "none",
   "reportMissingModuleSource": "none",
-  "enableTypeIgnoreComments": false
+  "enableTypeIgnoreComments": false,
+  "reportUnnecessaryTypeIgnoreComment": "error"
 }

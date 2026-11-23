@@ -1,7 +1,17 @@
 # `typing._ProtocolMeta` is private, but typeshed declares it, so type checkers see the
 # metaclass's real type instead of the `Any` that `Protocol.__class__` gives them.
+import array
+import mmap
 from collections.abc import Buffer
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, _ProtocolMeta, runtime_checkable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Protocol,
+    TypeVar,
+    _ProtocolMeta,
+    runtime_checkable,
+)
 
 from typing_extensions import TypeIs  # in `typing` from Python 3.13
 
@@ -127,6 +137,27 @@ type BufferLike = Buffer | NDArrayLike
 """What codecs accept and return: an object exporting the buffer protocol (PEP 688), such
 as `bytes`, `bytearray`, `memoryview` or a numpy array, or an ndarray-like such as a cupy
 array."""
+
+type WritableBufferLike = bytearray | memoryview | array.array[Any] | mmap.mmap | NDArrayLike
+"""What `decode` accepts as `out`: a buffer that can be written to.
+
+Python's type system cannot say "a writable buffer", so this names the common writable
+ones, plus ndarray-likes (numpy and cupy arrays). Its purpose is to leave out `bytes`,
+which exports a buffer but is immutable. A read-only `memoryview` or ndarray still
+type-checks; codecs reject those at runtime.
+"""
+
+OutT = TypeVar("OutT", bound=WritableBufferLike)
+"""The type of a caller's `out` argument, for `decode(buf, out: OutT) -> OutT`: a codec
+given `out` returns that same object.
+
+numcodecs' codecs overload `decode` three ways, in this order:
+
+1. `out: OutT -> OutT`. First, so that an `out` typed `Any` is not resolved to the next one.
+2. `out: None = None ->` what the codec decodes to.
+3. `out: WritableBufferLike | None = None ->` the union of both. This is the one that
+   matches the signature on `Codec`, which type checkers require of an override.
+"""
 
 
 def is_ndarray_like(obj: object) -> TypeIs[NDArrayLike]:

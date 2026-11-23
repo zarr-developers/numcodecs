@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class AsTypeConfig(CodecConfig):
@@ -63,10 +63,14 @@ class AsType(Codec):
         return arr.astype(self.encode_dtype)
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> npt.NDArray[Any] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise input
         enc = ensure_ndarray(buf).view(self.encode_dtype)
 

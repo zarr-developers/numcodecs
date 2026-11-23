@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class PackBits(Codec):
@@ -66,10 +66,14 @@ class PackBits(Codec):
         return enc
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.bool_]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> npt.NDArray[np.bool_] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise input
         enc = ensure_ndarray(buf).view('u1')
 
@@ -80,14 +84,14 @@ class PackBits(Codec):
         n_bits_padded = int(enc[0])
 
         # apply decoding
-        dec = np.unpackbits(enc[1:])
+        bits = np.unpackbits(enc[1:])
 
         # remove padded bits
         if n_bits_padded:
-            dec = dec[:-n_bits_padded]
+            bits = bits[:-n_bits_padded]
 
         # view as boolean array
-        dec = dec.view(bool)
+        dec = bits.view(bool)
 
         # handle destination
         return ndarray_copy(dec, out)

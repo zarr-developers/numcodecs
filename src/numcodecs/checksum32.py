@@ -12,7 +12,7 @@ import numpy.typing as npt
 from .abc import Codec, CodecConfig
 from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 crc32c_checksum: Callable[[Buffer, int], int] | None
 
@@ -89,10 +89,14 @@ class Checksum32(Codec, abc.ABC):
         return enc
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8] | memoryview: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> npt.NDArray[np.uint8] | memoryview | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         arr = ensure_contiguous_ndarray(buf).view('u1')
         if arr.nbytes < 4:
             raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
@@ -219,10 +223,14 @@ class JenkinsLookup3(Checksum32):
         return arr.tobytes() + struct.pack("<I", val)
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> memoryview: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> memoryview | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         if self.prefix is None:

@@ -5,7 +5,7 @@ from typing import Any, assert_type
 import numpy as np
 import numpy.typing as npt
 
-from numcodecs.abc import ArrayArrayCodec, CodecConfig
+from numcodecs.abc import CodecConfig
 from numcodecs.astype import AsType, AsTypeConfig
 from numcodecs.bitround import BitRound, BitRoundConfig
 from numcodecs.categorize import Categorize, CategorizeConfig
@@ -19,10 +19,6 @@ from numcodecs.shuffle import Shuffle, ShuffleConfig
 F8 = np.linspace(0, 100, 16, dtype="f8")
 
 
-def _as_array_codec(codec: ArrayArrayCodec) -> ArrayArrayCodec:
-    return codec
-
-
 def test_numeric_filters() -> None:
     codecs = (
         AsType(encode_dtype="f4", decode_dtype="f8"),
@@ -31,7 +27,6 @@ def test_numeric_filters() -> None:
         FixedScaleOffset(offset=0, scale=10, dtype="f8", astype="i4"),
     )
     for codec in codecs:
-        _as_array_codec(codec)
         enc = assert_type(codec.encode(F8), npt.NDArray[Any])
         assert isinstance(enc, np.ndarray)
         dec = assert_type(codec.decode(enc), npt.NDArray[Any])

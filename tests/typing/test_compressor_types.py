@@ -6,7 +6,7 @@ from typing import Any, assert_type
 
 import numpy as np
 
-from numcodecs.abc import ArrayArrayCodec, BytesBytesCodec, CodecConfig, JSONValue
+from numcodecs.abc import CodecConfig, JSONValue
 from numcodecs.base64 import Base64
 from numcodecs.blosc import Blosc, BloscConfig
 from numcodecs.bz2 import BZ2, BZ2Config
@@ -19,15 +19,8 @@ from numcodecs.zstd import Zstd, ZstdConfig
 DATA = np.arange(16, dtype="f8")
 
 
-def _round_trip(codec: BytesBytesCodec) -> None:
-    """Every compressor: bytes in any buffer form go in, bytes come out, `out` comes back."""
-    enc = codec.encode(DATA)
-    assert bytes(memoryview(codec.decode(enc))) == DATA.tobytes()
-
-
 def test_compressors() -> None:
     for codec in (Zlib(), GZip(), BZ2(), LZMA(), Base64(), Blosc(), Zstd(), LZ4()):
-        _round_trip(codec)
         enc = assert_type(codec.encode(DATA), bytes)
         assert isinstance(enc, bytes)
         assert assert_type(codec.decode(enc), bytes) == DATA.tobytes()
@@ -57,12 +50,6 @@ def test_configs() -> None:
     assert assert_type(LZ4().get_config(), LZ4Config)["acceleration"] == 1
     for config in (zlib_config, lzma_config, blosc_config, zstd_config):
         assert _json_round_trip(config) == config
-
-
-def test_compressors_are_not_array_codecs() -> None:
-    # A compressor returns bytes, which is not an ndarray-like.
-    codec: ArrayArrayCodec = Zlib()  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
-    assert not isinstance(codec.encode(DATA), np.ndarray)
 
 
 def _json_mapping(config: Mapping[str, JSONValue]) -> Mapping[str, JSONValue]:

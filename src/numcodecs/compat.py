@@ -6,7 +6,13 @@ from typing import Any, overload
 import numpy as np
 import numpy.typing as npt
 
-from .ndarray_like import BufferLike, NDArrayLike, is_ndarray_like
+from .ndarray_like import (
+    BufferLike,
+    NDArrayLike,
+    OutT,
+    WritableBufferLike,
+    is_ndarray_like,
+)
 
 
 @overload
@@ -193,11 +199,17 @@ def ensure_text(s: str | BufferLike, encoding: str = "utf-8") -> str:
     return codecs.decode(ensure_contiguous_ndarray(s), encoding)
 
 
+# `dst` given: `dst` comes back. Listed first so that an `Any`-typed `dst` is not resolved
+# to the no-`dst` overload.
+@overload
+def ndarray_copy(src: BufferLike, dst: OutT) -> OutT: ...
 @overload
 def ndarray_copy[SrcT: BufferLike](src: SrcT, dst: None) -> SrcT: ...
 @overload
-def ndarray_copy[DstT: BufferLike](src: BufferLike, dst: DstT) -> DstT: ...
-def ndarray_copy(src: BufferLike, dst: BufferLike | None) -> BufferLike:
+def ndarray_copy[SrcT: BufferLike](
+    src: SrcT, dst: WritableBufferLike | None
+) -> SrcT | WritableBufferLike: ...
+def ndarray_copy(src: BufferLike, dst: WritableBufferLike | None) -> BufferLike:
     """Copy the contents of the array from `src` to `dst`, and return `dst`.
 
     If `dst` is `None`, return `src` unchanged. Otherwise `dst` itself is returned, not

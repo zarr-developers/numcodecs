@@ -78,12 +78,14 @@
 
 * Annotate `numcodecs.abc.Codec`. `encode` and `decode` take and return
   `numcodecs.ndarray_like.BufferLike` (an object exporting the buffer protocol, or an
-  ndarray-like), with `buf` positional-only, and `decode(buf, out=out)` is typed to return
-  the type of `out`. `get_config` returns `Mapping[str, Any]` and `from_config` returns
-  `Self`. Previously pyright inferred that `encode` and `decode` return `None`.
-* Add structural protocols `numcodecs.abc.CodecProtocol`, `BytesBytesCodec`,
-  `ArrayArrayCodec` and `ArrayBytesCodec` for code that accepts any object implementing the
-  codec interface.
+  ndarray-like), with `buf` positional-only. `out` is a
+  `numcodecs.ndarray_like.WritableBufferLike`, which leaves out immutable `bytes`. Each
+  of numcodecs' own codecs types `decode(buf, out=out)` as returning the type of `out`,
+  and `decode(buf)` as returning what the codec decodes to. `get_config` returns `Mapping[str, Any]` and
+  `from_config` returns `Self`. Previously pyright inferred that `encode` and `decode`
+  return `None`.
+* Add the structural protocol `numcodecs.abc.CodecProtocol` for code that accepts any
+  object implementing the codec interface.
 * numcodecs now ships a `py.typed` marker (PEP 561), so type checkers use its annotations
   and stubs instead of treating the package as untyped. Downstream projects can drop
   `ignore_missing_imports` for numcodecs. Third-party codecs that subclass `Codec` are

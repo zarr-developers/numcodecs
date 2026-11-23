@@ -4,7 +4,7 @@ from typing import cast, overload
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_bytes, ensure_contiguous_ndarray
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class GZipConfig(CodecConfig):
@@ -42,10 +42,14 @@ class GZip(Codec):
         return compressed.getvalue()
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> bytes | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise inputs
         # BytesIO only copies if the data is not of `bytes` type.
         # This allows `bytes` objects to pass through without copying.

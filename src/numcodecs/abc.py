@@ -29,17 +29,14 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Buffer, Mapping, Sequence
-from typing import Any, Protocol, Self, overload
+from collections.abc import Mapping, Sequence
+from typing import Any, Protocol, Self
 
 from typing_extensions import ReadOnly, TypedDict
 
-from .ndarray_like import BufferLike, NDArrayLike
+from .ndarray_like import BufferLike, WritableBufferLike
 
 __all__ = [
-    "ArrayArrayCodec",
-    "ArrayBytesCodec",
-    "BytesBytesCodec",
     "Codec",
     "CodecConfig",
     "CodecProtocol",
@@ -93,13 +90,12 @@ class Codec(ABC):
             protocol.
         """
 
-    @overload
-    def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, /, out: OutT) -> OutT: ...
+    # Not overloaded on `out`: with overloads here, mypy rejects every subclass that
+    # annotates `decode` without repeating them. numcodecs' own codecs overload it, to say
+    # that they return `out` when it is given and what they decode to otherwise.
     @abstractmethod
     def decode(
-        self, buf: BufferLike, /, out: BufferLike | None = None
+        self, buf: BufferLike, /, out: WritableBufferLike | None = None
     ) -> BufferLike:  # pragma: no cover
         """Decode data in `buf`.
 
@@ -185,33 +181,11 @@ class CodecProtocol(Protocol):
 
     def encode(self, buf: BufferLike, /) -> BufferLike: ...  # pragma: no cover
 
-    def decode(self, buf: BufferLike, /, out: Any = None) -> BufferLike: ...  # pragma: no cover
+    def decode(
+        self, buf: BufferLike, /, out: WritableBufferLike | None = None
+    ) -> BufferLike: ...  # pragma: no cover
 
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 
     @classmethod
     def from_config(cls, config: Any) -> Self: ...  # pragma: no cover
-
-
-class BytesBytesCodec(CodecProtocol, Protocol):
-    """A codec that maps bytes to bytes, such as a compressor or a checksum."""
-
-    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> Buffer: ...  # pragma: no cover
-
-
-class ArrayArrayCodec(CodecProtocol, Protocol):
-    """A codec that maps an array to an array, such as a filter."""
-
-    def encode(self, buf: BufferLike, /) -> NDArrayLike: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover
-
-
-class ArrayBytesCodec(CodecProtocol, Protocol):
-    """A codec that serializes an array to bytes and back."""
-
-    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover

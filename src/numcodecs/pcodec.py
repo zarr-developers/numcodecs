@@ -6,7 +6,7 @@ from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
 from numcodecs.abc import Codec, CodecConfig
 from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
-from numcodecs.ndarray_like import BufferLike
+from numcodecs.ndarray_like import BufferLike, OutT, WritableBufferLike
 
 type ModeSpecName = Literal["auto", "classic"]
 type DeltaSpecName = Literal["auto", "no_op", "none", "try_consecutive", "try_lookback"]
@@ -142,10 +142,14 @@ class PCodec(Codec):
         return compressed
 
     @overload
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(
+        self, buf: BufferLike, out: WritableBufferLike | None = None
+    ) -> npt.NDArray[Any] | WritableBufferLike: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         buf = ensure_bytes(buf)
         if out is not None:
             standalone.simple_decompress_into(buf, ensure_contiguous_ndarray(out))
