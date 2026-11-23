@@ -71,9 +71,11 @@
   public. `from numcodecs import *` now imports only those names.
 * `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
   given, instead of registering it under `None`.
-* `Codec.codec_id` is annotated `str`, which every concrete codec sets. At runtime the
-  class default is still `None`, so a codec whose class never sets it reports `'id': None`
-  from `get_config`, as before.
+* `Codec.codec_id` no longer defaults to `None`: an identifier is a string. Abstract
+  intermediate classes such as `Checksum32` leave it unset, and every concrete codec sets
+  it. A third-party codec class that never set `codec_id` used to work with the id `None`;
+  now reading its `codec_id` and calling its `get_config()` raise `AttributeError`, and two
+  such codecs no longer compare equal. Set `codec_id` on the class.
 
 ### Enhancements
 

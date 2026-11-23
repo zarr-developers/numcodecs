@@ -108,8 +108,10 @@ class Checksum32(Codec, abc.ABC):
         expect = checksum_view.view('<u4')[0]
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
+            # a subclass that set no codec_id still has to report corrupt data
+            name = getattr(self, "codec_id", type(self).__name__)
             raise RuntimeError(
-                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {name} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 

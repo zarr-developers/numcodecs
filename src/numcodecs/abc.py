@@ -30,7 +30,7 @@ other and vice versa.
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Any, Protocol, Self, overload
+from typing import Any, Protocol, Self, overload
 
 from typing_extensions import ReadOnly, TypedDict
 
@@ -68,16 +68,13 @@ class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[c
 class Codec(ABC):
     """Codec abstract base class."""
 
-    # Type checkers see `str`, which every concrete codec sets as a class attribute (it is
-    # not `ClassVar`, so that `Codec` instances match protocols that declare `codec_id`
-    # either as a plain attribute or as a read-only property). At runtime the class keeps
-    # the default it has always had, None, for abstract intermediate classes and for
-    # codecs whose author never set an id: their `get_config()` reports `'id': None`.
-    if TYPE_CHECKING:  # pragma: no cover
-        codec_id: str
-        """Codec identifier. Every concrete codec class sets it as a class attribute."""
-    else:
-        codec_id: str | None = None
+    # Declared without a value: an identifier is a string, never None, and a codec class
+    # that sets none has no `codec_id` at all (abstract intermediate classes leave it
+    # unset). Not `ClassVar`, so that `Codec` instances match protocols that declare
+    # `codec_id` either as a plain attribute or as a read-only property.
+    codec_id: str
+    """Codec identifier. Every concrete codec class must set it as a class attribute;
+    `get_config` and `register_codec` fail for a class that does not."""
 
     @abstractmethod
     def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover
