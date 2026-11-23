@@ -45,8 +45,8 @@
   codecs, and every codec built on `numcodecs.compat.ndarray_copy` returned a flattened view
   of `out` instead, or a new ndarray when `out` was a `bytearray`. For a contiguous `out`
   the decoded bytes were already written into it, and only the returned object changes.
-  The VLen codecs now also fill a non-contiguous `out`; they used to decode into a copy
-  and leave `out` untouched. If such an `out` is read-only they now raise.
+  The VLen codecs now also fill a non-contiguous `out`; for most such layouts they used
+  to decode into a copy and leave `out` untouched. If such an `out` is read-only they now raise.
 * `JenkinsLookup3.decode` accepts a `bytearray`, a `memoryview` or another contiguous
   writable buffer as `out`, not only an ndarray, and raises `ValueError` when `out` has the
   wrong size. It also fills a 2-D `out`, and a non-contiguous one that numpy can view as
@@ -98,9 +98,9 @@
   `encode` or `decode` overrides whose annotations do not fit the base signature, such as
   a narrower `buf` or `out`, or a return type that is not buffer-like. A subclass of one
   of numcodecs' own codecs that overrides `decode` with a single signature does not fit
-  the two overloads it inherits. mypy reports it when it is annotated; pyright also reports
-  an unannotated one for the codecs that decode to `bytes`, because it infers the return
-  type. Repeat the two overloads, or ignore the error. Passing a codec's
+  the two overloads it inherits. mypy reports it when it is annotated; for the codecs that
+  decode to `bytes`, pyright reports it too, annotated or not (it infers the return type).
+  Repeat the two overloads, or ignore the error. Passing a codec's
   `get_config()` to a parameter typed `dict[str, ...]` also needs `dict(...)`, because a
   TypedDict is not a `dict` to a type checker. At runtime every `get_config()` still
   returns a plain `dict`.

@@ -5,6 +5,10 @@ pairs `typing.assert_type`, which mypy and pyright check, with a runtime asserti
 pytest checks. An annotation that type checkers accept but the runtime contradicts makes one
 of the two fail.
 
+`test_decode_overloads.py` is the exception: its checks of every codec's `decode`
+overloads are static only (some of its calls pass an immutable `out`), and
+`tests/test_codec_contract.py` checks the same behavior at runtime.
+
 Run them from the repository root:
 
 ```bash
