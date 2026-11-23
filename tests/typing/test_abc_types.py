@@ -1,6 +1,7 @@
 """Static types of `numcodecs.abc`, checked against runtime behavior."""
 
-from collections.abc import Callable, Mapping
+import json
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Self, TypedDict, assert_type, overload
 
 import numpy as np
@@ -8,7 +9,7 @@ import numpy.typing as npt
 import pytest
 
 import numcodecs
-from numcodecs.abc import Codec, CodecProtocol
+from numcodecs.abc import Codec, CodecProtocol, JSONValue
 from numcodecs.compat import ensure_bytes, ndarray_copy
 from numcodecs.ndarray_like import BufferLike, OutT, WritableBufferLike
 
@@ -73,6 +74,32 @@ def test_codec_protocol_matches_structural_codecs() -> None:
     # every numcodecs codec satisfies it too, through its overloads
     concrete: CodecProtocol = numcodecs.Zlib()
     assert concrete.get_config()["id"] == "zlib"
+
+
+class _PropertyId:
+    """A structural codec whose `codec_id` is a read-only property."""
+
+    @property
+    def codec_id(self) -> str:
+        return "test-property-id"
+
+    def encode(self, buf: BufferLike, /) -> bytes:
+        return ensure_bytes(buf)
+
+    def decode(self, buf: BufferLike, /, out: Any = None) -> bytes:
+        return ensure_bytes(buf)
+
+    def get_config(self) -> dict[str, Any]:
+        return {"id": self.codec_id}
+
+    @classmethod
+    def from_config(cls, config: Any) -> Self:
+        return cls()
+
+
+def test_codec_protocol_matches_a_read_only_codec_id() -> None:
+    codec: CodecProtocol = _PropertyId()
+    assert codec.codec_id == "test-property-id"
 
 
 def _consume(codec: CodecProtocol, level: int) -> CodecProtocol:
@@ -154,6 +181,19 @@ class _AnyTyped(Codec):
         return cls()
 
 
+class _ZlibSubclass(numcodecs.Zlib):
+    """A known limit. A subclass of a concrete codec that overrides `decode` with one
+    plain signature does not fit the two overloads it inherits, so both type checkers
+    report the override. (Unannotated, pyright alone reports it, because it infers the
+    return type.) Repeating the overloads, as `_Identity` does, avoids it. The ignore
+    comments are checked, so this fails if the limit goes away."""
+
+    codec_id = "test-zlib-subclass"
+
+    def decode(self, buf: BufferLike, out: Any = None) -> bytes:  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+        return super().decode(buf)
+
+
 def test_subclasses() -> None:
     identity = _Identity()
     assert assert_type(identity.encode(b"abc"), bytes) == b"abc"
@@ -167,6 +207,8 @@ def test_subclasses() -> None:
     any_typed = _AnyTyped()
     assert any_typed.decode(any_typed.encode(b"abc")) == b"abc"
     assert_type(_AnyTyped.from_config({}), _AnyTyped)
+
+    assert _ZlibSubclass().decode(numcodecs.Zlib().encode(b"abc")) == b"abc"
 
 
 class _ZlibLikeConfig(TypedDict):
@@ -223,3 +265,41 @@ def test_decode_is_usable_as_a_plain_callable() -> None:
     codec = numcodecs.Zlib()
     enc = np.frombuffer(codec.encode(b"abc"), dtype="u1")
     assert _apply(codec.decode, enc) == b"abc"
+
+
+def _json(value: JSONValue) -> JSONValue:
+    return value
+
+
+def test_json_value_covers_every_json_kind() -> None:
+    """`JSONValue` takes each kind of JSON value, with tuples and other read-only
+    containers standing in for arrays and objects."""
+    pair: tuple[int, ...] = (1, 2)
+    read_only: Mapping[str, Sequence[float]] = {"a": [1.5]}
+    values: list[JSONValue] = [
+        _json(None),
+        _json(True),
+        _json(1),
+        _json(1.5),
+        _json("a"),
+        _json([1, "a", None]),
+        _json(pair),
+        _json({"a": {"b": [1.5]}}),
+        _json(read_only),
+    ]
+    assert json.loads(json.dumps(values)) == [
+        None,
+        True,
+        1,
+        1.5,
+        "a",
+        [1, "a", None],
+        [1, 2],
+        {"a": {"b": [1.5]}},
+        {"a": [1.5]},
+    ]
+    # a known hole: `bytes` is a `Sequence[int]` to type checkers, so it is accepted
+    with pytest.raises(TypeError):
+        json.dumps(_json(b"bytes"))
+    with pytest.raises(TypeError):
+        json.dumps(_json({1, 2}))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]

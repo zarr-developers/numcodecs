@@ -120,3 +120,24 @@ def test_codec_id_inherited_from_a_base_class_property_propagates():
 
     with pytest.raises(AttributeError, match="_name"):
         Child().get_config()
+
+
+def test_error_inside_getattribute_is_not_swallowed():
+    class Custom(NoId):
+        def __getattribute__(self, name):
+            if name == "codec_id":
+                raise AttributeError("boom")
+            return super().__getattribute__(name)
+
+    with pytest.raises(AttributeError, match="boom"):
+        Custom().get_config()
+    assert Custom() != Custom()
+
+
+def test_register_codec_propagates_an_error_inside_a_codec_id_descriptor():
+    with pytest.raises(AttributeError, match="_prefix"):
+        numcodecs.register_codec(DescriptorId)
+
+
+def test_abc_exports():
+    assert set(numcodecs.abc.__all__) == {"Codec", "CodecConfig", "CodecProtocol", "JSONValue"}

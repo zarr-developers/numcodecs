@@ -46,7 +46,8 @@ __all__ = [
 type JSONValue = int | float | bool | str | Sequence[JSONValue] | Mapping[str, JSONValue] | None
 """A JSON-serializable value. `Sequence` and `Mapping` rather than `list` and `dict`, so
 that tuples, TypedDicts and lists of narrower types count (the same definition as
-`zarr_metadata`'s `JSONValue`)."""
+`zarr_metadata`'s `JSONValue`). One consequence: `bytes` is a `Sequence[int]` to type
+checkers, so it is accepted although it is not JSON-serializable."""
 
 
 # `extra_items` (PEP 728) says that any further keys hold JSON values and are read-only. It
@@ -65,18 +66,22 @@ class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[c
 
 
 def _codec_id_or_none(codec: object) -> str | None:
-    """Return `codec.codec_id`, or None for a codec whose class never set one.
+    """Return the `codec_id` of a codec or codec class, or None if its class never set one.
 
     `Codec.codec_id` used to default to None on the class. It no longer does, but a codec
-    that never set it keeps reporting None where numcodecs itself reads the id. When the
-    codec's class (or one of its bases) does define `codec_id`, as a property or another
-    descriptor, an `AttributeError` raised while reading it is a bug in that codec and
-    propagates.
+    that never set it keeps reporting None where numcodecs itself reads the id.
+
+    None is returned only when the attribute is plainly absent. When the class (or one of
+    its bases) defines `codec_id`, as a property or another descriptor, or customizes
+    `__getattribute__`, an `AttributeError` raised while reading it is a bug in that codec
+    and propagates.
     """
     try:
         return codec.codec_id  # type: ignore[attr-defined, no-any-return]
     except AttributeError:
-        if any('codec_id' in vars(cls) for cls in type(codec).__mro__):
+        cls = codec if isinstance(codec, type) else type(codec)
+        custom_lookup = getattr(cls, '__getattribute__') is not object.__getattribute__  # noqa: B009
+        if custom_lookup or any('codec_id' in vars(base) for base in cls.__mro__):
             raise
         return None
 

@@ -10,7 +10,7 @@ from numcodecs.ndarray_like import DType, FlagsObj, NDArrayLike, is_ndarray_like
 
 
 class _MinimalDType:
-    """Has no `str`, which `DType` once required of type checkers only."""
+    """Has no `str`, which `DType` required for a while on `main`."""
 
     itemsize: int = 1
     name: str = "uint8"
@@ -25,7 +25,7 @@ class _MinimalFlags:
 
 class _Minimal:
     """Exactly the members `NDArrayLike` requires. In particular it has no `copy`, which
-    `NDArrayLike` once required of type checkers only."""
+    `NDArrayLike` required for a while on `main`."""
 
     dtype: _MinimalDType = _MinimalDType()
     shape: tuple[int, ...] = (3,)

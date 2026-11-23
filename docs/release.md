@@ -97,7 +97,10 @@
   override that assigns `super().get_config()` to a `dict`-typed variable, since the base
   method is typed as returning a `Mapping` (write `dict(super().get_config())`); and
   `encode` or `decode` overrides whose annotations do not fit the base signature, such as
-  a narrower `buf` or `out`, or a return type that is not buffer-like. Passing a codec's
+  a narrower `buf` or `out`, or a return type that is not buffer-like. A subclass of one
+  of numcodecs' own codecs that overrides `decode` with a single signature does not fit
+  the two overloads it inherits, and is reported even when it is unannotated (by pyright,
+  which infers the return type); repeat the two overloads, or ignore the error. Passing a codec's
   `get_config()` to a parameter typed `dict[str, ...]` also needs `dict(...)`, because a
   TypedDict is not a `dict` to a type checker. At runtime every `get_config()` still
   returns a plain `dict`.

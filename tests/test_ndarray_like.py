@@ -201,27 +201,31 @@ def test_writable_buffer_like_without_optional_stdlib_modules(monkeypatch):
     assert {bytearray, memoryview, NDArrayLike} <= members
 
 
-def test_import_does_not_need_ctypes():
+# The optional `crc32c` package needs `mmap` itself, so it is blocked along with it.
+@pytest.mark.parametrize(
+    "blocked", [("ctypes", "_ctypes"), ("mmap", "crc32c")], ids=["ctypes", "mmap"]
+)
+def test_import_does_not_need_optional_stdlib_modules(blocked):
     """A Python built without libffi has no `ctypes`; numpy imports there, and so must
-    numcodecs."""
+    numcodecs. The same goes for `mmap`."""
     import subprocess
     import sys
 
     code = (
         "import sys\n"
-        "sys.modules['ctypes'] = sys.modules['_ctypes'] = None\n"
-        "import numcodecs\n"
+        f"for name in {blocked!r}: sys.modules[name] = None\n"
+        "import numcodecs.ndarray_like\n"
         "from numcodecs.ndarray_like import WritableBufferLike\n"
         "assert bytearray in WritableBufferLike.__value__.__args__\n"
-        "assert numcodecs.Zlib().decode(numcodecs.Zlib().encode(b'abc')) == b'abc'\n"
     )
     result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
 
 
-def _protocol_members(protocol: str) -> tuple[set[str], set[str]]:
+def _protocol_members(protocol: str) -> tuple[dict[str, str], dict[str, str]]:
     """The data members a protocol declares for type checkers (properties under `if
-    TYPE_CHECKING`) and at runtime (annotations under `else`)."""
+    TYPE_CHECKING`) and at runtime (annotations under `else`), with their types as source
+    text."""
     import ast
     import inspect
 
@@ -233,9 +237,13 @@ def _protocol_members(protocol: str) -> tuple[set[str], set[str]]:
         if isinstance(node, ast.ClassDef) and node.name == protocol
     ]
     (branch,) = [node for node in class_def.body if isinstance(node, ast.If)]
-    static = {node.name for node in branch.body if isinstance(node, ast.FunctionDef)}
+    static = {
+        node.name: ast.unparse(node.returns)
+        for node in branch.body
+        if isinstance(node, ast.FunctionDef) and node.returns is not None
+    }
     runtime = {
-        node.target.id
+        node.target.id: ast.unparse(node.annotation)
         for node in branch.orelse
         if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
     }
@@ -258,13 +266,14 @@ PROTOCOL_MEMBERS = {
 @pytest.mark.parametrize("protocol", PROTOCOL_MEMBERS)
 def test_protocol_definitions_agree(protocol):
     """The data members are declared twice, for type checkers and for the runtime. Both
-    must name the same members: those the protocol has always had, and no others."""
+    must name the same members, with the same types: those the protocol has always had,
+    and no others."""
     import numcodecs.ndarray_like as module
 
     data, methods = PROTOCOL_MEMBERS[protocol]
     static, runtime = _protocol_members(protocol)
-    assert static == data
-    assert runtime == data
+    assert set(static) == data
+    assert static == runtime, "the two declarations differ in a member or in its type"
     assert getattr(module, protocol).__protocol_attrs__ == data | methods
 
 

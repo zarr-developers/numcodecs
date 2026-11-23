@@ -63,3 +63,19 @@ def test_configs_are_json_mappings() -> None:
     blosc_config = _json_mapping(Blosc().get_config())  # type: ignore[arg-type]
     for config in (zlib_config, blosc_config):
         assert _json_round_trip(config) == config
+
+
+class _ExtendedConfig(CodecConfig):
+    """A third-party configuration. Declaring a field narrower than `JSONValue` is only
+    allowed (by PEP 728, which pyright implements) because `CodecConfig`'s extra items
+    are read-only."""
+
+    level: int
+
+
+def test_undeclared_config_keys_are_json_values() -> None:
+    config: _ExtendedConfig = {"id": "x", "level": 1}
+    # pyright knows that a key the TypedDict does not declare holds a JSON value. mypy
+    # does not implement PEP 728 and says `object`.
+    assert assert_type(config.get("undeclared"), JSONValue) is None  # type: ignore[assert-type]
+    assert assert_type(config["level"], int) == 1

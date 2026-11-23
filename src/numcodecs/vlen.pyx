@@ -56,9 +56,10 @@ def check_out_param(out, n_items):
 def _store_decoded(out, out_flat):
     """Return `out`, holding the items that were decoded into `out_flat`.
 
-    `out_flat` is `check_out_param(out, ...)`, normally a flat view of `out`. When `out`
-    is not contiguous it cannot be flattened without a copy, so `out_flat` is a copy (in C
-    order) and the decoded items have to be copied back into `out`.
+    `out_flat` is `check_out_param(out, ...)`, normally a flat view of `out`. Most
+    non-contiguous layouts cannot be flattened without a copy (numpy manages it only when
+    the strides are uniform); `out_flat` is then a copy in C order, and the decoded items
+    have to be copied back into `out`.
     """
     if out.size and out_flat is not out and not np.may_share_memory(out_flat, out):
         out[...] = out_flat.reshape(out.shape)

@@ -10,13 +10,18 @@ These tests pin down the contract that the type annotations on `Codec` describe:
 
 from __future__ import annotations
 
+import collections.abc
 import json
+import types
+import typing
 import warnings
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import pytest
+import typing_extensions
 
 import numcodecs
 from numcodecs import pickles
@@ -280,10 +285,10 @@ def test_jenkins_decode_fills_a_non_contiguous_out_of_bytes(out_kind: str) -> No
 
 VLEN_NON_CONTIGUOUS_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
     "every other row": lambda base: base[::2],
-    "every other column": lambda base: base[:, ::2],
+    "every other row and column": lambda base: base[::2, ::2],
     "rows reversed": lambda base: base[::-1],
     "transposed and strided": lambda base: base.T[::2],
-    "3-D, strided on the last axis": lambda base: base.reshape(2, 3, 4)[:, :, ::2],
+    "3-D, strided on the middle axis": lambda base: base.reshape(2, 4, 3)[:, ::2],
 }
 
 
@@ -297,8 +302,8 @@ def test_vlen_decode_fills_a_non_contiguous_out(codec_id: str, layout: str) -> N
     stale = object()
     base = np.full((6, 4), stale, dtype=object)
     out = VLEN_NON_CONTIGUOUS_OUTS[layout](base)
-    assert not out.flags.c_contiguous
-    assert not out.flags.f_contiguous
+    # numpy cannot flatten any of these layouts without a copy
+    assert not np.shares_memory(out.reshape(-1, order="A"), out)
     data = np.resize(CASES[codec_id].data, out.size)
 
     assert codec.decode(codec.encode(data), out=out) is out
@@ -334,6 +339,72 @@ def test_config_typeddicts_keep_their_required_keys() -> None:
     assert ZlibConfig.__required_keys__ == {"id", "level"}
     assert Checksum32Config.__required_keys__ == {"id"}
     assert Checksum32Config.__optional_keys__ == {"location"}
+
+
+def _conforms(value: Any, annotation: Any) -> bool:
+    """Whether `value` has the type `annotation`, for the annotations the configuration
+    TypedDicts use. Stricter than a type checker in one way: `bool` does not pass for
+    `int` or `float`. An annotation it does not know raises, so that it gets added."""
+    if annotation is Any:
+        return True
+    if isinstance(annotation, typing.TypeAliasType):
+        return _conforms(value, annotation.__value__)
+    if annotation is None or annotation is type(None):
+        return value is None
+    if annotation is float:
+        return type(value) in (int, float)
+    if annotation in (int, str, bool):
+        return type(value) is annotation
+    origin, args = typing.get_origin(annotation), typing.get_args(annotation)
+    if origin in (typing.Union, types.UnionType):
+        return any(_conforms(value, arg) for arg in args)
+    if origin is typing.Literal:
+        return any(type(value) is type(arg) and value == arg for arg in args)
+    if origin is list:
+        return type(value) is list and all(_conforms(item, args[0]) for item in value)
+    if origin is collections.abc.Sequence:
+        return type(value) in (list, tuple) and all(_conforms(item, args[0]) for item in value)
+    if origin is tuple:
+        if len(args) == 2 and args[1] is Ellipsis:
+            return type(value) is tuple and all(_conforms(item, args[0]) for item in value)
+        return (
+            type(value) is tuple
+            and len(value) == len(args)
+            and all(_conforms(item, arg) for item, arg in zip(value, args, strict=True))
+        )
+    if origin in (dict, collections.abc.Mapping):
+        return type(value) is dict and all(
+            _conforms(k, args[0]) and _conforms(v, args[1]) for k, v in value.items()
+        )
+    raise NotImplementedError(f"cannot check {annotation!r}")
+
+
+@pytest.mark.parametrize("codec_id", _params(set()))
+def test_config_has_the_declared_types(codec_id: str) -> None:
+    """`get_config()` returns what its TypedDict declares: the same keys, and values of
+    the declared types. The codecs build their configuration untyped and `cast` it, so no
+    type checker verifies this. (Codecs compiled from Cython carry no annotations at
+    runtime; `test_stubs.py` checks those against their stubs.)"""
+    codec = _codec(codec_id)
+    declared: Any = typing.get_type_hints(type(codec).get_config).get("return")
+    if not typing_extensions.is_typeddict(declared):
+        assert type(codec).__module__ in {
+            "numcodecs.blosc",
+            "numcodecs.zstd",
+            "numcodecs.lz4",
+            "numcodecs.vlen",
+            "numcodecs.fletcher32",
+        }
+        return
+    config = codec.get_config()
+    fields = typing.get_type_hints(declared)
+    assert declared.__required_keys__ <= set(config) <= set(fields)
+    wrong = {
+        key: f"declared {fields[key]}, is {value!r}"
+        for key, value in config.items()
+        if not _conforms(value, fields[key])
+    }
+    assert not wrong
 
 
 @pytest.mark.parametrize("codec_id", _params(set()))

@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from importlib.metadata import EntryPoint, entry_points
 from typing import Any
 
-from numcodecs.abc import Codec
+from numcodecs.abc import Codec, _codec_id_or_none
 from numcodecs.errors import UnknownCodecError
 
 logger: logging.Logger = logging.getLogger("numcodecs")
@@ -82,7 +82,7 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
 
     """
     if codec_id is None:
-        codec_id = getattr(cls, "codec_id", None)
+        codec_id = _codec_id_or_none(cls)
     if codec_id is None:
         raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
     logger.debug("Registering codec '%s'", codec_id)
