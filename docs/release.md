@@ -45,8 +45,8 @@
   codecs, and every codec built on `numcodecs.compat.ndarray_copy` returned a flattened view
   of `out` instead, or a new ndarray when `out` was a `bytearray`. For a contiguous `out`
   the decoded bytes were already written into it, and only the returned object changes.
-  The VLen codecs now also fill a non-contiguous `out`; for most such layouts they used
-  to decode into a copy and leave `out` untouched. If such an `out` is read-only they now raise.
+  The VLen codecs now also fill a non-contiguous `out`; for layouts that numpy cannot
+  flatten without a copy they used to decode into that copy and leave `out` untouched. If such an `out` is read-only they now raise.
 * `JenkinsLookup3.decode` accepts a `bytearray`, a `memoryview` or another contiguous
   writable buffer as `out`, not only an ndarray, and raises `ValueError` when `out` has the
   wrong size. It also fills a 2-D `out`, and a non-contiguous one that numpy can view as

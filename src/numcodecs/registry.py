@@ -82,14 +82,10 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
     previously registered under the same codec identifier, if present.
 
     """
-    if codec_id is None:
-        try:
-            codec_id = cls.codec_id
-        except AttributeError:
-            if inspect.getattr_static(cls, "codec_id", None) is not None:
-                # `codec_id` is defined, and reading it failed: a bug in that codec
-                raise
-            codec_id = None
+    # Read `cls.codec_id` only when something defines it, so that an error raised while
+    # reading it (inside a descriptor, say) surfaces instead of looking like a missing id.
+    if codec_id is None and inspect.getattr_static(cls, "codec_id", None) is not None:
+        codec_id = cls.codec_id
     if codec_id is None:
         raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
     logger.debug("Registering codec '%s'", codec_id)

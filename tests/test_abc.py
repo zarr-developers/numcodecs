@@ -98,3 +98,35 @@ def test_register_codec_propagates_an_error_inside_a_metaclass_codec_id():
 
     with pytest.raises(AttributeError, match="_prefix"):
         numcodecs.register_codec(MetaProperty)
+
+
+def test_checksum_codec_names_its_id_when_reporting_corruption():
+    with pytest.raises(RuntimeError, match="Stored and computed crc32 checksum do not match"):
+        numcodecs.CRC32().decode(bytes(8) + b"x")
+
+
+def test_checksum_codec_propagates_an_error_inside_a_codec_id_property():
+    """The class defines `codec_id`; that reading it fails is a bug in the codec."""
+
+    class MyChecksum(numcodecs.checksum32.Checksum32):
+        @property
+        def codec_id(self):
+            return self._name.lower()
+
+        @staticmethod
+        def checksum(data, value=0):
+            return 1
+
+    with pytest.raises(AttributeError, match="_name"):
+        MyChecksum().decode(bytes(8))
+
+
+def test_register_codec_refuses_an_id_of_none():
+    """A class that sets `codec_id = None` (the old default, spelled out) has no id."""
+
+    class ExplicitNone(NoId):
+        codec_id = None
+
+    with pytest.raises(ValueError, match="has no codec_id and none was given"):
+        numcodecs.register_codec(ExplicitNone)
+    assert None not in numcodecs.registry.codec_registry

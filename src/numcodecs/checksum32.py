@@ -1,5 +1,6 @@
 import abc
 import importlib.util
+import inspect
 import struct
 import warnings
 import zlib
@@ -109,7 +110,10 @@ class Checksum32(Codec, abc.ABC):
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
             # a subclass that set no codec_id still has to report corrupt data
-            name = getattr(self, "codec_id", type(self).__name__)
+            if inspect.getattr_static(self, "codec_id", None) is None:
+                name = type(self).__name__
+            else:
+                name = self.codec_id
             raise RuntimeError(
                 f"Stored and computed {name} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
@@ -248,7 +252,7 @@ class JenkinsLookup3(Checksum32):
                 raise ValueError(
                     f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
                 )
-            # the view of a non-contiguous `out` is not flat; fill it in C order
+            # the view of a non-contiguous `out` need not be flat; fill it in C order
             out_view[...] = b[:-4].reshape(out_view.shape)
             return out
         return memoryview(b[:-4])
