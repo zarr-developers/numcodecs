@@ -87,17 +87,19 @@
   `from_config` returns `Self`. Previously pyright inferred that `encode` and `decode`
   return `None`.
 * Add the structural protocol `numcodecs.abc.CodecProtocol` for code that accepts any
-  object implementing the codec interface.
+  object implementing the codec interface, whether or not it subclasses `Codec`.
 * numcodecs now ships a `py.typed` marker (PEP 561), so type checkers use its annotations
   and stubs instead of treating the package as untyped. Downstream projects can drop
   `ignore_missing_imports` for numcodecs. Third-party codecs that subclass `Codec` are
-  type-checked against it for the first time, which may surface two one-line fixes: a
-  `# type: ignore[misc]` on `class X(Codec)` that is no longer needed, and a
-  `get_config` override that assigns `super().get_config()` to a `dict`-typed variable,
-  since the base method is typed as returning a `Mapping`: write
-  `dict(super().get_config())`. The same applies to passing a codec's `get_config()` to
-  a parameter typed `dict[str, ...]`, because a TypedDict is not a `dict` to a type
-  checker. At runtime every `get_config()` still returns a plain `dict`.
+  type-checked against it for the first time. That can surface:
+  a `# type: ignore[misc]` on `class X(Codec)` that is no longer needed; a `get_config`
+  override that assigns `super().get_config()` to a `dict`-typed variable, since the base
+  method is typed as returning a `Mapping` (write `dict(super().get_config())`); and
+  `encode` or `decode` overrides whose annotations do not fit the base signature, such as
+  a narrower `buf` or `out`, or a return type that is not buffer-like. Passing a codec's
+  `get_config()` to a parameter typed `dict[str, ...]` also needs `dict(...)`, because a
+  TypedDict is not a `dict` to a type checker. At runtime every `get_config()` still
+  returns a plain `dict`.
 * Annotate the concrete codecs. Each `get_config` returns a TypedDict naming the codec's
   parameters (`ZlibConfig`, `BloscConfig`, ...), all subclasses of
   `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as

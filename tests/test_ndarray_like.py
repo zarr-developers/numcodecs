@@ -131,3 +131,51 @@ def test_protocol_without_annotations_using_the_cached_metaclass():
     assert isinstance(Impl(), HasFoo)
     assert not isinstance(object(), HasFoo)
     assert isinstance(NDArrayLike._instancecheck_cache, dict)
+
+
+def test_writable_buffer_like_definitions_agree():
+    """`WritableBufferLike` is defined twice, for type checkers and for the runtime. Both
+    must name the same types, and the runtime one must be evaluable."""
+    import array
+    import ast
+    import ctypes
+    import inspect
+    import mmap
+    import pickle
+
+    import numpy as np
+
+    import numcodecs.ndarray_like as module
+
+    assert set(module.WritableBufferLike.__value__.__args__) == {
+        bytearray,
+        memoryview,
+        array.array,
+        mmap.mmap,
+        np.ndarray,
+        ctypes.Array,
+        pickle.PickleBuffer,
+        NDArrayLike,
+    }
+
+    def members(alias: ast.TypeAlias) -> set[str]:
+        """The union members of a `type X = A | B[...] | ...` statement, unsubscripted."""
+        names = set()
+        todo = [alias.value]
+        while todo:
+            node = todo.pop()
+            if isinstance(node, ast.BinOp):
+                todo += [node.left, node.right]
+            elif isinstance(node, ast.Subscript):
+                names.add(ast.unparse(node.value))
+            else:
+                names.add(ast.unparse(node))
+        return names
+
+    definitions = [
+        node
+        for node in ast.walk(ast.parse(inspect.getsource(module)))
+        if isinstance(node, ast.TypeAlias) and node.name.id == "WritableBufferLike"
+    ]
+    assert len(definitions) == 2
+    assert members(definitions[0]) == members(definitions[1])

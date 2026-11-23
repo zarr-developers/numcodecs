@@ -200,10 +200,10 @@ class CodecProtocol(Protocol):
 
     def encode(self, buf: BufferLike, /) -> BufferLike: ...  # pragma: no cover
 
-    @overload
-    def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
-    @overload
-    def decode(self, buf: BufferLike, /, out: WritableBufferLike) -> BufferLike: ...
+    # `out: Any`, unlike `Codec.decode`: a protocol for consumers should match codecs
+    # however narrowly they type `out` (an ndarray only, say), and stay a plain method
+    # with a real runtime signature.
+    def decode(self, buf: BufferLike, /, out: Any = None) -> BufferLike: ...  # pragma: no cover
 
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 

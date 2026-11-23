@@ -47,6 +47,34 @@ def test_codec_satisfies_codec_protocol() -> None:
     assert codec.codec_id == "zlib"
 
 
+class _Structural:
+    """Implements the codec interface without subclassing `Codec`, and types `out` and
+    `config` more narrowly than `Codec` does."""
+
+    codec_id: str = "test-structural"
+
+    def encode(self, buf: BufferLike, /) -> bytes:
+        return ensure_bytes(buf)
+
+    def decode(self, buf: BufferLike, /, out: npt.NDArray[Any] | None = None) -> npt.NDArray[Any]:
+        return np.frombuffer(ensure_bytes(buf), dtype="u1")
+
+    def get_config(self) -> dict[str, Any]:
+        return {"id": self.codec_id}
+
+    @classmethod
+    def from_config(cls, config: dict[str, Any]) -> Self:
+        return cls()
+
+
+def test_codec_protocol_matches_structural_codecs() -> None:
+    codec: CodecProtocol = _Structural()
+    assert ensure_bytes(codec.decode(codec.encode(b"abc"))) == b"abc"
+    # every numcodecs codec satisfies it too, through its overloads
+    concrete: CodecProtocol = numcodecs.Zlib()
+    assert concrete.get_config()["id"] == "zlib"
+
+
 class _Identity(Codec):
     """A third-party codec typed as precisely as numcodecs' own."""
 
