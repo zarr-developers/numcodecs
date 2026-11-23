@@ -69,8 +69,8 @@
   `numcodecs.ndarray_like.BufferLike` names "a buffer or an ndarray-like".
 * `numcodecs` defines `__all__`, so type checkers treat its re-exported codec classes as
   public. `from numcodecs import *` now imports only those names.
-* `register_codec` raises `ValueError` for a class without a `codec_id` when no id is
-  given, instead of registering it under `None`.
+* `register_codec` raises `ValueError` for a class without a `codec_id`, or whose
+  `codec_id` is `None`, when no id is given, instead of registering it under `None`.
 * `Codec.codec_id` no longer defaults to `None`: an identifier is a string. Abstract
   intermediate classes such as `Checksum32` leave it unset, and every concrete codec sets
   it. A third-party codec class that never set `codec_id` used to work with the id `None`;

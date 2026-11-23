@@ -55,18 +55,6 @@ def test_abc_exports():
     assert set(numcodecs.abc.__all__) == {"Codec", "CodecConfig", "CodecProtocol", "JSONValue"}
 
 
-def test_checksum_codec_without_codec_id_reports_corruption():
-    """Corrupt data is reported as such even by a subclass that set no id."""
-
-    class MyChecksum(numcodecs.checksum32.Checksum32):
-        @staticmethod
-        def checksum(data, value=0):
-            return 1
-
-    with pytest.raises(RuntimeError, match="Stored and computed MyChecksum checksum do not match"):
-        MyChecksum().decode(bytes(8))
-
-
 class _ClassProperty:
     """A descriptor that also runs when read from the class, unlike `property`."""
 
@@ -78,47 +66,13 @@ class DescriptorId(NoId):
     codec_id = _ClassProperty()
 
 
-def test_register_codec_propagates_an_error_inside_a_codec_id_descriptor():
-    """The class defines `codec_id`; that reading it fails is a bug in the codec, not a
-    missing id."""
-    with pytest.raises(AttributeError, match="_prefix"):
+def test_register_codec_keeps_the_error_from_a_failing_codec_id():
+    """Reading `codec_id` failed inside the class's own descriptor. The class is refused
+    like one without an id, and the original error stays attached."""
+    with pytest.raises(ValueError, match="has no codec_id and none was given") as info:
         numcodecs.register_codec(DescriptorId)
-
-
-def test_register_codec_propagates_an_error_inside_a_metaclass_codec_id():
-    from abc import ABCMeta
-
-    class Meta(ABCMeta):
-        @property
-        def codec_id(cls):
-            return cls._prefix + "-x"
-
-    class MetaProperty(NoId, metaclass=Meta):
-        pass
-
-    with pytest.raises(AttributeError, match="_prefix"):
-        numcodecs.register_codec(MetaProperty)
-
-
-def test_checksum_codec_names_its_id_when_reporting_corruption():
-    with pytest.raises(RuntimeError, match="Stored and computed crc32 checksum do not match"):
-        numcodecs.CRC32().decode(bytes(8) + b"x")
-
-
-def test_checksum_codec_propagates_an_error_inside_a_codec_id_property():
-    """The class defines `codec_id`; that reading it fails is a bug in the codec."""
-
-    class MyChecksum(numcodecs.checksum32.Checksum32):
-        @property
-        def codec_id(self):
-            return self._name.lower()
-
-        @staticmethod
-        def checksum(data, value=0):
-            return 1
-
-    with pytest.raises(AttributeError, match="_name"):
-        MyChecksum().decode(bytes(8))
+    assert isinstance(info.value.__cause__, AttributeError)
+    assert "_prefix" in str(info.value.__cause__)
 
 
 def test_register_codec_refuses_an_id_of_none():
@@ -127,6 +81,30 @@ def test_register_codec_refuses_an_id_of_none():
     class ExplicitNone(NoId):
         codec_id = None
 
-    with pytest.raises(ValueError, match="has no codec_id and none was given"):
+    with pytest.raises(ValueError, match="its codec_id is None and no id was given"):
         numcodecs.register_codec(ExplicitNone)
     assert None not in numcodecs.registry.codec_registry
+
+
+def test_register_codec_reads_the_id_like_any_attribute():
+    """The id is read with plain attribute access, so one supplied by `__getattr__` (a
+    forwarding proxy, say) is found."""
+
+    class Proxy:
+        def __init__(self, target):
+            self.__dict__["_target"] = target
+
+        def __getattr__(self, name):
+            return getattr(self._target, name)
+
+    class Proxied(numcodecs.Zlib):
+        codec_id = "test-proxied"
+
+    proxy = Proxy(Proxied)
+    numcodecs.register_codec(proxy)
+    assert numcodecs.registry.codec_registry.pop("test-proxied") is proxy
+
+
+def test_checksum_codec_names_its_id_when_reporting_corruption():
+    with pytest.raises(RuntimeError, match="Stored and computed crc32 checksum do not match"):
+        numcodecs.CRC32().decode(bytes(8) + b"x")

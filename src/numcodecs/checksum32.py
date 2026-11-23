@@ -1,6 +1,5 @@
 import abc
 import importlib.util
-import inspect
 import struct
 import warnings
 import zlib
@@ -109,13 +108,8 @@ class Checksum32(Codec, abc.ABC):
         expect = checksum_view.view('<u4')[0]
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
-            # a subclass that set no codec_id still has to report corrupt data
-            if inspect.getattr_static(self, "codec_id", None) is None:
-                name = type(self).__name__
-            else:
-                name = self.codec_id
             raise RuntimeError(
-                f"Stored and computed {name} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 

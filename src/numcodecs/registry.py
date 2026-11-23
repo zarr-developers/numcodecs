@@ -1,7 +1,6 @@
 """The registry module provides some simple convenience functions to enable
 applications to dynamically register and look-up codec classes."""
 
-import inspect
 import logging
 import warnings
 from collections.abc import Mapping
@@ -82,11 +81,16 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
     previously registered under the same codec identifier, if present.
 
     """
-    # Read `cls.codec_id` only when something defines it, so that an error raised while
-    # reading it (inside a descriptor, say) surfaces instead of looking like a missing id.
-    if codec_id is None and inspect.getattr_static(cls, "codec_id", None) is not None:
-        codec_id = cls.codec_id
     if codec_id is None:
-        raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
+        try:
+            codec_id = cls.codec_id
+        except AttributeError as e:
+            # chained, so an error raised while reading a `codec_id` that the class does
+            # define (inside a descriptor, say) stays visible
+            raise ValueError(
+                f"cannot register {cls!r}: it has no codec_id and none was given"
+            ) from e
+    if codec_id is None:
+        raise ValueError(f"cannot register {cls!r}: its codec_id is None and no id was given")
     logger.debug("Registering codec '%s'", codec_id)
     codec_registry[codec_id] = cls
