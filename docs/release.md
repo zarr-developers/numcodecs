@@ -92,7 +92,10 @@
   type-checked against it for the first time, which may surface two one-line fixes: a
   `# type: ignore[misc]` on `class X(Codec)` that is no longer needed, and a
   `get_config` override that assigns `super().get_config()` to a `dict`-typed variable,
-  since the base method is typed as returning a `Mapping`.
+  since the base method is typed as returning a `Mapping`: write
+  `dict(super().get_config())`. The same applies to passing a codec's `get_config()` to
+  a parameter typed `dict[str, ...]`, because a TypedDict is not a `dict` to a type
+  checker. At runtime every `get_config()` still returns a plain `dict`.
 * Annotate the concrete codecs. Each `get_config` returns a TypedDict naming the codec's
   parameters (`ZlibConfig`, `BloscConfig`, ...), all subclasses of
   `numcodecs.abc.CodecConfig`, which carries the `id` and declares any further keys as
