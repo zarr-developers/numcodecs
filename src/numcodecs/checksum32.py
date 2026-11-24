@@ -108,8 +108,11 @@ class Checksum32(Codec, abc.ABC):
         expect = checksum_view.view('<u4')[0]
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
+            # Reporting corrupt data comes first: a subclass that set no `codec_id` is
+            # named by its class instead of failing here on the missing attribute.
+            name = getattr(self, 'codec_id', type(self).__name__)
             raise RuntimeError(
-                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {name} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 
@@ -237,18 +240,12 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out_arr = ensure_ndarray(out)
-            if out_arr.flags.c_contiguous or out_arr.flags.f_contiguous:
-                # flattening contiguous memory never copies, so this view writes to `out`
-                out_arr = out_arr.reshape(-1, order="A")
-            out_view = out_arr.view("uint8")
-            if out_view.nbytes != b.nbytes - 4:
+            out_nbytes = ensure_ndarray(out).nbytes
+            if out_nbytes != b.nbytes - 4:
                 raise ValueError(
-                    f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
+                    f"out has {out_nbytes} bytes, but the decoded data has {b.nbytes - 4}"
                 )
-            # the view of a non-contiguous `out` need not be flat; fill it in C order
-            out_view[...] = b[:-4].reshape(out_view.shape)
-            return out
+            return ndarray_copy(b[:-4], out)
         return memoryview(b[:-4])
 
 

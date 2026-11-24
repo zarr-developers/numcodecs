@@ -15,4 +15,5 @@ def test_ci_tests_the_declared_typing_extensions_minimum():
         pytest.skip("not running from a source checkout")
     (declared,) = re.findall(r'"typing_extensions>=([0-9.]+)"', pyproject.read_text())
     (tested,) = re.findall(r'"typing_extensions==([0-9.]+)"', workflow.read_text())
+    assert "-c min-constraints.txt" in workflow.read_text()
     assert tested == declared or tested == f"{declared}.0"

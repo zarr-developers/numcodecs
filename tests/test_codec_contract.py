@@ -217,19 +217,13 @@ NEEDS_CONTIGUOUS_OUT = frozenset(
 # Codecs that copy with `np.copyto(out, decoded)`, so `out` must have the decoded shape
 # (1-D for the case data used here).
 NEEDS_DECODED_SHAPE_OUT = frozenset({"json2", "msgpack2", "pickle"})
-# Codecs that assign bytes through a `uint8` view of `out`. numpy can take that view of a
-# non-contiguous array only when its items are one byte wide or its last axis is
-# contiguous ("strided-2d" skips rows, so its last axis is).
-NEEDS_UINT8_VIEW_OF_OUT = frozenset({"jenkins_lookup3"})
 
 
-def _refuses(codec_id: str, out_kind: str, itemsize: int) -> bool:
+def _refuses(codec_id: str, out_kind: str) -> bool:
     """Whether `codec_id` is expected to refuse an `out` of this kind. Every codec not
     named above must fill every kind of `out`."""
     if codec_id in NEEDS_CONTIGUOUS_OUT:
         return out_kind.startswith("strided")
-    if codec_id in NEEDS_UINT8_VIEW_OF_OUT:
-        return out_kind == "strided-1d" and itemsize != 1
     if codec_id in NEEDS_DECODED_SHAPE_OUT:
         return out_kind != "strided-1d"
     return False
@@ -250,7 +244,7 @@ def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
     out[...] = sentinel if case.is_object else np.zeros((), dtype=case.data.dtype)
     untouched = out.copy()
 
-    if _refuses(codec_id, out_kind, case.data.dtype.itemsize):
+    if _refuses(codec_id, out_kind):
         with pytest.raises(ValueError):
             codec.decode(enc, out=out)
         if case.is_object:
@@ -269,18 +263,6 @@ def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
         assert all(np.array_equal(a, b) for a, b in zip(flat, expected.ravel(), strict=True))
     else:
         assert flat.tobytes() == expected.tobytes()
-
-
-@pytest.mark.parametrize("out_kind", ["strided-1d", "strided-2d"])
-def test_jenkins_decode_fills_a_non_contiguous_out_of_bytes(out_kind: str) -> None:
-    """The case data above is wider than one byte. With one-byte items a non-contiguous
-    `out` is filled, in logical (C) order."""
-    codec = numcodecs.JenkinsLookup3()
-    data = np.arange(8, dtype="u1")
-    out = AWKWARD_OUTS[out_kind](data)
-    out[...] = 255
-    assert codec.decode(codec.encode(data), out=out) is out
-    assert out.ravel().tolist() == data.tolist()
 
 
 VLEN_NON_CONTIGUOUS_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {

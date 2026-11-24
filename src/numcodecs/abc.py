@@ -163,10 +163,15 @@ class Codec(ABC):
 
     def __eq__(self, other: object) -> bool:
         # override in sub-class if need special equality comparison
-        try:
-            return bool(self.get_config() == other.get_config())  # type: ignore[attr-defined]
-        except AttributeError:
+
+        # Only an `other` without `get_config` is "not a codec, so not equal". An error
+        # raised by either `get_config` (a codec class that set no `codec_id`, say)
+        # propagates: a codec that silently equals nothing, itself included, is harder
+        # to diagnose.
+        other_get_config = getattr(other, 'get_config', None)
+        if other_get_config is None:
             return False
+        return bool(self.get_config() == other_get_config())
 
     def __repr__(self) -> str:
         # override in sub-class if need special representation

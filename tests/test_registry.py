@@ -77,12 +77,10 @@ def test_register_codec_without_id():
         numcodecs.register_codec(NoId)
 
 
-def test_get_codec_non_string_id(monkeypatch):
-    """Ids are strings: the annotations say so, and type checkers reject anything else.
-    This only checks that `get_codec` looks up whatever hashable id a registry holds,
-    without failing on one that is not a string."""
-    monkeypatch.setitem(numcodecs.registry.codec_registry, 7, numcodecs.Zlib)
-    assert get_codec({"id": 7, "level": 3}) == numcodecs.Zlib(level=3)
+def test_get_codec_non_string_id():
+    """Ids are strings, so no other id names a codec."""
+    with pytest.raises(UnknownCodecError):
+        get_codec({"id": 7})
 
 
 def test_register_codec_only_refuses_a_missing_id(monkeypatch):

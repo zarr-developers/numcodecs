@@ -32,17 +32,30 @@ def test_codec_id_has_no_default():
 
 @pytest.mark.parametrize("cls", [NoId, _PassThrough])
 def test_codec_without_codec_id(cls):
-    """A codec class that never set `codec_id` is incomplete: its id cannot be read, it
-    has no configuration, it equals nothing, and it cannot be registered without an id."""
+    """A codec class that never set `codec_id` is incomplete, and says so: its id cannot
+    be read, it has no configuration, comparing it raises instead of answering "not
+    equal", and it cannot be registered without an id."""
     codec = cls()
     with pytest.raises(AttributeError, match="codec_id"):
         codec.codec_id  # noqa: B018
     with pytest.raises(AttributeError, match="codec_id"):
         codec.get_config()
-    assert codec != cls()
+    with pytest.raises(AttributeError, match="codec_id"):
+        codec == codec  # noqa: B015
+    with pytest.raises(AttributeError, match="codec_id"):
+        numcodecs.Zlib() == codec  # noqa: B015
     assert repr(NoId()) == "NoId()"
     with pytest.raises(ValueError, match="has no codec_id and none was given"):
         numcodecs.register_codec(cls)
+
+
+def test_codec_equality():
+    assert numcodecs.Zlib(1) == numcodecs.Zlib(1)
+    assert numcodecs.Zlib(1) != numcodecs.Zlib(2)
+    assert numcodecs.Zlib(1) != numcodecs.GZip(1)
+    # anything without `get_config` is not a codec, and not equal
+    assert numcodecs.Zlib(1) != {"id": "zlib", "level": 1}
+    assert numcodecs.Zlib(1) != None  # noqa: E711
 
 
 def test_star_imports_do_not_shadow_the_json_codec():
@@ -110,16 +123,16 @@ def test_checksum_codec_names_its_id_when_reporting_corruption():
         numcodecs.CRC32().decode(bytes(8) + b"x")
 
 
-def test_checksum_codec_without_codec_id_is_not_special_cased():
-    """Like any codec without an id, it is incomplete: the corrupt-data message reads
-    `codec_id` like any attribute, and no stand-in name is made up."""
+def test_checksum_codec_without_codec_id_reports_corruption():
+    """Corrupt data is reported as such (code catching `RuntimeError` relies on it), even
+    by a subclass that set no id; the message names the class."""
 
     class MyChecksum(numcodecs.checksum32.Checksum32):
         @staticmethod
         def checksum(data, value=0):
             return 1
 
-    with pytest.raises(AttributeError, match="codec_id"):
+    with pytest.raises(RuntimeError, match="Stored and computed MyChecksum checksum do not"):
         MyChecksum().decode(bytes(8))
 
 

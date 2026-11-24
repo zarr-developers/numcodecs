@@ -154,8 +154,9 @@ jobs:
 
       - name: Install numcodecs with the minimum typing_extensions
         run: |
-          python -m pip install -v ".[test,msgpack]"
-          python -m pip install "typing_extensions==4.14.0"
+          # a constraint, so that a dependency needing a newer version fails the install
+          echo "typing_extensions==4.14.0" > min-constraints.txt
+          python -m pip install -v -c min-constraints.txt ".[test,msgpack]"
 
       - name: List installed packages
         run: python -m pip list
