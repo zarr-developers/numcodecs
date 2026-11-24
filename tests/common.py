@@ -28,15 +28,15 @@ greetings = [
 ]
 
 
-def compare_arrays(arr, res, precision=None):
+def compare_arrays(arr, res, precision=None, order='A'):
     # ensure numpy array with matching dtype
     res = ensure_ndarray(res).view(arr.dtype)
 
-    # convert to correct shape
-    if arr.flags.f_contiguous:
-        order = 'F'
-    else:
-        order = 'C'
+    # convert to correct shape; 'A' keeps the historical behavior of matching
+    # the original array's memory layout, while 'C' expects the decoded data
+    # in logical (C) order (see issue #850)
+    if order == 'A':
+        order = 'F' if arr.flags.f_contiguous else 'C'
     res = res.reshape(arr.shape, order=order)
 
     # exact compare
@@ -48,7 +48,7 @@ def compare_arrays(arr, res, precision=None):
         assert_array_almost_equal(arr, res, decimal=precision)
 
 
-def check_encode_decode(arr, codec, precision=None):
+def check_encode_decode(arr, codec, precision=None, order='A'):
     # N.B., watch out here with blosc compressor, if the itemsize of
     # the source buffer is different then the results of encoding
     # (i.e., compression) may be different. Hence we *do not* require that
@@ -61,25 +61,25 @@ def check_encode_decode(arr, codec, precision=None):
     # test encoding of numpy array
     enc = codec.encode(arr)
     dec = codec.decode(enc)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test encoding of bytes
-    buf = arr.tobytes(order='A')
+    buf = arr.tobytes(order=order)
     enc = codec.encode(buf)
     dec = codec.decode(enc)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test encoding of bytearray
-    buf = bytearray(arr.tobytes(order='A'))
+    buf = bytearray(arr.tobytes(order=order))
     enc = codec.encode(buf)
     dec = codec.decode(enc)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test encoding of array.array
-    buf = array.array('b', arr.tobytes(order='A'))
+    buf = array.array('b', arr.tobytes(order=order))
     enc = codec.encode(buf)
     dec = codec.decode(enc)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # decoding should support any object exporting the buffer protocol,
 
@@ -88,38 +88,38 @@ def check_encode_decode(arr, codec, precision=None):
 
     # test decoding of raw bytes
     dec = codec.decode(enc_bytes)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test decoding of bytearray
     dec = codec.decode(bytearray(enc_bytes))
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test decoding of array.array
     buf = array.array('b', enc_bytes)
     dec = codec.decode(buf)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test decoding of numpy array
     buf = np.frombuffer(enc_bytes, dtype='u1')
     dec = codec.decode(buf)
-    compare_arrays(arr, dec, precision=precision)
+    compare_arrays(arr, dec, precision=precision, order=order)
 
     # test decoding directly into numpy array
     out = np.empty_like(arr)
     codec.decode(enc_bytes, out=out)
-    compare_arrays(arr, out, precision=precision)
+    compare_arrays(arr, out, precision=precision, order=order)
 
     # test decoding directly into bytearray
     out = bytearray(arr.nbytes)
     codec.decode(enc_bytes, out=out)
     # noinspection PyTypeChecker
-    compare_arrays(arr, out, precision=precision)
+    compare_arrays(arr, out, precision=precision, order=order)
 
 
-def assert_array_items_equal(res, arr):
+def assert_array_items_equal(res, arr, order='A'):
     assert isinstance(res, np.ndarray)
-    res = res.reshape(-1, order='A')
-    arr = arr.reshape(-1, order='A')
+    res = res.reshape(-1, order=order)
+    arr = arr.reshape(-1, order=order)
     assert res.shape == arr.shape
     assert res.dtype == arr.dtype
 
@@ -137,18 +137,18 @@ def assert_array_items_equal(res, arr):
             assert a == r
 
 
-def check_encode_decode_array(arr, codec):
+def check_encode_decode_array(arr, codec, order='A'):
     enc = codec.encode(arr)
     dec = codec.decode(enc)
-    assert_array_items_equal(arr, dec)
+    assert_array_items_equal(arr, dec, order=order)
 
     out = np.empty_like(arr)
     codec.decode(enc, out=out)
-    assert_array_items_equal(arr, out)
+    assert_array_items_equal(arr, out, order=order)
 
     enc = codec.encode(arr)
     dec = codec.decode(ensure_ndarray(enc))
-    assert_array_items_equal(arr, dec)
+    assert_array_items_equal(arr, dec, order=order)
 
 
 def check_config(codec):

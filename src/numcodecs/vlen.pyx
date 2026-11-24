@@ -40,8 +40,7 @@ def check_out_param(out, n_items):
         raise TypeError('out must be 1-dimensional array')
     if out.dtype != object:
         raise ValueError('out must be object array')
-    out = out.reshape(-1, order='A')
-    if out.shape[0] < n_items:
+    if out.size < n_items:
         raise ValueError('out is too small')
     return out
 
@@ -87,8 +86,10 @@ class VLenUTF8(Codec):
             object o
             unicode u
 
-        # normalise input
-        input_values = np.asarray(buf, dtype=object).reshape(-1, order='A')
+        # normalise input to C order, so the encoded stream holds items
+        # in logical order regardless of the input's memory layout
+        # (see issue #850)
+        input_values = np.ascontiguousarray(buf, dtype=object).reshape(-1)
 
         # determine number of items
         n_items = input_values.shape[0]
@@ -154,11 +155,11 @@ class VLenUTF8(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output; always decode into a fresh 1-D array, which holds
+        # the items in logical (stream) order
         if out is not None:
             out = check_out_param(out, n_items)
-        else:
-            out = np.empty(n_items, dtype=object)
+        dec = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -171,10 +172,15 @@ class VLenUTF8(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyUnicode_FromStringAndSize(data, L)
+            dec[i] = PyUnicode_FromStringAndSize(data, L)
             data += L
 
-        return out
+        if out is not None:
+            # place the decoded items into the caller's buffer in logical
+            # (C) order (see issue #850)
+            out.flat[:n_items] = dec
+            return out
+        return dec
 
 
 class VLenBytes(Codec):
@@ -217,8 +223,10 @@ class VLenBytes(Codec):
             bytearray out
             char* data
 
-        # normalise input
-        values = np.asarray(buf, dtype=object).reshape(-1, order='A')
+        # normalise input to C order, so the encoded stream holds items
+        # in logical order regardless of the input's memory layout
+        # (see issue #850)
+        values = np.ascontiguousarray(buf, dtype=object).reshape(-1)
 
         # determine number of items
         n_items = values.shape[0]
@@ -283,11 +291,11 @@ class VLenBytes(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output; always decode into a fresh 1-D array, which holds
+        # the items in logical (stream) order
         if out is not None:
             out = check_out_param(out, n_items)
-        else:
-            out = np.empty(n_items, dtype=object)
+        dec = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -300,10 +308,15 @@ class VLenBytes(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out[i] = PyBytes_FromStringAndSize(data, L)
+            dec[i] = PyBytes_FromStringAndSize(data, L)
             data += L
 
-        return out
+        if out is not None:
+            # place the decoded items into the caller's buffer in logical
+            # (C) order (see issue #850)
+            out.flat[:n_items] = dec
+            return out
+        return dec
 
 
 class VLenArray(Codec):
@@ -361,8 +374,10 @@ class VLenArray(Codec):
             const Py_buffer* value_pb
             object o
 
-        # normalise input
-        values = np.asarray(buf, dtype=object).reshape(-1, order='A')
+        # normalise input to C order, so the encoded stream holds items
+        # in logical order regardless of the input's memory layout
+        # (see issue #850)
+        values = np.ascontiguousarray(buf, dtype=object).reshape(-1)
 
         # determine number of items
         n_items = values.shape[0]
@@ -439,11 +454,11 @@ class VLenArray(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output
+        # setup output; always decode into a fresh 1-D array, which holds
+        # the items in logical (stream) order
         if out is not None:
             out = check_out_param(out, n_items)
-        else:
-            out = np.empty(n_items, dtype=object)
+        dec = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -463,7 +478,12 @@ class VLenArray(Codec):
             v_pb = PyMemoryView_GET_BUFFER(v_mv)
             memcpy(v_pb.buf, data, L)
 
-            out[i] = v
+            dec[i] = v
             data += L
 
-        return out
+        if out is not None:
+            # place the decoded items into the caller's buffer in logical
+            # (C) order (see issue #850)
+            out.flat[:n_items] = dec
+            return out
+        return dec

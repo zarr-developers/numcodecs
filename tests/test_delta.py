@@ -25,7 +25,7 @@ arrays = [
 def test_encode_decode():
     for arr in arrays:
         codec = Delta(dtype=arr.dtype)
-        check_encode_decode(arr, codec)
+        check_encode_decode(arr, codec, order='C')
 
 
 def test_encode():
@@ -59,3 +59,22 @@ def test_errors():
         Delta(dtype=object)
     with pytest.raises(ValueError):
         Delta(dtype='i8', astype=object)
+
+
+def test_encode_f_contiguous_logical_order():
+    # regression test for https://github.com/zarr-developers/numcodecs/issues/850
+    # the encoded stream must hold elements in logical (C) order, so encoding
+    # an F-contiguous array produces the same bytes as its C-ordered equivalent
+    arr_f = np.asfortranarray(np.arange(12, dtype='<i4').reshape(3, 4))
+    arr_c = np.ascontiguousarray(arr_f)
+    codec = Delta(dtype='<i4')
+    assert_array_equal(codec.encode(arr_f), codec.encode(arr_c))
+
+    # a consumer reshaping the decoded 1-D stream in C order gets the array back
+    dec = codec.decode(codec.encode(arr_f)).reshape(arr_f.shape)
+    assert_array_equal(dec, arr_f)
+
+    # decoding into an F-ordered output buffer lands values in the right places
+    out = np.empty(arr_f.shape, dtype='<i4', order='F')
+    codec.decode(codec.encode(arr_f), out=out)
+    assert_array_equal(out, arr_f)

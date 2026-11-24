@@ -24,12 +24,12 @@ def test_encode_decode():
     # unicode dtype
     for arr in arrays:
         codec = Categorize(labels, dtype=arr.dtype)
-        check_encode_decode(arr, codec)
+        check_encode_decode(arr, codec, order='C')
 
     # object dtype
     for arr in arrays_object:
         codec = Categorize(labels, dtype=arr.dtype)
-        check_encode_decode_array(arr, codec)
+        check_encode_decode_array(arr, codec, order='C')
 
 
 def test_encode():
@@ -85,3 +85,23 @@ def test_errors():
         Categorize(labels=['foo', 'bar'], dtype='S6')
     with pytest.raises(TypeError):
         Categorize(labels=['foo', 'bar'], dtype='U6', astype=object)
+
+
+def test_encode_f_contiguous_logical_order():
+    # regression test for https://github.com/zarr-developers/numcodecs/issues/850
+    # the encoded stream must hold elements in logical (C) order, so encoding
+    # an F-contiguous array produces the same bytes as its C-ordered equivalent
+    for dtype in 'U1', object:
+        arr_f = np.asfortranarray(np.array([['a', 'b'], ['a', 'a']], dtype=dtype))
+        arr_c = np.ascontiguousarray(arr_f)
+        codec = Categorize(labels=['a', 'b'], dtype=dtype)
+        assert_array_equal(codec.encode(arr_f), codec.encode(arr_c))
+
+        # a consumer reshaping the decoded 1-D stream in C order gets the array back
+        dec = codec.decode(codec.encode(arr_f)).reshape(arr_f.shape)
+        assert_array_equal(dec, arr_f)
+
+        # decoding into an F-ordered output buffer lands values in the right places
+        out = np.empty(arr_f.shape, dtype=dtype, order='F')
+        codec.decode(codec.encode(arr_f), out=out)
+        assert_array_equal(out, arr_f)
