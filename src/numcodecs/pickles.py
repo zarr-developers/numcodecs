@@ -1,14 +1,12 @@
 import os
 import pickle
 import warnings
-from typing import Any, overload
 
 import numpy as np
 
-from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ensure_ndarray
+from .abc import Codec
+from .compat import ensure_contiguous_ndarray
 from .errors import UnsafeDecodeError
-from .ndarray_like import BufferLike
 
 _ENV_VAR = "NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE"
 
@@ -41,12 +39,6 @@ _DEPRECATION_MESSAGE = (
 # warning, so it points at the first caller outside numcodecs (user code, or the
 # library that selected the codec from array metadata) rather than at numcodecs itself.
 _NUMCODECS_DIR = os.path.dirname(os.path.abspath(__file__)) + os.sep
-
-
-class PickleConfig(CodecConfig):
-    """The configuration of a `Pickle` codec, as returned by `Pickle.get_config`."""
-
-    protocol: int
 
 
 class Pickle(Codec):
@@ -103,20 +95,16 @@ class Pickle(Codec):
 
     codec_id = 'pickle'
 
-    def __init__(self, protocol: int = pickle.HIGHEST_PROTOCOL) -> None:
+    def __init__(self, protocol=pickle.HIGHEST_PROTOCOL):
         warnings.warn(
             _DEPRECATION_MESSAGE, DeprecationWarning, skip_file_prefixes=(_NUMCODECS_DIR,)
         )
         self.protocol = protocol
 
-    def encode(self, buf: object) -> bytes:
+    def encode(self, buf):
         return pickle.dumps(buf, protocol=self.protocol)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> Any: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> Any:
+    def decode(self, buf, out=None):
         if not ALLOW_UNSAFE_PICKLE_DECODE:
             raise UnsafeDecodeError(
                 "Pickle.decode is disabled because unpickling data can execute arbitrary "
@@ -128,13 +116,13 @@ class Pickle(Codec):
         dec = pickle.loads(buf)
 
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            np.copyto(out, dec)
             return out
         else:
             return dec
 
-    def get_config(self) -> PickleConfig:
+    def get_config(self):
         return {'id': self.codec_id, 'protocol': self.protocol}
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f'Pickle(protocol={self.protocol})'

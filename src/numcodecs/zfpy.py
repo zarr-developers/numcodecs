@@ -2,7 +2,6 @@ import warnings
 from contextlib import suppress
 from importlib.metadata import PackageNotFoundError, version
 from types import ModuleType
-from typing import Any, cast, overload
 
 from packaging.version import InvalidVersion, Version
 
@@ -37,26 +36,9 @@ if _zfpy_version is not None:
 
 if _zfpy:
     import numpy as np
-    import numpy.typing as npt
 
-    from .abc import Codec, CodecConfig
+    from .abc import Codec
     from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
-    from .ndarray_like import BufferLike
-
-    _zfpy_module: ModuleType = _zfpy  # narrowed from `ModuleType | None` for the methods below
-
-    class ZFPYConfig(CodecConfig):
-        """The configuration of a `ZFPY` codec, as returned by `ZFPY.get_config`.
-
-        `compression_kwargs` repeats whichever of `tolerance`, `rate` or `precision` the
-        mode uses; the constructor ignores it.
-        """
-
-        mode: int
-        compression_kwargs: dict[str, float]
-        tolerance: float
-        rate: float
-        precision: int
 
     # noinspection PyShadowingBuiltins
     class ZFPY(Codec):
@@ -80,29 +62,25 @@ if _zfpy:
 
         def __init__(
             self,
-            mode: int = _zfpy_module.mode_fixed_accuracy,
-            tolerance: float = -1,
-            rate: float = -1,
-            precision: int = -1,
-            compression_kwargs: dict[str, float] | None = None,
-        ) -> None:
+            mode=_zfpy.mode_fixed_accuracy,
+            tolerance=-1,
+            rate=-1,
+            precision=-1,
+            compression_kwargs=None,
+        ):
             self.mode = mode
-            if mode == _zfpy_module.mode_fixed_accuracy:
-                self.compression_kwargs: dict[str, float] = {"tolerance": tolerance}
-            elif mode == _zfpy_module.mode_fixed_rate:
+            if mode == _zfpy.mode_fixed_accuracy:
+                self.compression_kwargs = {"tolerance": tolerance}
+            elif mode == _zfpy.mode_fixed_rate:
                 self.compression_kwargs = {"rate": rate}
-            elif mode == _zfpy_module.mode_fixed_precision:
+            elif mode == _zfpy.mode_fixed_precision:
                 self.compression_kwargs = {"precision": precision}
 
             self.tolerance = tolerance
             self.rate = rate
             self.precision = precision
 
-        def get_config(self) -> ZFPYConfig:
-            return cast(ZFPYConfig, super().get_config())
-
-        def encode(self, buf: BufferLike) -> bytes:
-            """Compress `buf`, which must be a C-contiguous numpy array."""
+        def encode(self, buf):
             # not flatten c-order array and raise exception for f-order array
             if not isinstance(buf, np.ndarray):
                 raise TypeError(
@@ -119,23 +97,16 @@ if _zfpy:
             buf = ensure_contiguous_ndarray(buf, flatten=flatten)
 
             # do compression
-            compressed: bytes = _zfpy_module.compress_numpy(
-                buf, write_header=True, **self.compression_kwargs
-            )
-            return compressed
+            return _zfpy.compress_numpy(buf, write_header=True, **self.compression_kwargs)
 
-        @overload
-        def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
-        @overload
-        def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-        def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+        def decode(self, buf, out=None):
             # normalise inputs
             buf = ensure_bytes(buf)
             if out is not None:
-                ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
+                out = ensure_contiguous_ndarray(out)
 
             # do decompression
-            dec: npt.NDArray[Any] = _zfpy_module.decompress_numpy(buf)
+            dec = _zfpy.decompress_numpy(buf)
 
             # handle destination
             if out is not None:
@@ -143,7 +114,7 @@ if _zfpy:
             else:
                 return dec
 
-        def __repr__(self) -> str:
+        def __repr__(self):
             return (
                 f"{type(self).__name__}(mode={self.mode!r}, "
                 f"tolerance={self.tolerance}, rate={self.rate}, "

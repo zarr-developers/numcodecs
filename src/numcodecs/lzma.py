@@ -1,5 +1,4 @@
 from types import ModuleType
-from typing import Any, cast, overload
 
 _lzma: ModuleType | None = None
 try:
@@ -12,19 +11,8 @@ except ImportError:  # pragma: no cover
 
 
 if _lzma:
-    from .abc import Codec, CodecConfig
+    from .abc import Codec
     from .compat import ensure_contiguous_ndarray, ndarray_copy
-    from .ndarray_like import BufferLike
-
-    _lzma_module: ModuleType = _lzma  # narrowed from `ModuleType | None` for the methods below
-
-    class LZMAConfig(CodecConfig):
-        """The configuration of an `LZMA` codec, as returned by `LZMA.get_config`."""
-
-        format: int
-        check: int
-        preset: int | None
-        filters: list[dict[str, Any]] | None
 
     # noinspection PyShadowingBuiltins
     class LZMA(Codec):
@@ -48,50 +36,36 @@ if _lzma:
 
         codec_id = 'lzma'
 
-        def __init__(
-            self,
-            format: int = 1,
-            check: int = -1,
-            preset: int | None = None,
-            filters: list[dict[str, Any]] | None = None,
-        ) -> None:
+        def __init__(self, format=1, check=-1, preset=None, filters=None):
             self.format = format
             self.check = check
             self.preset = preset
             self.filters = filters
 
-        def get_config(self) -> LZMAConfig:
-            return cast(LZMAConfig, super().get_config())
-
-        def encode(self, buf: BufferLike) -> bytes:
+        def encode(self, buf):
             # normalise inputs
-            arr = ensure_contiguous_ndarray(buf)
+            buf = ensure_contiguous_ndarray(buf)
 
             # do compression
-            compressed: bytes = _lzma_module.compress(
-                arr,
+            return _lzma.compress(
+                buf,
                 format=self.format,
                 check=self.check,
                 preset=self.preset,
                 filters=self.filters,
             )
-            return compressed
 
-        @overload
-        def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
-        @overload
-        def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-        def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+        def decode(self, buf, out=None):
             # normalise inputs
-            arr = ensure_contiguous_ndarray(buf)
+            buf = ensure_contiguous_ndarray(buf)
             if out is not None:
-                ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
+                out = ensure_contiguous_ndarray(out)
 
             # do decompression
-            dec = _lzma_module.decompress(arr, format=self.format, filters=self.filters)
+            dec = _lzma.decompress(buf, format=self.format, filters=self.filters)
 
             # handle destination
             return ndarray_copy(dec, out)
 
-        def __repr__(self) -> str:
+        def __repr__(self):
             return f'{type(self).__name__}(format={self.format!r}, check={self.check!r}, preset={self.preset!r}, filters={self.filters!r})'

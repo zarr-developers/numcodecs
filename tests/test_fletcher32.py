@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
-
 from numcodecs.fletcher32 import Fletcher32
+
+from numcodecs.compat import ensure_contiguous_ndarray
 
 
 @pytest.mark.parametrize("dtype", ["uint8", "int32", "float32"])
@@ -54,3 +55,32 @@ def test_out():
     f = Fletcher32()
     result = f.encode(data)
     f.decode(result, out=data)
+
+
+@pytest.mark.parametrize(
+    "make_out",
+    [
+        lambda: np.empty(16, dtype="uint8"),
+        lambda: np.empty((2, 2), dtype="uint32", order="F"),
+        lambda: np.empty(2, dtype="float64"),
+        lambda: bytearray(16),
+        lambda: memoryview(bytearray(16)),
+    ],
+    ids=["uint8", "uint32-F-order", "float64", "bytearray", "memoryview"],
+)
+def test_decode_into_out(make_out):
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    out = make_out()
+    assert f.decode(f.encode(data), out=out) is out
+    assert ensure_contiguous_ndarray(out).view("uint8").tobytes() == data.tobytes()
+
+
+@pytest.mark.parametrize("shape", [(15,), (17,), ()], ids=["smaller", "larger", "0-d"])
+def test_decode_rejects_out_of_wrong_size(shape):
+    data = np.arange(16, dtype="uint8")
+    f = Fletcher32()
+    out = np.full(shape, 0xAA, dtype="uint8")
+    with pytest.raises(ValueError, match=f"out has {out.size} bytes, but the decoded data has 16"):
+        f.decode(f.encode(data), out=out)
+    assert (out == 0xAA).all()

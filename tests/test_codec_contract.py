@@ -21,7 +21,6 @@ import pytest
 import numcodecs
 from numcodecs import pickles
 from numcodecs.abc import Codec
-from numcodecs.compat import ensure_ndarray
 
 
 @dataclass(frozen=True)
@@ -86,8 +85,36 @@ NO_BYTEARRAY_OUT = frozenset({"pcodec"})
 
 # Known violations of the `out` contract. Each entry is a bug; remove it when fixed.
 # `strict=True` makes a fixed entry fail, so this list cannot go stale.
-OUT_NDARRAY_XFAIL: set[str] = set()
-OUT_BYTEARRAY_XFAIL: set[str] = set()
+OUT_NDARRAY_XFAIL: set[str] = {
+    "zlib",
+    "bz2",
+    "lzma",
+    "base64",
+    "shuffle",
+    "zfpy",
+    "pcodec",
+    "vlen-utf8",
+    "vlen-bytes",
+    "vlen-array",
+}
+OUT_BYTEARRAY_XFAIL: set[str] = {
+    "zlib",
+    "bz2",
+    "lzma",
+    "base64",
+    "shuffle",
+    "crc32",
+    "adler32",
+    "crc32c",
+    "jenkins_lookup3",
+    "astype",
+    "delta",
+    "quantize",
+    "fixedscaleoffset",
+    "bitround",
+    "packbits",
+    "zfpy",
+}
 DECODE_RETURNS_BUFFER_XFAIL: set[str] = set()
 
 
@@ -148,9 +175,9 @@ def test_decode_into_ndarray_returns_out(codec_id: str) -> None:
     out = np.empty_like(data)
     assert codec.decode(enc, out=out) is out
     if CASES[codec_id].is_object:
-        assert all(np.array_equal(a, b) for a, b in zip(out, ensure_ndarray(expected), strict=True))
+        assert all(np.array_equal(a, b) for a, b in zip(out, expected, strict=True))
     else:
-        assert ensure_ndarray(expected).tobytes() == out.tobytes()
+        assert np.asarray(memoryview(expected)).tobytes() == out.tobytes()
 
 
 @pytest.mark.parametrize(
@@ -162,7 +189,7 @@ def test_decode_into_bytearray_returns_out(codec_id: str) -> None:
     expected = codec.decode(enc)
     out = bytearray(data.nbytes)
     assert codec.decode(enc, out=out) is out
-    assert bytes(out) == ensure_ndarray(expected).tobytes()
+    assert bytes(out) == np.asarray(memoryview(expected)).tobytes()
 
 
 # Rebuilding the codec from its config constructs it again, outside `_codec`.

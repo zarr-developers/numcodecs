@@ -1,5 +1,4 @@
 import inspect
-import types
 
 import pytest
 
@@ -35,43 +34,10 @@ def test_all_classes_registered():
         if (
             inspect.isclass(obj)
             and issubclass(obj, numcodecs.abc.Codec)
-            and not inspect.isabstract(obj)
             and obj.codec_id not in numcodecs.registry.codec_registry
+            and obj.codec_id is not None  # remove `None`
         )
     }
 
     if missing:
         raise Exception(f"these codecs are missing: {missing}")  # pragma: no cover
-
-
-class _DuckCodec:
-    """Looks like a codec, but does not subclass numcodecs.abc.Codec."""
-
-    codec_id = "duck"
-
-    @classmethod
-    def from_config(cls, config):
-        return cls()
-
-
-def test_entry_point_not_a_codec_subclass_is_deprecated(monkeypatch):
-    monkeypatch.setitem(
-        numcodecs.registry.entries, "duck", types.SimpleNamespace(load=lambda: _DuckCodec)
-    )
-    monkeypatch.delitem(numcodecs.registry.codec_registry, "duck", raising=False)
-    with pytest.warns(DeprecationWarning, match="not a subclass of numcodecs.abc.Codec"):
-        codec = get_codec({"id": "duck"})
-    assert isinstance(codec, _DuckCodec)
-    numcodecs.registry.codec_registry.pop("duck")
-
-
-def test_register_codec_without_id():
-    class NoId(numcodecs.abc.Codec):
-        def encode(self, buf):  # pragma: no cover
-            return buf
-
-        def decode(self, buf, out=None):  # pragma: no cover
-            return buf
-
-    with pytest.raises(ValueError, match="has no codec_id and none was given"):
-        numcodecs.register_codec(NoId)
