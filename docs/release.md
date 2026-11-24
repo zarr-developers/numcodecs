@@ -35,6 +35,9 @@
 
 ### Fixes
 
+* Fix decoding LZMA container streams encoded with custom filters, while retaining
+  explicit filters for raw streams.
+  By {user}`Oikantik Basu <Golden007-prog>`, {issue}`188`
 * `Fletcher32.decode` raises `ValueError` when `out` is not exactly the size of the
   decoded data.
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
