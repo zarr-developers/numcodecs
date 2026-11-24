@@ -84,8 +84,9 @@ class FixedScaleOffset(Codec):
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
-        # flatten to simplify implementation
-        arr = arr.reshape(-1, order='A')
+        # preserve the historical one-element shape for scalar inputs
+        if arr.ndim == 0:
+            arr = arr.reshape(-1)
 
         # compute scale offset
         enc = (arr - self.offset) * self.scale
@@ -93,21 +94,24 @@ class FixedScaleOffset(Codec):
         # round to nearest integer
         enc = np.around(enc)
 
-        # convert dtype
-        return enc.astype(self.astype, copy=False)
+        # preserve the legacy byte order, including for non-contiguous inputs
+        order = "F" if arr.flags.f_contiguous else "C"
+        return enc.astype(self.astype, order=order, copy=False)
 
     def decode(self, buf, out=None):
         # interpret buffer as numpy array
         enc = ensure_ndarray(buf).view(self.astype)
 
-        # flatten to simplify implementation
-        enc = enc.reshape(-1, order='A')
+        # preserve the historical one-element shape for scalar inputs
+        if enc.ndim == 0:
+            enc = enc.reshape(-1)
 
         # decode scale offset
         dec = (enc / self.scale) + self.offset
 
-        # convert dtype
-        dec = dec.astype(self.dtype, copy=False)
+        # preserve the legacy byte order when copying into a differently shaped output
+        order = "F" if enc.flags.f_contiguous else "C"
+        dec = dec.astype(self.dtype, order=order, copy=False)
 
         # handle output
         return ndarray_copy(dec, out)

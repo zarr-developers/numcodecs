@@ -35,6 +35,10 @@
 
 ### Fixes
 
+* Preserve multidimensional array shapes in `FixedScaleOffset` and preserve logical
+  coordinates when copying equally shaped arrays across different memory orders.
+  By {user}`shixi-li <shixi-li>`, {issue}`852`
+
 * `Fletcher32.decode` raises `ValueError` when `out` is not exactly the size of the
   decoded data.
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
