@@ -44,53 +44,54 @@ zstd_dep = dependency('libzstd', required: get_option('system_zstd'))
 if not zstd_dep.found()
   zstd_sources = files(
     # common/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/debug.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/entropy_common.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/error_private.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/fse_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/pool.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/threading.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/xxhash.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/zstd_common.c',
+    '../../third_party/zstd-1.6.0/common/debug.c',
+    '../../third_party/zstd-1.6.0/common/entropy_common.c',
+    '../../third_party/zstd-1.6.0/common/error_private.c',
+    '../../third_party/zstd-1.6.0/common/fse_decompress.c',
+    '../../third_party/zstd-1.6.0/common/pool.c',
+    '../../third_party/zstd-1.6.0/common/threading.c',
+    '../../third_party/zstd-1.6.0/common/xxhash.c',
+    '../../third_party/zstd-1.6.0/common/zstd_common.c',
     # compress/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/fse_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/hist.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/huf_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_literals.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_sequences.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_superblock.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_double_fast.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_fast.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_lazy.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_ldm.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_opt.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstdmt_compress.c',
+    '../../third_party/zstd-1.6.0/compress/fse_compress.c',
+    '../../third_party/zstd-1.6.0/compress/hist.c',
+    '../../third_party/zstd-1.6.0/compress/huf_compress.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_compress.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_compress_literals.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_compress_sequences.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_compress_superblock.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_double_fast.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_fast.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_lazy.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_ldm.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_opt.c',
+    '../../third_party/zstd-1.6.0/compress/zstd_preSplit.c',
+    '../../third_party/zstd-1.6.0/compress/zstdmt_compress.c',
     # decompress/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_ddict.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_decompress_block.c',
+    '../../third_party/zstd-1.6.0/decompress/huf_decompress.c',
+    '../../third_party/zstd-1.6.0/decompress/zstd_ddict.c',
+    '../../third_party/zstd-1.6.0/decompress/zstd_decompress.c',
+    '../../third_party/zstd-1.6.0/decompress/zstd_decompress_block.c',
     # dictBuilder/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/cover.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/divsufsort.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/fastcover.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/zdict.c',
+    '../../third_party/zstd-1.6.0/dictBuilder/cover.c',
+    '../../third_party/zstd-1.6.0/dictBuilder/divsufsort.c',
+    '../../third_party/zstd-1.6.0/dictBuilder/fastcover.c',
+    '../../third_party/zstd-1.6.0/dictBuilder/zdict.c',
   )
 
   # Assembly files — meson handles .S natively
   if host_machine.cpu_family() == 'x86_64'
     zstd_sources += files(
-      '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress_amd64.S',
+      '../../third_party/zstd-1.6.0/decompress/huf_decompress_amd64.S',
     )
   endif
 
   zstd_inc = include_directories(
-    '../../c-blosc/internal-complibs/zstd-1.5.6',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder',
+    '../../third_party/zstd-1.6.0',
+    '../../third_party/zstd-1.6.0/common',
+    '../../third_party/zstd-1.6.0/compress',
+    '../../third_party/zstd-1.6.0/decompress',
+    '../../third_party/zstd-1.6.0/dictBuilder',
   )
 
   zstd_lib = static_library('zstd_vendored', zstd_sources,

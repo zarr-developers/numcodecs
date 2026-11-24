@@ -14,6 +14,12 @@
 
 ## Unreleased
 
+### Fixes
+
+* Update the bundled Zstandard from 1.5.6 to 1.6.0, which fixes CVE-2026-124851 (streaming
+  decompression of malformed data could expose uninitialized memory). Zstandard is now
+  vendored in `third_party/zstd-1.6.0` rather than taken from the `c-blosc` submodule.
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,

@@ -1,4 +1,4 @@
-exclude: ^fixture/  # files with trailing whitespaces on purpose
+exclude: ^(fixture|third_party)/  # fixture has trailing whitespace on purpose; third_party is vendored unmodified
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autoupdate_schedule: "monthly"
