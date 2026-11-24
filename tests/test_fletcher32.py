@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
+from numcodecs.fletcher32 import Fletcher32
 
 from numcodecs.compat import ensure_contiguous_ndarray
-from numcodecs.fletcher32 import Fletcher32
 
 
 @pytest.mark.parametrize("dtype", ["uint8", "int32", "float32"])

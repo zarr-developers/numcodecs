@@ -34,7 +34,7 @@ def __getattr__(name: str) -> Any:
 try:
     import zarr  # noqa: F401
 
-    zarr_version: str = version('zarr')
+    zarr_version = version('zarr')
     if Version(zarr_version) < Version("3.1.3"):  # pragma: no cover
         msg = f"Zarr 3.1.3 or later is required to use the numcodecs zarr integration. Got {zarr_version}."
         raise ImportError(msg)

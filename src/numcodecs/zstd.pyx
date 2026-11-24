@@ -11,15 +11,8 @@ from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 
 from .compat_ext cimport PyBytes_RESIZE, ensure_contiguous_memoryview
 
-from typing import TypedDict
-
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
-
-
-# The type of `Zstd.get_config()`. Declared with the functional syntax because Cython does not
-# compile TypedDict class bodies; `zstd.pyi` declares the same type with the class syntax.
-ZstdConfig = TypedDict("ZstdConfig", {"id": str, "level": int, "checksum": bool})
 
 from libc.stdlib cimport malloc, realloc, free
 
