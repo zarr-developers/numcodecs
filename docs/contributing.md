@@ -62,13 +62,13 @@ You will need your own fork to work on the code. Go to the link above and hit
 the "Fork" button. Then clone your fork to your local machine:
 
 ```
-$ git clone --recursive git@github.com:your-user-name/numcodecs.git  # with ssh
+$ git clone git@github.com:your-user-name/numcodecs.git  # with ssh
 ```
 
 or:
 
 ```
-$ git clone --recursive https://github.com/your-user-name/numcodecs.git  # with https
+$ git clone https://github.com/your-user-name/numcodecs.git  # with https
 ```
 
 Then `cd` into the clone and add the `upstream` remote:
@@ -78,12 +78,11 @@ $ cd numcodecs
 $ git remote add upstream https://github.com/zarr-developers/numcodecs.git
 ```
 
-Note the ``--recursive`` flag is required to clone the ``c-blosc`` git submodule. If you
-forgot it, you can initialize it later with:
-
-```
-$ git submodule update --init --recursive
-```
+The C libraries numcodecs links against (c-blosc, zstd, lz4, zlib) are not stored in the
+repository. They are pinned in `subprojects/*.wrap` and downloaded by meson the first time
+you build, so the first build needs network access. To fetch them ahead of time, run
+`meson subprojects download`. Numcodecs-specific build files and patches for c-blosc live in
+`subprojects/packagefiles/c-blosc/`.
 
 ### Creating a development environment
 

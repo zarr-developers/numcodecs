@@ -7,203 +7,63 @@ if host_machine.system() != 'windows'
   link_args += ['-pthread']
 endif
 
-# --- SIMD detection ---
-# Detected via compiler capability, NOT runtime CPU flags.
-# Correct for cross-compilation: checks what the *target* supports.
-have_sse2 = false
-have_avx2 = false
+# --- C library dependencies ---
+# Each codec library is either found on the system (-Dsystem_<lib>=enabled/auto)
+# or built as a static subproject from subprojects/<lib>.wrap. Once a subproject
+# has been configured, every later dependency('<name>') lookup -- including those
+# inside the c-blosc subproject -- resolves to it, so numcodecs.zstd and blosc
+# always link the same zstd.
+subproject_opts = ['default_library=static', 'warning_level=0']
 
-if host_machine.cpu_family() == 'x86_64'
+zstd_dep = dependency('libzstd', required: get_option('system_zstd'), allow_fallback: false)
+if not zstd_dep.found()
+  subproject('zstd', default_options: subproject_opts + [
+    'bin_programs=false', 'multi_thread=disabled', 'legacy_level=0',
+    'zlib=disabled', 'lzma=disabled', 'lz4=disabled',
+  ])
+  zstd_dep = dependency('libzstd')
+endif
+
+lz4_dep = dependency('liblz4', required: get_option('system_lz4'), allow_fallback: false)
+if not lz4_dep.found()
+  subproject('lz4', default_options: subproject_opts + ['ossfuzz=false', 'programs=false'])
+  lz4_dep = dependency('liblz4')
+endif
+
+blosc_dep = dependency('blosc', required: get_option('system_blosc'), allow_fallback: false)
+if not blosc_dep.found()
+  # zlib is only needed by blosc; it is not built when using a system blosc.
+  zlib_dep = dependency('zlib', required: get_option('system_zlib'), allow_fallback: false)
+  if not zlib_dep.found()
+    subproject('zlib', default_options: subproject_opts)
+  endif
+
   # Honor legacy environment variables for backwards compatibility with
   # existing build scripts and packaging recipes.
-  disable_sse2_env = run_command(
-    py, '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_SSE2", ""))',
-    check: true,
-  ).stdout().strip() != ''
-  disable_avx2_env = run_command(
-    py, '-c', 'import os; print(os.environ.get("DISABLE_NUMCODECS_AVX2", ""))',
-    check: true,
-  ).stdout().strip() != ''
+  env_disabled = {}
+  foreach simd : ['sse2', 'avx2']
+    env_disabled += {simd: run_command(
+      py, '-c',
+      'import os; print(os.environ.get("DISABLE_NUMCODECS_@0@", ""))'.format(simd.to_upper()),
+      check: true,
+    ).stdout().strip() != ''}
+  endforeach
 
-  if get_option('sse2').disabled() or disable_sse2_env
-    have_sse2 = false
-  else
-    have_sse2 = cc.has_argument('-msse2')
-  endif
-
-  if get_option('avx2').disabled() or disable_avx2_env
-    have_avx2 = false
-  else
-    have_avx2 = cc.has_argument('-mavx2')
-  endif
-endif
-
-# --- Vendored zstd ---
-zstd_dep = dependency('libzstd', required: get_option('system_zstd'))
-
-if not zstd_dep.found()
-  zstd_sources = files(
-    # common/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/debug.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/entropy_common.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/error_private.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/fse_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/pool.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/threading.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/xxhash.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common/zstd_common.c',
-    # compress/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/fse_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/hist.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/huf_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_literals.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_sequences.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_compress_superblock.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_double_fast.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_fast.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_lazy.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_ldm.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstd_opt.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress/zstdmt_compress.c',
-    # decompress/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_ddict.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_decompress.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/zstd_decompress_block.c',
-    # dictBuilder/
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/cover.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/divsufsort.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/fastcover.c',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder/zdict.c',
-  )
-
-  # Assembly files — meson handles .S natively
-  if host_machine.cpu_family() == 'x86_64'
-    zstd_sources += files(
-      '../../c-blosc/internal-complibs/zstd-1.5.6/decompress/huf_decompress_amd64.S',
-    )
-  endif
-
-  zstd_inc = include_directories(
-    '../../c-blosc/internal-complibs/zstd-1.5.6',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/common',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/compress',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/decompress',
-    '../../c-blosc/internal-complibs/zstd-1.5.6/dictBuilder',
-  )
-
-  zstd_lib = static_library('zstd_vendored', zstd_sources,
-    include_directories: zstd_inc,
-    c_args: c_args,
-  )
-  zstd_dep = declare_dependency(
-    link_with: zstd_lib,
-    include_directories: zstd_inc,
-  )
-endif
-
-# --- Vendored lz4 ---
-lz4_dep = dependency('liblz4', required: get_option('system_lz4'))
-
-if not lz4_dep.found()
-  lz4_sources = files(
-    '../../c-blosc/internal-complibs/lz4-1.10.0/lz4.c',
-    '../../c-blosc/internal-complibs/lz4-1.10.0/lz4hc.c',
-  )
-  lz4_inc = include_directories('../../c-blosc/internal-complibs/lz4-1.10.0')
-
-  lz4_lib = static_library('lz4_vendored', lz4_sources,
-    include_directories: lz4_inc,
-    c_args: c_args,
-  )
-  lz4_dep = declare_dependency(
-    link_with: lz4_lib,
-    include_directories: lz4_inc,
-  )
-endif
-
-# --- Vendored blosc ---
-blosc_dep = dependency('blosc', required: get_option('system_blosc'))
-
-if not blosc_dep.found()
-  # --- Vendored zlib ---
-  zlib_dep = dependency('zlib', required: get_option('system_zlib'))
-
-  if not zlib_dep.found()
-    zlib_sources = files(
-      '../../c-blosc/internal-complibs/zlib-1.3.1/adler32.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/compress.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/crc32.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/deflate.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/gzclose.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/gzlib.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/gzread.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/gzwrite.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/infback.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/inffast.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/inflate.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/inftrees.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/trees.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/uncompr.c',
-      '../../c-blosc/internal-complibs/zlib-1.3.1/zutil.c',
-    )
-    zlib_inc = include_directories('../../c-blosc/internal-complibs/zlib-1.3.1')
-
-    zlib_lib = static_library('zlib_vendored', zlib_sources,
-      include_directories: zlib_inc,
-      c_args: c_args,
-    )
-    zlib_dep = declare_dependency(
-      link_with: zlib_lib,
-      include_directories: zlib_inc,
-    )
-  endif
-
-  blosc_sources = files(
-    '../../c-blosc/blosc/blosc.c',
-    '../../c-blosc/blosc/blosclz.c',
-    '../../c-blosc/blosc/fastcopy.c',
-    '../../c-blosc/blosc/shuffle.c',
-    '../../c-blosc/blosc/shuffle-generic.c',
-    '../../c-blosc/blosc/bitshuffle-generic.c',
-  )
-
-  blosc_c_args = c_args + ['-DHAVE_LZ4', '-DHAVE_ZLIB', '-DHAVE_ZSTD']
-
-  if have_sse2
-    blosc_sources += files(
-      '../../c-blosc/blosc/shuffle-sse2.c',
-      '../../c-blosc/blosc/bitshuffle-sse2.c',
-    )
-    blosc_c_args += ['-DSHUFFLE_SSE2_ENABLED', '-msse2']
-    if host_machine.system() == 'windows'
-      blosc_c_args += ['-D__SSE2__']
+  simd_opts = []
+  foreach simd : ['sse2', 'avx2', 'neon']
+    f = get_option(simd)
+    if f.disabled() or env_disabled.get(simd, false)
+      state = 'disabled'
+    elif f.enabled()
+      state = 'enabled'
+    else
+      state = 'auto'
     endif
-  endif
+    simd_opts += '@0@=@1@'.format(simd, state)
+  endforeach
 
-  if have_avx2
-    blosc_sources += files(
-      '../../c-blosc/blosc/shuffle-avx2.c',
-      '../../c-blosc/blosc/bitshuffle-avx2.c',
-    )
-    blosc_c_args += ['-DSHUFFLE_AVX2_ENABLED', '-mavx2']
-    if host_machine.system() == 'windows'
-      blosc_c_args += ['-D__AVX2__']
-    endif
-  endif
-
-  blosc_inc = include_directories('../../c-blosc/blosc')
-
-  blosc_lib = static_library('blosc_vendored', blosc_sources,
-    include_directories: blosc_inc,
-    dependencies: [lz4_dep, zlib_dep, zstd_dep],
-    c_args: blosc_c_args,
-  )
-  blosc_dep = declare_dependency(
-    link_with: blosc_lib,
-    include_directories: blosc_inc,
-  )
+  subproject('c-blosc', default_options: subproject_opts + simd_opts)
+  blosc_dep = dependency('blosc')
 endif
 
 # --- Cython extension modules ---
