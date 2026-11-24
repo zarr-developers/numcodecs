@@ -38,6 +38,8 @@ license-files = [
     "LICENSE.txt",
     "c-blosc/LICENSE.txt",
     "c-blosc/LICENSES/*",
+    "third_party/zstd-1.6.0/LICENSE",
+    "third_party/zstd-1.6.0/COPYING",
 ]
 
 [project.urls]
