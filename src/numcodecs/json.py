@@ -7,8 +7,8 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_ndarray, ensure_text
-from .ndarray_like import BufferLike
+from .compat import ensure_text
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class JSONConfig(CodecConfig):
@@ -96,8 +96,8 @@ class JSON(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         items = self._decoder.decode(ensure_text(buf, self._text_encoding))
         dec = np.empty(items[-1], dtype=items[-2])
         if not items[-1]:
@@ -105,7 +105,8 @@ class JSON(Codec):
         else:
             dec[:] = items[:-2]
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            # np.copyto needs an ndarray destination and raises TypeError otherwise
+            np.copyto(out, dec)  # type: ignore[arg-type]
             return out
         else:
             return dec

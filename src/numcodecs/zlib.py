@@ -3,7 +3,7 @@ from typing import cast, overload
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_contiguous_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class ZlibConfig(CodecConfig):
@@ -40,8 +40,8 @@ class Zlib(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         # normalise inputs
         arr = ensure_contiguous_ndarray(buf)
         if out is not None:

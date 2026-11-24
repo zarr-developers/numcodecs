@@ -4,7 +4,7 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT
 
 class Fletcher32(Codec):
     codec_id: str
@@ -13,4 +13,4 @@ class Fletcher32(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...

@@ -1,10 +1,10 @@
-from typing import cast, overload
+from typing import Any, cast, overload
 
 import numpy as np
 
 from .abc import Codec, CodecConfig
 from .compat import ensure_ndarray_like, ndarray_copy
-from .ndarray_like import BufferLike, NDArrayLike
+from .ndarray_like import BufferLike, NDArrayLike, OutT, WritableBufferLike
 
 
 class BitRoundConfig(CodecConfig):
@@ -61,7 +61,9 @@ class BitRound(Codec):
         The itemsize will be preserved, but the output should be much more
         compressible.
         """
-        a = ensure_ndarray_like(buf)
+        # typed Any: beyond the NDArrayLike protocol, this needs `copy`, `dtype.str` and
+        # in-place arithmetic, which numpy and cupy arrays provide
+        a: Any = ensure_ndarray_like(buf)
         if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
         bits = max_bits[str(a.dtype)]
@@ -69,7 +71,8 @@ class BitRound(Codec):
         a_int_dtype = np.dtype(a.dtype.str.replace("f", "i"))
         all_set = np.array(-1, dtype=a_int_dtype)
         if self.keepbits == bits:
-            return a
+            unchanged: NDArrayLike = a
+            return unchanged
         if self.keepbits > bits:
             raise ValueError("Keepbits too large for given dtype")
         b = a.copy()
@@ -85,14 +88,14 @@ class BitRound(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> NDArrayLike: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Remake floats from ints
 
         As with ``encode``, preserves itemsize.
         """
-        buf = ensure_ndarray_like(buf)
+        arr: Any = ensure_ndarray_like(buf)
         # Cast back from `int` to `float` type (noop if a `float`ing type buffer is provided)
-        dt = np.dtype(buf.dtype.str.replace("i", "f"))
-        data = buf.view(dt)
+        dt = np.dtype(arr.dtype.str.replace("i", "f"))
+        data = arr.view(dt)
         return ndarray_copy(data, out)

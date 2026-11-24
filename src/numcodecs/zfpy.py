@@ -41,7 +41,7 @@ if _zfpy:
 
     from .abc import Codec, CodecConfig
     from .compat import ensure_bytes, ensure_contiguous_ndarray, ndarray_copy
-    from .ndarray_like import BufferLike
+    from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
     _zfpy_module: ModuleType = _zfpy  # narrowed from `ModuleType | None` for the methods below
 
@@ -127,8 +127,8 @@ if _zfpy:
         @overload
         def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
         @overload
-        def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-        def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+        def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+        def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
             # normalise inputs
             buf = ensure_bytes(buf)
             if out is not None:

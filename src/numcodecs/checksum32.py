@@ -10,9 +10,9 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ndarray_copy
+from .compat import ensure_contiguous_ndarray, ensure_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 crc32c_checksum: Callable[[Buffer, int], int] | None
 
@@ -91,8 +91,8 @@ class Checksum32(Codec, abc.ABC):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8] | memoryview: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         arr = ensure_contiguous_ndarray(buf).view('u1')
         if arr.nbytes < 4:
             raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
@@ -108,8 +108,11 @@ class Checksum32(Codec, abc.ABC):
         expect = checksum_view.view('<u4')[0]
         checksum = self.checksum(payload_view) & 0xFFFFFFFF
         if expect != checksum:
+            # Reporting corrupt data comes first: a subclass that set no `codec_id` is
+            # named by its class instead of failing here on the missing attribute.
+            name = getattr(self, 'codec_id', type(self).__name__)
             raise RuntimeError(
-                f"Stored and computed {self.codec_id} checksum do not match. Stored: {expect}. Computed: {checksum}."
+                f"Stored and computed {name} checksum do not match. Stored: {expect}. Computed: {checksum}."
             )
         return ndarray_copy(payload_view, out)
 
@@ -175,9 +178,11 @@ class JenkinsLookup3(Checksum32):
     ----------
     initval : int
         initial seed passed to the hash algorithm, default: 0
-    prefix : bytes-like or list of int
+    prefix : bytes-like, or list or tuple of int
         bytes prepended to the buffer before evaluating the hash, default: None.
-        `get_config` reports them as a list of ints, so that the configuration is JSON.
+        A bytes-like object contributes its raw bytes; a list or tuple gives the byte
+        values. `get_config` reports them as a list of ints, so that the configuration
+        is JSON.
     """
 
     checksum = staticmethod(jenkins_lookup3)
@@ -185,12 +190,21 @@ class JenkinsLookup3(Checksum32):
 
     prefix: npt.NDArray[np.uint8] | None
 
-    def __init__(self, initval: int = 0, prefix: Buffer | list[int] | None = None) -> None:
+    def __init__(
+        self,
+        initval: int = 0,
+        prefix: Buffer | list[int] | tuple[int, ...] | None = None,
+    ) -> None:
         self.initval = initval
         if prefix is None:
             self.prefix = None
-        else:
+        elif isinstance(prefix, (list, tuple)):
+            # the form get_config() reports; bytes() rejects anything but ints in 0..255
             self.prefix = np.frombuffer(bytes(prefix), dtype='uint8')
+        else:
+            # Any buffer, read as its raw bytes. Not bytes(prefix): for an int that
+            # means "this many zero bytes", and a numpy scalar would be read as an int.
+            self.prefix = np.frombuffer(prefix, dtype='uint8')
 
     def get_config(self) -> "JenkinsLookup3Config":
         config = cast(JenkinsLookup3Config, dict(super().get_config()))
@@ -210,8 +224,8 @@ class JenkinsLookup3(Checksum32):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> memoryview: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         if self.prefix is None:
@@ -226,13 +240,12 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out_view = ensure_contiguous_ndarray(out).view("uint8")
-            if out_view.nbytes != b.nbytes - 4:
+            out_nbytes = ensure_ndarray(out).nbytes
+            if out_nbytes != b.nbytes - 4:
                 raise ValueError(
-                    f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
+                    f"out has {out_nbytes} bytes, but the decoded data has {b.nbytes - 4}"
                 )
-            out_view[:] = b[:-4]
-            return out
+            return ndarray_copy(b[:-4], out)
         return memoryview(b[:-4])
 
 

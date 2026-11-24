@@ -29,34 +29,32 @@ other and vice versa.
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Buffer, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any, Protocol, Self, overload
 
 from typing_extensions import ReadOnly, TypedDict
 
-from .ndarray_like import BufferLike, NDArrayLike
+from .ndarray_like import BufferLike, WritableBufferLike
 
 __all__ = [
-    "JSON",
-    "ArrayArrayCodec",
-    "ArrayBytesCodec",
-    "BytesBytesCodec",
     "Codec",
     "CodecConfig",
     "CodecProtocol",
+    "JSONValue",
 ]
 
-type JSON = int | float | bool | str | Sequence[JSON] | Mapping[str, JSON] | None
+type JSONValue = int | float | bool | str | Sequence[JSONValue] | Mapping[str, JSONValue] | None
 """A JSON-serializable value. `Sequence` and `Mapping` rather than `list` and `dict`, so
 that tuples, TypedDicts and lists of narrower types count (the same definition as
-`zarr_metadata`'s `JSONValue`)."""
+`zarr_metadata`'s `JSONValue`). One consequence: `bytes` is a `Sequence[int]` to type
+checkers, so it is accepted although it is not JSON-serializable."""
 
 
 # `extra_items` (PEP 728) says that any further keys hold JSON values and are read-only. It
 # lets type checkers that implement PEP 728 (pyright) treat every codec configuration as a
-# `Mapping[str, JSON]`, and as Zarr v2 codec metadata. mypy does not implement PEP 728 yet,
+# `Mapping[str, JSONValue]`, and as Zarr v2 codec metadata. mypy does not implement PEP 728 yet,
 # so it rejects the keyword and treats `CodecConfig` as a plain TypedDict.
-class CodecConfig(TypedDict, extra_items=ReadOnly[JSON]):  # type: ignore[call-arg]
+class CodecConfig(TypedDict, extra_items=ReadOnly[JSONValue]):  # type: ignore[call-arg]
     """The configuration every codec returns from `Codec.get_config`: its `id`, plus any
     further JSON-serializable parameters.
 
@@ -70,11 +68,14 @@ class CodecConfig(TypedDict, extra_items=ReadOnly[JSON]):  # type: ignore[call-a
 class Codec(ABC):
     """Codec abstract base class."""
 
-    # Declared without a value (abstract intermediate classes leave it unset) and without
-    # `ClassVar`, so that `Codec` instances match protocols that declare `codec_id` either
-    # as a plain attribute or as a read-only property.
+    # Declared without a value: an identifier is a string, never None, and a codec class
+    # that sets none has no `codec_id` at all (abstract intermediate classes leave it
+    # unset). Not `ClassVar`, so that `Codec` instances match protocols that declare
+    # `codec_id` either as a plain attribute or as a read-only property.
     codec_id: str
-    """Codec identifier. Every concrete codec class sets it as a class attribute."""
+    """Codec identifier. Every concrete codec class must set it as a class attribute.
+    For a class that does not, `get_config` fails, and so does `register_codec` unless it
+    is given an id."""
 
     @abstractmethod
     def encode(self, buf: BufferLike, /) -> BufferLike:  # pragma: no cover
@@ -93,13 +94,18 @@ class Codec(ABC):
             protocol.
         """
 
+    # Both overloads return `BufferLike`: the base class says nothing about which object
+    # comes back, so a subclass may annotate `decode` with one plain signature. (If the
+    # second overload returned the type of `out`, mypy would reject every subclass that
+    # did not repeat the overloads.) numcodecs' own codecs narrow both: what they decode
+    # to without `out`, and the type of `out` with it.
     @overload
     def decode(self, buf: BufferLike, /, out: None = None) -> BufferLike: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, /, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, /, out: WritableBufferLike) -> BufferLike: ...
     @abstractmethod
     def decode(
-        self, buf: BufferLike, /, out: BufferLike | None = None
+        self, buf: BufferLike, /, out: WritableBufferLike | None = None
     ) -> BufferLike:  # pragma: no cover
         """Decode data in `buf`.
 
@@ -137,8 +143,14 @@ class Codec(ABC):
 
         return config
 
+    # `config` is typed `Any`, like the input of pydantic's `model_validate`. No narrower
+    # type works for everyone: codecs that override this (to decode config values) declare
+    # `dict[str, Any]`, which rules out `Mapping` here, and callers pass TypedDicts, which
+    # are not dicts to a type checker.
+    # The cost is that type checkers accept any argument, including `None`, which
+    # fails at runtime.
     @classmethod
-    def from_config(cls, config: Mapping[str, Any]) -> Self:
+    def from_config(cls, config: Any) -> Self:
         """Instantiate codec from a configuration object, without its 'id' field."""
         # N.B., assume at this point the 'id' field has been removed from
         # the config object
@@ -151,10 +163,15 @@ class Codec(ABC):
 
     def __eq__(self, other: object) -> bool:
         # override in sub-class if need special equality comparison
-        try:
-            return bool(self.get_config() == other.get_config())  # type: ignore[attr-defined]
-        except AttributeError:
+
+        # Only an `other` without `get_config` is "not a codec, so not equal". An error
+        # raised by either `get_config` (a codec class that set no `codec_id`, say)
+        # propagates: a codec that silently equals nothing, itself included, is harder
+        # to diagnose.
+        other_get_config = getattr(other, 'get_config', None)
+        if other_get_config is None:
             return False
+        return bool(self.get_config() == other_get_config())
 
     def __repr__(self) -> str:
         # override in sub-class if need special representation
@@ -179,33 +196,12 @@ class CodecProtocol(Protocol):
 
     def encode(self, buf: BufferLike, /) -> BufferLike: ...  # pragma: no cover
 
+    # `out: Any`, unlike `Codec.decode`: a protocol for consumers should match codecs
+    # however narrowly they type `out` (an ndarray only, say), and stay a plain method
+    # with a real runtime signature.
     def decode(self, buf: BufferLike, /, out: Any = None) -> BufferLike: ...  # pragma: no cover
 
     def get_config(self) -> Mapping[str, Any]: ...  # pragma: no cover
 
     @classmethod
-    def from_config(cls, config: Mapping[str, Any]) -> Self: ...  # pragma: no cover
-
-
-class BytesBytesCodec(CodecProtocol, Protocol):
-    """A codec that maps bytes to bytes, such as a compressor or a checksum."""
-
-    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> Buffer: ...  # pragma: no cover
-
-
-class ArrayArrayCodec(CodecProtocol, Protocol):
-    """A codec that maps an array to an array, such as a filter."""
-
-    def encode(self, buf: BufferLike, /) -> NDArrayLike: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover
-
-
-class ArrayBytesCodec(CodecProtocol, Protocol):
-    """A codec that serializes an array to bytes and back."""
-
-    def encode(self, buf: BufferLike, /) -> Buffer: ...  # pragma: no cover
-
-    def decode(self, buf: BufferLike, /, out: Any = None) -> NDArrayLike: ...  # pragma: no cover
+    def from_config(cls, config: Any) -> Self: ...  # pragma: no cover

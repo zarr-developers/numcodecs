@@ -168,3 +168,38 @@ def test_config_with_prefix_round_trips_through_json():
     assert rebuilt == j
     data = np.arange(8, dtype="uint8")
     assert rebuilt.encode(data) == j.encode(data)
+
+
+@pytest.mark.parametrize("prefix", [5, True, 0, 1.5, "FADB"])
+def test_prefix_rejects_non_buffers(prefix):
+    # in particular an int must not be read as "that many zero bytes"
+    with pytest.raises(TypeError):
+        JenkinsLookup3(prefix=prefix)
+
+
+@pytest.mark.parametrize("bad", [[256], [-1], [1.5]])
+def test_prefix_rejects_lists_that_are_not_bytes(bad):
+    with pytest.raises((TypeError, ValueError)):
+        JenkinsLookup3(prefix=bad)
+
+
+def test_prefix_forms_agree():
+    """A prefix hashes the same whether given as bytes, a list or tuple of ints, a uint8
+    array or a numpy scalar; buffers contribute their raw bytes."""
+    data = np.arange(8, dtype="uint8")
+    expected = JenkinsLookup3(prefix=b"\x03").encode(data)
+    for prefix in ([3], (3,), np.array([3], dtype="uint8"), np.uint8(3), bytearray(b"\x03")):
+        assert JenkinsLookup3(prefix=prefix).encode(data) == expected
+    # a multi-byte buffer contributes all of its bytes, not its value
+    wide = np.array(7, dtype="<i8")
+    assert JenkinsLookup3(prefix=wide).encode(data) == JenkinsLookup3(prefix=wide.tobytes()).encode(
+        data
+    )
+
+
+def test_out_non_contiguous():
+    j = JenkinsLookup3()
+    data = np.arange(4, dtype="uint8")
+    out = np.zeros(8, dtype="uint8")[::2]
+    assert j.decode(j.encode(data), out=out) is out
+    assert out.tolist() == data.tolist()

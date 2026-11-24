@@ -125,6 +125,45 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
+  test-min-typing-extensions:
+    # numcodecs imports typing_extensions at import time, and too old a version fails in
+    # ways that depend on the Python version. Run the tests at the declared minimum on the
+    # oldest and newest supported Pythons. Keep the pin in step with pyproject.toml.
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.15"]
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for version resolution
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install numcodecs with the minimum typing_extensions
+        run: |
+          # a constraint, so that a dependency needing a newer version fails the install
+          echo "typing_extensions==4.14.0" > min-constraints.txt
+          python -m pip install -v -c min-constraints.txt ".[test,msgpack]"
+
+      - name: List installed packages
+        run: python -m pip list
+
+      - name: Run tests
+        run: pytest -v
+
   typing:
     # Static types: the repository's own mypy configuration over src and tests, and the
     # strict type tests in tests/typing under both mypy and pyright (see its README).

@@ -75,3 +75,22 @@ def test_register_codec_without_id():
 
     with pytest.raises(ValueError, match="has no codec_id and none was given"):
         numcodecs.register_codec(NoId)
+
+
+def test_get_codec_non_string_id():
+    """Ids are strings, so no other id names a codec."""
+    with pytest.raises(UnknownCodecError):
+        get_codec({"id": 7})
+
+
+def test_register_codec_only_refuses_a_missing_id(monkeypatch):
+    """`None` means the class has no id. Any other id is used as it is, even an empty
+    string."""
+
+    class Empty(numcodecs.Zlib):
+        codec_id = ""
+
+    monkeypatch.delitem(numcodecs.registry.codec_registry, "", raising=False)
+    numcodecs.register_codec(Empty)
+    assert type(get_codec({"id": "", "level": 2})) is Empty
+    numcodecs.registry.codec_registry.pop("")

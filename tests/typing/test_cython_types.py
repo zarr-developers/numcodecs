@@ -57,3 +57,17 @@ def test_vlen() -> None:
     values[0], values[1] = np.arange(3, dtype="i4"), np.arange(2, dtype="i4")
     enc = assert_type(arrays.encode(values), bytearray)
     assert assert_type(arrays.decode(enc), npt.NDArray[np.object_])[0].tolist() == [0, 1, 2]
+
+
+def test_versions() -> None:
+    from numcodecs import blosc, lz4, zstd
+
+    for version in (blosc.__version__, zstd.__version__, lz4.__version__):
+        assert isinstance(assert_type(version, str), str)
+
+
+def test_blosc_cbuffer_metainfo() -> None:
+    from numcodecs import blosc
+
+    info = assert_type(blosc._cbuffer_metainfo(Blosc().encode(DATA)), tuple[int, int, int])  # pyright: ignore[reportPrivateUsage]
+    assert [type(x) for x in info] == [int, int, int]

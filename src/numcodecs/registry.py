@@ -82,8 +82,15 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
 
     """
     if codec_id is None:
-        codec_id = getattr(cls, "codec_id", None)
+        try:
+            codec_id = cls.codec_id
+        except AttributeError as e:
+            # chained, so an error raised while reading a `codec_id` that the class does
+            # define (inside a descriptor, say) stays visible
+            raise ValueError(
+                f"cannot register {cls!r}: it has no codec_id and none was given"
+            ) from e
     if codec_id is None:
-        raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
+        raise ValueError(f"cannot register {cls!r}: its codec_id is None and no id was given")
     logger.debug("Registering codec '%s'", codec_id)
     codec_registry[codec_id] = cls

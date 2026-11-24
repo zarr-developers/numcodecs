@@ -6,7 +6,7 @@ import numpy as np
 import numpy.typing as npt
 
 from numcodecs import pickles
-from numcodecs.abc import ArrayBytesCodec, CodecConfig
+from numcodecs.abc import CodecConfig
 from numcodecs.json import JSON, JSONConfig
 from numcodecs.pickles import Pickle, PickleConfig
 from numcodecs.vlen import VLenArray, VLenArrayConfig, VLenUTF8
@@ -14,12 +14,8 @@ from numcodecs.vlen import VLenArray, VLenArrayConfig, VLenUTF8
 OBJECTS = np.array(["foo", "bar", "baz"], dtype=object)
 
 
-def _as_array_bytes_codec(codec: ArrayBytesCodec) -> ArrayBytesCodec:
-    return codec
-
-
 def test_json() -> None:
-    codec = _as_array_bytes_codec(JSON())
+    codec = JSON()
     enc = assert_type(JSON().encode(OBJECTS), bytes)
     assert isinstance(enc, bytes)
     dec = assert_type(JSON().decode(enc), npt.NDArray[Any])

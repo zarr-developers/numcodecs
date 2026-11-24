@@ -6,7 +6,7 @@ from typing import Any, assert_type
 
 import numpy as np
 
-from numcodecs.abc import JSON, ArrayArrayCodec, BytesBytesCodec, CodecConfig
+from numcodecs.abc import CodecConfig, JSONValue
 from numcodecs.base64 import Base64
 from numcodecs.blosc import Blosc, BloscConfig
 from numcodecs.bz2 import BZ2, BZ2Config
@@ -19,15 +19,8 @@ from numcodecs.zstd import Zstd, ZstdConfig
 DATA = np.arange(16, dtype="f8")
 
 
-def _round_trip(codec: BytesBytesCodec) -> None:
-    """Every compressor: bytes in any buffer form go in, bytes come out, `out` comes back."""
-    enc = codec.encode(DATA)
-    assert bytes(memoryview(codec.decode(enc))) == DATA.tobytes()
-
-
 def test_compressors() -> None:
     for codec in (Zlib(), GZip(), BZ2(), LZMA(), Base64(), Blosc(), Zstd(), LZ4()):
-        _round_trip(codec)
         enc = assert_type(codec.encode(DATA), bytes)
         assert isinstance(enc, bytes)
         assert assert_type(codec.decode(enc), bytes) == DATA.tobytes()
@@ -59,20 +52,30 @@ def test_configs() -> None:
         assert _json_round_trip(config) == config
 
 
-def test_compressors_are_not_array_codecs() -> None:
-    # A compressor returns bytes, which is not an ndarray-like.
-    codec: ArrayArrayCodec = Zlib()  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
-    assert not isinstance(codec.encode(DATA), np.ndarray)
-
-
-def _json_mapping(config: Mapping[str, JSON]) -> Mapping[str, JSON]:
+def _json_mapping(config: Mapping[str, JSONValue]) -> Mapping[str, JSONValue]:
     return config
 
 
 def test_configs_are_json_mappings() -> None:
     # pyright implements PEP 728, so CodecConfig's read-only JSON `extra_items` make every
-    # codec configuration a `Mapping[str, JSON]`. mypy does not implement it yet.
+    # codec configuration a `Mapping[str, JSONValue]`. mypy does not implement it yet.
     zlib_config = _json_mapping(Zlib().get_config())  # type: ignore[arg-type]
     blosc_config = _json_mapping(Blosc().get_config())  # type: ignore[arg-type]
     for config in (zlib_config, blosc_config):
         assert _json_round_trip(config) == config
+
+
+class _ExtendedConfig(CodecConfig):
+    """A third-party configuration. Declaring a field narrower than `JSONValue` is only
+    allowed (by PEP 728, which pyright implements) because `CodecConfig`'s extra items
+    are read-only."""
+
+    level: int
+
+
+def test_undeclared_config_keys_are_json_values() -> None:
+    config: _ExtendedConfig = {"id": "x", "level": 1}
+    # pyright knows that a key the TypedDict does not declare holds a JSON value. mypy
+    # does not implement PEP 728 and says `object`.
+    assert assert_type(config.get("undeclared"), JSONValue) is None  # type: ignore[assert-type]
+    assert assert_type(config["level"], int) == 1

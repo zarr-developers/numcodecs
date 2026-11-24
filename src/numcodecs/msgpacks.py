@@ -5,8 +5,8 @@ import numpy as np
 import numpy.typing as npt
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ensure_ndarray
-from .ndarray_like import BufferLike
+from .compat import ensure_contiguous_ndarray
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 
 class MsgPackConfig(CodecConfig):
@@ -81,14 +81,15 @@ class MsgPack(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> BufferLike:
         buf = ensure_contiguous_ndarray(buf)
         items = msgpack.unpackb(buf, raw=self.raw)
         dec = np.empty(items[-1], dtype=items[-2])
         dec[:] = items[:-2]
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            # np.copyto needs an ndarray destination and raises TypeError otherwise
+            np.copyto(out, dec)  # type: ignore[arg-type]
             return out
         else:
             return dec

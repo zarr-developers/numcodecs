@@ -11,15 +11,11 @@
     .. automethod:: get_config
     .. automethod:: from_config
 
-Protocols
----------
+Protocol
+--------
 
-These describe codecs structurally, for code that accepts any object implementing the
-interface whether or not it subclasses :class:`Codec`. The three kinds mirror the codec
-kinds of the Zarr version 3 specification.
+:class:`CodecProtocol` describes a codec structurally, for code that accepts any object
+implementing the interface whether or not it subclasses :class:`Codec`.
 
 .. autoclass:: CodecProtocol
-.. autoclass:: BytesBytesCodec
-.. autoclass:: ArrayArrayCodec
-.. autoclass:: ArrayBytesCodec
 ```

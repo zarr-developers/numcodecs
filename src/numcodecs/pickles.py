@@ -5,9 +5,9 @@ from typing import Any, overload
 import numpy as np
 
 from .abc import Codec, CodecConfig
-from .compat import ensure_contiguous_ndarray, ensure_ndarray
+from .compat import ensure_contiguous_ndarray
 from .errors import UnsafeDecodeError
-from .ndarray_like import BufferLike
+from .ndarray_like import BufferLike, OutT, WritableBufferLike
 
 _ENV_VAR = "NUMCODECS_ALLOW_UNSAFE_PICKLE_DECODE"
 
@@ -79,8 +79,8 @@ class Pickle(Codec):
     @overload
     def decode(self, buf: BufferLike, out: None = None) -> Any: ...
     @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> Any:
+    def decode(self, buf: BufferLike, out: OutT) -> OutT: ...
+    def decode(self, buf: BufferLike, out: WritableBufferLike | None = None) -> Any:
         if not ALLOW_UNSAFE_PICKLE_DECODE:
             raise UnsafeDecodeError(
                 "Pickle.decode is disabled because unpickling data can execute arbitrary "
@@ -92,7 +92,8 @@ class Pickle(Codec):
         dec = pickle.loads(buf)
 
         if out is not None:
-            np.copyto(ensure_ndarray(out), dec)
+            # np.copyto needs an ndarray destination and raises TypeError otherwise
+            np.copyto(out, dec)  # type: ignore[arg-type]
             return out
         else:
             return dec
