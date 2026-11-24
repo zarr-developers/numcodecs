@@ -42,6 +42,10 @@
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
   installed. zfpy versions are now parsed with `packaging`, which becomes a dependency,
   and the `zfpy` extra now requires zfpy >= 1.0.1. {issue}`892`
+* The VLen codecs (`VLenUTF8`, `VLenBytes` and `VLenArray`) fill a non-contiguous `out`
+  passed to `decode`. For layouts that numpy cannot flatten without a copy they decoded
+  into that copy and returned `out` unchanged. If such an `out` is read-only they raise
+  `ValueError`.
 * `decode(buf, out=out)` now returns `out` itself for every codec, as the `Codec`
   docstring describes. Zlib, BZ2, LZMA, Base64, Shuffle, ZFPY, PCodec, the three VLen
   codecs, and every codec built on `numcodecs.compat.ndarray_copy` returned a flattened view
