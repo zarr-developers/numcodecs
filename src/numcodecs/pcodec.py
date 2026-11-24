@@ -122,7 +122,8 @@ class PCodec(Codec):
     def decode(self, buf, out=None):
         buf = ensure_bytes(buf)
         if out is not None:
-            standalone.simple_decompress_into(buf, ensure_contiguous_ndarray(out))
+            out = ensure_contiguous_ndarray(out)
+            standalone.simple_decompress_into(buf, out)
             return out
         else:
             return standalone.simple_decompress(buf)

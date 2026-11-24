@@ -103,7 +103,7 @@ if _zfpy:
             # normalise inputs
             buf = ensure_bytes(buf)
             if out is not None:
-                ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
+                out = ensure_contiguous_ndarray(out)
 
             # do decompression
             dec = _zfpy.decompress_numpy(buf)

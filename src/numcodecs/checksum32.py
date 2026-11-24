@@ -185,12 +185,7 @@ class JenkinsLookup3(Checksum32):
                 "This could be a sign that the data has been corrupted."
             )
         if out is not None:
-            out_view = ensure_contiguous_ndarray(out).view("uint8")
-            if out_view.nbytes != b.nbytes - 4:
-                raise ValueError(
-                    f"out has {out_view.nbytes} bytes, but the decoded data has {b.nbytes - 4}"
-                )
-            out_view[:] = b[:-4]
+            out.view("uint8")[:] = b[:-4]
             return out
         return memoryview(b[:-4])
 

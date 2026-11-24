@@ -154,11 +154,11 @@ class VLenUTF8(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output: fill a flat view, but return the caller's own `out`
+        # setup output
         if out is not None:
-            out_flat = check_out_param(out, n_items)
+            out = check_out_param(out, n_items)
         else:
-            out = out_flat = np.empty(n_items, dtype=object)
+            out = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -171,7 +171,7 @@ class VLenUTF8(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out_flat[i] = PyUnicode_FromStringAndSize(data, L)
+            out[i] = PyUnicode_FromStringAndSize(data, L)
             data += L
 
         return out
@@ -283,11 +283,11 @@ class VLenBytes(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output: fill a flat view, but return the caller's own `out`
+        # setup output
         if out is not None:
-            out_flat = check_out_param(out, n_items)
+            out = check_out_param(out, n_items)
         else:
-            out = out_flat = np.empty(n_items, dtype=object)
+            out = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -300,7 +300,7 @@ class VLenBytes(Codec):
             data += HEADER_LENGTH
             if data + L > data_end:
                 raise ValueError('corrupt buffer, data seem truncated')
-            out_flat[i] = PyBytes_FromStringAndSize(data, L)
+            out[i] = PyBytes_FromStringAndSize(data, L)
             data += L
 
         return out
@@ -439,11 +439,11 @@ class VLenArray(Codec):
         # load number of items
         n_items = load_le32(<uint8_t*>data)
 
-        # setup output: fill a flat view, but return the caller's own `out`
+        # setup output
         if out is not None:
-            out_flat = check_out_param(out, n_items)
+            out = check_out_param(out, n_items)
         else:
-            out = out_flat = np.empty(n_items, dtype=object)
+            out = np.empty(n_items, dtype=object)
 
         # iterate and decode - N.B., do not try to cast `out` as object[:]
         # as this causes segfaults, possibly similar to
@@ -463,7 +463,7 @@ class VLenArray(Codec):
             v_pb = PyMemoryView_GET_BUFFER(v_mv)
             memcpy(v_pb.buf, data, L)
 
-            out_flat[i] = v
+            out[i] = v
             data += L
 
         return out

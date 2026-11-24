@@ -31,7 +31,7 @@ class BZ2(Codec):
         # normalise inputs
         buf = ensure_contiguous_ndarray(buf)
         if out is not None:
-            ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
+            out = ensure_contiguous_ndarray(out)
 
         # N.B., bz2 cannot handle ndarray directly because of truth testing issues
         buf = memoryview(buf)

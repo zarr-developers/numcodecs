@@ -40,15 +40,6 @@
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is
   installed. zfpy versions are now parsed with `packaging`, which becomes a dependency,
   and the `zfpy` extra now requires zfpy >= 1.0.1. {issue}`892`
-* `decode(buf, out=out)` now returns `out` itself for every codec, as the `Codec`
-  docstring describes. Zlib, BZ2, LZMA, Base64, Shuffle, ZFPY, PCodec, the three VLen
-  codecs, and every codec built on `numcodecs.compat.ndarray_copy` returned a flattened view
-  of `out` instead, or a new ndarray when `out` was a `bytearray`. The decoded bytes were
-  already written into `out`; only the returned object changes.
-* `JenkinsLookup3.decode` accepts any contiguous writable buffer as `out`, not only an
-  ndarray, and raises `ValueError` when `out` has the wrong size.
-* `Fletcher32.decode` without `out` returns a `uint8` ndarray, like the other checksum
-  codecs, instead of a Cython memoryview slice.
 
 (release_0.17.1)=
 
