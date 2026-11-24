@@ -1,18 +1,7 @@
-from typing import Any, overload
-
 import numpy as np
-import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
-
-
-class AsTypeConfig(CodecConfig):
-    """The configuration of a `AsType` codec, as returned by `AsType.get_config`."""
-
-    encode_dtype: str
-    decode_dtype: str
 
 
 class AsType(Codec):
@@ -51,22 +40,18 @@ class AsType(Codec):
 
     codec_id = 'astype'
 
-    def __init__(self, encode_dtype: npt.DTypeLike, decode_dtype: npt.DTypeLike) -> None:
-        self.encode_dtype: np.dtype[Any] = np.dtype(encode_dtype)
-        self.decode_dtype: np.dtype[Any] = np.dtype(decode_dtype)
+    def __init__(self, encode_dtype, decode_dtype):
+        self.encode_dtype = np.dtype(encode_dtype)
+        self.decode_dtype = np.dtype(decode_dtype)
 
-    def encode(self, buf: BufferLike) -> npt.NDArray[Any]:
+    def encode(self, buf):
         # normalise input
         arr = ensure_ndarray(buf).view(self.decode_dtype)
 
         # convert and copy
         return arr.astype(self.encode_dtype)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         # normalise input
         enc = ensure_ndarray(buf).view(self.encode_dtype)
 
@@ -76,12 +61,12 @@ class AsType(Codec):
         # handle output
         return ndarray_copy(dec, out)
 
-    def get_config(self) -> AsTypeConfig:
+    def get_config(self):
         return {
             'id': self.codec_id,
             'encode_dtype': self.encode_dtype.str,
             'decode_dtype': self.decode_dtype.str,
         }
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f'{type(self).__name__}(encode_dtype={self.encode_dtype.str!r}, decode_dtype={self.decode_dtype.str!r})'

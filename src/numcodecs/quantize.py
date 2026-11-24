@@ -1,20 +1,9 @@
 import math
-from typing import Any, overload
 
 import numpy as np
-import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
-
-
-class QuantizeConfig(CodecConfig):
-    """The configuration of a `Quantize` codec, as returned by `Quantize.get_config`."""
-
-    digits: int
-    dtype: str
-    astype: str
 
 
 class Quantize(Codec):
@@ -58,19 +47,17 @@ class Quantize(Codec):
 
     codec_id = 'quantize'
 
-    def __init__(
-        self, digits: int, dtype: npt.DTypeLike, astype: npt.DTypeLike | None = None
-    ) -> None:
+    def __init__(self, digits, dtype, astype=None):
         self.digits = digits
-        self.dtype: np.dtype[Any] = np.dtype(dtype)
+        self.dtype = np.dtype(dtype)
         if astype is None:
-            self.astype: np.dtype[Any] = self.dtype
+            self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
         if self.dtype.kind != 'f' or self.astype.kind != 'f':
             raise ValueError('only floating point data types are supported')
 
-    def encode(self, buf: BufferLike) -> npt.NDArray[Any]:
+    def encode(self, buf):
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -88,17 +75,13 @@ class Quantize(Codec):
         # cast dtype
         return enc.astype(self.astype, copy=False)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         # filter is lossy, decoding is no-op
         dec = ensure_ndarray(buf).view(self.astype)
         dec = dec.astype(self.dtype, copy=False)
         return ndarray_copy(dec, out)
 
-    def get_config(self) -> QuantizeConfig:
+    def get_config(self):
         # override to handle encoding dtypes
         return {
             'id': self.codec_id,
@@ -107,7 +90,7 @@ class Quantize(Codec):
             'astype': self.astype.str,
         }
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         r = f'{type(self).__name__}(digits={self.digits}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
             r += f', astype={self.astype.str!r}'

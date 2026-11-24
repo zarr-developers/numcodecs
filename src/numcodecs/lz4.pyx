@@ -14,15 +14,8 @@ from cpython.memoryview cimport PyMemoryView_GET_BUFFER
 from .compat_ext cimport PyBytes_RESIZE, ensure_contiguous_memoryview
 from ._utils cimport store_le32, load_le32
 
-from typing import TypedDict
-
 from .compat import ensure_contiguous_ndarray
 from .abc import Codec
-
-
-# The type of `LZ4.get_config()`. Declared with the functional syntax because Cython does not
-# compile TypedDict class bodies; `lz4.pyi` declares the same type with the class syntax.
-LZ4Config = TypedDict("LZ4Config", {"id": str, "acceleration": int})
 
 
 cdef extern from "lz4.h":

@@ -1,18 +1,8 @@
-from typing import cast, overload
-
 import numpy as np
-import numpy.typing as npt
 
 from ._shuffle import _doShuffle, _doUnshuffle
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_contiguous_ndarray
-from .ndarray_like import BufferLike
-
-
-class ShuffleConfig(CodecConfig):
-    """The configuration of a `Shuffle` codec, as returned by `Shuffle.get_config`."""
-
-    elementsize: int
 
 
 class Shuffle(Codec):
@@ -27,15 +17,10 @@ class Shuffle(Codec):
 
     codec_id = 'shuffle'
 
-    def __init__(self, elementsize: int = 4) -> None:
+    def __init__(self, elementsize=4):
         self.elementsize = elementsize
 
-    def get_config(self) -> ShuffleConfig:
-        return cast(ShuffleConfig, super().get_config())
-
-    def _prepare_arrays(
-        self, buf: BufferLike, out: BufferLike | None
-    ) -> tuple[npt.NDArray[np.generic], npt.NDArray[np.generic]]:
+    def _prepare_arrays(self, buf, out):
         buf = ensure_contiguous_ndarray(buf)
 
         if out is None:
@@ -52,29 +37,25 @@ class Shuffle(Codec):
 
         return buf, out
 
-    @overload
-    def encode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8]: ...
-    @overload
-    def encode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def encode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
-        buf, out_arr = self._prepare_arrays(buf, out)
+    def encode(self, buf, out=None):
+        buf, out = self._prepare_arrays(buf, out)
 
-        if self.elementsize > 1:
-            _doShuffle(buf.view("uint8"), out_arr.view("uint8"), self.elementsize)
+        if self.elementsize <= 1:
+            return out  # no shuffling needed
 
-        return out_arr if out is None else out
+        _doShuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
-        buf, out_arr = self._prepare_arrays(buf, out)
+        return out
 
-        if self.elementsize > 1:
-            _doUnshuffle(buf.view("uint8"), out_arr.view("uint8"), self.elementsize)
+    def decode(self, buf, out=None):
+        buf, out = self._prepare_arrays(buf, out)
 
-        return out_arr if out is None else out
+        if self.elementsize <= 1:
+            return out  # no shuffling needed
 
-    def __repr__(self) -> str:
+        _doUnshuffle(buf.view("uint8"), out.view("uint8"), self.elementsize)
+
+        return out
+
+    def __repr__(self):
         return f'{type(self).__name__}(elementsize={self.elementsize})'

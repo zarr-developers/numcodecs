@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:  # pragma: no cover
-    import zarr.codecs.numcodecs
+    import zarr
 else:
     zarr = pytest.importorskip("zarr", "3.1.3")
 

@@ -2,22 +2,17 @@
 applications to dynamically register and look-up codec classes."""
 
 import logging
-import warnings
-from collections.abc import Mapping
-from importlib.metadata import EntryPoint, entry_points
-from typing import Any
+from importlib.metadata import EntryPoints, entry_points
 
 from numcodecs.abc import Codec
 from numcodecs.errors import UnknownCodecError
 
-logger: logging.Logger = logging.getLogger("numcodecs")
-codec_registry: dict[str, type[Codec]] = {}
-"""Codec classes by codec id."""
-entries: dict[str, EntryPoint] = {}
-"""Not-yet-loaded codec classes from the `numcodecs.codecs` entry point group, by codec id."""
+logger = logging.getLogger("numcodecs")
+codec_registry: dict[str, Codec] = {}
+entries: dict[str, EntryPoints] = {}
 
 
-def run_entrypoints() -> None:
+def run_entrypoints():
     entries.clear()
     eps = entry_points()
     entries.update({e.name: e for e in eps.select(group="numcodecs.codecs")})
@@ -26,7 +21,7 @@ def run_entrypoints() -> None:
 run_entrypoints()
 
 
-def get_codec(config: Mapping[str, Any]) -> Codec:
+def get_codec(config):
     """Obtain a codec for the given configuration.
 
     Parameters
@@ -49,25 +44,17 @@ def get_codec(config: Mapping[str, Any]) -> Codec:
     """
     config = dict(config)
     codec_id = config.pop('id', None)
-    cls = codec_registry.get(codec_id) if isinstance(codec_id, str) else None
+    cls = codec_registry.get(codec_id)
     if cls is None and codec_id in entries:
         logger.debug("Auto loading codec '%s' from entrypoint", codec_id)
         cls = entries[codec_id].load()
-        if not (isinstance(cls, type) and issubclass(cls, Codec)):
-            warnings.warn(
-                f"The entry point for codec {codec_id!r} loads {cls!r}, which is not a "
-                "subclass of numcodecs.abc.Codec. Support for such codecs is deprecated "
-                "and will be removed in a future release.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
         register_codec(cls, codec_id=codec_id)
     if cls:
         return cls.from_config(config)
     raise UnknownCodecError(f"{codec_id!r}")
 
 
-def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
+def register_codec(cls, codec_id=None):
     """Register a codec class.
 
     Parameters
@@ -82,8 +69,6 @@ def register_codec(cls: type[Codec], codec_id: str | None = None) -> None:
 
     """
     if codec_id is None:
-        codec_id = getattr(cls, "codec_id", None)
-    if codec_id is None:
-        raise ValueError(f"cannot register {cls!r}: it has no codec_id and none was given")
+        codec_id = cls.codec_id
     logger.debug("Registering codec '%s'", codec_id)
     codec_registry[codec_id] = cls

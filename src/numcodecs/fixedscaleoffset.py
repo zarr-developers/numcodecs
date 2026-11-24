@@ -1,20 +1,7 @@
-from typing import Any, overload
-
 import numpy as np
-import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
-
-
-class FixedScaleOffsetConfig(CodecConfig):
-    """The configuration of a `FixedScaleOffset` codec, as returned by `FixedScaleOffset.get_config`."""
-
-    scale: float
-    offset: float
-    dtype: str
-    astype: str
 
 
 class FixedScaleOffset(Codec):
@@ -82,24 +69,18 @@ class FixedScaleOffset(Codec):
 
     codec_id = 'fixedscaleoffset'
 
-    def __init__(
-        self,
-        offset: float,
-        scale: float,
-        dtype: npt.DTypeLike,
-        astype: npt.DTypeLike | None = None,
-    ) -> None:
+    def __init__(self, offset, scale, dtype, astype=None):
         self.offset = offset
         self.scale = scale
-        self.dtype: np.dtype[Any] = np.dtype(dtype)
+        self.dtype = np.dtype(dtype)
         if astype is None:
-            self.astype: np.dtype[Any] = self.dtype
+            self.astype = self.dtype
         else:
             self.astype = np.dtype(astype)
         if self.dtype == np.dtype(object) or self.astype == np.dtype(object):
             raise ValueError('object arrays are not supported')
 
-    def encode(self, buf: BufferLike) -> npt.NDArray[Any]:
+    def encode(self, buf):
         # normalise input
         arr = ensure_ndarray(buf).view(self.dtype)
 
@@ -115,11 +96,7 @@ class FixedScaleOffset(Codec):
         # convert dtype
         return enc.astype(self.astype, copy=False)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         # interpret buffer as numpy array
         enc = ensure_ndarray(buf).view(self.astype)
 
@@ -135,7 +112,7 @@ class FixedScaleOffset(Codec):
         # handle output
         return ndarray_copy(dec, out)
 
-    def get_config(self) -> FixedScaleOffsetConfig:
+    def get_config(self):
         # override to handle encoding dtypes
         return {
             'id': self.codec_id,
@@ -145,7 +122,7 @@ class FixedScaleOffset(Codec):
             'astype': self.astype.str,
         }
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         r = f'{type(self).__name__}(scale={self.scale}, offset={self.offset}, dtype={self.dtype.str!r}'
         if self.astype != self.dtype:
             r += f', astype={self.astype.str!r}'

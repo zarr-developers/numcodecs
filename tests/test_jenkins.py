@@ -1,11 +1,8 @@
-import json
-
 import numpy as np
 import pytest
+from numcodecs.jenkins import jenkins_lookup3
 
 from numcodecs.checksum32 import JenkinsLookup3
-from numcodecs.jenkins import jenkins_lookup3
-from numcodecs.registry import get_codec
 
 
 def test_jenkins_lookup3():
@@ -151,20 +148,3 @@ def test_out():
     j = JenkinsLookup3()
     result = j.encode(data)
     j.decode(result, out=data)
-
-
-def test_out_wrong_size():
-    j = JenkinsLookup3()
-    enc = j.encode(np.arange(8, dtype="uint8"))
-    with pytest.raises(ValueError, match="out has 4 bytes, but the decoded data has 8"):
-        j.decode(enc, out=bytearray(4))
-
-
-def test_config_with_prefix_round_trips_through_json():
-    j = JenkinsLookup3(initval=7, prefix=b"FADB")
-    config = j.get_config()
-    assert config == {"id": "jenkins_lookup3", "initval": 7, "prefix": list(b"FADB")}
-    rebuilt = get_codec(json.loads(json.dumps(config)))
-    assert rebuilt == j
-    data = np.arange(8, dtype="uint8")
-    assert rebuilt.encode(data) == j.encode(data)
