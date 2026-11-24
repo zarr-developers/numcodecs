@@ -209,3 +209,17 @@ jobs:
           fail_ci_if_error: ${{ github.repository == 'zarr-developers/numcodecs' }}
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+
+  # Branch protection requires this job instead of individual matrix entries, so
+  # renaming a runner or changing a matrix never leaves a required check unreported.
+  tests-complete:
+    name: Tests complete
+    needs: [build, test-crc32c, typing, test-zarr]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check failure
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - name: Success
+        run: echo Success!

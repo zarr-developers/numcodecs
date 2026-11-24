@@ -67,6 +67,20 @@ jobs:
           name: sdist
           path: dist/*.tar.gz
 
+  # Branch protection requires this job instead of individual matrix entries, so
+  # renaming a runner or changing a matrix never leaves a required check unreported.
+  wheels-complete:
+    name: Wheels complete
+    needs: [build_wheels, build_sdist]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check failure
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - name: Success
+        run: echo Success!
+
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
