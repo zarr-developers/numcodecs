@@ -21,16 +21,5 @@ configuration in `pyproject.toml` covers those.
 `pyrightconfig.json` turns off pyright's three `reportUnknown*` rules, because most numcodecs
 parameters are not annotated yet. Turn them back on once they are.
 
-The Cython extension modules carry their types in `.pyi` stubs next to the `.pyx` sources.
-`mypy.stubtest` compares those stubs with the compiled modules, against an installed
-(non-editable) build:
-
-```bash
-python -m mypy.stubtest --mypy-config-file pyproject.toml \
-  --allowlist tests/typing/stubtest-allowlist.txt \
-  numcodecs.blosc numcodecs.zstd numcodecs.lz4 numcodecs.vlen \
-  numcodecs.fletcher32 numcodecs.jenkins numcodecs.compat_ext numcodecs._shuffle
-```
-
 When you change an annotation in numcodecs, add or update an `assert_type` here that shows
 what callers now get.

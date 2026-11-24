@@ -4,15 +4,13 @@ import struct
 import warnings
 import zlib
 from collections.abc import Buffer, Callable
-from typing import Literal, NotRequired, cast, overload
+from typing import Literal
 
 import numpy as np
-import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
 from .jenkins import jenkins_lookup3
-from .ndarray_like import BufferLike
 
 crc32c_checksum: Callable[[Buffer, int], int] | None
 
@@ -22,8 +20,10 @@ if importlib.util.find_spec("google_crc32c") is not None:
     import google_crc32c
 
     def crc32c_checksum(data: Buffer, value: int = 0) -> int:
-        result: int = google_crc32c.value(data) if value == 0 else google_crc32c.extend(value, data)
-        return result
+        if value == 0:
+            return google_crc32c.value(data)
+        else:
+            return google_crc32c.extend(value, data)
 
 elif importlib.util.find_spec("crc32c") is not None:
     warnings.warn(
@@ -42,39 +42,17 @@ else:
 CHECKSUM_LOCATION = Literal['start', 'end']
 
 
-class Checksum32Config(CodecConfig):
-    """The configuration of a `Checksum32` codec (CRC32, Adler32, CRC32C), as returned by
-    `get_config`. `location` is present only when it was passed to the constructor; the
-    class default applies otherwise (`'start'` for CRC32 and Adler32, `'end'` for
-    CRC32C)."""
-
-    location: NotRequired[CHECKSUM_LOCATION]
-
-
-class JenkinsLookup3Config(Checksum32Config):
-    """The configuration of a `JenkinsLookup3` codec, as returned by
-    `JenkinsLookup3.get_config`."""
-
-    initval: int
-    prefix: list[int] | None
-
-
 class Checksum32(Codec, abc.ABC):
     # override in sub-class
     location: CHECKSUM_LOCATION = 'start'
 
-    def __init__(self, location: CHECKSUM_LOCATION | None = None) -> None:
+    def __init__(self, location: CHECKSUM_LOCATION | None = None):
         if location is not None:
             self.location = location
         if self.location not in ['start', 'end']:
             raise ValueError(f"Invalid checksum location: {self.location}")
 
-    def get_config(self) -> Checksum32Config:
-        return cast(Checksum32Config, super().get_config())
-
-    # CRC32, Adler32 and CRC32C return uint8 ndarrays; JenkinsLookup3 overrides encode and
-    # decode to return bytes and a memoryview. The annotations here cover both.
-    def encode(self, buf: BufferLike) -> npt.NDArray[np.uint8] | bytes:
+    def encode(self, buf):
         arr = ensure_contiguous_ndarray(buf).view('u1')
         checksum = self.checksum(arr) & 0xFFFFFFFF
         enc = np.empty(arr.nbytes + 4, dtype='u1')
@@ -88,17 +66,13 @@ class Checksum32(Codec, abc.ABC):
         ndarray_copy(arr, payload_view)
         return enc
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.uint8] | memoryview: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
-        arr = ensure_contiguous_ndarray(buf).view('u1')
-        if arr.nbytes < 4:
+    def decode(self, buf, out=None):
+        if len(buf) < 4:
             raise ValueError("Input buffer is too short to contain a 32-bit checksum.")
         if out is not None:
             ensure_contiguous_ndarray(out)  # check that out is a valid ndarray
 
+        arr = ensure_contiguous_ndarray(buf).view('u1')
         if self.location == 'start':
             checksum_view = arr[:4]
             payload_view = arr[4:]
@@ -115,9 +89,7 @@ class Checksum32(Codec, abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def checksum(data: Buffer, value: int = 0, /) -> int:
-        """Return the checksum of `data`, continuing from `value`. Subclasses choose the
-        default `value`."""
+    def checksum(data: Buffer, value: int) -> int: ...
 
 
 class CRC32(Checksum32):
@@ -130,7 +102,7 @@ class CRC32(Checksum32):
     """
 
     codec_id = 'crc32'
-    location: CHECKSUM_LOCATION = 'start'
+    location = 'start'
 
     @staticmethod
     def checksum(data: Buffer, value: int = 0) -> int:
@@ -150,7 +122,7 @@ class Adler32(Checksum32):
     """
 
     codec_id = 'adler32'
-    location: CHECKSUM_LOCATION = 'start'
+    location = 'start'
 
     @staticmethod
     def checksum(data: Buffer, value: int = 1) -> int:
@@ -175,43 +147,30 @@ class JenkinsLookup3(Checksum32):
     ----------
     initval : int
         initial seed passed to the hash algorithm, default: 0
-    prefix : bytes-like or list of int
-        bytes prepended to the buffer before evaluating the hash, default: None.
-        `get_config` reports them as a list of ints, so that the configuration is JSON.
+    prefix : int
+        bytes prepended to the buffer before evaluating the hash, default: None
     """
 
-    checksum = staticmethod(jenkins_lookup3)
+    checksum = jenkins_lookup3
     codec_id = "jenkins_lookup3"
 
-    prefix: npt.NDArray[np.uint8] | None
-
-    def __init__(self, initval: int = 0, prefix: Buffer | list[int] | None = None) -> None:
+    def __init__(self, initval: int = 0, prefix=None):
         self.initval = initval
         if prefix is None:
             self.prefix = None
         else:
-            self.prefix = np.frombuffer(bytes(prefix), dtype='uint8')
+            self.prefix = np.frombuffer(prefix, dtype='uint8')
 
-    def get_config(self) -> "JenkinsLookup3Config":
-        config = cast(JenkinsLookup3Config, dict(super().get_config()))
-        if self.prefix is not None:
-            config["prefix"] = self.prefix.tolist()
-        return config
-
-    def encode(self, buf: BufferLike) -> bytes:
+    def encode(self, buf):
         """Return buffer plus 4-byte Bob Jenkin's lookup3 checksum"""
-        arr = ensure_contiguous_ndarray(buf).ravel().view('uint8')
+        buf = ensure_contiguous_ndarray(buf).ravel().view('uint8')
         if self.prefix is None:
-            val = jenkins_lookup3(arr, self.initval)
+            val = jenkins_lookup3(buf, self.initval)
         else:
-            val = jenkins_lookup3(np.hstack((self.prefix, arr)), self.initval)
-        return arr.tobytes() + struct.pack("<I", val)
+            val = jenkins_lookup3(np.hstack((self.prefix, buf)), self.initval)
+        return buf.tobytes() + struct.pack("<I", val)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> memoryview: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         """Check Bob Jenkin's lookup3 checksum, and return buffer without it"""
         b = ensure_contiguous_ndarray(buf).view('uint8')
         if self.prefix is None:
@@ -248,7 +207,7 @@ if crc32c_checksum is not None:
         """
 
         codec_id = 'crc32c'
-        location: CHECKSUM_LOCATION = 'end'
+        location = 'end'
 
         @staticmethod
         def checksum(data: Buffer, value: int = 0) -> int:

@@ -1,28 +1,10 @@
 import warnings
-from typing import Any, Literal, cast, overload
+from typing import Literal
 
-import numpy.typing as npt
 from pcodec import ChunkConfig, DeltaSpec, ModeSpec, PagingSpec, standalone
 
-from numcodecs.abc import Codec, CodecConfig
+from numcodecs.abc import Codec
 from numcodecs.compat import ensure_bytes, ensure_contiguous_ndarray
-from numcodecs.ndarray_like import BufferLike
-
-type ModeSpecName = Literal["auto", "classic"]
-type DeltaSpecName = Literal["auto", "no_op", "none", "try_consecutive", "try_lookback"]
-type PagingSpecName = Literal["equal_pages_up_to"]
-
-
-class PCodecConfig(CodecConfig):
-    """The configuration of a `PCodec` codec, as returned by `PCodec.get_config`."""
-
-    level: int
-    mode_spec: ModeSpecName
-    delta_spec: DeltaSpecName
-    paging_spec: PagingSpecName
-    delta_encoding_order: int | None
-    equal_pages_up_to: int
-
 
 DEFAULT_MAX_PAGE_N = 262144
 
@@ -68,12 +50,12 @@ class PCodec(Codec):
         self,
         level: int = 8,
         *,
-        mode_spec: ModeSpecName = "auto",
-        delta_spec: DeltaSpecName = "auto",
-        paging_spec: PagingSpecName = "equal_pages_up_to",
+        mode_spec: Literal["auto", "classic"] = "auto",
+        delta_spec: Literal["auto", "no_op", "none", "try_consecutive", "try_lookback"] = "auto",
+        paging_spec: Literal["equal_pages_up_to"] = "equal_pages_up_to",
         delta_encoding_order: int | None = None,
         equal_pages_up_to: int = DEFAULT_MAX_PAGE_N,
-    ) -> None:
+    ):
         # note that we use `level` instead of `compression_level` to
         # match other codecs
         self.level = level
@@ -83,10 +65,7 @@ class PCodec(Codec):
         self.delta_encoding_order = delta_encoding_order
         self.equal_pages_up_to = equal_pages_up_to
 
-    def get_config(self) -> PCodecConfig:
-        return cast(PCodecConfig, super().get_config())
-
-    def _get_chunk_config(self) -> ChunkConfig:
+    def _get_chunk_config(self):
         match self.mode_spec:
             case "auto":
                 mode_spec = ModeSpec.auto()
@@ -135,21 +114,15 @@ class PCodec(Codec):
             paging_spec=paging_spec,
         )
 
-    def encode(self, buf: BufferLike) -> bytes:
+    def encode(self, buf):
         buf = ensure_contiguous_ndarray(buf)
         config = self._get_chunk_config()
-        compressed: bytes = standalone.simple_compress(buf, config)
-        return compressed
+        return standalone.simple_compress(buf, config)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[Any]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         buf = ensure_bytes(buf)
         if out is not None:
             standalone.simple_decompress_into(buf, ensure_contiguous_ndarray(out))
             return out
         else:
-            dec: npt.NDArray[Any] = standalone.simple_decompress(buf)
-            return dec
+            return standalone.simple_decompress(buf)

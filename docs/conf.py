@@ -21,7 +21,7 @@ import numcodecs
 
 class Mock(MagicMock):
     @classmethod
-    def __getattr__(cls, name: str) -> "Mock":
+    def __getattr__(cls, name):
         return Mock()
 
 

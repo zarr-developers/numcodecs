@@ -1,11 +1,7 @@
-from typing import cast, overload
-
 import numpy as np
-import numpy.typing as npt
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
 
 
 class PackBits(Codec):
@@ -33,10 +29,7 @@ class PackBits(Codec):
 
     codec_id = 'packbits'
 
-    def get_config(self) -> CodecConfig:
-        return cast(CodecConfig, super().get_config())
-
-    def encode(self, buf: BufferLike) -> npt.NDArray[np.uint8]:
+    def encode(self, buf):
         # normalise input
         arr = ensure_ndarray(buf).view(bool)
 
@@ -65,11 +58,7 @@ class PackBits(Codec):
 
         return enc
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> npt.NDArray[np.bool_]: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    def decode(self, buf, out=None):
         # normalise input
         enc = ensure_ndarray(buf).view('u1')
 

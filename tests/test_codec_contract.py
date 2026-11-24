@@ -21,7 +21,6 @@ import pytest
 import numcodecs
 from numcodecs import pickles
 from numcodecs.abc import Codec
-from numcodecs.compat import ensure_ndarray
 
 
 @dataclass(frozen=True)
@@ -148,9 +147,9 @@ def test_decode_into_ndarray_returns_out(codec_id: str) -> None:
     out = np.empty_like(data)
     assert codec.decode(enc, out=out) is out
     if CASES[codec_id].is_object:
-        assert all(np.array_equal(a, b) for a, b in zip(out, ensure_ndarray(expected), strict=True))
+        assert all(np.array_equal(a, b) for a, b in zip(out, expected, strict=True))
     else:
-        assert ensure_ndarray(expected).tobytes() == out.tobytes()
+        assert np.asarray(memoryview(expected)).tobytes() == out.tobytes()
 
 
 @pytest.mark.parametrize(
@@ -162,7 +161,7 @@ def test_decode_into_bytearray_returns_out(codec_id: str) -> None:
     expected = codec.decode(enc)
     out = bytearray(data.nbytes)
     assert codec.decode(enc, out=out) is out
-    assert bytes(out) == ensure_ndarray(expected).tobytes()
+    assert bytes(out) == np.asarray(memoryview(expected)).tobytes()
 
 
 @pytest.mark.parametrize("codec_id", _params(set()))

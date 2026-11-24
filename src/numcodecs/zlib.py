@@ -1,15 +1,7 @@
 import zlib as _zlib
-from typing import cast, overload
 
-from .abc import Codec, CodecConfig
+from .abc import Codec
 from .compat import ensure_contiguous_ndarray, ndarray_copy
-from .ndarray_like import BufferLike
-
-
-class ZlibConfig(CodecConfig):
-    """The configuration of a `Zlib` codec, as returned by `Zlib.get_config`."""
-
-    level: int
 
 
 class Zlib(Codec):
@@ -24,31 +16,25 @@ class Zlib(Codec):
 
     codec_id = 'zlib'
 
-    def __init__(self, level: int = 1) -> None:
+    def __init__(self, level=1):
         self.level = level
 
-    def get_config(self) -> ZlibConfig:
-        return cast(ZlibConfig, super().get_config())
-
-    def encode(self, buf: BufferLike) -> bytes:
+    def encode(self, buf):
         # normalise inputs
-        arr = ensure_contiguous_ndarray(buf)
+        buf = ensure_contiguous_ndarray(buf)
 
         # do compression
-        return _zlib.compress(arr, self.level)
+        return _zlib.compress(buf, self.level)
 
-    @overload
-    def decode(self, buf: BufferLike, out: None = None) -> bytes: ...
-    @overload
-    def decode[OutT: BufferLike](self, buf: BufferLike, out: OutT) -> OutT: ...
-    def decode(self, buf: BufferLike, out: BufferLike | None = None) -> BufferLike:
+    # noinspection PyMethodMayBeStatic
+    def decode(self, buf, out=None):
         # normalise inputs
-        arr = ensure_contiguous_ndarray(buf)
+        buf = ensure_contiguous_ndarray(buf)
         if out is not None:
             ensure_contiguous_ndarray(out)  # validate; decode into `out` itself below
 
         # do decompression
-        dec = _zlib.decompress(arr)
+        dec = _zlib.decompress(buf)
 
         # handle destination - Python standard library zlib module does not
         # support direct decompression into buffer, so we have to copy into

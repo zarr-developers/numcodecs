@@ -21,8 +21,6 @@ from numpy cimport ndarray
 from .compat_ext cimport ensure_contiguous_memoryview
 from ._utils cimport store_le32, load_le32
 
-from typing import TypedDict
-
 import numpy as np
 
 from .abc import Codec
@@ -35,11 +33,6 @@ cdef extern from *:
     const Py_ssize_t HEADER_LENGTH = sizeof(uint32_t);
     """
     const Py_ssize_t HEADER_LENGTH
-
-
-# The type of `VLenArray.get_config()`. Declared with the functional syntax because Cython does
-# not compile TypedDict class bodies; `vlen.pyi` declares the same type with the class syntax.
-VLenArrayConfig = TypedDict("VLenArrayConfig", {"id": str, "dtype": str})
 
 
 def check_out_param(out, n_items):
