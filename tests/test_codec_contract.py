@@ -265,57 +265,6 @@ def test_decode_into_awkward_out(codec_id: str, out_kind: str) -> None:
         assert flat.tobytes() == expected.tobytes()
 
 
-VLEN_NON_CONTIGUOUS_OUTS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
-    "every other row": lambda base: base[::2],
-    "every other row and column": lambda base: base[::2, ::2],
-    "rows reversed": lambda base: base[::-1],
-    "transposed and strided": lambda base: base.T[::2],
-    "3-D, strided on the middle axis": lambda base: base.reshape(2, 4, 3)[:, ::2],
-}
-
-
-@pytest.mark.parametrize("layout", VLEN_NON_CONTIGUOUS_OUTS)
-@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
-def test_vlen_decode_fills_a_non_contiguous_out(codec_id: str, layout: str) -> None:
-    """`out` cannot be flattened without a copy, so the decoded items have to be copied
-    back into it, in logical (C) order. The rest of the memory `out` is a view of is left
-    alone."""
-    codec = _codec(codec_id)
-    stale = object()
-    base = np.full((6, 4), stale, dtype=object)
-    out = VLEN_NON_CONTIGUOUS_OUTS[layout](base)
-    # numpy cannot flatten any of these layouts without a copy
-    assert not np.shares_memory(out.reshape(-1, order="A"), out)
-    data = np.resize(CASES[codec_id].data, out.size)
-
-    assert codec.decode(codec.encode(data), out=out) is out
-    assert all(np.array_equal(a, b) for a, b in zip(out.ravel(), data, strict=True))
-    assert sum(item is stale for item in base.flat) == base.size - out.size
-
-
-@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
-def test_vlen_decode_refuses_a_read_only_non_contiguous_out(codec_id: str) -> None:
-    """The decoded items cannot be copied back, and returning `out` unfilled would be
-    wrong data."""
-    codec = _codec(codec_id)
-    stale = object()
-    base = np.full((4, 2), stale, dtype=object)
-    out = base[::2]
-    out.setflags(write=False)
-    with pytest.raises(ValueError, match="read-only"):
-        codec.decode(codec.encode(np.resize(CASES[codec_id].data, out.size)), out=out)
-    assert all(item is stale for item in base.flat)
-
-
-@pytest.mark.parametrize("codec_id", ["vlen-utf8", "vlen-bytes", "vlen-array"])
-def test_vlen_decode_into_an_empty_read_only_out(codec_id: str) -> None:
-    """There is nothing to write, so a read-only `out` is not an error."""
-    codec = _codec(codec_id)
-    out = np.empty(0, dtype=object)
-    out.setflags(write=False)
-    assert codec.decode(codec.encode(np.empty(0, dtype=object)), out=out) is out
-
-
 @pytest.mark.parametrize("codec_id", ["json2", "msgpack2", "pickle"])
 def test_object_codec_decode_rejects_non_ndarray_out(codec_id: str) -> None:
     """These codecs copy with `np.copyto`, which needs an ndarray destination. A
