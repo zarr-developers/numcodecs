@@ -14,6 +14,16 @@
 
 ## Unreleased
 
+### Deprecations
+
+* The `Pickle` codec is deprecated and will be removed in numcodecs 0.19.0. Constructing
+  it, directly or through `numcodecs.get_codec({"id": "pickle"})`, emits a
+  `DeprecationWarning`. Encoding and decoding still work until removal, and decoding still
+  requires the opt-in described in
+  [GHSA-jqc8-qjfv-5m6r](https://github.com/zarr-developers/numcodecs/security/advisories/GHSA-jqc8-qjfv-5m6r).
+  To encode arrays of Python objects, use `VLenUTF8`, `VLenBytes`, `VLenArray`, `JSON` or
+  `MsgPack` instead. {issue}`706`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,

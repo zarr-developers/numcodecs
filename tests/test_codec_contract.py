@@ -192,6 +192,8 @@ def test_decode_into_bytearray_returns_out(codec_id: str) -> None:
     assert bytes(out) == np.asarray(memoryview(expected)).tobytes()
 
 
+# Rebuilding the codec from its config constructs it again, outside `_codec`.
+@pytest.mark.filterwarnings("ignore:The Pickle codec is deprecated:DeprecationWarning")
 @pytest.mark.parametrize("codec_id", _params(set()))
 def test_config_round_trip(codec_id: str) -> None:
     codec = _codec(codec_id)

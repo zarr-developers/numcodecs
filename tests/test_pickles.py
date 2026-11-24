@@ -1,12 +1,15 @@
 import itertools
 import sys
+import warnings
+from functools import partial
 
 import numpy as np
 import pytest
 
+import numcodecs
 import numcodecs.pickles
 from numcodecs.errors import UnsafeDecodeError
-from numcodecs.pickles import _ENV_VAR, Pickle, _read_opt_in_from_env
+from numcodecs.pickles import _ENV_VAR, _REMOVAL_VERSION, Pickle, _read_opt_in_from_env
 from numcodecs.registry import get_codec
 from tests.common import (
     check_backwards_compatibility,
@@ -16,7 +19,15 @@ from tests.common import (
     greetings,
 )
 
-codecs = [Pickle(protocol=i) for i in range(5)]
+# Constructing Pickle emits a DeprecationWarning. The tests below that predate the
+# deprecation exercise the codec itself, so they ignore it; test_construction_warns checks it.
+DEPRECATION_MATCH = "The Pickle codec is deprecated"
+pytestmark = pytest.mark.filterwarnings(f"ignore:{DEPRECATION_MATCH}:DeprecationWarning")
+
+# Built at import time, where pytestmark does not apply.
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", message=DEPRECATION_MATCH, category=DeprecationWarning)
+    codecs = [Pickle(protocol=i) for i in range(5)]
 
 # object array with strings
 # object array with mix strings / nans
@@ -68,6 +79,41 @@ def test_repr():
 )
 def test_backwards_compatibility():
     check_backwards_compatibility(Pickle.codec_id, arrays, codecs)
+
+
+@pytest.mark.parametrize(
+    "make_codec",
+    [
+        partial(Pickle),
+        partial(numcodecs.Pickle, protocol=2),
+        partial(Pickle.from_config, {"protocol": 3}),
+        partial(get_codec, {"id": "pickle"}),
+        partial(get_codec, {"id": "pickle", "protocol": 4}),
+    ],
+    ids=["Pickle", "numcodecs.Pickle", "Pickle.from_config", "get_codec", "get_codec-protocol"],
+)
+def test_construction_warns(make_codec):
+    """Every way of obtaining a Pickle codec warns once, attributes the warning to the
+    caller rather than to numcodecs internals, and leaves encode and decode working."""
+    with pytest.warns(DeprecationWarning, match=DEPRECATION_MATCH) as record:
+        codec = make_codec()
+    assert len(record) == 1
+    assert record[0].filename == __file__
+    message = str(record[0].message)
+    assert _REMOVAL_VERSION in message
+    for alternative in ("VLenUTF8", "VLenBytes", "VLenArray", "JSON", "MsgPack"):
+        assert alternative in message
+    # encoding and decoding do not warn again
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        check_encode_decode_array(arrays[0], codec)
+
+
+def test_construction_raises_when_deprecation_warnings_are_errors():
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        with pytest.raises(DeprecationWarning, match=DEPRECATION_MATCH):
+            get_codec({"id": "pickle"})
 
 
 def test_decode_refused_without_opt_in(monkeypatch):
