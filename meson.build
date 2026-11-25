@@ -5,7 +5,8 @@ project(
     ['src/numcodecs/_build_utils/gitversion.py'], check: true,
   ).stdout().strip(),
   default_options: [
-    'c_std=gnu11',
+    # MSVC has no gnu11; fall back to c11 there
+    'c_std=gnu11,c11',
     'warning_level=1',
   ],
   meson_version: '>=1.6.0',
