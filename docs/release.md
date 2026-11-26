@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Fixes
+
+* Normalize NumPy integer scalar ``keepbits`` values in {class}`numcodecs.bitround.BitRound`
+  to avoid overflow during floating-point rounding. By {user}`sapunyangkut`, {issue}`793`.
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
