@@ -35,6 +35,9 @@
 
 ### Fixes
 
+* `BitRound.encode` now supports floating-point arrays with non-native byte order
+  (e.g., `>f2`, `>f4`, `>f8` on little-endian platforms) while preserving the input
+  endianness.
 * `Fletcher32.decode` raises `ValueError` when `out` is not exactly the size of the
   decoded data.
 * `import numcodecs` no longer fails when a zfpy post-release such as 1.0.1.post0 is

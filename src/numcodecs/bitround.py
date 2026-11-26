@@ -51,7 +51,7 @@ class BitRound(Codec):
         a = ensure_ndarray_like(buf)
         if not a.dtype.kind == "f" or a.dtype.itemsize > 8:
             raise TypeError("Only float arrays (16-64bit) can be bit-rounded")
-        bits = max_bits[str(a.dtype)]
+        bits = max_bits[a.dtype.newbyteorder("=").name]
         # cast float to int type of same width (preserve endianness)
         a_int_dtype = np.dtype(a.dtype.str.replace("f", "i"))
         all_set = np.array(-1, dtype=a_int_dtype)
