@@ -79,3 +79,26 @@ def test_errors():
         BitRound(keepbits=10).encode(np.array([0]))
     with pytest.raises(ValueError):
         BitRound(-1)
+
+
+@pytest.mark.parametrize("dtype_str", ["<f2", ">f2", "<f4", ">f4", "<f8", ">f8"])
+def test_non_native_byteorder(dtype_str):
+    dt = np.dtype(dtype_str)
+    native_dt = dt.newbyteorder("=")
+    values = [0.0, -0.0, 1.0, -1.0, 3.141592653589793, -42.125, np.inf, -np.inf]
+    arr = np.array(values, dtype=dt)
+    native_arr = arr.astype(native_dt)
+    bits = max_bits[native_dt.name]
+
+    for keepbits in (0, 3, bits):
+        codec = BitRound(keepbits=keepbits)
+        enc = codec.encode(arr)
+        dec = codec.decode(enc)
+        expected = codec.decode(codec.encode(native_arr))
+
+        assert enc.dtype.byteorder == dt.byteorder
+        assert dec.dtype == dt
+        np.testing.assert_equal(dec, expected)
+
+    with pytest.raises(ValueError):
+        BitRound(keepbits=bits + 1).encode(arr)
