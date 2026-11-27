@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Documentation
+
+* Add the Base64 codec to the filter API reference, with an encoding and decoding example.
+  By {user}`Wentao Tong <tongwentao>`, {issue}`587`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
