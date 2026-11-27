@@ -55,7 +55,7 @@ class MsgPack(Codec):
             buf = np.asarray(buf)
         except ValueError:
             buf = np.asarray(buf, dtype=object)
-        items = buf.tolist()
+        items = np.atleast_1d(buf).tolist()
         items.extend((buf.dtype.str, buf.shape))
         return msgpack.packb(
             items,
@@ -67,7 +67,10 @@ class MsgPack(Codec):
         buf = ensure_contiguous_ndarray(buf)
         items = msgpack.unpackb(buf, raw=self.raw)
         dec = np.empty(items[-1], dtype=items[-2])
-        dec[:] = items[:-2]
+        if not items[-1]:
+            dec[...] = items[0]
+        else:
+            dec[:] = items[:-2]
         if out is not None:
             np.copyto(out, dec)
             return out

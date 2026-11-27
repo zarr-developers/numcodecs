@@ -14,6 +14,11 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Fix `MsgPack` round trips for zero-dimensional arrays, including object arrays
+  containing lists, without modifying the input. {issue}`898`
+
 ### Maintenance
 
 * Build wheels for CPython 3.15 and free-threaded CPython 3.15t, using cibuildwheel 4.3.5,
