@@ -83,3 +83,28 @@ def test_non_numpy_inputs(input_data, dtype):
     for codec in codecs:
         output_data = codec.decode(codec.encode(data))
         assert input_data == output_data.tolist()
+
+
+@pytest.mark.parametrize(
+    "arr",
+    [
+        # from #518
+        np.array(
+            [
+                (1, 'dataset_1', {'source': '.', 'path': '/dataset_1', 'object_id': None}),
+                (2, 'dataset_2', {'source': '.', 'path': '/dataset_2', 'object_id': None}),
+            ],
+            dtype=[('id', '<i4'), ('name', 'O'), ('reference', 'O')],
+        ),
+        np.array((1, 2.5), dtype=[('x', '<i8'), ('y', '<f4')]),
+        np.arange(12).astype('f8').view([('a', '<f8'), ('b', '<f8', (2,))]).reshape(2, 2),
+        np.zeros(3, dtype=[('outer', [('p', '<i4'), ('q', '<f8')]), ('z', '<u1')]),
+        np.zeros(2, dtype=[('inner', [('p', '<i4')], (2,))]),
+    ],
+)
+def test_structured_dtype(arr):
+    codec = JSON()
+    dec = codec.decode(codec.encode(arr))
+    assert dec.dtype == arr.dtype
+    assert dec.shape == arr.shape
+    np.testing.assert_equal(dec.tolist(), arr.tolist())
