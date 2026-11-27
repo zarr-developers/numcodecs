@@ -1,3 +1,4 @@
+import struct
 import threading
 import time
 from multiprocessing import Pool
@@ -38,6 +39,8 @@ codecs = [
     Blosc(shuffle=Blosc.SHUFFLE, blocksize=2**8),
     Blosc(cname='lz4', clevel=1, shuffle=Blosc.NOSHUFFLE, blocksize=2**8),
 ]
+# compressors can be left out of a build (e.g. -Dblosc_zstd=disabled with c-blosc2)
+codecs = [c if c is None or c.cname in blosc.list_compressors() else None for c in codecs]
 
 
 # mix of dtypes: integer, float, bool, string
@@ -57,6 +60,7 @@ arrays = [
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[ns]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('M8[m]'),
     np.random.randint(-(2**63), -(2**63) + 20, size=1000, dtype='i8').view('m8[m]'),
+    np.empty(0, dtype='u1'),
 ]
 
 
@@ -75,6 +79,35 @@ def use_threads(request):
 def test_encode_decode(array, codec):
     _skip_null(codec)
     check_encode_decode(array, codec)
+
+
+def test_empty_encode_decode(use_threads):
+    blosc.use_threads = use_threads
+    try:
+        check_encode_decode(np.empty(0, dtype='u1'), Blosc())
+    finally:
+        blosc.use_threads = None
+
+
+def test_empty_decode_rejects_nonempty_destination():
+    codec = Blosc()
+    encoded = codec.encode(b'')
+    with pytest.raises(RuntimeError, match='non-empty destination buffer'):
+        codec.decode(encoded, out=bytearray(1))
+
+
+def test_decompress_allows_trailing_bytes():
+    codec = Blosc()
+    original = b'some data to compress'
+    encoded = codec.encode(original)
+    assert codec.decode(encoded + b'padding') == original
+
+
+def test_decompress_rejects_truncated_frame():
+    codec = Blosc()
+    encoded = codec.encode(b'some data to compress')
+    with pytest.raises(RuntimeError, match='buffer is truncated'):
+        codec.decode(encoded[:-1])
 
 
 def test_config():
@@ -165,7 +198,11 @@ def test_compress_metainfo(dtype, use_threads):
             enc = blosc.compress(arr, cname.encode(), 1, shuffle)
             typesize, did_shuffle, _ = blosc._cbuffer_metainfo(enc)
             assert typesize == arr.dtype.itemsize
-            assert did_shuffle == shuffle
+            if typesize == 1 and shuffle == Blosc.SHUFFLE and blosc.LIBRARY == 'c-blosc2':
+                # c-blosc2 omits the byte shuffle flag when it is a no-op
+                assert did_shuffle in (Blosc.NOSHUFFLE, shuffle)
+            else:
+                assert did_shuffle == shuffle
 
 
 def test_compress_autoshuffle(use_threads):
@@ -203,7 +240,8 @@ def test_backwards_compatibility():
 
 
 def _encode_worker(data):
-    compressor = Blosc(cname='zlib', clevel=9, shuffle=Blosc.SHUFFLE)
+    cname = 'zlib' if 'zlib' in blosc.list_compressors() else 'lz4'
+    compressor = Blosc(cname=cname, clevel=9, shuffle=Blosc.SHUFFLE)
     return compressor.encode(data)
 
 
@@ -326,7 +364,145 @@ def test_typesize_less_than_1():
         compressor.encode(arr.tobytes())
 
 
+@pytest.mark.parametrize(
+    "shuffle", [Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE, Blosc.AUTOSHUFFLE]
+)
+def test_zero_itemsize(shuffle):
+    # a structured dtype with a zero-length field has itemsize 0, which blosc
+    # rejects as a typesize (and older versions crashed on, #516)
+    arr = np.zeros((5,), dtype=[("foo", int, (0,))])
+    assert arr.dtype.itemsize == 0
+    enc = Blosc(shuffle=shuffle).encode(arr)
+    nbytes, _, _ = blosc._cbuffer_sizes(enc)
+    assert nbytes == 0
+
+
 def test_config_no_typesize():
     codec = Blosc(shuffle=Blosc.SHUFFLE, typesize=5)
     config = codec.get_config()
     assert "typesize" not in config
+
+
+@pytest.mark.parametrize('shuffle', [Blosc.SHUFFLE, Blosc.BITSHUFFLE])
+@pytest.mark.parametrize('blocksize', [0, 2**8, 4097])
+@pytest.mark.parametrize('nbytes', [1, 31, 33, 127, 1000, 65537])
+@pytest.mark.parametrize('typesize', [1, 2, 3, 4, 7, 8, 12, 16, 17, 32])
+def test_shuffle_roundtrip_typesizes(typesize, nbytes, blocksize, shuffle):
+    # Exercises the SIMD (un)shuffle kernels, including the scalar tail used when a
+    # block is not a multiple of the vector width or the typesize.
+    src = np.random.default_rng(0).integers(0, 64, nbytes, dtype='u1').tobytes()
+    codec = Blosc(cname='lz4', clevel=5, shuffle=shuffle, blocksize=blocksize, typesize=typesize)
+    assert bytes(codec.decode(codec.encode(src))) == src
+
+
+@pytest.mark.parametrize('cname', blosc.list_compressors())
+@pytest.mark.parametrize('shuffle', [Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE])
+@pytest.mark.parametrize('typesize', [1, 2, 3, 8])
+def test_output_is_blosc1_format(cname, shuffle, typesize):
+    # Chunks must stay readable by C-Blosc 1.x: format version 2 in the first byte
+    src = np.arange(4096, dtype='u1').tobytes()
+    enc = Blosc(cname=cname, shuffle=shuffle, typesize=typesize).encode(src)
+    assert enc[0] == 2
+
+
+def _blosc1_header(nbytes, cbytes, typesize=1, blocksize=1):
+    # version 2, lz4, no flags, then nbytes, blocksize, cbytes (little endian)
+    return struct.pack('<BBBBIII', 2, 1, 0, typesize, nbytes, blocksize, cbytes)
+
+
+def test_decompress_rejects_short_buffer():
+    with pytest.raises(RuntimeError, match='buffer is too small'):
+        blosc.decompress(b'\x02\x01\x00')
+
+
+def test_decompress_rejects_invalid_header():
+    # a declared size above the maximum buffer size
+    header = _blosc1_header(nbytes=2**31 - 1, cbytes=16)
+    with pytest.raises(RuntimeError, match='header validation failed'):
+        blosc.decompress(header)
+
+
+def test_decompress_rejects_truncated_header_size():
+    # the header says there are more compressed bytes than were given
+    header = _blosc1_header(nbytes=10, cbytes=1000)
+    with pytest.raises(RuntimeError, match='buffer is truncated'):
+        blosc.decompress(header)
+
+
+def _blosc2_special_chunk(version, flags, nbytes=1024):
+    # a 32-byte chunk with the Blosc2 extended header (used by c-blosc2 whenever both
+    # the shuffle and bitshuffle flag bits are set), marked as an uninitialized
+    # special chunk: c-blosc2 would decode it without writing the output at all
+    header = struct.pack('<BBBBiii', version, 1, flags, 1, nbytes, nbytes, 32)
+    blosc2_flags = 0x4 << 4  # BLOSC2_SPECIAL_UNINIT
+    return header + bytes(15) + bytes([blosc2_flags])
+
+
+@pytest.mark.skipif(blosc.LIBRARY != 'c-blosc2', reason='c-blosc2 backend only')
+@pytest.mark.parametrize(
+    'chunk',
+    [
+        # Blosc2 format versions with a plain 16-byte header
+        struct.pack('<BBBBiii', 3, 1, 0, 1, 16, 16, 32) + bytes(16),
+        struct.pack('<BBBBiii', 6, 1, 0, 1, 16, 16, 32) + bytes(16),
+        # extended (Blosc2) header with a Blosc2 or a Blosc1 format version
+        _blosc2_special_chunk(version=5, flags=0x5),
+        _blosc2_special_chunk(version=2, flags=0x5),
+    ],
+    ids=['v3', 'v6', 'v5-extended-uninit', 'v2-extended-uninit'],
+)
+def test_decompress_rejects_non_blosc1_format(chunk, use_threads):
+    # this codec only writes Blosc1-format chunks and C-Blosc 1.x reads nothing else,
+    # so the c-blosc2 backend must not decode other chunks either
+    blosc.use_threads = use_threads
+    try:
+        with pytest.raises(RuntimeError, match='not a Blosc1-format frame'):
+            blosc.decompress(chunk)
+    finally:
+        blosc.use_threads = None
+
+
+def test_decompress_reads_only_within_frame(use_threads):
+    # Point the first block at a copy of its own compressed data placed after the
+    # frame. Bytes after the frame are allowed (and ignored), but must never be read
+    # as part of it, whichever decompression path is taken.
+    src = np.tile(np.arange(64, dtype='u1'), 2**12).tobytes()
+    codec = Blosc(cname='lz4', clevel=5, shuffle=Blosc.NOSHUFFLE, blocksize=2**16)
+    enc = bytearray(codec.encode(src))
+    nbytes, cbytes, blocksize = blosc._cbuffer_sizes(enc)
+    assert enc[0] == 2  # Blosc1 format
+    assert not enc[2] & 0x2  # not memcpyed
+    nblocks = nbytes // blocksize
+    assert nblocks > 1
+    bstarts = struct.unpack_from(f'<{nblocks}i', enc, 16)
+    block0 = enc[bstarts[0] : bstarts[1]]
+    struct.pack_into('<i', enc, 16, cbytes)
+    tampered = bytes(enc) + bytes(block0)
+
+    blosc.use_threads = use_threads
+    try:
+        assert bytes(blosc.decompress(bytes(codec.encode(src)) + bytes(block0))) == src
+        with pytest.raises(RuntimeError):
+            blosc.decompress(tampered)
+    finally:
+        blosc.use_threads = None
+
+
+@pytest.mark.parametrize('blocksize', [10, 255, 10**6])
+@pytest.mark.parametrize('typesize', [1, 3, 8])
+def test_blocksize_larger_than_buffer_or_not_multiple_of_typesize(blocksize, typesize):
+    # c-blosc 1.x adjusts the blocksize itself; c-blosc2 needs to be given a valid one
+    src = np.arange(1000, dtype='u1').tobytes()
+    for shuffle in (Blosc.NOSHUFFLE, Blosc.SHUFFLE, Blosc.BITSHUFFLE):
+        codec = Blosc(cname='lz4', shuffle=shuffle, blocksize=blocksize, typesize=typesize)
+        assert bytes(codec.decode(codec.encode(src))) == src
+
+
+def test_library():
+    assert blosc.LIBRARY in ('c-blosc', 'c-blosc2')
+    assert blosc.VERSION_STRING
+
+
+def test_compressors_listed():
+    # these are built into Blosc whichever library it is built on
+    assert {'blosclz', 'lz4', 'lz4hc'} <= set(blosc.list_compressors())

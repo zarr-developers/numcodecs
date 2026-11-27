@@ -1,0 +1,9 @@
+[wrap-git]
+directory = c-blosc2
+url = https://github.com/Blosc/c-blosc2.git
+# Head of c-blosc2 main (includes Blosc/c-blosc2#815); move to a release that has it.
+revision = d77f4b9167c72ac97bc3f4c0644bf46f77c8d71f
+patch_directory = c-blosc2
+
+[provide]
+dependency_names = blosc2
